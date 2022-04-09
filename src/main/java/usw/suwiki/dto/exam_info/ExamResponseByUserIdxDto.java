@@ -11,6 +11,7 @@ public class ExamResponseByUserIdxDto {
     private String professor;
     private String semester;
     private String semesterList;
+    private String examType;
     private String examInfo;    
     private String examDifficulty;    //난이도
 
@@ -25,6 +26,7 @@ public class ExamResponseByUserIdxDto {
         this.lectureName = entity.getLectureName();
         this.semester = entity.getSemester();
         this.professor = entity.getProfessor();
+        this.examType = entity.getExamType();
         this.examInfo = entity.getExamInfo();
         this.examDifficulty = entity.getExamDifficulty();
         this.content = entity.getContent();

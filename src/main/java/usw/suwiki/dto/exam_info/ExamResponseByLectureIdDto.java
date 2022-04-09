@@ -9,6 +9,7 @@ public class ExamResponseByLectureIdDto {
     private Long id;
     private String semester;
 
+    private String examType;
     private String examInfo;    //시험방식
     private String examDifficulty;    //난이도
 
@@ -17,6 +18,7 @@ public class ExamResponseByLectureIdDto {
     public ExamResponseByLectureIdDto(ExamPosts entity) {
         this.id = entity.getId();
         this.semester = entity.getSemester();
+        this.examType = entity.getExamType();
         this.examInfo = entity.getExamInfo();
         this.examDifficulty = entity.getExamDifficulty();
         this.content = entity.getContent();

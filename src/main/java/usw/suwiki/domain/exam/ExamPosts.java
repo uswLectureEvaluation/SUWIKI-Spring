@@ -25,6 +25,7 @@ public class ExamPosts extends BaseTimeEntity{
     private String semester;
     private String professor;   //교수
 
+    private String examType;
     private String examInfo;    //시험방식
     private String examDifficulty;    //난이도
 
@@ -55,6 +56,7 @@ public class ExamPosts extends BaseTimeEntity{
         this.lectureName = dto.getLectureName();
         this.semester = dto.getSemester();
         this.professor = dto.getProfessor();
+        this.examType = dto.getExamType();
         this.examInfo = dto.getExamInfo();
         this.examDifficulty = dto.getExamDifficulty();
         this.content = dto.getContent();
