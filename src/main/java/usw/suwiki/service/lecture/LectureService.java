@@ -1,9 +1,7 @@
 package usw.suwiki.service.lecture;
 
 import usw.suwiki.dto.evaluate.EvaluatePostsToLecture;
-import usw.suwiki.dto.lecture.LectureDetailResponseDto;
-import usw.suwiki.dto.lecture.LectureFindOption;
-import usw.suwiki.dto.lecture.LectureResponseDto;
+import usw.suwiki.dto.lecture.*;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.repository.lecture.JpaLectureRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,24 +33,24 @@ public class LectureService {
         lecture.calcLectureAvg();
     }
 
-    public List<LectureResponseDto> findAllLectureByFindOption(LectureFindOption lectureFindOption){
+    public LectureToJsonArray findAllLectureByFindOption(LectureFindOption lectureFindOption){
         List<LectureResponseDto> dtoList = new ArrayList<>();
-        List<Lecture> lectureList = lectureRepository.findAllLectureByFindOption(lectureFindOption);
-        for (Lecture lecture : lectureList) {
+        LectureListAndCountDto dto = lectureRepository.findAllLectureByFindOption(lectureFindOption);
+        for (Lecture lecture : dto.getLectureList()) {
             dtoList.add(new LectureResponseDto(lecture));
         }
 
-        return dtoList;
+        return new LectureToJsonArray(dtoList, dto.getCount());
     }
 
-    public List<LectureResponseDto> findLectureByFindOption(String searchValue ,LectureFindOption lectureFindOption){
+    public LectureToJsonArray findLectureByFindOption(String searchValue , LectureFindOption lectureFindOption){
         List<LectureResponseDto> dtoList = new ArrayList<>();
-        List<Lecture> lectureList = lectureRepository.findLectureByFindOption(searchValue,lectureFindOption);
-        for (Lecture lecture : lectureList) {
+        LectureListAndCountDto dto = lectureRepository.findLectureByFindOption(searchValue,lectureFindOption);
+        for (Lecture lecture : dto.getLectureList()) {
             dtoList.add(new LectureResponseDto(lecture));
         }
 
-        return dtoList;
+        return new LectureToJsonArray(dtoList, dto.getCount());
     }
 
     public LectureDetailResponseDto findByIdDetail(Long id){

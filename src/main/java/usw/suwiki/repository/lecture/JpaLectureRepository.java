@@ -1,16 +1,16 @@
 package usw.suwiki.repository.lecture;
 
-import usw.suwiki.domain.evaluation.EvaluatePosts;
 import usw.suwiki.dto.lecture.LectureFindOption;
 import usw.suwiki.domain.lecture.Lecture;
 import org.springframework.stereotype.Repository;
+import usw.suwiki.dto.lecture.LectureListAndCountDto;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 public class JpaLectureRepository implements LectureRepository {
@@ -42,7 +42,7 @@ public class JpaLectureRepository implements LectureRepository {
     }
 
     @Override
-    public List<Lecture> findLectureByFindOption(String searchValue, LectureFindOption lectureFindOption) {
+    public LectureListAndCountDto findLectureByFindOption(String searchValue, LectureFindOption lectureFindOption) {
         Optional<String> orderOption = lectureFindOption.getOrderOption();
         Optional<Integer> pageNumber = lectureFindOption.getPageNumber();
         if (pageNumber.isEmpty()) {
@@ -58,8 +58,6 @@ public class JpaLectureRepository implements LectureRepository {
                 "lectureLearningAvg",
                 "lectureTotalAvg"};
 
-//        String[] sortOptions = {"asc", "desc"};
-
         if (!Arrays.asList(orderOptions).contains(orderOption.get())) {
             throw new InvalidParameterException("invalid orderOption");
         }
@@ -73,13 +71,16 @@ public class JpaLectureRepository implements LectureRepository {
                 .setMaxResults(10)
                 .getResultList();
 
-//        List<Lecture> resultList = lectureList.stream().distinct().collect(Collectors.toList());
+        List countList = em.createQuery("SELECT COUNT(l) FROM Lecture l WHERE l.lectureName LIKE CONCAT('%%',UPPER(:value),'%%') OR l.professor LIKE CONCAT('%%',UPPER(:value),'%%')")
+                .setParameter("value", searchValue)
+                .getResultList();
+        Long count = (Long) countList.get(0);
 
-        return lectureList;
+        return LectureListAndCountDto.builder().lectureList(lectureList).count(count).build();
     }
 
     @Override
-    public List<Lecture> findAllLectureByFindOption(LectureFindOption lectureFindOption) {
+    public LectureListAndCountDto findAllLectureByFindOption(LectureFindOption lectureFindOption) {
         Optional<String> orderOption = lectureFindOption.getOrderOption();
         Optional<Integer> pageNumber = lectureFindOption.getPageNumber();
         if (pageNumber.isEmpty()) {
@@ -109,8 +110,11 @@ public class JpaLectureRepository implements LectureRepository {
                 .setMaxResults(10)
                 .getResultList();
 
-//        List<Lecture> resultList = lectureList.stream().distinct().collect(Collectors.toList());
+        List countList = em.createQuery("SELECT COUNT(l) FROM Lecture l")
+                .getResultList();
+        Long count = (Long) countList.get(0);
 
-        return lectureList;
+        return LectureListAndCountDto.builder().lectureList(lectureList).count(count).build();
     }
+
 }
