@@ -30,7 +30,7 @@ public class JpaExamPostsRepository implements ExamPostsRepository{
             page = Optional.of(1);
         }
 
-        List resultList = em.createQuery("SELECT p from ExamPosts p join p.lecture l WHERE l.id = :lectureId ORDER BY p.modifiedDate")
+        List resultList = em.createQuery("SELECT p from ExamPosts p join p.lecture l WHERE l.id = :lectureId ORDER BY p.modifiedDate DESC")
                 .setParameter("lectureId", lectureId)
                 .setFirstResult((page.get()-1)*10)
                 .setMaxResults(10)
@@ -52,7 +52,7 @@ public class JpaExamPostsRepository implements ExamPostsRepository{
             page = Optional.of(1);
         }
 
-        List resultList = em.createQuery("SELECT p from ExamPosts p join p.user u WHERE u.id = :id ORDER BY p.modifiedDate")
+        List resultList = em.createQuery("SELECT p from ExamPosts p join p.user u WHERE u.id = :id ORDER BY p.modifiedDate DESC")
                 .setParameter("id", userId)
                 .setFirstResult((page.get()-1)*10)
                 .setMaxResults(10)
@@ -80,7 +80,7 @@ public class JpaExamPostsRepository implements ExamPostsRepository{
     @Override
     public List<ExamPosts> findAllByUserId(Long userId) {
 
-        List resultList = em.createQuery("SELECT p from ExamPosts p join p.user u WHERE u.id = :id ORDER BY p.modifiedDate")
+        List resultList = em.createQuery("SELECT p from ExamPosts p join p.user u WHERE u.id = :id ORDER BY p.modifiedDate DESC")
                 .setParameter("id", userId)
                 .getResultList();
 

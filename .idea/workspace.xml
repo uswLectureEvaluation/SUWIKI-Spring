@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="501b0fc5-c352-4174-9aa9-b56b765d5a08" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/ExamPosts.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/ExamPosts.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/dto/exam_info/ExamPostsSaveDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/dto/exam_info/ExamPostsSaveDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/dto/exam_info/ExamPostsUpdateDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/dto/exam_info/ExamPostsUpdateDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/repository/evaluation/JpaEvaluatePostsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/repository/evaluation/JpaEvaluatePostsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/repository/exam/JpaExamPostsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/repository/exam/JpaExamPostsRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
