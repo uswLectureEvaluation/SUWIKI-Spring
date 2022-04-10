@@ -17,26 +17,26 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Transactional
-@SpringBootTest(classes = SuwikiApplication.class)
-public class Test1 {
-
-    @Autowired
-    JpaEvaluatePostsRepository jpaEvaluatePostsRepository;
-    @Autowired
-    JpaLectureRepository jpaLectureRepository;
-    @Autowired
-    JpaExamPostsRepository jpaExamPostsRepository;
-
-    @Test
-    public void findSubOrProf() {
-
-        Optional<String> option = Optional.of("modifiedDate");
-        Optional<Integer> page = Optional.of(1);
-
-        LectureListAndCountDto dto = jpaLectureRepository.findAllLectureByFindOption(new LectureFindOption(option, page));
-        System.out.println(dto.getLectureList());
-        System.out.println(dto.getCount());
-    }
-}
-
+//@Transactional
+//@SpringBootTest(classes = SuwikiApplication.class)
+//public class Test1 {
+//
+//    @Autowired
+//    JpaEvaluatePostsRepository jpaEvaluatePostsRepository;
+//    @Autowired
+//    JpaLectureRepository jpaLectureRepository;
+//    @Autowired
+//    JpaExamPostsRepository jpaExamPostsRepository;
+//
+//    @Test
+//    public void findSubOrProf() {
+//
+//        Optional<String> option = Optional.of("modifiedDate");
+//        Optional<Integer> page = Optional.of(1);
+//
+//        LectureListAndCountDto dto = jpaLectureRepository.findAllLectureByFindOption(new LectureFindOption(option, page));
+//        System.out.println(dto.getLectureList());
+//        System.out.println(dto.getCount());
+//    }
+//}
+//
