@@ -11,16 +11,18 @@ public class ExamPostsSaveDto {
     private String semester;
     private String professor;   //교수
 
+    private String examType;
     private String examInfo;    //시험방식
     private String examDifficulty;    //난이도
 
     private String content;
 
-    public ExamPostsSaveDto( String lectureName, String semester, String professor,String examInfo,
+    public ExamPostsSaveDto( String lectureName, String semester, String professor,String examType, String examInfo,
                             String examDifficulty, String content) {
         this.lectureName = lectureName;
         this.semester = semester;
         this.professor = professor;
+        this.examType = examType;
         this.examInfo = examInfo;
         this.examDifficulty = examDifficulty;
         this.content = content;

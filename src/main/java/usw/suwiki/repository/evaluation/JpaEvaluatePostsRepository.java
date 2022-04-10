@@ -38,7 +38,7 @@ public class JpaEvaluatePostsRepository implements EvaluatePostsRepository {
             page = Optional.of(1);
         }
 
-        List resultList = em.createQuery("SELECT p from EvaluatePosts p join p.lecture l WHERE l.id = :lectureId ORDER BY p.modifiedDate")
+        List resultList = em.createQuery("SELECT p from EvaluatePosts p join p.lecture l WHERE l.id = :lectureId ORDER BY p.modifiedDate DESC")
                 .setParameter("lectureId", lectureId)
                 .setFirstResult((page.get()-1)*10)
                 .setMaxResults(10)
@@ -54,7 +54,7 @@ public class JpaEvaluatePostsRepository implements EvaluatePostsRepository {
             page = Optional.of(1);
         }
 
-        List resultList = em.createQuery("SELECT p from EvaluatePosts p join p.user u WHERE u.id = :id ORDER BY p.modifiedDate")
+        List resultList = em.createQuery("SELECT p from EvaluatePosts p join p.user u WHERE u.id = :id ORDER BY p.modifiedDate DESC")
                 .setParameter("id", userId)
                 .setFirstResult((page.get()-1)*10)
                 .setMaxResults(10)
@@ -82,7 +82,7 @@ public class JpaEvaluatePostsRepository implements EvaluatePostsRepository {
     @Override
     public List<EvaluatePosts> findAllByUserId(Long userId) {
 
-        List resultList = em.createQuery("SELECT p from EvaluatePosts p join p.user u WHERE u.id = :id ORDER BY p.modifiedDate")
+        List resultList = em.createQuery("SELECT p from EvaluatePosts p join p.user u WHERE u.id = :id ORDER BY p.modifiedDate DESC")
                 .setParameter("id", userId)
                 .getResultList();
 

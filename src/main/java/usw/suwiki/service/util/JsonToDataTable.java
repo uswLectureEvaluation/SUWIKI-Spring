@@ -22,7 +22,7 @@ public class JsonToDataTable {
 
     private final JpaLectureRepository lectureRepository;
 
-    public void toEntity() throws IOException, ParseException {
+    public void toEntity() throws IOException, ParseException, InterruptedException {
 
         Reader reader = new FileReader("/Users/BestFriend/Downloads/Suwiki-Backend/src/main/resources/USW_2022_1 thirteen.json");
 
@@ -64,6 +64,7 @@ public class JsonToDataTable {
                 } else {
                     Lecture savedLecture = Lecture.builder().build();
                     savedLecture.toEntity(dto);
+                    Thread.sleep(100);
                     lectureRepository.save(savedLecture);
                 }
             }

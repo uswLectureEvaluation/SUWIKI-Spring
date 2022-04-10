@@ -5,6 +5,7 @@ import usw.suwiki.dto.ToJsonArray;
 import usw.suwiki.dto.lecture.LectureDetailResponseDto;
 import usw.suwiki.dto.lecture.LectureFindOption;
 import usw.suwiki.dto.lecture.LectureResponseDto;
+import usw.suwiki.dto.lecture.LectureToJsonArray;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 import usw.suwiki.jwt.JwtTokenResolver;
@@ -30,7 +31,7 @@ public class LectureController {
     private final JwtTokenResolver jwtTokenResolver;
 
     @GetMapping("/findBySearchValue")
-    public ResponseEntity<ToJsonArray>findByLectureList(@RequestParam String searchValue, @RequestParam(required = false)
+    public ResponseEntity<LectureToJsonArray>findByLectureList(@RequestParam String searchValue, @RequestParam(required = false)
             Optional<String> option, @RequestParam(required = false) Optional<Integer> page){
         HttpHeaders header = new HttpHeaders();
 
@@ -38,25 +39,21 @@ public class LectureController {
             throw new AccountException(ErrorType.NOT_EXISTS_LECTURE_NAME);
         }
 
-        List<LectureResponseDto> list = lectureService.findLectureByFindOption
+        LectureToJsonArray data = lectureService.findLectureByFindOption
                 (searchValue,new LectureFindOption(option,page));
 
-        ToJsonArray data = new ToJsonArray(list);
-
-        return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
+        return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
     }
 
     @GetMapping("/findAllList")
-    public ResponseEntity<ToJsonArray>findAllList(@RequestParam(required = false) Optional<String> option,
+    public ResponseEntity<LectureToJsonArray>findAllList(@RequestParam(required = false) Optional<String> option,
                                                            @RequestParam(required = false) Optional<Integer> page){
         HttpHeaders header = new HttpHeaders();
 
-        List<LectureResponseDto> list = lectureService.findAllLectureByFindOption
+        LectureToJsonArray data = lectureService.findAllLectureByFindOption
                 (new LectureFindOption(option,page));
 
-        ToJsonArray data = new ToJsonArray(list);
-
-        return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
+        return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
     }
 
     @GetMapping
