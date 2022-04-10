@@ -7,7 +7,7 @@ build/
 ./java/usw/suwiki/config/MailAuthConfig.java
 !src/test/test/**/build/
 *.yml
-*.properties
+application.properties
 
 ### STS ###
 .apt_generated

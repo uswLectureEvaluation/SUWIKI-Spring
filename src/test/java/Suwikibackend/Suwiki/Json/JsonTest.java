@@ -1,5 +1,5 @@
-package Suwikibackend.Suwiki.Json;
-
+//package Suwikibackend.Suwiki.Json;
+//
 //import org.json.simple.parser.ParseException;
 //import usw.suwiki.SuwikiApplication;
 //import usw.suwiki.domain.lecture.Lecture;
@@ -32,7 +32,7 @@ package Suwikibackend.Suwiki.Json;
 //        jsonToDataTable.toEntity();
 //    }
 //}
-//
+
 //    }
 ////
 //////}public class JsonTest {

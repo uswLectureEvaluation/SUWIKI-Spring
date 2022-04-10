@@ -24,7 +24,7 @@ public class JsonToDataTable {
 
     public void toEntity() throws IOException, ParseException, InterruptedException {
 
-        Reader reader = new FileReader("/Users/BestFriend/Downloads/Suwiki-Backend/src/main/resources/USW_2022_1 thirteen.json");
+        Reader reader = new FileReader("/Users/BestFriend/Downloads/Suwiki-Backend/src/main/resources/USW_2021_2 thirteen.json");
 
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(reader);
@@ -64,7 +64,7 @@ public class JsonToDataTable {
                 } else {
                     Lecture savedLecture = Lecture.builder().build();
                     savedLecture.toEntity(dto);
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                     lectureRepository.save(savedLecture);
                 }
             }
