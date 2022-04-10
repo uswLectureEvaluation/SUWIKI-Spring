@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="501b0fc5-c352-4174-9aa9-b56b765d5a08" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/repository/evaluation/JpaEvaluatePostsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/repository/evaluation/JpaEvaluatePostsRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/repository/exam/JpaExamPostsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/repository/exam/JpaExamPostsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/service/util/JsonToDataTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/service/util/JsonToDataTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/Suwikibackend/Suwiki/Json/JsonTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/Suwikibackend/Suwiki/Json/JsonTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +67,7 @@
       <recent name="usw.suwiki.dto.lecture" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.Test1.findSubOrProf">
+  <component name="RunManager" selected="JUnit.JsonTest.registration_json">
     <configuration name="JpaRepositoryTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -82,29 +82,6 @@
             <option value=":test" />
             <option value="--tests" />
             <option value="&quot;Suwikibackend.Suwiki.domain.JpaRepositoryTest&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="JpaRepositoryTest.findSubOrProf (1)" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;Suwikibackend.Suwiki.domain.JpaRepositoryTest.findSubOrProf&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -136,6 +113,22 @@
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
+    </configuration>
+    <configuration name="JsonTest.registration_json" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="suwiki.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Suwikibackend.Suwiki.Json.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Suwikibackend.Suwiki.Json" />
+      <option name="MAIN_CLASS_NAME" value="Suwikibackend.Suwiki.Json.JsonTest" />
+      <option name="METHOD_NAME" value="registration_json" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
     <configuration name="Test1" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="suwiki.test" />
@@ -170,11 +163,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.JsonTest.registration_json" />
         <item itemvalue="JUnit.Test1.findSubOrProf" />
         <item itemvalue="JUnit.Test1" />
         <item itemvalue="Gradle.Test1" />
         <item itemvalue="Gradle.JpaRepositoryTest" />
-        <item itemvalue="Gradle.JpaRepositoryTest.findSubOrProf (1)" />
       </list>
     </recent_temporary>
   </component>
