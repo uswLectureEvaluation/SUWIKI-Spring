@@ -4,8 +4,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @NoArgsConstructor
 @Getter
 public class UserAdminDto {
@@ -15,6 +13,6 @@ public class UserAdminDto {
         private Long evaluateIdx; //강의평가 인덱스
         private Long examIdx; //시험 인덱스
         private Boolean postType; //게시글 타입
-        private LocalDateTime bannedTime; //정지 기간
+        private Long bannedTime; //정지 기간
     }
 }

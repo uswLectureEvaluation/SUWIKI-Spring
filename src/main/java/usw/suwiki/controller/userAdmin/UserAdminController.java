@@ -1,10 +1,7 @@
 package usw.suwiki.controller.userAdmin;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import usw.suwiki.dto.userAdmin.UserAdminDto;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
@@ -25,7 +22,7 @@ public class UserAdminController {
     private final JwtTokenValidator jwtTokenValidator;
 
     @PostMapping("ban")
-    public HashMap<String, Boolean> blackList(@Valid @RequestHeader String Authorization, UserAdminDto.BannedTargetForm bannedTargetForm) {
+    public HashMap<String, Boolean> blackList(@Valid @RequestHeader String Authorization, @Valid @RequestBody UserAdminDto.BannedTargetForm bannedTargetForm) {
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);

@@ -1,6 +1,7 @@
 //package Suwikibackend.Suwiki.Json;
 //
 //import org.json.simple.parser.ParseException;
+//import org.springframework.transaction.annotation.Transactional;
 //import usw.suwiki.SuwikiApplication;
 //import usw.suwiki.domain.lecture.Lecture;
 //import usw.suwiki.repository.evaluation.JpaEvaluatePostsRepository;
@@ -14,9 +15,10 @@
 //
 //import java.io.IOException;
 //
-////@Transactional
+//@Transactional
 //@SpringBootTest(classes = SuwikiApplication.class)
 //public class JsonTest {
+//
 //    @Autowired
 //    JpaLectureRepository lectureRepository;
 //    @Autowired
@@ -31,25 +33,5 @@
 //        Long i;
 //        jsonToDataTable.toEntity();
 //    }
+//
 //}
-////
-////    }
-//////
-//////}public class JsonTest {
-//////    @Autowired
-//////    JpaLectureRepository lectureRepository;
-//////    @Autowired
-//////    JpaEvaluatePostsRepository evaluatePostsRepository;
-//////    @Autowired
-//////    JsonToDataTable jsonToDataTable;
-//////
-//////    @Test
-//////    public void registration_json() throws IOException, ParseException {
-//////        //given
-//////
-//////        Long i;
-//////        jsonToDataTable.toEntity();
-//////
-//////    }
-//////
-//////}

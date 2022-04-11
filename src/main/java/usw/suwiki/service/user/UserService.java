@@ -19,6 +19,8 @@ import usw.suwiki.exception.ErrorType;
 import usw.suwiki.jwt.JwtTokenProvider;
 import usw.suwiki.jwt.JwtTokenResolver;
 import usw.suwiki.jwt.JwtTokenValidator;
+import usw.suwiki.repository.evaluation.JpaEvaluatePostsRepository;
+import usw.suwiki.repository.exam.JpaExamPostsRepository;
 import usw.suwiki.repository.reportTarget.ReportTargetRepository;
 import usw.suwiki.repository.user.UserRepository;
 import usw.suwiki.repository.userIsolation.UserIsolationRepository;
@@ -54,6 +56,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserIsolationRepository userIsolationRepository;
     private final ReportTargetRepository reportTargetRepository;
+    private final JpaEvaluatePostsRepository jpaEvaluatePostsRepository;
+    private final JpaExamPostsRepository jpaExamPostsRepository;
 
     //Email
     private final EmailSender emailSender;
@@ -130,7 +134,7 @@ public class UserService {
         confirmationTokenService.saveConfirmationToken(confirmationToken);
 
         //이메일 토큰에 대한 링크 생성
-        String link = "https://api.suwiki.kr/user/verify-email/?token=" + token;
+        String link = "http://localhost:8080/user/verify-email/?token=" + token;
 
         //이메일 전송
         emailSender.send(joinForm.getEmail(), buildEmailAuthFormService.buildEmail(link));
@@ -409,19 +413,38 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public EvaluatePosts loadEvaluatePostsFromEvaluatePostsIdx(Long EvaluatePostsIdx) {
+        return jpaEvaluatePostsRepository.findById(EvaluatePostsIdx);
+    }
+
+    @Transactional
+    public ExamPosts loadExamPostsFromEvaluatePostsIdx(Long ExamPostsIdx) {
+        return jpaExamPostsRepository.findById(ExamPostsIdx);
+    }
+
     //신고 받은 대상 신고 테이블에 저장
     @Transactional
     public void reportUserPost(UserDto.UserReportForm userReportForm) {
 
-        ReportTarget target = ReportTarget.builder()
-                .user(loadUserFromUserIdx(userReportForm.getUserIdx()))
-                .evaluatePosts(new EvaluatePosts())
-                .examPosts(new ExamPosts())
-                .postType(userReportForm.getPostType())
-                .comment(userReportForm.getComment())
-                .reportedDate(LocalDateTime.now())
-                .build();
-
-        reportTargetRepository.save(target);
+        if (userReportForm.getPostType()) {
+            ReportTarget target = ReportTarget.builder()
+                    .user(loadUserFromUserIdx(userReportForm.getUserIdx()))
+                    .evaluatePosts(loadEvaluatePostsFromEvaluatePostsIdx(userReportForm.getEvaluateIdx()))
+                    .postType(userReportForm.getPostType())
+                    .content(userReportForm.getContent())
+                    .reportedDate(LocalDateTime.now())
+                    .build();
+            reportTargetRepository.save(target);
+        } else {
+            ReportTarget target = ReportTarget.builder()
+                    .user(loadUserFromUserIdx(userReportForm.getUserIdx()))
+                    .examPosts(loadExamPostsFromEvaluatePostsIdx(userReportForm.getExamIdx()))
+                    .postType(userReportForm.getPostType())
+                    .content(userReportForm.getContent())
+                    .reportedDate(LocalDateTime.now())
+                    .build();
+            reportTargetRepository.save(target);
+        }
     }
 }

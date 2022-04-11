@@ -15,6 +15,7 @@ import usw.suwiki.repository.blacklist.BlacklistRepository;
 import usw.suwiki.service.evaluation.EvaluatePostsService;
 import usw.suwiki.service.exam.ExamPostsService;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -32,6 +33,8 @@ public class UserAdminService {
     public void banUser(UserAdminDto.BannedTargetForm bannedTargetForm) {
 
         User user = new User();
+
+        System.out.println(bannedTargetForm);
 
         if (bannedTargetForm.getPostType()) {
             //타겟 유저 인덱스로 유저 객체 불러오기
@@ -55,7 +58,7 @@ public class UserAdminService {
         Optional<BlacklistDomain> expiredAtSetTarget = blacklistRepository.findByUserId(user.getId());
 
         //index 로 받온 객체에 제한 시간 걸기
-        expiredAtSetTarget.get().setExpiredAt(bannedTargetForm.getBannedTime());
+        expiredAtSetTarget.get().setExpiredAt(LocalDateTime.now().plusDays(bannedTargetForm.getBannedTime()));
     }
 
     //신고받은 게시글 삭제 해주기
@@ -63,6 +66,8 @@ public class UserAdminService {
     public void banPost(UserAdminDto.BannedTargetForm bannedTargetForm) {
         // 포스트 타입이 true == 강의평가
         // 포스트 타입이 false == 시험정보
+
+        System.out.println(bannedTargetForm);
 
         if (bannedTargetForm.getPostType()) {
             evaluatePostsService.deleteById(bannedTargetForm.getEvaluateIdx());

@@ -394,7 +394,10 @@ public class UserController {
     }
 
     @PostMapping("/report")
-    public void report(@Valid @RequestBody UserDto.UserReportForm userReportForm, @Valid @RequestHeader String Authorization) {
+    public HashMap<String, Boolean> report(@Valid @RequestBody UserDto.UserReportForm userReportForm, @Valid @RequestHeader String Authorization) {
+
+        HashMap<String, Boolean> result = new HashMap<>();
+
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
         
@@ -403,6 +406,10 @@ public class UserController {
         
         //신고하기 비즈니스 로직 호출 --> 신고 테이블에 값 저장
         userService.reportUserPost(userReportForm);
+
+        result.put("Success", true);
+
+        return result;
     }
 }
 
