@@ -81,20 +81,22 @@ public class UserAdminService {
 
         //강의평가에 대한 게시글 삭제
         if (bannedTargetForm.getPostType()) {
-            userAdminEvaluateRepository.deleteById(bannedTargetForm.getEvaluateIdx());
-
-            User user = userService.loadUserFromUserIdx(bannedTargetForm.getUserIdx());
-            user.setBannedCount(+1);
-            user.setWrittenEvaluation(-1);
+            evaluatePostsService.deleteById(bannedTargetForm.getEvaluateIdx());
+//            userAdminEvaluateRepository.deleteById(bannedTargetForm.getEvaluateIdx());
+//
+//            User user = userService.loadUserFromUserIdx(bannedTargetForm.getUserIdx());
+//            user.setBannedCount(+1);
+//            user.setWrittenEvaluation(-1);
         } 
         //시험정보에 대한 게시글 삭제
         else {
-            userAdminExamRepository.deleteById(bannedTargetForm.getExamIdx());
-
-
-            User user = userService.loadUserFromUserIdx(bannedTargetForm.getUserIdx());
-            user.setBannedCount(+1);
-            user.setWrittenExam(-1);
+            examPostsService.deleteById(bannedTargetForm.getEvaluateIdx());
+//            userAdminExamRepository.deleteById(bannedTargetForm.getExamIdx());
+//
+//
+//            User user = userService.loadUserFromUserIdx(bannedTargetForm.getUserIdx());
+//            user.setBannedCount(+1);
+//            user.setWrittenExam(-1);
         }
     }
 }

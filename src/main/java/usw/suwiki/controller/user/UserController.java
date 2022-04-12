@@ -407,7 +407,7 @@ public class UserController {
         //신고하기 비즈니스 로직 호출 --> 신고 테이블에 값 저장
         userService.reportUserPost(userReportForm);
 
-        result.put("Success", true);
+        result.put("success", true);
 
         return result;
     }
