@@ -363,15 +363,15 @@ public class UserService {
 
     //회원탈퇴 대기
     @Transactional
-    public void waitQuit(User user) {
+    public void waitQuit(Long userIdx) {
         //회원탈퇴 요청한 유저의 강의평가 삭제
-        evaluatePostsService.deleteByUser(user.getId());
+        evaluatePostsService.deleteByUser(userIdx);
 
         //회원탈퇴 요청한 유저의 시험정보 삭제
-        examPostsService.deleteByUser(user.getId());
+        examPostsService.deleteByUser(userIdx);
 
         //유저 이용불가 처리
-        disableUser(user);
+        disableUser(loadUserFromUserIdx(userIdx));
     }
 
     //회원탈퇴 요청 유저 일부 데이터 초기화

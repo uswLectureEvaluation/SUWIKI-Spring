@@ -386,7 +386,7 @@ public class UserController {
         userService.requestQuitDateStamp(theUserRequestedQuit);
 
         //해당 유저 아이디, 이메일 제외 모두 삭제
-        userService.waitQuit(theUserRequestedQuit);
+        userService.waitQuit(theUserRequestedQuit.getId());
 
         result.put("success", true);
 
