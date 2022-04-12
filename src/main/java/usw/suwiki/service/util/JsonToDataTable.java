@@ -24,7 +24,7 @@ public class JsonToDataTable {
 
     public void toEntity() throws IOException, ParseException, InterruptedException {
 
-        Reader reader = new FileReader("/Users/BestFriend/Downloads/Suwiki-Backend/src/main/resources/USW_2022_1 thirteen.json");
+        Reader reader = new FileReader("E:\\Priority\\Project\\SUWIKI-REMASTER\\src\\main\\resources\\USW_2022_1 thirteen.json");
 
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(reader);

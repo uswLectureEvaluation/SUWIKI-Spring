@@ -34,12 +34,17 @@ public class BlackListService {
     @Transactional
     @Scheduled(cron = "0 0 0 * * *")
     public void whiteList() {
+        
+        //정지 풀렸는지 확인하는 로직 호출
         List<BlacklistDomain> whiteListTarget = beReleased();
 
         for (int i = 0; i < whiteListTarget.toArray().length; i++) {
             Long userIdx = whiteListTarget.get(i).getId();
 
+            //권한 해제
             userRepository.unRestricted(userIdx);
+
+            //블랙리스트 테이블에서 제거
             blacklistRepository.deleteByUserId(userIdx);
         }
     }

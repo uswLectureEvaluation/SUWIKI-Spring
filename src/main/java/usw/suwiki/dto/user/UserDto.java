@@ -70,6 +70,6 @@ public class UserDto {
         private Long examIdx;
         private Boolean postType;
         private LocalDateTime reportedDate;
-        private String comment;
+        private String content;
     }
 }
