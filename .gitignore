@@ -8,6 +8,7 @@ build/
 !src/test/test/**/build/
 *.yml
 application.properties
+.idea/workspace.xml
 
 ### STS ###
 .apt_generated
