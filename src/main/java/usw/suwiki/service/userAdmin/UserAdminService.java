@@ -12,6 +12,8 @@ import usw.suwiki.exception.ErrorType;
 import usw.suwiki.repository.blacklist.BlacklistRepository;
 import usw.suwiki.repository.evaluation.EvaluatePostsRepository;
 import usw.suwiki.repository.exam.ExamPostsRepository;
+import usw.suwiki.repository.userAdmin.UserAdminEvaluateRepository;
+import usw.suwiki.repository.userAdmin.UserAdminExamRepository;
 import usw.suwiki.service.evaluation.EvaluatePostsService;
 import usw.suwiki.service.exam.ExamPostsService;
 import usw.suwiki.service.user.UserService;
