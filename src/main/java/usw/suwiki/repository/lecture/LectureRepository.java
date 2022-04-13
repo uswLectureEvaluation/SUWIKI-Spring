@@ -11,6 +11,8 @@ public interface LectureRepository {
     Lecture findOneBySubAndProf(String lectureNameName,String ProfessorName);
     Lecture findById(Long id);
     LectureListAndCountDto findLectureByFindOption(String searchValue, LectureFindOption lectureFindOption);
+    LectureListAndCountDto findLectureByMajorType(String searchValue, LectureFindOption lectureFindOption);
     LectureListAndCountDto findAllLectureByFindOption(LectureFindOption lectureFindOption);
+    LectureListAndCountDto findAllLectureByMajorType(LectureFindOption lectureFindOption);
     List<String> findAllMajorType();
 }

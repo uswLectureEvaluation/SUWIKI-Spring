@@ -8,6 +8,7 @@ import usw.suwiki.SuwikiApplication;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.dto.lecture.LectureFindOption;
 import usw.suwiki.dto.lecture.LectureListAndCountDto;
+import usw.suwiki.dto.lecture.LectureToJsonArray;
 import usw.suwiki.repository.evaluation.JpaEvaluatePostsRepository;
 import usw.suwiki.repository.exam.JpaExamPostsRepository;
 import usw.suwiki.repository.lecture.JpaLectureRepository;
@@ -36,10 +37,11 @@ public class Test1 {
     @Test
     public void findSubOrProf() {
 //        evaluatePostsService.deleteById(1L);
-
-        List<String> allMajorType = jpaLectureRepository.findAllMajorType();
-        for (String s : allMajorType) {
-            System.out.println(s);
+        LectureFindOption option = LectureFindOption.builder().majorType(Optional.of("간호학과")).pageNumber(Optional.of(1)).orderOption(Optional.of("modifiedDate")).build();
+        LectureListAndCountDto dto = jpaLectureRepository.findAllLectureByMajorType(option);
+        System.out.println(dto.getCount());
+        for (Lecture lecture : dto.getLectureList()) {
+            System.out.println(lecture.getMajorType() + "," + lecture.getId());
         }
 
     }

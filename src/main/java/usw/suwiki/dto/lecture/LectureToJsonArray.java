@@ -1,8 +1,10 @@
 package usw.suwiki.dto.lecture;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class LectureToJsonArray {
     Object data;
 

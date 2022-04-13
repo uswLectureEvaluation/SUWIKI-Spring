@@ -4,20 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.SuwikiVersion;
 import usw.suwiki.dto.ToJsonArray;
-import usw.suwiki.dto.notice.NoticeResponseDto;
 import usw.suwiki.service.lecture.LectureService;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-public class SuwikiController {
+public class VersionController {
 
     private final LectureService lectureService;
 
