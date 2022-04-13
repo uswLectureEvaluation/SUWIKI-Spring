@@ -19,6 +19,8 @@ import usw.suwiki.exception.ErrorType;
 import usw.suwiki.jwt.JwtTokenProvider;
 import usw.suwiki.jwt.JwtTokenResolver;
 import usw.suwiki.jwt.JwtTokenValidator;
+import usw.suwiki.repository.evaluation.JpaEvaluatePostsRepository;
+import usw.suwiki.repository.exam.JpaExamPostsRepository;
 import usw.suwiki.repository.reportTarget.ReportTargetRepository;
 import usw.suwiki.repository.user.UserRepository;
 import usw.suwiki.repository.userIsolation.UserIsolationRepository;
@@ -54,6 +56,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserIsolationRepository userIsolationRepository;
     private final ReportTargetRepository reportTargetRepository;
+    private final JpaEvaluatePostsRepository jpaEvaluatePostsRepository;
+    private final JpaExamPostsRepository jpaExamPostsRepository;
 
     //Email
     private final EmailSender emailSender;
@@ -360,21 +364,20 @@ public class UserService {
 
     //회원탈퇴 대기
     @Transactional
-    public void waitQuit(User user) {
+    public void waitQuit(Long userIdx) {
         //회원탈퇴 요청한 유저의 강의평가 삭제
-        evaluatePostsService.deleteByUser(user.getId());
+        evaluatePostsService.deleteByUser(userIdx);
 
         //회원탈퇴 요청한 유저의 시험정보 삭제
-        examPostsService.deleteByUser(user.getId());
+        examPostsService.deleteByUser(userIdx);
 
         //유저 이용불가 처리
-        disableUser(user);
+        disableUser(loadUserFromUserIdx(userIdx));
     }
 
     //회원탈퇴 요청 유저 일부 데이터 초기화
     @Transactional
     public void disableUser(User user) {
-        user.setId(null);
         user.setRestricted(true);
         user.setBannedCount(null);
         user.setRole(null);
@@ -393,8 +396,9 @@ public class UserService {
     @Transactional
     public List<User> isTargetedQuit() {
         //회원탈퇴 신청 후 30일이 지났는지 확인
-        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
+//        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
 
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(1);
         return userRepository.findByRequestedQuitDate(targetTime);
     }
 
@@ -410,19 +414,38 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public EvaluatePosts loadEvaluatePostsFromEvaluatePostsIdx(Long EvaluatePostsIdx) {
+        return jpaEvaluatePostsRepository.findById(EvaluatePostsIdx);
+    }
+
+    @Transactional
+    public ExamPosts loadExamPostsFromEvaluatePostsIdx(Long ExamPostsIdx) {
+        return jpaExamPostsRepository.findById(ExamPostsIdx);
+    }
+
     //신고 받은 대상 신고 테이블에 저장
     @Transactional
     public void reportUserPost(UserDto.UserReportForm userReportForm) {
 
-        ReportTarget target = ReportTarget.builder()
-                .user(loadUserFromUserIdx(userReportForm.getUserIdx()))
-                .evaluatePosts(new EvaluatePosts())
-                .examPosts(new ExamPosts())
-                .postType(userReportForm.getPostType())
-                .comment(userReportForm.getComment())
-                .reportedDate(LocalDateTime.now())
-                .build();
-
-        reportTargetRepository.save(target);
+        if (userReportForm.getPostType()) {
+            ReportTarget target = ReportTarget.builder()
+                    .user(loadUserFromUserIdx(userReportForm.getUserIdx()))
+                    .evaluatePosts(loadEvaluatePostsFromEvaluatePostsIdx(userReportForm.getEvaluateIdx()))
+                    .postType(userReportForm.getPostType())
+                    .content(userReportForm.getContent())
+                    .reportedDate(LocalDateTime.now())
+                    .build();
+            reportTargetRepository.save(target);
+        } else {
+            ReportTarget target = ReportTarget.builder()
+                    .user(loadUserFromUserIdx(userReportForm.getUserIdx()))
+                    .examPosts(loadExamPostsFromEvaluatePostsIdx(userReportForm.getExamIdx()))
+                    .postType(userReportForm.getPostType())
+                    .content(userReportForm.getContent())
+                    .reportedDate(LocalDateTime.now())
+                    .build();
+            reportTargetRepository.save(target);
+        }
     }
 }

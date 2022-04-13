@@ -8,6 +8,7 @@ build/
 !src/test/test/**/build/
 *.yml
 application.properties
+.idea/workspace.xml
 
 ### STS ###
 .apt_generated
@@ -32,7 +33,6 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 !src/test/test/**/out/
->>>>>>> Feature_jjw_01
 
 ### NetBeans ###
 /nbproject/private/

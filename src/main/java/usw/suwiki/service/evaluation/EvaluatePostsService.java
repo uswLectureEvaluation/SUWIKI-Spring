@@ -102,12 +102,18 @@ public class EvaluatePostsService {
 
     public void deleteByUser(Long userIdx){
         List<EvaluatePosts> list = evaluatePostsRepository.findAllByUserId(userIdx);
-        for (EvaluatePosts evaluatePosts : list) {
-            EvaluatePostsToLecture dto = new EvaluatePostsToLecture(evaluatePosts);
-            lectureService.cancelLectureValue(dto);
-            lectureService.calcLectureAvg(dto);
-            evaluatePostsRepository.delete(evaluatePosts);
+
+        if (list.isEmpty()) {
+            return;
+        } else {
+            for (EvaluatePosts evaluatePosts : list) {
+                EvaluatePostsToLecture dto = new EvaluatePostsToLecture(evaluatePosts);
+                lectureService.cancelLectureValue(dto);
+                lectureService.calcLectureAvg(dto);
+                evaluatePostsRepository.delete(evaluatePosts);
+            }
         }
+
     }
 
     @Synchronized

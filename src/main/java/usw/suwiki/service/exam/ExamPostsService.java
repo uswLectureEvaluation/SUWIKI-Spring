@@ -86,8 +86,13 @@ public class ExamPostsService {
 
     public void deleteByUser(Long userIdx){
         List<ExamPosts> list = examPostsRepository.findAllByUserId(userIdx);
-        for (ExamPosts examPosts : list) {
-            examPostsRepository.delete(examPosts);
+
+        if (list.isEmpty()) {
+            return;
+        } else {
+            for (ExamPosts examPosts : list) {
+                examPostsRepository.delete(examPosts);
+            }
         }
     }
 

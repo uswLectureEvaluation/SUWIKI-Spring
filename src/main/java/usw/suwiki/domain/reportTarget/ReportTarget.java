@@ -34,7 +34,7 @@ public class ReportTarget {
     private boolean postType; //true = evaluate, false = exam
 
     @Column
-    private String comment;
+    private String content;
 
     @Column
     private LocalDateTime reportedDate;

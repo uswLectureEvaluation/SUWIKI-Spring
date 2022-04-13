@@ -118,6 +118,7 @@ public class Lecture extends BaseTimeEntity {
         }
     }
 
+
     public void toEntity(JsonToLectureDto dto){
         this.semester = dto.getSemester();
         this.placeSchedule = dto.getPlaceSchedule();
