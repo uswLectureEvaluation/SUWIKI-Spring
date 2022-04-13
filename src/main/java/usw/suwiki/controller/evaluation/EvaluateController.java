@@ -2,10 +2,7 @@ package usw.suwiki.controller.evaluation;
 
 import usw.suwiki.dto.PageOption;
 import usw.suwiki.dto.ToJsonArray;
-import usw.suwiki.dto.evaluate.EvaluatePostsSaveDto;
-import usw.suwiki.dto.evaluate.EvaluatePostsUpdateDto;
-import usw.suwiki.dto.evaluate.EvaluateResponseByLectureIdDto;
-import usw.suwiki.dto.evaluate.EvaluateResponseByUserIdxDto;
+import usw.suwiki.dto.evaluate.*;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 import usw.suwiki.jwt.JwtTokenResolver;
@@ -32,14 +29,17 @@ public class EvaluateController {
     private final JwtTokenResolver jwtTokenResolver;
 
     @GetMapping("/findByLectureId")
-    public ResponseEntity<ToJsonArray> findByLecture(@RequestHeader String Authorization,@RequestParam Long lectureId,
-                                                                   @RequestParam(required = false) Optional<Integer> page){
+    public ResponseEntity<FindByLectureToJson> findByLecture(@RequestHeader String Authorization, @RequestParam Long lectureId,
+                                                             @RequestParam(required = false) Optional<Integer> page){
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
             if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
             List<EvaluateResponseByLectureIdDto> list = evaluatePostsService.findEvaluatePostsByLectureId(new PageOption(page), lectureId);
-            ToJsonArray data = new ToJsonArray(list);
-            return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
+            FindByLectureToJson data = new FindByLectureToJson(list);
+            if(evaluatePostsService.verifyWriteEvaluatePosts(jwtTokenResolver.getId(Authorization),lectureId)){
+                data.setWritten(false);
+            }
+            return new ResponseEntity<FindByLectureToJson>(data, header, HttpStatus.valueOf(200));
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
