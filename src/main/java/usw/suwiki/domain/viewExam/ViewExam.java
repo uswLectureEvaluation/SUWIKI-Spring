@@ -1,6 +1,7 @@
 package usw.suwiki.domain.viewExam;
 
 import lombok.*;
+import org.springframework.data.annotation.LastModifiedDate;
 import usw.suwiki.domain.BaseTimeEntity;
 import usw.suwiki.domain.exam.ExamPosts;
 import usw.suwiki.domain.lecture.Lecture;

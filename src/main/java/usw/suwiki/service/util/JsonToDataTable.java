@@ -41,7 +41,7 @@ public class JsonToDataTable {
                         .evaluateType((String) jsonObject.get("cretEvalNm"))
                         .lectureCode((String) jsonObject.get("subjtCd"))
                         .semester(jsonObject.get("subjtEstbYear") + "-" + String.valueOf(jsonObject.get("subjtEstbSmrCd")).substring(0, 1))
-                        .grade(Integer.parseInt(String.valueOf(jsonObject.get("trgtGrdeCd"))))
+                        .grade((Integer)jsonObject.get("trgtGrdeCd"))
                         .lectureType((String) jsonObject.get("facDvnm"))
                         .placeSchedule(String.valueOf(jsonObject.get("timtSmryCn")))
                         .diclNo(String.valueOf(jsonObject.get("diclNo")))

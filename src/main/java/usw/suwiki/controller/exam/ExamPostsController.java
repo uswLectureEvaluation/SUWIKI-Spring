@@ -5,6 +5,7 @@ import usw.suwiki.dto.PageOption;
 import usw.suwiki.dto.ToJsonArray;
 import usw.suwiki.dto.exam_info.*;
 import usw.suwiki.dto.lecture.LectureToJsonArray;
+import usw.suwiki.dto.view_exam.PurchaseHistoryDto;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 import usw.suwiki.jwt.JwtTokenResolver;
@@ -122,5 +123,17 @@ public class ExamPostsController {
                 throw new AccountException(ErrorType.USER_POINT_LACK);
             }
         } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+    }
+
+    @GetMapping("/purchase-history") // 이름 수정 , 널값 처리 프론트
+    public ResponseEntity<ToJsonArray> showPurchaseHistory(@RequestHeader String Authorization){
+        HttpHeaders header = new HttpHeaders();
+        if (jwtTokenValidator.validateAccessToken(Authorization)) {
+            Long userIdx = jwtTokenResolver.getId(Authorization);
+            List<PurchaseHistoryDto> list = viewExamService.findByUserId(userIdx);
+            ToJsonArray data = new ToJsonArray(list);
+            return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
+
+        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 }
