@@ -12,4 +12,5 @@ public interface LectureRepository {
     Lecture findById(Long id);
     LectureListAndCountDto findLectureByFindOption(String searchValue, LectureFindOption lectureFindOption);
     LectureListAndCountDto findAllLectureByFindOption(LectureFindOption lectureFindOption);
+    List<String> findAllMajorType();
 }

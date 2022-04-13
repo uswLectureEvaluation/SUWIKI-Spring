@@ -117,4 +117,11 @@ public class JpaLectureRepository implements LectureRepository {
         return LectureListAndCountDto.builder().lectureList(lectureList).count(count).build();
     }
 
+    @Override
+    public List<String> findAllMajorType() {
+        List<String> resultList = em.createQuery("SELECT DISTINCT l.majorType FROM Lecture l")
+                .getResultList();
+
+        return resultList;
+    }
 }

@@ -63,4 +63,9 @@ public class LectureService {
         return lectureRepository.findById(id);
     }
 
+    public List<String> findAllMajorType(){
+        List<String> resultList = lectureRepository.findAllMajorType();
+        return resultList;
+    }
+
 }

@@ -37,8 +37,10 @@ public class Test1 {
     public void findSubOrProf() {
 //        evaluatePostsService.deleteById(1L);
 
-        LocalDateTime time = LocalDateTime.now();
-        System.out.println(time);
+        List<String> allMajorType = jpaLectureRepository.findAllMajorType();
+        for (String s : allMajorType) {
+            System.out.println(s);
+        }
 
     }
 }
