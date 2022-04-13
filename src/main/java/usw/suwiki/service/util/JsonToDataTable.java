@@ -64,7 +64,7 @@ public class JsonToDataTable {
                 } else {
                     Lecture savedLecture = Lecture.builder().build();
                     savedLecture.toEntity(dto);
-                    Thread.sleep(100);
+                    Thread.sleep(1);
                     lectureRepository.save(savedLecture);
                 }
             }

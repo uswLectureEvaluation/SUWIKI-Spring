@@ -14,25 +14,25 @@ import usw.suwiki.service.util.JsonToDataTable;
 
 import java.io.IOException;
 
-////@Transactional
-//@SpringBootTest(classes = SuwikiApplication.class)
-//public class JsonTest {
-//    @Autowired
-//    JpaLectureRepository lectureRepository;
-//    @Autowired
-//    JpaEvaluatePostsRepository evaluatePostsRepository;
-//    @Autowired
-//    JsonToDataTable jsonToDataTable;
-//
-//    @Test
-//    public void registration_json() throws IOException, ParseException, InterruptedException {
-//        //given
-//
-//        Long i;
-//        jsonToDataTable.toEntity();
-//    }
-//}
-//
+//@Transactional
+@SpringBootTest(classes = SuwikiApplication.class)
+public class JsonTest {
+    @Autowired
+    JpaLectureRepository lectureRepository;
+    @Autowired
+    JpaEvaluatePostsRepository evaluatePostsRepository;
+    @Autowired
+    JsonToDataTable jsonToDataTable;
+
+    @Test
+    public void registration_json() throws IOException, ParseException, InterruptedException {
+        //given
+
+        Long i;
+        jsonToDataTable.toEntity();
+    }
+}
+
 ////    }
 ////
 //////}public class JsonTest {

@@ -99,13 +99,23 @@ public class Lecture extends BaseTimeEntity {
     }
 
     public void calcLectureAvg(){
-        this.lectureSatisfactionAvg = lectureSatisfactionValue / postsCount;
-        this.lectureHoneyAvg = lectureHoneyValue / postsCount;
-        this.lectureLearningAvg = lectureLearningValue / postsCount;
-        this.lectureTeamAvg = lectureTeamValue / postsCount;
-        this.lectureDifficultyAvg = lectureDifficultyValue / postsCount;
-        this.lectureHomeworkAvg = lectureHomeworkValue / postsCount;
-        this.lectureTotalAvg = (lectureSatisfactionAvg+lectureHoneyAvg+lectureLearningAvg) / 3;
+        if(postsCount < 1){
+            this.lectureTotalAvg = 0;
+            this.lectureSatisfactionAvg = 0;
+            this.lectureHoneyAvg = 0;
+            this.lectureLearningAvg = 0;
+            this.lectureTeamAvg = 0;
+            this.lectureDifficultyAvg = 0;
+            this.lectureHomeworkAvg = 0;
+        }else {
+            this.lectureSatisfactionAvg = lectureSatisfactionValue / postsCount;
+            this.lectureHoneyAvg = lectureHoneyValue / postsCount;
+            this.lectureLearningAvg = lectureLearningValue / postsCount;
+            this.lectureTeamAvg = lectureTeamValue / postsCount;
+            this.lectureDifficultyAvg = lectureDifficultyValue / postsCount;
+            this.lectureHomeworkAvg = lectureHomeworkValue / postsCount;
+            this.lectureTotalAvg = (lectureSatisfactionAvg + lectureHoneyAvg + lectureLearningAvg) / 3;
+        }
     }
 
     public void toEntity(JsonToLectureDto dto){

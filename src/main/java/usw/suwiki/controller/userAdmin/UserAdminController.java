@@ -31,7 +31,7 @@ public class UserAdminController {
         jwtTokenValidator.validateAccessToken(Authorization);
         
         //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
-        if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) throw new AccountException(ErrorType.USER_RESTRICTED);
+//        if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) throw new AccountException(ErrorType.USER_RESTRICTED);
 
 
         HashMap<String, Boolean> returnJson = new HashMap<>();

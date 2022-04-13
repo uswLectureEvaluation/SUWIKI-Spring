@@ -64,7 +64,11 @@ public class UserAdminService {
         // 포스트 타입이 true == 강의평가
         // 포스트 타입이 false == 시험정보
 
+        System.out.println("1111122222");
+        Boolean postType = bannedTargetForm.getPostType();
+        System.out.println(postType);
         if (bannedTargetForm.getPostType()) {
+            System.out.println("1111111");
             evaluatePostsService.deleteById(bannedTargetForm.getEvaluateIdx());
         } else {
             examPostsService.deleteById(bannedTargetForm.getExamIdx());

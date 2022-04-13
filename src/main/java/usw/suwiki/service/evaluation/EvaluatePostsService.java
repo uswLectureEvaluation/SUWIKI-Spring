@@ -1,5 +1,7 @@
 package usw.suwiki.service.evaluation;
 
+import lombok.Synchronized;
+import org.springframework.scheduling.annotation.Async;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
 import usw.suwiki.domain.exam.ExamPosts;
 import usw.suwiki.domain.user.User;
@@ -108,11 +110,17 @@ public class EvaluatePostsService {
         }
     }
 
+    @Synchronized
     public void deleteById(Long evaluateIdx){
+        System.out.println(evaluateIdx);
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
+        System.out.println(posts.getId());
         EvaluatePostsToLecture dto = new EvaluatePostsToLecture(posts);
+        System.out.println("cancle");
         lectureService.cancelLectureValue(dto);
+        System.out.println("calc");
         lectureService.calcLectureAvg(dto);
+        System.out.println("calc2");
         evaluatePostsRepository.delete(posts);
     }
 }
