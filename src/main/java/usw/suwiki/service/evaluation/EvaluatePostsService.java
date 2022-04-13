@@ -93,8 +93,8 @@ public class EvaluatePostsService {
     public boolean verifyDeleteEvaluatePosts(Long userIdx, Long evaluateIdx){
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         Integer point = posts.getUser().getPoint();
-        if(point >= 30){
-            posts.getUser().setPoint(point -= 30);
+        if(point >= 10){
+            posts.getUser().setPoint(point - 10);
             return true;
         }
         return false;
@@ -118,15 +118,10 @@ public class EvaluatePostsService {
 
     @Synchronized
     public void deleteById(Long evaluateIdx){
-        System.out.println(evaluateIdx);
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
-        System.out.println(posts.getId());
         EvaluatePostsToLecture dto = new EvaluatePostsToLecture(posts);
-        System.out.println("cancle");
         lectureService.cancelLectureValue(dto);
-        System.out.println("calc");
         lectureService.calcLectureAvg(dto);
-        System.out.println("calc2");
         evaluatePostsRepository.delete(posts);
     }
 }
