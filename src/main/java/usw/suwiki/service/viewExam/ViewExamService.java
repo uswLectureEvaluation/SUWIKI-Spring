@@ -64,8 +64,10 @@ public class ViewExamService {
             PurchaseHistoryDto dto = PurchaseHistoryDto.builder()
                     .lectureName(viewExam.getLecture().getLectureName())
                     .professor(viewExam.getLecture().getProfessor())
+                    .majorType(viewExam.getLecture().getMajorType())
                     .createDate(viewExam.getCreateDate())
                     .build();
+
             dtoList.add(dto);
         }
 

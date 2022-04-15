@@ -9,6 +9,7 @@ public class ExamResponseByUserIdxDto {
     private Long id;
     private String lectureName;
     private String professor;
+    private String majorType;
     private String semester;
     private String semesterList;
     private String examType;
@@ -24,6 +25,7 @@ public class ExamResponseByUserIdxDto {
     public ExamResponseByUserIdxDto(ExamPosts entity) {
         this.id = entity.getId();
         this.lectureName = entity.getLectureName();
+        this.majorType = entity.getLecture().getMajorType();
         this.semester = entity.getSemester();
         this.professor = entity.getProfessor();
         this.examType = entity.getExamType();
