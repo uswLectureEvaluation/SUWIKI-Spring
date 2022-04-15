@@ -39,10 +39,9 @@ public class Test1 {
 //        evaluatePostsService.deleteById(1L);
         LectureFindOption option = LectureFindOption.builder().majorType(Optional.of("간호학과")).pageNumber(Optional.of(1)).orderOption(Optional.of("modifiedDate")).build();
         LectureListAndCountDto dto = jpaLectureRepository.findAllLectureByMajorType(option);
-        System.out.println(dto.getCount());
-        for (Lecture lecture : dto.getLectureList()) {
-            System.out.println(lecture.getMajorType() + "," + lecture.getId());
-        }
+
+        Lecture lecture = jpaLectureRepository.verifyJsonLecture("도전과창조-기업가정신", "강성민", "교양");
+        System.out.println(lecture);
 
     }
 }

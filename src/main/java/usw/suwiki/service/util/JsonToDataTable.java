@@ -51,7 +51,7 @@ public class JsonToDataTable {
                         .lectureName(String.valueOf(jsonObject.get("subjtNm")))
                         .build();
 
-                Lecture lecture = lectureRepository.findOneBySubAndProf(dto.getLectureName(), dto.getProfessor());
+                Lecture lecture = lectureRepository.verifyJsonLecture(dto.getLectureName(), dto.getProfessor(),dto.getMajorType());
                 if (lecture != null) {
                     if (lecture.getSemester().contains(dto.getSemester())) {
                         continue;

@@ -34,9 +34,11 @@ public class JpaLectureRepository implements LectureRepository {
     }
 
     @Override
-    public Lecture findOneBySubAndProf(String lectureNameName, String professorName) {
-        List<Lecture> resultList = em.createQuery("SELECT l FROM Lecture l WHERE(l.lectureName =:lectureName AND l.professor =:professor)").setParameter("lectureName", lectureNameName)
+    public Lecture verifyJsonLecture(String lectureName, String professorName, String majorType) {
+        List<Lecture> resultList = em.createQuery("SELECT l FROM Lecture l WHERE(l.lectureName =:lectureName AND l.professor =:professor AND l.majorType = :majorType)")
+                .setParameter("lectureName", lectureName)
                 .setParameter("professor", professorName)
+                .setParameter("majorType", majorType)
                 .getResultList();     //refactoring 해야한다
         if (resultList.isEmpty()) {
             return null;
