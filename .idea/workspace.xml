@@ -6,10 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="501b0fc5-c352-4174-9aa9-b56b765d5a08" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/repository/lecture/JpaLectureRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/repository/lecture/JpaLectureRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/repository/lecture/LectureRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/repository/lecture/LectureRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/service/util/JsonToDataTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/service/util/JsonToDataTable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/USW_2021_2 thirteen.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/USW_2021_2 thirteen.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/controller/lecture/LectureController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/controller/lecture/LectureController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/dto/lecture/LectureDetailResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/dto/lecture/LectureDetailResponseDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/dto/lecture/LectureListAndCountDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/dto/lecture/LectureListAndCountDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/dto/lecture/LectureResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/dto/lecture/LectureResponseDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/dto/view_exam/PurchaseHistoryDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/dto/view_exam/PurchaseHistoryDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/Suwikibackend/Suwiki/domain/Test1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/Suwikibackend/Suwiki/domain/Test1.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

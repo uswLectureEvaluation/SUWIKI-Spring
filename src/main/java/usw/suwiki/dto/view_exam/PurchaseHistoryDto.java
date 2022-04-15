@@ -11,13 +11,15 @@ import java.time.LocalDateTime;
 public class PurchaseHistoryDto {
     private String professor;
     private String lectureName;
+    private String majorType;
     private LocalDateTime createDate;
 
 
     @Builder
-    public PurchaseHistoryDto(String professor, String lectureName, LocalDateTime createDate) {
+    public PurchaseHistoryDto(String professor, String lectureName, String majorType, LocalDateTime createDate) {
         this.professor = professor;
         this.lectureName = lectureName;
+        this.majorType = majorType;
         this.createDate = createDate;
     }
 }

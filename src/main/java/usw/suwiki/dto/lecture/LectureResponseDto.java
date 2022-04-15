@@ -13,6 +13,7 @@ public class LectureResponseDto {
     private String professor;
     private String lectureType; //이수 구분
     private String lectureName;
+    private String majorType;
 
     private float lectureTotalAvg;
     private float lectureSatisfactionAvg;
@@ -25,6 +26,7 @@ public class LectureResponseDto {
         this.professor = entity.getProfessor();
         this.lectureType = entity.getLectureType();
         this.lectureName = entity.getLectureName();
+        this.majorType = entity.getMajorType();
         this.lectureTotalAvg = entity.getLectureTotalAvg();
         this.lectureSatisfactionAvg = entity.getLectureSatisfactionAvg();
         this.lectureHoneyAvg = entity.getLectureHoneyAvg();

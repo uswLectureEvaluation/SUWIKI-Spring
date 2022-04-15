@@ -27,7 +27,6 @@ import java.util.Optional;
 public class LectureController {
     private final LectureService lectureService;
     private final JwtTokenValidator jwtTokenValidator;
-    private final UserService userService;
     private final JwtTokenResolver jwtTokenResolver;
 
     @GetMapping("/findBySearchValue")
