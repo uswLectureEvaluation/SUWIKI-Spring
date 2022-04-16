@@ -16,22 +16,22 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 
 
-@Transactional
-@SpringBootTest(classes = SuwikiApplication.class)
-public class LectureRepositoryTest {
-
-    @Autowired
-    JpaLectureRepository jpaLectureRepository;
-
-    @Test
-    public void findAllLectureByMajorTypeTest() {
-        LectureFindOption option = LectureFindOption.builder().majorType(Optional.of("간호학과")).pageNumber(Optional.of(1)).orderOption(Optional.of("modifiedDate")).build();
-        LectureListAndCountDto dto = jpaLectureRepository.findAllLectureByMajorType(option);
-
-        System.out.println(dto.getCount());
-        for (Lecture lecture : dto.getLectureList()) {
-            System.out.println(lecture.getLectureName() + " ," + lecture.getMajorType());
-        }
-    }
-}
+//@Transactional
+//@SpringBootTest(classes = SuwikiApplication.class)
+//public class LectureRepositoryTest {
+//
+//    @Autowired
+//    JpaLectureRepository jpaLectureRepository;
+//
+//    @Test
+//    public void findAllLectureByMajorTypeTest() {
+//        LectureFindOption option = LectureFindOption.builder().majorType(Optional.of("간호학과")).pageNumber(Optional.of(1)).orderOption(Optional.of("modifiedDate")).build();
+//        LectureListAndCountDto dto = jpaLectureRepository.findAllLectureByMajorType(option);
+//
+//        System.out.println(dto.getCount());
+//        for (Lecture lecture : dto.getLectureList()) {
+//            System.out.println(lecture.getLectureName() + " ," + lecture.getMajorType());
+//        }
+//    }
+//}
 

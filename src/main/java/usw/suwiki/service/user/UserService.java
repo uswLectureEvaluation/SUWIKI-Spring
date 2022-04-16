@@ -136,8 +136,8 @@ public class UserService {
         confirmationTokenService.saveConfirmationToken(confirmationToken);
 
         //이메일 토큰에 대한 링크 생성
-        String link = "http://localhost:8080/user/verify-email/?token=" + token;
-//        String link = "https://api.suwiki.kr/user/verify-email/?token=" + token;
+//        String link = "http://localhost:8080/user/verify-email/?token=" + token;
+        String link = "https://api.suwiki.kr/user/verify-email/?token=" + token;
 
         //이메일 전송
         emailSender.send(joinForm.getEmail(), buildEmailAuthFormService.buildEmail(link));
@@ -367,7 +367,9 @@ public class UserService {
     //회원탈퇴 대기
     @Transactional
     public void waitQuit(Long userIdx) {
-        viewExamService.
+        
+        //구매한 시험 정보 삭제
+        viewExamService.deleteByUserIdx(userIdx);
 
         //회원탈퇴 요청한 유저의 강의평가 삭제
         evaluatePostsService.deleteByUser(userIdx);
