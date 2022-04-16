@@ -22,6 +22,7 @@ import usw.suwiki.service.evaluation.EvaluatePostsService;
 import usw.suwiki.service.exam.ExamPostsService;
 import usw.suwiki.service.user.UserService;
 import usw.suwiki.service.userIsolation.UserIsolationService;
+import usw.suwiki.service.viewExam.ViewExamService;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ public class UserController {
     //게시글 관련 서비스
     private final ExamPostsService examPostsService;
     private final EvaluatePostsService evaluatePostsService;
+    private final ViewExamService viewExamService;
 
     //아이디 중복확인
     @PostMapping("check-id")

@@ -32,6 +32,7 @@ import usw.suwiki.service.emailBuild.BuildSoonDormantTargetFormService;
 import usw.suwiki.service.emailToken.ConfirmationTokenService;
 import usw.suwiki.service.evaluation.EvaluatePostsService;
 import usw.suwiki.service.exam.ExamPostsService;
+import usw.suwiki.service.viewExam.ViewExamService;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -50,6 +51,7 @@ public class UserService {
     private final BlackListService blackListService;
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
+    private final ViewExamService viewExamService;
 
 
     //Repository
@@ -364,6 +366,8 @@ public class UserService {
     //회원탈퇴 대기
     @Transactional
     public void waitQuit(Long userIdx) {
+        viewExamService.
+
         //회원탈퇴 요청한 유저의 강의평가 삭제
         evaluatePostsService.deleteByUser(userIdx);
 
