@@ -4,6 +4,8 @@ import org.springframework.http.MediaType;
 import usw.suwiki.dto.PageOption;
 import usw.suwiki.dto.ToJsonArray;
 import usw.suwiki.dto.exam_info.*;
+import usw.suwiki.dto.lecture.LectureToJsonArray;
+import usw.suwiki.dto.view_exam.PurchaseHistoryDto;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 import usw.suwiki.jwt.JwtTokenResolver;
@@ -32,23 +34,25 @@ public class ExamPostsController {
     private final ViewExamService viewExamService;
 
     @GetMapping("/findByLectureId") // 이름 수정
-    public ResponseEntity<ToJsonArrayExam> findByLecture(@RequestParam Long lectureId, @RequestHeader String Authorization,
+    public ResponseEntity<FindByLectureToExam> findByLecture(@RequestParam Long lectureId, @RequestHeader String Authorization,
                                                    @RequestParam(required = false) Optional<Integer> page){
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
             if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
             List<ExamResponseByLectureIdDto> list = examPostsService.findExamPostsByLectureId(new PageOption(page), lectureId);
-            ToJsonArrayExam data = new ToJsonArrayExam(list);
-
+            FindByLectureToExam data = new FindByLectureToExam(list);
+            if(examPostsService.verifyWriteExamPosts(jwtTokenResolver.getId(Authorization), lectureId)){
+                data.setWritten(false);
+            }
             if(list.isEmpty()){
                 data.setExamDataExist(false);
-                return new ResponseEntity<ToJsonArrayExam>(data, header, HttpStatus.valueOf(200));
+                return new ResponseEntity<FindByLectureToExam>(data, header, HttpStatus.valueOf(200));
             } else {
                 if(viewExamService.verifyAuth(lectureId, jwtTokenResolver.getId(Authorization))) {
-                    return new ResponseEntity<ToJsonArrayExam>(data, header, HttpStatus.valueOf(200));
+                    return new ResponseEntity<FindByLectureToExam>(data, header, HttpStatus.valueOf(200));
                 }else{
                     data.setData(new ArrayList<>());
-                    return new ResponseEntity<ToJsonArrayExam>(data, header, HttpStatus.valueOf(200));
+                    return new ResponseEntity<FindByLectureToExam>(data, header, HttpStatus.valueOf(200));
                 }
             }
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
@@ -119,5 +123,17 @@ public class ExamPostsController {
                 throw new AccountException(ErrorType.USER_POINT_LACK);
             }
         } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+    }
+
+    @GetMapping("/purchase-history") // 이름 수정 , 널값 처리 프론트
+    public ResponseEntity<ToJsonArray> showPurchaseHistory(@RequestHeader String Authorization){
+        HttpHeaders header = new HttpHeaders();
+        if (jwtTokenValidator.validateAccessToken(Authorization)) {
+            Long userIdx = jwtTokenResolver.getId(Authorization);
+            List<PurchaseHistoryDto> list = viewExamService.findByUserId(userIdx);
+            ToJsonArray data = new ToJsonArray(list);
+            return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
+
+        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 }

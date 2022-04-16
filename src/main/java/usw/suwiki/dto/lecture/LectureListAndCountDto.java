@@ -17,4 +17,5 @@ public class LectureListAndCountDto {
         this.lectureList = lectureList;
         this.count = count;
     }
+
 }

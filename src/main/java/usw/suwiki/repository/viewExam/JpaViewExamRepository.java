@@ -31,4 +31,9 @@ public class JpaViewExamRepository implements ViewExamRepository{
             return new ArrayList<>();
         } else return resultList;
     }
+
+    @Override
+    public void delete(ViewExam viewExam) {
+        em.remove(viewExam);
+    }
 }

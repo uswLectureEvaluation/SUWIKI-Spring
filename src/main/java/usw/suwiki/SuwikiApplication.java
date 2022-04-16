@@ -14,3 +14,4 @@ public class SuwikiApplication {
 		SpringApplication.run(SuwikiApplication.class, args);
 	}
 }
+

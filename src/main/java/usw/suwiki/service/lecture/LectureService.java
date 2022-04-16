@@ -43,9 +43,29 @@ public class LectureService {
         return new LectureToJsonArray(dtoList, dto.getCount());
     }
 
+    public LectureToJsonArray findAllLectureByMajorType(LectureFindOption lectureFindOption){
+        List<LectureResponseDto> dtoList = new ArrayList<>();
+        LectureListAndCountDto dto = lectureRepository.findAllLectureByMajorType(lectureFindOption);
+        for (Lecture lecture : dto.getLectureList()) {
+            dtoList.add(new LectureResponseDto(lecture));
+        }
+
+        return new LectureToJsonArray(dtoList, dto.getCount());
+    }
+
     public LectureToJsonArray findLectureByFindOption(String searchValue , LectureFindOption lectureFindOption){
         List<LectureResponseDto> dtoList = new ArrayList<>();
         LectureListAndCountDto dto = lectureRepository.findLectureByFindOption(searchValue,lectureFindOption);
+        for (Lecture lecture : dto.getLectureList()) {
+            dtoList.add(new LectureResponseDto(lecture));
+        }
+
+        return new LectureToJsonArray(dtoList, dto.getCount());
+    }
+
+    public LectureToJsonArray findLectureByMajorType(String searchValue , LectureFindOption lectureFindOption){
+        List<LectureResponseDto> dtoList = new ArrayList<>();
+        LectureListAndCountDto dto = lectureRepository.findLectureByMajorType(searchValue,lectureFindOption);
         for (Lecture lecture : dto.getLectureList()) {
             dtoList.add(new LectureResponseDto(lecture));
         }
@@ -61,6 +81,11 @@ public class LectureService {
 
     public Lecture findById(Long id){
         return lectureRepository.findById(id);
+    }
+
+    public List<String> findAllMajorType(){
+        List<String> resultList = lectureRepository.findAllMajorType();
+        return resultList;
     }
 
 }

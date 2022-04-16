@@ -5,10 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.blacklistDomain.BlacklistDomain;
-import usw.suwiki.domain.evaluation.EvaluatePosts;
-import usw.suwiki.domain.exam.ExamPosts;
 import usw.suwiki.domain.user.User;
-import usw.suwiki.dto.evaluate.EvaluatePostsToLecture;
 import usw.suwiki.dto.userAdmin.UserAdminDto;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
@@ -87,7 +84,7 @@ public class UserAdminService {
 //            User user = userService.loadUserFromUserIdx(bannedTargetForm.getUserIdx());
 //            user.setBannedCount(+1);
 //            user.setWrittenEvaluation(-1);
-        } 
+        }
         //시험정보에 대한 게시글 삭제
         else {
             examPostsService.deleteById(bannedTargetForm.getEvaluateIdx());

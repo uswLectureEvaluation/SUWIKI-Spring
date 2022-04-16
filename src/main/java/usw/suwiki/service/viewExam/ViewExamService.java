@@ -6,12 +6,14 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.viewExam.ViewExam;
+import usw.suwiki.dto.view_exam.PurchaseHistoryDto;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 import usw.suwiki.repository.user.UserRepository;
 import usw.suwiki.repository.viewExam.JpaViewExamRepository;
 import usw.suwiki.service.lecture.LectureService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,4 +56,29 @@ public class ViewExamService {
         }
         return false;
     }
+
+    public List<PurchaseHistoryDto> findByUserId(Long userIdx){
+        List<PurchaseHistoryDto> dtoList = new ArrayList<PurchaseHistoryDto>();
+        List<ViewExam> list = jpaViewExamRepository.findByUserId(userIdx);
+        for (ViewExam viewExam : list) {
+            PurchaseHistoryDto dto = PurchaseHistoryDto.builder()
+                    .lectureName(viewExam.getLecture().getLectureName())
+                    .professor(viewExam.getLecture().getProfessor())
+                    .majorType(viewExam.getLecture().getMajorType())
+                    .createDate(viewExam.getCreateDate())
+                    .build();
+
+            dtoList.add(dto);
+        }
+
+        return dtoList;
+    }
+
+    public void deleteByUserIdx(Long userIdx){
+        List<ViewExam> list = jpaViewExamRepository.findByUserId(userIdx);
+        for (ViewExam viewExam : list) {
+            jpaViewExamRepository.delete(viewExam);
+        }
+    }
+
 }

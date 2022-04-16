@@ -27,33 +27,36 @@ import java.util.Optional;
 public class LectureController {
     private final LectureService lectureService;
     private final JwtTokenValidator jwtTokenValidator;
-    private final UserService userService;
     private final JwtTokenResolver jwtTokenResolver;
 
     @GetMapping("/findBySearchValue")
-    public ResponseEntity<LectureToJsonArray>findByLectureList(@RequestParam String searchValue, @RequestParam(required = false)
-            Optional<String> option, @RequestParam(required = false) Optional<Integer> page){
+    public ResponseEntity<LectureToJsonArray>findByLectureSearchValue(@RequestParam String searchValue, @RequestParam(required = false)
+            Optional<String> option, @RequestParam(required = false) Optional<Integer> page, @RequestParam(required = false) Optional<String> majorType){
         HttpHeaders header = new HttpHeaders();
-
-        if(searchValue.equals(null)){
-            throw new AccountException(ErrorType.NOT_EXISTS_LECTURE_NAME);
+        LectureFindOption findOption = LectureFindOption.builder().orderOption(option).pageNumber(page).majorType(majorType).build();
+        if(findOption.getMajorType().get().equals("")){
+            LectureToJsonArray  data = lectureService.findLectureByFindOption(searchValue, findOption);
+            return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
+        }else {
+            LectureToJsonArray data = lectureService.findLectureByMajorType(searchValue, findOption);
+            return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
         }
-
-        LectureToJsonArray data = lectureService.findLectureByFindOption
-                (searchValue,new LectureFindOption(option,page));
-
-        return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
     }
 
     @GetMapping("/findAllList")
     public ResponseEntity<LectureToJsonArray>findAllList(@RequestParam(required = false) Optional<String> option,
-                                                           @RequestParam(required = false) Optional<Integer> page){
+                                                           @RequestParam(required = false) Optional<Integer> page,
+                                                         @RequestParam(required = false) Optional<String> majorType){
         HttpHeaders header = new HttpHeaders();
 
-        LectureToJsonArray data = lectureService.findAllLectureByFindOption
-                (new LectureFindOption(option,page));
-
-        return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
+        LectureFindOption findOption = LectureFindOption.builder().orderOption(option).pageNumber(page).majorType(majorType).build();
+        if(findOption.getMajorType().get().equals("")){
+            LectureToJsonArray  data = lectureService.findAllLectureByFindOption(findOption);
+            return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
+        }else {
+            LectureToJsonArray data = lectureService.findAllLectureByMajorType(findOption);
+            return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
+        }
     }
 
     @GetMapping

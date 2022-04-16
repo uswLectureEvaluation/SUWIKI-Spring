@@ -30,6 +30,12 @@ public enum ErrorType {
     //Buy User Point error
     USER_POINT_LACK("POINTS001", "유저 포인트가 부족합니다.", HttpStatus.BAD_REQUEST),
 
+    //Option error
+    INVALID_ORDER_OPTION("OPTION001", "ORDER OPTION을 확인해주세요.", HttpStatus.BAD_REQUEST),
+    INVALID_MAJOR_OPTION("OPTION002", "MAJOR OPTION을 확인해주세요.", HttpStatus.BAD_REQUEST),
+
+
+
     //Lecture 400 error
     NOT_EXISTS_LECTURE_NAME("LECTURE001", "강의 제목을 입력해주세요", HttpStatus.BAD_REQUEST),
     NOT_EXISTS_PROFESSOR_NAME("LECTURE002", "교수 이름을 입력해주세요", HttpStatus.BAD_REQUEST),

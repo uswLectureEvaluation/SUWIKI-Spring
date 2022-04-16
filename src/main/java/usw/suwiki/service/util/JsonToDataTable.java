@@ -24,7 +24,7 @@ public class JsonToDataTable {
 
     public void toEntity() throws IOException, ParseException, InterruptedException {
 
-        Reader reader = new FileReader("E:\\Priority\\Project\\SUWIKI-REMASTER\\src\\main\\resources\\USW_2022_1 thirteen.json");
+        Reader reader = new FileReader("/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2022_1 thirteen.json");
 
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(reader);
@@ -35,13 +35,12 @@ public class JsonToDataTable {
             for(int i=0; i< jsonArray.size(); i++){
                 JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
-
                 JsonToLectureDto dto = JsonToLectureDto.builder()
                         .capprType((String) jsonObject.get("capprTypeNm"))
                         .evaluateType((String) jsonObject.get("cretEvalNm"))
                         .lectureCode((String) jsonObject.get("subjtCd"))
                         .semester(jsonObject.get("subjtEstbYear") + "-" + String.valueOf(jsonObject.get("subjtEstbSmrCd")).substring(0, 1))
-                        .grade(Integer.parseInt(String.valueOf(jsonObject.get("trgtGrdeCd"))))
+                        .grade(Integer.parseInt(jsonObject.get("trgtGrdeCd").toString()))
                         .lectureType((String) jsonObject.get("facDvnm"))
                         .placeSchedule(String.valueOf(jsonObject.get("timtSmryCn")))
                         .diclNo(String.valueOf(jsonObject.get("diclNo")))
@@ -51,7 +50,7 @@ public class JsonToDataTable {
                         .lectureName(String.valueOf(jsonObject.get("subjtNm")))
                         .build();
 
-                Lecture lecture = lectureRepository.findOneBySubAndProf(dto.getLectureName(), dto.getProfessor());
+                Lecture lecture = lectureRepository.verifyJsonLecture(dto.getLectureName(), dto.getProfessor(),dto.getMajorType());
                 if (lecture != null) {
                     if (lecture.getSemester().contains(dto.getSemester())) {
                         continue;
@@ -64,7 +63,7 @@ public class JsonToDataTable {
                 } else {
                     Lecture savedLecture = Lecture.builder().build();
                     savedLecture.toEntity(dto);
-                    Thread.sleep(100);
+                    Thread.sleep(1);
                     lectureRepository.save(savedLecture);
                 }
             }

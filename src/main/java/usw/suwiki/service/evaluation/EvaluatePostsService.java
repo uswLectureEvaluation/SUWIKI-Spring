@@ -1,5 +1,7 @@
 package usw.suwiki.service.evaluation;
 
+import lombok.Synchronized;
+import org.springframework.scheduling.annotation.Async;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
 import usw.suwiki.domain.exam.ExamPosts;
 import usw.suwiki.domain.user.User;
@@ -91,8 +93,8 @@ public class EvaluatePostsService {
     public boolean verifyDeleteEvaluatePosts(Long userIdx, Long evaluateIdx){
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         Integer point = posts.getUser().getPoint();
-        if(point >= 30){
-            posts.getUser().setPoint(point -= 30);
+        if(point >= 10){
+            posts.getUser().setPoint(point - 10);
             return true;
         }
         return false;
@@ -114,6 +116,7 @@ public class EvaluatePostsService {
 
     }
 
+    @Synchronized
     public void deleteById(Long evaluateIdx){
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         EvaluatePostsToLecture dto = new EvaluatePostsToLecture(posts);

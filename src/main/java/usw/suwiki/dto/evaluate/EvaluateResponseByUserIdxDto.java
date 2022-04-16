@@ -9,6 +9,7 @@ public class EvaluateResponseByUserIdxDto {
     private Long id;
     private String lectureName;
     private String professor;
+    private String majorType;
     private String semester;
     private String semesterList;
     private Float totalAvg;   // 평균지수
@@ -30,6 +31,7 @@ public class EvaluateResponseByUserIdxDto {
         this.id = entity.getId();
         this.lectureName = entity.getLectureName();
         this.professor = entity.getProfessor();
+        this.majorType = entity.getLecture().getMajorType();
         this.semester = entity.getSemester();
         this.totalAvg = entity.getTotalAvg();
         this.satisfaction = entity.getSatisfaction();
