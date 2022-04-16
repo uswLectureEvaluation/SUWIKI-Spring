@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.SuwikiVersion;
 import usw.suwiki.dto.ToJsonArray;
+import usw.suwiki.dto.VersionResponseDto;
 import usw.suwiki.service.lecture.LectureService;
 
 import java.util.List;
@@ -19,10 +20,11 @@ public class VersionController {
     private final LectureService lectureService;
 
     @GetMapping("/suwiki-version")
-    public ResponseEntity<Integer> findVersionSuwiki(){
+    public ResponseEntity<VersionResponseDto> findVersionSuwiki(){
         HttpHeaders header = new HttpHeaders();
-        int version = SuwikiVersion.version;
-        return new ResponseEntity<Integer>(version, header, HttpStatus.valueOf(200));
+        float version = SuwikiVersion.version;
+        VersionResponseDto dto = new VersionResponseDto(version);
+        return new ResponseEntity<VersionResponseDto>(dto, header, HttpStatus.valueOf(200));
     }
 
     @GetMapping("/version-update")

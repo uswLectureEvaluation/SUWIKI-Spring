@@ -30,7 +30,7 @@ public class LectureController {
     private final JwtTokenResolver jwtTokenResolver;
 
     @GetMapping("/findBySearchValue")
-    public ResponseEntity<LectureToJsonArray>findByLectureList(@RequestParam String searchValue, @RequestParam(required = false)
+    public ResponseEntity<LectureToJsonArray>findByLectureSearchValue(@RequestParam String searchValue, @RequestParam(required = false)
             Optional<String> option, @RequestParam(required = false) Optional<Integer> page, @RequestParam(required = false) Optional<String> majorType){
         HttpHeaders header = new HttpHeaders();
         LectureFindOption findOption = LectureFindOption.builder().orderOption(option).pageNumber(page).majorType(majorType).build();

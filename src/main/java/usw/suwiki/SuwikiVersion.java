@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class SuwikiVersion {
-    public static final int version = 1;
+    public static final float version = 1;
 }
