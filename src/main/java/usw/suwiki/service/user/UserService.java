@@ -392,7 +392,6 @@ public class UserService {
         user.setViewExamCount(null);
         user.setPoint(null);
         user.setLastLogin(null);
-        user.setRequestedQuitDate(null);
         user.setCreatedAt(null);
         user.setUpdatedAt(null);
     }
