@@ -117,7 +117,7 @@ public class ExamPostsController {
             if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
             if (examPostsService.verifyDeleteExamPosts(userIdx, examIdx)) {
-                examPostsService.deleteById(examIdx);
+                examPostsService.deleteById(examIdx,userIdx);
                 return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
             }else{
                 throw new AccountException(ErrorType.USER_POINT_LACK);

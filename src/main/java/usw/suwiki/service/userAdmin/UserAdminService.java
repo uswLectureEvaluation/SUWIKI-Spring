@@ -78,7 +78,7 @@ public class UserAdminService {
 
         //강의평가에 대한 게시글 삭제
         if (bannedTargetForm.getPostType()) {
-            evaluatePostsService.deleteById(bannedTargetForm.getEvaluateIdx());
+            evaluatePostsService.deleteById(bannedTargetForm.getEvaluateIdx(),bannedTargetForm.getUserIdx());
 //            userAdminEvaluateRepository.deleteById(bannedTargetForm.getEvaluateIdx());
 //
 //            User user = userService.loadUserFromUserIdx(bannedTargetForm.getUserIdx());
@@ -87,7 +87,7 @@ public class UserAdminService {
         }
         //시험정보에 대한 게시글 삭제
         else {
-            examPostsService.deleteById(bannedTargetForm.getEvaluateIdx());
+            examPostsService.deleteById(bannedTargetForm.getEvaluateIdx(),bannedTargetForm.getUserIdx());
 //            userAdminExamRepository.deleteById(bannedTargetForm.getExamIdx());
 //
 //

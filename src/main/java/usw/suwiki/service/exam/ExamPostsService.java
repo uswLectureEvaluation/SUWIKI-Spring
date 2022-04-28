@@ -106,8 +106,11 @@ public class ExamPostsService {
         return false;
     }
 
-    public void deleteById(Long examIdx){
+    public void deleteById(Long examIdx, Long userIdx){
         ExamPosts posts = examPostsRepository.findById(examIdx);
+        Optional<User> user = userRepository.findById(userIdx);
+        Integer postsCount = user.get().getWrittenExam();
+        user.get().setWrittenExam(postsCount - 1);
         examPostsRepository.delete(posts);
     }
 }

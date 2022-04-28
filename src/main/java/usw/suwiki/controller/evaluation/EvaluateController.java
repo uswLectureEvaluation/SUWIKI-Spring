@@ -93,7 +93,7 @@ public class EvaluateController {
             if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
             if (evaluatePostsService.verifyDeleteEvaluatePosts(userIdx, evaluateIdx)) {
-                evaluatePostsService.deleteById(evaluateIdx);
+                evaluatePostsService.deleteById(evaluateIdx,userIdx);
                 return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
             }else{
                 throw new AccountException(ErrorType.USER_POINT_LACK);
