@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class LectureDetailResponseDto {
     private Long id;    //필요한가?
 
-    private String semester;
+    private String selectedSemester;
     private String professor;
     private String lectureType; //이수 구분
     private String lectureName;
@@ -25,7 +25,7 @@ public class LectureDetailResponseDto {
 
     public LectureDetailResponseDto(Lecture entity) {
         this.id = entity.getId();
-        this.semester = entity.getSemester();
+        this.selectedSemester = entity.getSemester();
         this.professor = entity.getProfessor();
         this.lectureType = entity.getLectureType();
         this.lectureName = entity.getLectureName();

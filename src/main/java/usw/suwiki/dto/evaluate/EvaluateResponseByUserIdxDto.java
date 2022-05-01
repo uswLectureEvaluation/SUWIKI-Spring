@@ -10,7 +10,7 @@ public class EvaluateResponseByUserIdxDto {
     private String lectureName;
     private String professor;
     private String majorType;
-    private String semester;
+    private String selectedSemester;
     private String semesterList;
     private Float totalAvg;   // 평균지수
     private Float satisfaction;    //수업 만족도
@@ -32,7 +32,7 @@ public class EvaluateResponseByUserIdxDto {
         this.lectureName = entity.getLectureName();
         this.professor = entity.getProfessor();
         this.majorType = entity.getLecture().getMajorType();
-        this.semester = entity.getSemester();
+        this.selectedSemester = entity.getSemester();
         this.totalAvg = entity.getTotalAvg();
         this.satisfaction = entity.getSatisfaction();
         this.learning = entity.getLearning();

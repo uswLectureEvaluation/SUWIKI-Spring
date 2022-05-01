@@ -7,7 +7,7 @@ import lombok.Getter;
 public class ExamResponseByLectureIdDto {
 
     private Long id;
-    private String semester;
+    private String selectedSemester;
 
     private String examType;
     private String examInfo;    //시험방식
@@ -17,7 +17,7 @@ public class ExamResponseByLectureIdDto {
 
     public ExamResponseByLectureIdDto(ExamPosts entity) {
         this.id = entity.getId();
-        this.semester = entity.getSemester();
+        this.selectedSemester = entity.getSemester();
         this.examType = entity.getExamType();
         this.examInfo = entity.getExamInfo();
         this.examDifficulty = entity.getExamDifficulty();
