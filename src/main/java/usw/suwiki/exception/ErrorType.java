@@ -21,6 +21,8 @@ public enum ErrorType {
     USER_RESTRICTED("USER011", "접근 권한이 없는 사용자 입니다. 관리자에게 문의하세요.", HttpStatus.FORBIDDEN), //403
     USER_AND_EMAIL_OVERLAP("USER012", "아이디 혹은 이메일이 중복됩니다.", HttpStatus.BAD_REQUEST),
 
+    USER_NOT_FOUND("USER013", "해당 이메일에 대한 유저를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
+
     // JWT 401 Error
     TOKEN_IS_NOT_FOUND("SECURITY005", "토큰이 만료되었거나, 유효하지 않습니다. 다시 로그인 해주세요", HttpStatus.UNAUTHORIZED),
 

@@ -162,7 +162,7 @@ public class UserService {
             emailSender.send(findIdForm.getEmail(), BuildFindLoginIdFormService.buildEmail(inquiryId.get().getLoginId()));
             return true;
         }
-        throw new AccountException(ErrorType.METHOD_NOT_ALLOWED);
+        throw new AccountException(ErrorType.USER_NOT_FOUND);
     }
 
     //임시 비밀번호 생성
@@ -203,7 +203,7 @@ public class UserService {
 
             return true;
         }
-        throw new AccountException(ErrorType.METHOD_NOT_ALLOWED);
+        throw new AccountException(ErrorType.USER_NOT_FOUND);
     }
 
     //마이페이지에서 비밀번호 재설정
