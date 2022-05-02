@@ -64,6 +64,7 @@ public class ExamPosts extends BaseTimeEntity{
 
     public void update(ExamPostsUpdateDto dto){
         this.semester = dto.getSemester();
+        this.examType = dto.getExamType();
         this.examInfo = dto.getExamInfo();
         this.examDifficulty = dto.getExamDifficulty();
         this.content = dto.getContent();
