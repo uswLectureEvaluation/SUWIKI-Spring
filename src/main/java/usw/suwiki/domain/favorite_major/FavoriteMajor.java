@@ -19,4 +19,12 @@ public class FavoriteMajor {
     private User user;
 
     private String majorType;
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public FavoriteMajor(String majorType) {
+        this.majorType = majorType;
+    }
 }

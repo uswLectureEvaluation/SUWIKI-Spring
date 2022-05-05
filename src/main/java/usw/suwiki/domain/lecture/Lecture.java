@@ -50,11 +50,7 @@ public class Lecture extends BaseTimeEntity {
     private float lectureTeamValue = 0;
     private float lectureDifficultyValue = 0;
     private float lectureHomeworkValue = 0;
-
-    private int postsCount = 0;
-
-    @LastModifiedDate
-    private LocalDateTime modifiedDate;
+    private int postsCount;
 
     public void setSemester(String semester) {
         this.semester = semester;
