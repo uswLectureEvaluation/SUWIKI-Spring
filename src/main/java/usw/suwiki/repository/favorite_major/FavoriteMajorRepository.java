@@ -7,7 +7,7 @@ import java.util.List;
 public interface FavoriteMajorRepository {
     FavoriteMajor findById(Long id);
 
-    public List<FavoriteMajor> findAllByUser(Long userIdx);
+    List<FavoriteMajor> findAllByUser(Long userIdx);
 
     void save(FavoriteMajor favoriteMajor);
 

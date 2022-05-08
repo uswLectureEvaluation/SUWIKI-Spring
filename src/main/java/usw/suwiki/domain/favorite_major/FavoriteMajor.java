@@ -10,6 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 public class FavoriteMajor {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //Auto Increment
