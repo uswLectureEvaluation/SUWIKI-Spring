@@ -12,19 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import usw.suwiki.service.util.JsonToDataTable;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 
-@Transactional
-@SpringBootTest(classes = SuwikiApplication.class)
-public class JsonTest {
-
-    @Autowired
-    JsonToDataTable jsonToDataTable;
-
-    @Test
-    public void registration_json() throws IOException, ParseException, InterruptedException {
-        jsonToDataTable.toEntity();
-    }
-}
-
+////@Transactional
+//@SpringBootTest(classes = SuwikiApplication.class)
+//public class JsonTest {
+//
+//    @Autowired
+//    JsonToDataTable jsonToDataTable;
+//
+//    @Test
+//    public void registration_json() throws IOException, ParseException, InterruptedException {
+//        jsonToDataTable.toEntity();
+//    }
+//}

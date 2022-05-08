@@ -32,6 +32,7 @@ import usw.suwiki.service.emailBuild.BuildSoonDormantTargetFormService;
 import usw.suwiki.service.emailToken.ConfirmationTokenService;
 import usw.suwiki.service.evaluation.EvaluatePostsService;
 import usw.suwiki.service.exam.ExamPostsService;
+import usw.suwiki.service.viewExam.ViewExamService;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -50,6 +51,7 @@ public class UserService {
     private final BlackListService blackListService;
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
+    private final ViewExamService viewExamService;
 
 
     //Repository
@@ -159,7 +161,7 @@ public class UserService {
             emailSender.send(findIdForm.getEmail(), BuildFindLoginIdFormService.buildEmail(inquiryId.get().getLoginId()));
             return true;
         }
-        throw new AccountException(ErrorType.METHOD_NOT_ALLOWED);
+        throw new AccountException(ErrorType.USER_NOT_FOUND);
     }
 
     //임시 비밀번호 생성
@@ -200,7 +202,7 @@ public class UserService {
 
             return true;
         }
-        throw new AccountException(ErrorType.METHOD_NOT_ALLOWED);
+        throw new AccountException(ErrorType.USER_NOT_FOUND);
     }
 
     //마이페이지에서 비밀번호 재설정
@@ -364,6 +366,10 @@ public class UserService {
     //회원탈퇴 대기
     @Transactional
     public void waitQuit(Long userIdx) {
+
+        //구매한 시험 정보 삭제
+        viewExamService.deleteByUserIdx(userIdx);
+
         //회원탈퇴 요청한 유저의 강의평가 삭제
         evaluatePostsService.deleteByUser(userIdx);
 
@@ -385,7 +391,6 @@ public class UserService {
         user.setViewExamCount(null);
         user.setPoint(null);
         user.setLastLogin(null);
-        user.setRequestedQuitDate(null);
         user.setCreatedAt(null);
         user.setUpdatedAt(null);
     }
