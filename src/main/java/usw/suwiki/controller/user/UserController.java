@@ -2,12 +2,22 @@ package usw.suwiki.controller.user;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import usw.suwiki.domain.refreshToken.RefreshToken;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.userIsolation.UserIsolation;
+import usw.suwiki.dto.PageOption;
+import usw.suwiki.dto.ToJsonArray;
+import usw.suwiki.dto.evaluate.EvaluatePostsUpdateDto;
+import usw.suwiki.dto.evaluate.EvaluateResponseByLectureIdDto;
+import usw.suwiki.dto.evaluate.FindByLectureToJson;
+import usw.suwiki.dto.favorite_major.FavoriteSaveDto;
 import usw.suwiki.dto.user.UserDto;
 import usw.suwiki.dto.user.UserResponseDto;
 import usw.suwiki.exception.AccountException;
@@ -20,12 +30,14 @@ import usw.suwiki.service.emailAuth.EmailAuthService;
 import usw.suwiki.service.emailBuild.BuildEmailAuthSuccessFormService;
 import usw.suwiki.service.evaluation.EvaluatePostsService;
 import usw.suwiki.service.exam.ExamPostsService;
+import usw.suwiki.service.favorite_major.FavoriteMajorService;
 import usw.suwiki.service.user.UserService;
 import usw.suwiki.service.userIsolation.UserIsolationService;
 import usw.suwiki.service.viewExam.ViewExamService;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -50,6 +62,9 @@ public class UserController {
     private final ExamPostsService examPostsService;
     private final EvaluatePostsService evaluatePostsService;
     private final ViewExamService viewExamService;
+
+    //학과 즐겨찾기 관련 서비스
+    private final FavoriteMajorService favoriteMajorService;
 
     //아이디 중복확인
     @PostMapping("check-id")
@@ -412,6 +427,42 @@ public class UserController {
         result.put("success", true);
 
         return result;
+    }
+
+    @PostMapping("/favorite-major")
+    public ResponseEntity<String> saveFavoriteMajor(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto dto){
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_JSON);
+        if (jwtTokenValidator.validateAccessToken(Authorization)) {
+            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
+            Long userIdx = jwtTokenResolver.getId(Authorization);
+            favoriteMajorService.save(dto,userIdx);
+            return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
+        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+    }
+
+    @DeleteMapping("/favorite-major")
+    public ResponseEntity<String> deleteFavoriteMajor(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto dto){
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_JSON);
+        if (jwtTokenValidator.validateAccessToken(Authorization)) {
+            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
+            Long userIdx = jwtTokenResolver.getId(Authorization);
+            favoriteMajorService.save(dto,userIdx);
+            return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
+        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+    }
+
+    @GetMapping("/favorite-major")
+    public ResponseEntity<ToJsonArray> findByLecture(@RequestHeader String Authorization){
+        HttpHeaders header = new HttpHeaders();
+        if (jwtTokenValidator.validateAccessToken(Authorization)) {
+            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
+            Long userIdx = jwtTokenResolver.getId(Authorization);
+            List<String> list = favoriteMajorService.findMajorTypeByUser(userIdx);
+            ToJsonArray data = new ToJsonArray(list);
+            return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
+        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 }
 

@@ -7,7 +7,7 @@ import lombok.Getter;
 public class EvaluateResponseByLectureIdDto {
 
     private Long id;
-    private String semester;
+    private String selectedSemester;
     private Float totalAvg;   // 평균지수
     private Float satisfaction;    //수업 만족도
     private Float learning; //배움지수
@@ -21,7 +21,7 @@ public class EvaluateResponseByLectureIdDto {
 
     public EvaluateResponseByLectureIdDto(EvaluatePosts entity) {
         this.id = entity.getId();
-        this.semester = entity.getSemester();
+        this.selectedSemester = entity.getSemester();
         this.totalAvg = entity.getTotalAvg();
         this.satisfaction = entity.getSatisfaction();
         this.learning = entity.getLearning();

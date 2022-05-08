@@ -59,5 +59,4 @@ public class User {
 
     @Column
     private LocalDateTime updatedAt;
-
 }

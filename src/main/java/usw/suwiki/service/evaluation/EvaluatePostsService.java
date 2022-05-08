@@ -1,9 +1,7 @@
 package usw.suwiki.service.evaluation;
 
 import lombok.Synchronized;
-import org.springframework.scheduling.annotation.Async;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
-import usw.suwiki.domain.exam.ExamPosts;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
@@ -117,11 +115,14 @@ public class EvaluatePostsService {
     }
 
     @Synchronized
-    public void deleteById(Long evaluateIdx){
+    public void deleteById(Long evaluateIdx, Long userIdx){
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
+        Optional<User> user = userRepository.findById(userIdx);
         EvaluatePostsToLecture dto = new EvaluatePostsToLecture(posts);
         lectureService.cancelLectureValue(dto);
         lectureService.calcLectureAvg(dto);
+        Integer postsCount = user.get().getWrittenEvaluation();
+        user.get().setWrittenEvaluation(postsCount - 1);
         evaluatePostsRepository.delete(posts);
     }
 }

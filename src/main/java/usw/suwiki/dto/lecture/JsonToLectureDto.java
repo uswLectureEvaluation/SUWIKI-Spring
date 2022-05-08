@@ -20,6 +20,10 @@ public class JsonToLectureDto {
     private double point;
     private String capprType;
 
+    public void setProfessor(String professor) {
+        this.professor = professor;
+    }
+
     @Builder
     public JsonToLectureDto(String semester, String placeSchedule, String professor, String lectureType, String lectureCode,
                             String lectureName, String evaluateType, String diclNo, String majorType, double point,

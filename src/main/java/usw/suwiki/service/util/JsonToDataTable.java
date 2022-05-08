@@ -50,6 +50,10 @@ public class JsonToDataTable {
                         .lectureName(String.valueOf(jsonObject.get("subjtNm")))
                         .build();
 
+                if(dto.getProfessor().isEmpty()){
+                    dto.setProfessor("-");
+                }
+
                 Lecture lecture = lectureRepository.verifyJsonLecture(dto.getLectureName(), dto.getProfessor(),dto.getMajorType());
                 if (lecture != null) {
                     if (lecture.getSemester().contains(dto.getSemester())) {
