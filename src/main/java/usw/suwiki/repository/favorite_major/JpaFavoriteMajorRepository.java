@@ -32,6 +32,15 @@ public class JpaFavoriteMajorRepository implements FavoriteMajorRepository{
     }
 
     @Override
+    public List<String> findOnlyMajorTypeByUser(Long userIdx) {
+        List resultList = em.createQuery("SELECT f.majorType from FavoriteMajor f join f.user u WHERE u.id = :id")
+                .setParameter("id", userIdx)
+                .getResultList();
+
+        return resultList;
+    }
+
+    @Override
     public FavoriteMajor findByUserAndMajorType(Long userIdx, String majorType) {
         List resultList = em.createQuery("SELECT f from FavoriteMajor f join f.user u WHERE u.id = :id AND f.majorType = :majorType")
                 .setParameter("id", userIdx)

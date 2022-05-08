@@ -15,4 +15,6 @@ public interface FavoriteMajorRepository {
 
     FavoriteMajor findByUserAndMajorType(Long userIdx, String majorType);
 
+    List<String> findOnlyMajorTypeByUser(Long userIdx);
+
 }

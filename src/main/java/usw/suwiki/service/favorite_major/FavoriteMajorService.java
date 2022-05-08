@@ -26,6 +26,11 @@ public class FavoriteMajorService {
         jpaFavoriteMajorRepository.save(favorite);
     }
 
+    public List<String> findMajorTypeByUser(Long userIdx){
+        List<String> list = jpaFavoriteMajorRepository.findOnlyMajorTypeByUser(userIdx);
+        return list;
+    }
+
     public void delete(Long userIdx, String majorType){
         FavoriteMajor favorite = jpaFavoriteMajorRepository.findByUserAndMajorType(userIdx, majorType);
         jpaFavoriteMajorRepository.delete(favorite);
