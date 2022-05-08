@@ -23,12 +23,24 @@ public class JpaFavoriteMajorRepository implements FavoriteMajorRepository{
     }
 
     @Override
-    public List<FavoriteMajor> findByUser(Long userIdx) {
-        List resultList = em.createQuery("SELECT p from FavoriteMajor f join f.user u WHERE u.id = :id")
+    public List<FavoriteMajor> findAllByUser(Long userIdx) {
+        List resultList = em.createQuery("SELECT f from FavoriteMajor f join f.user u WHERE u.id = :id")
                 .setParameter("id", userIdx)
                 .getResultList();
 
         return resultList;
+    }
+
+    @Override
+    public FavoriteMajor findByUserAndMajorType(Long userIdx, String majorType) {
+        List resultList = em.createQuery("SELECT f from FavoriteMajor f join f.user u WHERE u.id = :id AND f.majorType = :majorType")
+                .setParameter("id", userIdx)
+                .setParameter("majorType", majorType)
+                .getResultList();
+
+        FavoriteMajor result = (FavoriteMajor) resultList.get(0);
+
+        return result;
     }
 
     @Override
