@@ -62,12 +62,13 @@ public class ViewExamService {
         List<ViewExam> list = jpaViewExamRepository.findByUserId(userIdx);
         for (ViewExam viewExam : list) {
             PurchaseHistoryDto dto = PurchaseHistoryDto.builder()
+                    .id(viewExam.getId())
                     .lectureName(viewExam.getLecture().getLectureName())
                     .professor(viewExam.getLecture().getProfessor())
                     .majorType(viewExam.getLecture().getMajorType())
                     .createDate(viewExam.getCreateDate())
                     .build();
-
+            
             dtoList.add(dto);
         }
 

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class PurchaseHistoryDto {
+    private Long id;
     private String professor;
     private String lectureName;
     private String majorType;
@@ -16,7 +17,8 @@ public class PurchaseHistoryDto {
 
 
     @Builder
-    public PurchaseHistoryDto(String professor, String lectureName, String majorType, LocalDateTime createDate) {
+    public PurchaseHistoryDto(Long id, String professor, String lectureName, String majorType, LocalDateTime createDate) {
+        this.id = id;
         this.professor = professor;
         this.lectureName = lectureName;
         this.majorType = majorType;
