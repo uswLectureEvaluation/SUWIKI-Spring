@@ -13,13 +13,13 @@ import java.util.List;
 @Transactional
 @SpringBootTest(classes = SuwikiApplication.class)
 public class FavoirteMajorRepositoryTest {
-    @Autowired
-    JpaFavoriteMajorRepository jpaFavoriteMajorRepository;
-
-    @Test
-    public void findOnlyMajorTypeByUser(){
-        List<String> list = jpaFavoriteMajorRepository.findOnlyMajorTypeByUser(17L);
-
-        System.out.println(list);
-    }
+//    @Autowired
+//    JpaFavoriteMajorRepository jpaFavoriteMajorRepository;
+//
+//    @Test
+//    public void findOnlyMajorTypeByUser(){
+//        List<String> list = jpaFavoriteMajorRepository.findOnlyMajorTypeByUser(17L);
+//
+//        System.out.println(list);
+//    }
 }
