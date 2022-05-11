@@ -39,11 +39,11 @@ public class UserAdminController {
 
         HashMap<String, Boolean> result = new HashMap<>();
 
-        //게시글 삭제
-        userAdminService.banishPost(bannedTargetForm);
+//        //게시글 삭제
+//        userAdminService.banishPost(bannedTargetForm);
 
-        //유저 블랙리스트 테이블로
-        userAdminService.banUser(bannedTargetForm);
+        //게시글 삭제 및 유저 블랙리스트 테이블로
+        userAdminService.banUser(userAdminService.banishPost(bannedTargetForm), bannedTargetForm.getBannedTime());
 
         result.put("Success", true);
         return result;

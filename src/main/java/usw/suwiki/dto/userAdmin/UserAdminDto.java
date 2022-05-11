@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 public class UserAdminDto {
     @Data
     public static class BannedTargetForm {
-        private Long userIdx; //신고한 사람
         private Long evaluateIdx; //강의평가 인덱스
         private Long examIdx; //시험 인덱스
         private Boolean postType; //게시글 타입
