@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ExamPostsSaveDto {
     private String lectureName; //과목
-    private String semester;
+    private String selectedSemester;
     private String professor;   //교수
 
     private String examType;
@@ -17,10 +17,10 @@ public class ExamPostsSaveDto {
 
     private String content;
 
-    public ExamPostsSaveDto( String lectureName, String semester, String professor,String examType, String examInfo,
+    public ExamPostsSaveDto( String lectureName, String selectedSemester, String professor,String examType, String examInfo,
                             String examDifficulty, String content) {
         this.lectureName = lectureName;
-        this.semester = semester;
+        this.selectedSemester = selectedSemester;
         this.professor = professor;
         this.examType = examType;
         this.examInfo = examInfo;

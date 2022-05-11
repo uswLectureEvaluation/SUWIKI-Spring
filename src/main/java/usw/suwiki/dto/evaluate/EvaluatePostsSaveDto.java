@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 public class EvaluatePostsSaveDto {
 
     private String lectureName; //과목
-    private String semester;
+    private String selectedSemester;
     private String professor;   //교수
 
     private Float satisfaction;    //수업 만족도
@@ -22,10 +22,10 @@ public class EvaluatePostsSaveDto {
     private String content;    //주관적인 강의평가 입력내용
 
 
-    public EvaluatePostsSaveDto(String lectureName, String semester, String professor, Float satisfaction,
+    public EvaluatePostsSaveDto(String lectureName, String selectedSemester, String professor, Float satisfaction,
                                 Float learning, Float honey, int team, int difficulty, int homework, String content) {
         this.lectureName = lectureName;
-        this.semester = semester;
+        this.selectedSemester = selectedSemester;
         this.professor = professor;
         this.satisfaction = satisfaction;
         this.learning = learning;
