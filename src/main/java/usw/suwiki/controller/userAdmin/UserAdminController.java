@@ -41,12 +41,6 @@ public class UserAdminController {
 
         //게시글 삭제
         userAdminService.banishPost(bannedTargetForm);
-        
-        //PostType 이 True 일때 강의평가 게시글 조치
-        if (bannedTargetForm.getPostType()) { userAdminService.decreaseWrittenEvaluation(bannedTargetForm); }
-
-        //PostType 이 false 일때 시험정보 게시글 조치
-        else { userAdminService.decreaseWrittenExam(bannedTargetForm); }
 
         //유저 블랙리스트 테이블로
         userAdminService.banUser(bannedTargetForm);
