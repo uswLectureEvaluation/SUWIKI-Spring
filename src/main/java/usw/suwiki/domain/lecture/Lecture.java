@@ -52,6 +52,9 @@ public class Lecture extends BaseTimeEntity {
     private float lectureHomeworkValue = 0;
     private int postsCount;
 
+    @LastModifiedDate // 조회한 Entity값을 변경할때 ,시간이 자동 저장된다.
+    private LocalDateTime modifiedDate;
+
     public void setSemester(String semester) {
         this.semester = semester;
     }

@@ -64,5 +64,19 @@
 //        System.out.println(e);
 //
 //    }
+//
+//    @Test
+//    public void handleErrorTest() {
+//        LectureFindOption findOption = LectureFindOption.builder().majorType(Optional.of("")).pageNumber(Optional.of(1)).orderOption(Optional.of("modifiedDate")).build();
+//        LectureListAndCountDto dto = jpaLectureRepository.findAllLectureByFindOption(findOption);
+//        for (Lecture lecture : dto.getLectureList()) {
+//            System.out.println(lecture.getLectureName());
+//        }
+//    }
 //}
 //
+
+
+
+
+
