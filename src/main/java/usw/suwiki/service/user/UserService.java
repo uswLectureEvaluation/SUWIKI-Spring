@@ -418,13 +418,14 @@ public class UserService {
         }
     }
 
+    // 강의평가 인덱스로 강
     @Transactional
-    public EvaluatePosts loadEvaluatePostsFromEvaluatePostsIdx(Long EvaluatePostsIdx) {
+    public EvaluatePosts loadEvaluatePostsByIndex(Long EvaluatePostsIdx) {
         return jpaEvaluatePostsRepository.findById(EvaluatePostsIdx);
     }
 
     @Transactional
-    public ExamPosts loadExamPostsFromEvaluatePostsIdx(Long ExamPostsIdx) {
+    public ExamPosts loadExamPostsByIndex(Long ExamPostsIdx) {
         return jpaExamPostsRepository.findById(ExamPostsIdx);
     }
 
@@ -432,22 +433,26 @@ public class UserService {
     @Transactional
     public void reportUserPost(UserDto.UserReportForm userReportForm) {
 
+        // 강의평가 게시물을 신고했을 때
         if (userReportForm.getPostType()) {
             ReportTarget target = ReportTarget.builder()
-                    .user(loadUserFromUserIdx(userReportForm.getUserIdx()))
-                    .evaluatePosts(loadEvaluatePostsFromEvaluatePostsIdx(userReportForm.getEvaluateIdx()))
+                    .evaluateIdx(userReportForm.getEvaluateIdx())
                     .postType(userReportForm.getPostType())
                     .content(userReportForm.getContent())
                     .reportedDate(LocalDateTime.now())
+                    .professor(loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getProfessor())
+                    .lectureName(loadEvaluatePostsByIndex(userReportForm.getExamIdx()).getLectureName())
                     .build();
             reportTargetRepository.save(target);
         } else {
+            // 시험정보 게시물을 신고했을 때
             ReportTarget target = ReportTarget.builder()
-                    .user(loadUserFromUserIdx(userReportForm.getUserIdx()))
-                    .examPosts(loadExamPostsFromEvaluatePostsIdx(userReportForm.getExamIdx()))
+                    .examIdx(userReportForm.getExamIdx())
                     .postType(userReportForm.getPostType())
                     .content(userReportForm.getContent())
                     .reportedDate(LocalDateTime.now())
+                    .professor(loadExamPostsByIndex(userReportForm.getExamIdx()).getProfessor())
+                    .lectureName(loadExamPostsByIndex(userReportForm.getExamIdx()).getLectureName())
                     .build();
             reportTargetRepository.save(target);
         }
