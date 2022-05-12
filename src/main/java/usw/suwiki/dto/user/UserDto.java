@@ -65,11 +65,9 @@ public class UserDto {
 
     @Data
     public static class UserReportForm {
-        private Long userIdx;
         private Long evaluateIdx;
         private Long examIdx;
         private Boolean postType;
-        private LocalDateTime reportedDate;
         private String content;
     }
 }
