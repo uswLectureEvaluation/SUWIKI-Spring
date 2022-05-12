@@ -14,32 +14,35 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReportTarget {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //Auto Increment
 
-    @ManyToOne
-    @JoinColumn(name = "user_idx")
-    private User user; //userIdx -- 신고 한 사람
-
-    @ManyToOne
-    @JoinColumn(name = "evaluate_idx")
-    private EvaluatePosts evaluatePosts; //EvaluateIdx
-
-    @ManyToOne
-    @JoinColumn(name = "exam_idx")
-    private ExamPosts examPosts; //ExamIdx
+    @Column
+    private Long evaluateIdx;
 
     @Column
-    private boolean postType; //true = evaluate, false = exam
+    private Long examIdx;
 
+    // 교수이름
+    @Column
+    private String professor;
+
+    // 과목이름
+    @Column
+    private String lectureName;
+
+    // true = evaluate, false = exam
+    @Column
+    private boolean postType;
+
+    // 신고 내용
     @Column
     private String content;
 
+    //신고한 날짜
     @Column
     private LocalDateTime reportedDate;
-
-//    @Column
-//    private String admin;         : 프론트에서 처리
 
 }

@@ -1,8 +1,9 @@
 package usw.suwiki.controller.userAdmin;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.reportTarget.ReportTarget;
 import usw.suwiki.dto.userAdmin.UserAdminDto;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
@@ -14,6 +15,7 @@ import usw.suwiki.service.userAdmin.UserAdminService;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,25 +33,33 @@ public class UserAdminController {
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
-        
+
         //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
-//        if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) throw new AccountException(ErrorType.USER_RESTRICTED);
+        if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) throw new AccountException(ErrorType.USER_RESTRICTED);
 
         HashMap<String, Boolean> result = new HashMap<>();
 
-        //게시글 삭제
-        userAdminService.banPost(bannedTargetForm);
+//        //게시글 삭제
+//        userAdminService.banishPost(bannedTargetForm);
 
-        //유저 밴 카운트 늘리기
-
-        //게시글 삭제로 인한 평균점수 수정
-//        lectureService.calcLectureAvg();
-
-
-        //유저 블랙리스트 테이블로
-        userAdminService.banUser(bannedTargetForm);
+        //게시글 삭제 및 유저 블랙리스트 테이블로
+        userAdminService.banUser(userAdminService.banishPost(bannedTargetForm), bannedTargetForm.getBannedTime());
 
         result.put("Success", true);
         return result;
+    }
+
+    @GetMapping("ban")
+    public List<ReportTarget> loadReportedPosts(@Valid @RequestHeader String Authorization) {
+
+        HttpHeaders header = new HttpHeaders();
+
+        //토큰 검증
+        jwtTokenValidator.validateAccessToken(Authorization);
+
+        //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
+        if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) throw new AccountException(ErrorType.USER_RESTRICTED);
+
+        return userAdminService.getReportedPostList();
     }
 }
