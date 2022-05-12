@@ -22,7 +22,7 @@ public class ExamPosts extends BaseTimeEntity{
     private Long id;
 
     private String lectureName; //과목
-    private String semester;
+    private String selectedSemester;
     private String professor;   //교수
 
     private String examType;
@@ -54,7 +54,7 @@ public class ExamPosts extends BaseTimeEntity{
     @Builder
     public ExamPosts(ExamPostsSaveDto dto) {
         this.lectureName = dto.getLectureName();
-        this.semester = dto.getSemester();
+        this.selectedSemester = dto.getSelectedSemester();
         this.professor = dto.getProfessor();
         this.examType = dto.getExamType();
         this.examInfo = dto.getExamInfo();
@@ -63,7 +63,7 @@ public class ExamPosts extends BaseTimeEntity{
     }
 
     public void update(ExamPostsUpdateDto dto){
-        this.semester = dto.getSemester();
+        this.selectedSemester = dto.getSelectedSemester();
         this.examType = dto.getExamType();
         this.examInfo = dto.getExamInfo();
         this.examDifficulty = dto.getExamDifficulty();

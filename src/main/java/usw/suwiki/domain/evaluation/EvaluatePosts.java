@@ -22,7 +22,7 @@ public class EvaluatePosts extends BaseTimeEntity{
     private Long id;
 
     private String lectureName; //과목
-    private String semester;
+    private String selectedSemester;
     private String professor;   //교수
 
     private Float satisfaction;    //수업 만족도
@@ -58,7 +58,7 @@ public class EvaluatePosts extends BaseTimeEntity{
 
     public EvaluatePosts(EvaluatePostsSaveDto dto) {
         this.lectureName = dto.getLectureName();
-        this.semester = dto.getSemester();
+        this.selectedSemester = dto.getSelectedSemester();
         this.professor = dto.getProfessor();
         this.satisfaction = dto.getSatisfaction();
         this.learning = dto.getLearning();
@@ -71,7 +71,7 @@ public class EvaluatePosts extends BaseTimeEntity{
     }
 
     public void update(EvaluatePostsUpdateDto dto) {
-        this.semester = dto.getSemester();
+        this.selectedSemester = dto.getSelectedSemester();
         this.satisfaction = dto.getSatisfaction();
         this.learning = dto.getLearning();
         this.honey = dto.getHoney();

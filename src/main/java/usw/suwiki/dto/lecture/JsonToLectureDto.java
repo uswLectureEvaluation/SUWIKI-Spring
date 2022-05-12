@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class JsonToLectureDto {
-    private String semester;
+    private String selectedSemester;
     private String placeSchedule;  // 시간표 대로 나워야 하나?
     private String professor;
     private int grade;
@@ -25,10 +25,10 @@ public class JsonToLectureDto {
     }
 
     @Builder
-    public JsonToLectureDto(String semester, String placeSchedule, String professor, String lectureType, String lectureCode,
+    public JsonToLectureDto(String selectedSemester, String placeSchedule, String professor, String lectureType, String lectureCode,
                             String lectureName, String evaluateType, String diclNo, String majorType, double point,
                             String capprType , int grade) {
-        this.semester = semester;
+        this.selectedSemester = selectedSemester;
         this.placeSchedule = placeSchedule;
         this.professor = professor;
         this.lectureType = lectureType;

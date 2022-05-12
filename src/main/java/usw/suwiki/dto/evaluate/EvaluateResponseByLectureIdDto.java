@@ -21,7 +21,7 @@ public class EvaluateResponseByLectureIdDto {
 
     public EvaluateResponseByLectureIdDto(EvaluatePosts entity) {
         this.id = entity.getId();
-        this.selectedSemester = entity.getSemester();
+        this.selectedSemester = entity.getSelectedSemester();
         this.totalAvg = entity.getTotalAvg();
         this.satisfaction = entity.getSatisfaction();
         this.learning = entity.getLearning();

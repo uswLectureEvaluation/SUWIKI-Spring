@@ -76,7 +76,7 @@ public class EvaluatePostsService {
         List<EvaluatePosts> list = evaluatePostsRepository.findByUserId(option, userId);
         for (EvaluatePosts post : list) {
             EvaluateResponseByUserIdxDto dto = new EvaluateResponseByUserIdxDto(post);
-            dto.setSemesterList(post.getLecture().getSemester());
+            dto.setSemesterList(post.getLecture().getSemesterList());
             dtoList.add(dto);
         }
         return dtoList;

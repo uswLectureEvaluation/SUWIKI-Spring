@@ -25,7 +25,7 @@ public class LectureDetailResponseDto {
 
     public LectureDetailResponseDto(Lecture entity) {
         this.id = entity.getId();
-        this.semesterList = entity.getSemester();
+        this.semesterList = entity.getSemesterList();
         this.professor = entity.getProfessor();
         this.lectureType = entity.getLectureType();
         this.lectureName = entity.getLectureName();

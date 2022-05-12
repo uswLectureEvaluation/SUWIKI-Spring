@@ -39,7 +39,7 @@ public class JsonToDataTable {
                         .capprType((String) jsonObject.get("capprTypeNm"))
                         .evaluateType((String) jsonObject.get("cretEvalNm"))
                         .lectureCode((String) jsonObject.get("subjtCd"))
-                        .semester(jsonObject.get("subjtEstbYear") + "-" + String.valueOf(jsonObject.get("subjtEstbSmrCd")).substring(0, 1))
+                        .selectedSemester(jsonObject.get("subjtEstbYear") + "-" + String.valueOf(jsonObject.get("subjtEstbSmrCd")).substring(0, 1))
                         .grade(Integer.parseInt(jsonObject.get("trgtGrdeCd").toString()))
                         .lectureType((String) jsonObject.get("facDvnm"))
                         .placeSchedule(String.valueOf(jsonObject.get("timtSmryCn")))
@@ -56,10 +56,10 @@ public class JsonToDataTable {
 
                 Lecture lecture = lectureRepository.verifyJsonLecture(dto.getLectureName(), dto.getProfessor(),dto.getMajorType());
                 if (lecture != null) {
-                    if (lecture.getSemester().contains(dto.getSemester())) {
+                    if (lecture.getSemesterList().contains(dto.getSelectedSemester())) {
                         continue;
                     }else{
-                        String updateString = lecture.getSemester() +","+ dto.getSemester();
+                        String updateString = lecture.getSemesterList() +","+ dto.getSelectedSemester();
                         Lecture updatedLecture = Lecture.builder().build();
                         updatedLecture.toEntity(dto);
                         updatedLecture.setSemester(updateString);  //refactoring 필요

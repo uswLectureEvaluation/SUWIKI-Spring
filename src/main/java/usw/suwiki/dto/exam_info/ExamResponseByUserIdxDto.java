@@ -26,7 +26,7 @@ public class ExamResponseByUserIdxDto {
         this.id = entity.getId();
         this.lectureName = entity.getLectureName();
         this.majorType = entity.getLecture().getMajorType();
-        this.selectedSemester = entity.getSemester();
+        this.selectedSemester = entity.getSelectedSemester();
         this.professor = entity.getProfessor();
         this.examType = entity.getExamType();
         this.examInfo = entity.getExamInfo();

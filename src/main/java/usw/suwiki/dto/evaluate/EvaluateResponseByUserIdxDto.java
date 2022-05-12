@@ -32,7 +32,7 @@ public class EvaluateResponseByUserIdxDto {
         this.lectureName = entity.getLectureName();
         this.professor = entity.getProfessor();
         this.majorType = entity.getLecture().getMajorType();
-        this.selectedSemester = entity.getSemester();
+        this.selectedSemester = entity.getSelectedSemester();
         this.totalAvg = entity.getTotalAvg();
         this.satisfaction = entity.getSatisfaction();
         this.learning = entity.getLearning();

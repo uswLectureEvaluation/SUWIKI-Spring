@@ -23,7 +23,7 @@ public class Lecture extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String semester;
+    private String semesterList;
     private String placeSchedule;  // 시간표 대로 나워야 하나?
     private String professor;
     private int grade;
@@ -56,13 +56,13 @@ public class Lecture extends BaseTimeEntity {
     private LocalDateTime modifiedDate;
 
     public void setSemester(String semester) {
-        this.semester = semester;
+        this.semesterList = semester;
     }
 
     @Builder
-    public Lecture(String semester, String placeSchedule, String professor, String lectureType, String lectureCode,
+    public Lecture(String semesterList, String placeSchedule, String professor, String lectureType, String lectureCode,
                    String lectureName, String evaluateType, String diclNo, String majorType, double point, String capprType, int grade) {
-        this.semester = semester;
+        this.semesterList = semesterList;
         this.placeSchedule = placeSchedule;
         this.professor = professor;
         this.lectureType = lectureType;
@@ -119,7 +119,7 @@ public class Lecture extends BaseTimeEntity {
 
 
     public void toEntity(JsonToLectureDto dto){
-        this.semester = dto.getSemester();
+        this.semesterList = dto.getSelectedSemester();
         this.placeSchedule = dto.getPlaceSchedule();
         this.professor = dto.getProfessor();
         this.lectureType = dto.getLectureType();

@@ -17,7 +17,7 @@ public class ExamResponseByLectureIdDto {
 
     public ExamResponseByLectureIdDto(ExamPosts entity) {
         this.id = entity.getId();
-        this.selectedSemester = entity.getSemester();
+        this.selectedSemester = entity.getSelectedSemester();
         this.examType = entity.getExamType();
         this.examInfo = entity.getExamInfo();
         this.examDifficulty = entity.getExamDifficulty();
