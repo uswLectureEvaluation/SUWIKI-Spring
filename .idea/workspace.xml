@@ -84,7 +84,7 @@
     <property name="last_opened_file_path" value="$USER_HOME$/Algorithm/Solve/Acmicpc(Java)/src/Etc" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
   </component>
-  <component name="RunManager" selected="애플리케이션.SuwikiApplication">
+  <component name="RunManager" selected="Application.SuwikiApplication">
     <configuration name="SuwikiApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="usw.suwiki.SuwikiApplication" />
       <module name="suwiki.main" />
@@ -177,7 +177,6 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="애플리케이션.SuwikiApplication" />
         <item itemvalue="JUnit.JsonTest.registration_json" />
         <item itemvalue="JUnit.JsonTest" />
         <item itemvalue="Gradle.JsonTest (1)" />
