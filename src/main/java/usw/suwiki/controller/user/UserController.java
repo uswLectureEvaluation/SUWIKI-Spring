@@ -335,7 +335,7 @@ public class UserController {
                 .loginId(user.getLoginId())
                 .email(user.getEmail())
                 .point(user.getPoint())
-                .writtenLecture(user.getWrittenEvaluation())
+                .writtenEvaluation(user.getWrittenEvaluation())
                 .writtenExam(user.getWrittenExam())
                 .viewExam(user.getViewExamCount())
                 .build();
