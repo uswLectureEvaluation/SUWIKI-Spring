@@ -19,7 +19,7 @@ public class RefreshToken {
 
     private String payload;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
     private User user;
 }

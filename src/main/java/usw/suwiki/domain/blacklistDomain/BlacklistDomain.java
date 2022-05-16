@@ -23,7 +23,7 @@ public class BlacklistDomain {
     @Column
     private LocalDateTime expiredAt;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
     private User user;
 }
