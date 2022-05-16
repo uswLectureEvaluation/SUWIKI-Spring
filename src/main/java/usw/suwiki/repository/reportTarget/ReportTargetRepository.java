@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public interface ReportTargetRepository extends JpaRepository<ReportTarget, Long> {
 
-    @Modifying
     @Query(value = "SELECT * FROM report_target", nativeQuery = true)
     List<ReportTarget> loadAllReportedPosts();
 
