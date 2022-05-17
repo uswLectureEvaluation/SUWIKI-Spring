@@ -88,6 +88,12 @@ public class UserAdminService {
             // 추방할 게시글 불러오기
             EvaluatePosts targetedEvaluatePost = userService.loadEvaluatePostsByIndex(bannedTargetForm.getEvaluateIdx());
 
+            // 게시글 인덱스 불러오기
+            Long targetedEvaluatePostIdx = targetedEvaluatePost.getId();
+
+            // 게시글 인덱스로 신고 테이블에서 지우기(벤 하면 신고 테이블에서도 지워줘야함)
+            evaluateReportRepository.deleteById(targetedEvaluatePostIdx);
+
             // 강의평가를 작성한 작성자 인덱스 불러오기
             Long targetedUserIdx = targetedEvaluatePost.getUser().getId();
 
@@ -105,6 +111,12 @@ public class UserAdminService {
 
             // 추방할 게시글 불러오기
             ExamPosts targetedExamPost = userService.loadExamPostsByIndex(bannedTargetForm.getExamIdx());
+
+            // 게시글 인덱스 불러오기
+            Long targetedExamPostId = targetedExamPost.getId();
+
+            // 게시글 인덱스로 신고 테이블에서 지우기(벤 하면 신고 테이블에서도 지워줘야함)
+            examReportRepository.deleteById(targetedExamPostId);
 
             // 시험정보를 작성한 작성자 인덱스 불러오기
             Long targetedUserIdx = targetedExamPost.getUser().getId();
