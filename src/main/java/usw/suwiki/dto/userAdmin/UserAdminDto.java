@@ -3,8 +3,10 @@ package usw.suwiki.dto.userAdmin;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import usw.suwiki.domain.reportTarget.EvaluatePostReport;
+import usw.suwiki.domain.reportTarget.ExamPostReport;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -18,15 +20,11 @@ public class UserAdminDto {
     }
 
     @Data
-    public static class GetReportedPostsForm {
-        private Long id;
-        private Long evaluateIdx;
-        private Long examIdx;
-        private String professor;
-        private String lectureName;
-        private boolean postType;
-        private LocalDateTime reportedDate;
-        private String content;
+    public static class ViewAllBannedPost {
+
+        private List<ExamPostReport> examPostReports;
+        private List<EvaluatePostReport> evaluatePostReports;
     }
+
 
 }

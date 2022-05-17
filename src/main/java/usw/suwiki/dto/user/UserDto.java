@@ -64,10 +64,14 @@ public class UserDto {
     }
 
     @Data
-    public static class UserReportForm {
+    public static class EvaluateReportForm {
         private Long evaluateIdx;
+        private String content;
+    }
+
+    @Data
+    public static class ExamReportForm {
         private Long examIdx;
-        private Boolean postType;
         private String content;
     }
 }

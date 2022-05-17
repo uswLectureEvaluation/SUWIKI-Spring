@@ -3,7 +3,8 @@ package usw.suwiki.controller.userAdmin;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.reportTarget.ReportTarget;
+import usw.suwiki.domain.reportTarget.EvaluatePostReport;
+import usw.suwiki.domain.reportTarget.ExamPostReport;
 import usw.suwiki.dto.userAdmin.UserAdminDto;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
@@ -50,9 +51,9 @@ public class UserAdminController {
     }
 
     @GetMapping("ban")
-    public List<ReportTarget> loadReportedPosts(@Valid @RequestHeader String Authorization) {
+    public UserAdminDto.ViewAllBannedPost loadReportedPosts(@Valid @RequestHeader String Authorization) {
 
-        HttpHeaders header = new HttpHeaders();
+        UserAdminDto.ViewAllBannedPost result = new UserAdminDto.ViewAllBannedPost();
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
@@ -60,6 +61,9 @@ public class UserAdminController {
         //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) throw new AccountException(ErrorType.USER_RESTRICTED);
 
-        return userAdminService.getReportedPostList();
+        result.setEvaluatePostReports(userAdminService.getReportedEvaluateList());
+        result.setExamPostReports(userAdminService.getReportedExamList());
+
+        return result;
     }
 }

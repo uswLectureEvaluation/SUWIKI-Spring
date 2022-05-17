@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.emailToken.ConfirmationToken;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
 import usw.suwiki.domain.exam.ExamPosts;
-import usw.suwiki.domain.reportTarget.ReportTarget;
+import usw.suwiki.domain.reportTarget.EvaluatePostReport;
+import usw.suwiki.domain.reportTarget.ExamPostReport;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.userIsolation.UserIsolation;
 import usw.suwiki.dto.user.UserDto;
@@ -21,7 +22,8 @@ import usw.suwiki.jwt.JwtTokenResolver;
 import usw.suwiki.jwt.JwtTokenValidator;
 import usw.suwiki.repository.evaluation.JpaEvaluatePostsRepository;
 import usw.suwiki.repository.exam.JpaExamPostsRepository;
-import usw.suwiki.repository.reportTarget.ReportTargetRepository;
+import usw.suwiki.repository.reportTarget.EvaluateReportRepository;
+import usw.suwiki.repository.reportTarget.ExamReportRepository;
 import usw.suwiki.repository.user.UserRepository;
 import usw.suwiki.repository.userIsolation.UserIsolationRepository;
 import usw.suwiki.service.blacklist.BlackListService;
@@ -57,9 +59,12 @@ public class UserService {
     //Repository
     private final UserRepository userRepository;
     private final UserIsolationRepository userIsolationRepository;
-    private final ReportTargetRepository reportTargetRepository;
+
     private final JpaEvaluatePostsRepository jpaEvaluatePostsRepository;
     private final JpaExamPostsRepository jpaExamPostsRepository;
+
+    private final EvaluateReportRepository evaluateReportRepository;
+    private final ExamReportRepository examReportRepository;
 
     //Email
     private final EmailSender emailSender;
@@ -151,7 +156,7 @@ public class UserService {
         //만료 됐으면 true, 아니면 false
         return expiredAt.isBefore(LocalDateTime.now());
     }
-    
+
     //아이디 찾기 메일 발송
     @Transactional
     public boolean findId(UserDto.FindIdForm findIdForm) {
@@ -171,7 +176,7 @@ public class UserService {
         SecureRandom sr = new SecureRandom();
         sr.setSeed(new Date().getTime());
 
-        char[] charSet = new char[] {
+        char[] charSet = new char[]{
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
                 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
@@ -356,10 +361,10 @@ public class UserService {
 
         //1년이상 접속하지 않은 유저 리스트 불러오기
         List<User> targetUser = isDormant();
-        
+
         //해당 유저들 격리테이블로 이동
         for (int i = 0; i < targetUser.toArray().length; i++) {
-                moveIsolation(targetUser.get(i));
+            moveIsolation(targetUser.get(i));
         }
     }
 
@@ -431,30 +436,37 @@ public class UserService {
 
     //신고 받은 대상 신고 테이블에 저장
     @Transactional
-    public void reportUserPost(UserDto.UserReportForm userReportForm) {
+    public void reportExamPost(UserDto.ExamReportForm userReportForm, Long reportingUserIdx) {
 
-        // 강의평가 게시물을 신고했을 때
-        if (userReportForm.getPostType()) {
-            ReportTarget target = ReportTarget.builder()
-                    .evaluateIdx(userReportForm.getEvaluateIdx())
-                    .postType(userReportForm.getPostType())
-                    .content(userReportForm.getContent())
-                    .reportedDate(LocalDateTime.now())
-                    .professor(loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getProfessor())
-                    .lectureName(loadEvaluatePostsByIndex(userReportForm.getExamIdx()).getLectureName())
-                    .build();
-            reportTargetRepository.save(target);
-        } else {
-            // 시험정보 게시물을 신고했을 때
-            ReportTarget target = ReportTarget.builder()
-                    .examIdx(userReportForm.getExamIdx())
-                    .postType(userReportForm.getPostType())
-                    .content(userReportForm.getContent())
-                    .reportedDate(LocalDateTime.now())
-                    .professor(loadExamPostsByIndex(userReportForm.getExamIdx()).getProfessor())
-                    .lectureName(loadExamPostsByIndex(userReportForm.getExamIdx()).getLectureName())
-                    .build();
-            reportTargetRepository.save(target);
-        }
+        ExamPostReport target = ExamPostReport.builder()
+                .examIdx(userReportForm.getExamIdx())
+                .content(userReportForm.getContent())
+                .reportedDate(LocalDateTime.now())
+                .professor(loadExamPostsByIndex(userReportForm.getExamIdx()).getProfessor())
+                .lectureName(loadExamPostsByIndex(userReportForm.getExamIdx()).getLectureName())
+                .reportedUserIdx(loadUserFromUserIdx(userReportForm.getExamIdx()).getId())
+
+                .reportingUserIdx(reportingUserIdx)
+                .build();
+
+        examReportRepository.save(target);
     }
+
+    @Transactional
+    public void reportEvaluatePost(UserDto.EvaluateReportForm userReportForm, Long reportingUserIdx) {
+
+        EvaluatePostReport target = EvaluatePostReport.builder()
+                .evaluateIdx(userReportForm.getEvaluateIdx())
+                .content(userReportForm.getContent())
+                .reportedDate(LocalDateTime.now())
+                .professor(loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getProfessor())
+                .lectureName(loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getLectureName())
+                .reportedUserIdx(loadUserFromUserIdx(userReportForm.getEvaluateIdx()).getId())
+                .reportingUserIdx(reportingUserIdx)
+                .build();
+
+        evaluateReportRepository.save(target);
+
+        }
 }
+

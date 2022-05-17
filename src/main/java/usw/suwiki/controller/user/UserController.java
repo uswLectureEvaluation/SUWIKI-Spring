@@ -57,7 +57,7 @@ public class UserController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
     private final RefreshTokenRepository refreshTokenRepository;
-    
+
     //게시글 관련 서비스
     private final ExamPostsService examPostsService;
     private final EvaluatePostsService evaluatePostsService;
@@ -69,7 +69,7 @@ public class UserController {
     //아이디 중복확인
     @PostMapping("check-id")
     public HashMap<String, Boolean> overlapId(@Valid @RequestBody UserDto.CheckIdForm checkId) {
-        
+
         //반환객체 생성
         HashMap<String, Boolean> overlapLoginId = new HashMap<>();
 
@@ -94,10 +94,9 @@ public class UserController {
         //이메일이 이미 존재하거나 블랙리스트 테이블에 있으면
         if (
                 userService.existEmail(checkEmailForm.getEmail()).isPresent() ||
-                userIsolationService.existEmail(checkEmailForm.getEmail()).isPresent() ||
-                userService.existBlacklistEmail(checkEmailForm.getEmail())
-            )
-        {
+                        userIsolationService.existEmail(checkEmailForm.getEmail()).isPresent() ||
+                        userService.existBlacklistEmail(checkEmailForm.getEmail())
+        ) {
             overlapEmail.put("overlap", true);
             return overlapEmail;
         }
@@ -223,7 +222,7 @@ public class UserController {
 
                 //마지막 로그인 일자 스탬프
                 userService.setLastLogin(loginForm);
-                
+
                 //회원탈퇴 요청 시각 초기화
                 userService.initQuitDateStamp(user);
                 return token;
@@ -319,7 +318,7 @@ public class UserController {
     }
 
     @GetMapping("/my-page")
-    public UserResponseDto.MyPageResponse myPage (@Valid @RequestHeader String Authorization) {
+    public UserResponseDto.MyPageResponse myPage(@Valid @RequestHeader String Authorization) {
 
         //AccessToken 만료 확인
         jwtTokenValidator.validateAccessToken(Authorization);
@@ -329,7 +328,7 @@ public class UserController {
 
         //토큰에 담김 loginId를 통해 레포지토리에 접근하여 User 불러오기
         User user = userService.loadUserFromUserIdx(userIdx);
-        
+
         //반환
         return UserResponseDto.MyPageResponse.builder()
                 .loginId(user.getLoginId())
@@ -351,7 +350,8 @@ public class UserController {
         jwtTokenValidator.validateRefreshToken(Authorization);
 
         //RefreshToken DB에 담겨있는지 확인(임의로 만든 토큰이 아닌지 확인하자.)
-        if (refreshTokenRepository.findByPayload(Authorization).isEmpty()) throw new AccountException(ErrorType.USER_RESTRICTED);
+        if (refreshTokenRepository.findByPayload(Authorization).isEmpty())
+            throw new AccountException(ErrorType.USER_RESTRICTED);
 
         //리프레시 토큰으로 유저 인덱스 뽑아오기
         Long userIdx = refreshTokenRepository.findByPayload(Authorization).get().getUser().getId();
@@ -371,7 +371,7 @@ public class UserController {
 
         //RefreshToken 재생성
         String newRefreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
-        
+
         //반환객체에 담기
         token.put("RefreshToken", newRefreshToken);
         return token;
@@ -385,12 +385,13 @@ public class UserController {
 
         //AccessToken 으로 요청 접근 권한이 있는지 확인
         if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
-        
+
         HashMap<String, Boolean> result = new HashMap<>();
 
         //아이디 비밀번호 검증 후 일치하지 않으면
         if (!userService.matchingLoginIdWithPassword(
-                userQuitForm.getLoginId(), userQuitForm.getPassword())) throw new AccountException(ErrorType.USER_NOT_EXISTS);
+                userQuitForm.getLoginId(), userQuitForm.getPassword()))
+            throw new AccountException(ErrorType.USER_NOT_EXISTS);
 
         //아이디 비밀번호 검증 후 일치하면
         //해당하는 유저 가져오기
@@ -410,19 +411,44 @@ public class UserController {
         return result;
     }
 
-    @PostMapping("/report")
-    public HashMap<String, Boolean> report(@Valid @RequestBody UserDto.UserReportForm userReportForm, @Valid @RequestHeader String Authorization) {
+    // 시험정보 신고
+    @PostMapping("/report/exam")
+    public HashMap<String, Boolean> reportExam(@Valid @RequestBody UserDto.ExamReportForm examReportForm, @Valid @RequestHeader String Authorization) {
 
         HashMap<String, Boolean> result = new HashMap<>();
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
-        
+
         //AccessToken 으로 요청 접근 권한이 있는지 확인
         if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
-        
+
+        Long reportingUser = jwtTokenResolver.getId(Authorization);
+
         //신고하기 비즈니스 로직 호출 --> 신고 테이블에 값 저장
-        userService.reportUserPost(userReportForm);
+        userService.reportExamPost(examReportForm, reportingUser);
+
+        result.put("success", true);
+
+        return result;
+    }
+
+    // 강의평가 신고
+    @PostMapping("/report/evaluate")
+    public HashMap<String, Boolean> reportEvaluate(@Valid @RequestBody UserDto.EvaluateReportForm evaluateReportForm, @Valid @RequestHeader String Authorization) {
+
+        HashMap<String, Boolean> result = new HashMap<>();
+
+        //토큰 검증
+        jwtTokenValidator.validateAccessToken(Authorization);
+
+        //AccessToken 으로 요청 접근 권한이 있는지 확인
+        if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
+
+        Long reportingUser = jwtTokenResolver.getId(Authorization);
+
+        //신고하기 비즈니스 로직 호출 --> 신고 테이블에 값 저장
+        userService.reportEvaluatePost(evaluateReportForm, reportingUser);
 
         result.put("success", true);
 
@@ -430,39 +456,47 @@ public class UserController {
     }
 
     @PostMapping("/favorite-major")
-    public ResponseEntity<String> saveFavoriteMajor(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto dto){
+    public ResponseEntity<String> saveFavoriteMajor(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto dto) {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
+            if (jwtTokenResolver.getUserIsRestricted(Authorization))
+                throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
-            favoriteMajorService.save(dto,userIdx);
+            favoriteMajorService.save(dto, userIdx);
             return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
-        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+        } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
     @DeleteMapping("/favorite-major")
-    public ResponseEntity<String> deleteFavoriteMajor(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto dto){
+    public ResponseEntity<String> deleteFavoriteMajor(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto dto) {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
+            if (jwtTokenResolver.getUserIsRestricted(Authorization))
+                throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
-            favoriteMajorService.save(dto,userIdx);
+            favoriteMajorService.save(dto, userIdx);
             return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
-        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+        } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
     @GetMapping("/favorite-major")
-    public ResponseEntity<ToJsonArray> findByLecture(@RequestHeader String Authorization){
+    public ResponseEntity<ToJsonArray> findByLecture(@RequestHeader String Authorization) {
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
+            if (jwtTokenResolver.getUserIsRestricted(Authorization))
+                throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
             List<String> list = favoriteMajorService.findMajorTypeByUser(userIdx);
             ToJsonArray data = new ToJsonArray(list);
             return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
-        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+        } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+    }
+
+    @GetMapping("suki")
+    public String thanksToSuki() {
+        return "Thank You 0xSuki! You gave to me a lot of knowledge";
     }
 }
 

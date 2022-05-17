@@ -7,17 +7,15 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.blacklistDomain.BlacklistDomain;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
 import usw.suwiki.domain.exam.ExamPosts;
-import usw.suwiki.domain.reportTarget.ReportTarget;
+import usw.suwiki.domain.reportTarget.EvaluatePostReport;
+import usw.suwiki.domain.reportTarget.ExamPostReport;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.dto.userAdmin.UserAdminDto;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 import usw.suwiki.repository.blacklist.BlacklistRepository;
-import usw.suwiki.repository.evaluation.EvaluatePostsRepository;
-import usw.suwiki.repository.exam.ExamPostsRepository;
-import usw.suwiki.repository.reportTarget.ReportTargetRepository;
-import usw.suwiki.repository.userAdmin.UserAdminEvaluateRepository;
-import usw.suwiki.repository.userAdmin.UserAdminExamRepository;
+import usw.suwiki.repository.reportTarget.EvaluateReportRepository;
+import usw.suwiki.repository.reportTarget.ExamReportRepository;
 import usw.suwiki.service.evaluation.EvaluatePostsService;
 import usw.suwiki.service.exam.ExamPostsService;
 import usw.suwiki.service.user.UserService;
@@ -42,7 +40,8 @@ public class UserAdminService {
     private final ExamPostsService examPostsService;
 
     // Admin 관련 레포지토리
-    private final ReportTargetRepository reportTargetRepository;
+    private final EvaluateReportRepository evaluateReportRepository;
+    private final ExamReportRepository examReportRepository;
 
 
     // 신고받은 유저 데이터 -> 블랙리스트 테이블로 해싱
@@ -127,9 +126,15 @@ public class UserAdminService {
         user.setBannedCount(user.getBannedCount() + 1);
     }
 
-    //신고 받은 게시물 모두 불러오기
+    //신고 받은 강의평가 모두 불러오기
     @Transactional
-    public List<ReportTarget> getReportedPostList() {
-        return reportTargetRepository.loadAllReportedPosts();
+    public List<EvaluatePostReport> getReportedEvaluateList() {
+        return evaluateReportRepository.loadAllReportedPosts();
+    } 
+    
+    //신고 받은 시험정보 모두 불러오기
+    @Transactional
+    public List<ExamPostReport> getReportedExamList() {
+        return examReportRepository.loadAllReportedPosts();
     }
 }
