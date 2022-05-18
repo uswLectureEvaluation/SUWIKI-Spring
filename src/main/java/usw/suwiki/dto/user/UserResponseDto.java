@@ -18,4 +18,5 @@ public class UserResponseDto {
         private Integer writtenExam; //유저 작성한 시험정보 갯수
         private Integer viewExam; //조회환 시험정보 갯수
     }
+
 }

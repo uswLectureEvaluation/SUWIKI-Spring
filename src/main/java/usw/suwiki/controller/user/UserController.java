@@ -500,10 +500,12 @@ public class UserController {
     @GetMapping("suki")
     public String thanksToSuki() {
 
-        return "\uD83D\uDE00 Thank You Suki! \uD83D\uDE00 You gave to me a lot of knowledge\n" +
-                "He is my Tech-Mentor\n" +
-                "If you wish to contact him\n" +
-                "https://github.com/0xsuky";
+        return "<center>\uD83D\uDE00 Thank You Suki! \uD83D\uDE00 <br><br> You gave to me a lot of knowledge <br><br>" +
+                "He is my Tech-Mentor <br><br>" +
+                "If you wanna contact him <br><br>" +
+                "<a href = https://github.com/0xsuky> " +
+                "<b>https://github.com/0xsuky<b>" +
+                "</center>";
     }
 }
 
