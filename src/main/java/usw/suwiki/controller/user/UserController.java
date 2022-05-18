@@ -499,7 +499,11 @@ public class UserController {
 
     @GetMapping("suki")
     public String thanksToSuki() {
-        return "Thank You 0xSuki! You gave to me a lot of knowledge";
+
+        return "\uD83D\uDE00 Thank You Suki! \uD83D\uDE00 You gave to me a lot of knowledge\n" +
+                "He is my Tech-Mentor\n" +
+                "If you wish to contact him\n" +
+                "https://github.com/0xsuky";
     }
 }
 
