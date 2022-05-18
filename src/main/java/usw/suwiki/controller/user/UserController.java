@@ -175,6 +175,9 @@ public class UserController {
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
 
+        //로그인 아이디 및 현재 비밀번호 검증
+        userService.correctPw(jwtTokenResolver.getLoginId(Authorization), editMyPasswordForm.getPrePassword());
+
         //토큰 검증 통과 시 반환 객체 생성
         HashMap<String, Boolean> findPwSuccess = new HashMap<>();
 

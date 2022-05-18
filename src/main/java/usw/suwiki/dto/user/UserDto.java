@@ -44,7 +44,8 @@ public class UserDto {
     @Data
     public static class EditMyPasswordForm {
         @NotEmpty
-        private String password;
+        private String prePassword;
+        private String newPassword;
     }
 
     @Data

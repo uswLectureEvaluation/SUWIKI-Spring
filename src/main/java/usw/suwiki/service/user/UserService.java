@@ -217,7 +217,7 @@ public class UserService {
         String userLoginId = jwtTokenResolver.getLoginId(AccessToken);
 
         //재설정한 비밀번호 받아서 암호화 후 저장
-        userRepository.editPassword(bCryptPasswordEncoder.encode(editMyPasswordForm.getPassword()), userLoginId);
+        userRepository.editPassword(bCryptPasswordEncoder.encode(editMyPasswordForm.getNewPassword()), userLoginId);
 
         //UpdatedAt 타임스탬프
         Optional<User> optionalUser = loadUserFromLoginId(userLoginId);
