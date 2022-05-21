@@ -49,14 +49,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
 
-    //Another Service
+    // Another Service
     private final BlackListService blackListService;
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
     private final ViewExamService viewExamService;
 
 
-    //Repository
+    // Repository
     private final UserRepository userRepository;
     private final UserIsolationRepository userIsolationRepository;
 
@@ -66,7 +66,7 @@ public class UserService {
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;
 
-    //Email
+    // Email
     private final EmailSender emailSender;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
@@ -75,14 +75,14 @@ public class UserService {
     private final BuildFindPasswordFormService BuildFindPasswordFormService;
     private final BuildSoonDormantTargetFormService buildSoonDormantTargetFormService;
 
-    //JWT
+    // JWT
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
 
-    //아이디 중복 확인
-    //존재하면 Optional 반환, 아니면 null
+    // 아이디 중복 확인
+    // 존재하면 Optional 반환, 아니면 null
     @Transactional
     public Optional<User> existId(String loginId) {
         return userRepository.findByLoginId(loginId);
@@ -423,7 +423,7 @@ public class UserService {
         }
     }
 
-    // 강의평가 인덱스로 강
+    // 강의평가 인덱스로 강의평가 객체 불러오기
     @Transactional
     public EvaluatePosts loadEvaluatePostsByIndex(Long EvaluatePostsIdx) {
         return jpaEvaluatePostsRepository.findById(EvaluatePostsIdx);
@@ -438,14 +438,15 @@ public class UserService {
     @Transactional
     public void reportExamPost(UserDto.ExamReportForm userReportForm, Long reportingUserIdx) {
 
+        Long reportTargetUser = loadExamPostsByIndex(userReportForm.getExamIdx()).getUser().getId();
+
         ExamPostReport target = ExamPostReport.builder()
                 .examIdx(userReportForm.getExamIdx())
                 .content(userReportForm.getContent())
                 .reportedDate(LocalDateTime.now())
                 .professor(loadExamPostsByIndex(userReportForm.getExamIdx()).getProfessor())
                 .lectureName(loadExamPostsByIndex(userReportForm.getExamIdx()).getLectureName())
-                .reportedUserIdx(loadUserFromUserIdx(userReportForm.getExamIdx()).getId())
-
+                .reportedUserIdx((reportTargetUser))
                 .reportingUserIdx(reportingUserIdx)
                 .build();
 
@@ -455,18 +456,19 @@ public class UserService {
     @Transactional
     public void reportEvaluatePost(UserDto.EvaluateReportForm userReportForm, Long reportingUserIdx) {
 
+        Long reportTargetUser = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getUser().getId();
+
         EvaluatePostReport target = EvaluatePostReport.builder()
                 .evaluateIdx(userReportForm.getEvaluateIdx())
                 .content(userReportForm.getContent())
                 .reportedDate(LocalDateTime.now())
                 .professor(loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getProfessor())
                 .lectureName(loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getLectureName())
-                .reportedUserIdx(loadUserFromUserIdx(userReportForm.getEvaluateIdx()).getId())
+                .reportedUserIdx(reportTargetUser)
                 .reportingUserIdx(reportingUserIdx)
                 .build();
 
         evaluateReportRepository.save(target);
 
-        }
+    }
 }
-
