@@ -24,6 +24,14 @@ public class JsonToLectureDto {
         this.professor = professor;
     }
 
+    public void setMajorType(String majorType) {
+        this.majorType = majorType;
+    }
+
+    public void setLectureName(String lectureName) {
+        this.lectureName = lectureName;
+    }
+
     @Builder
     public JsonToLectureDto(String selectedSemester, String placeSchedule, String professor, String lectureType, String lectureCode,
                             String lectureName, String evaluateType, String diclNo, String majorType, double point,

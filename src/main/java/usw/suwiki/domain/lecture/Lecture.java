@@ -59,6 +59,7 @@ public class Lecture extends BaseTimeEntity {
         this.semesterList = semester;
     }
 
+
     @Builder
     public Lecture(String semesterList, String placeSchedule, String professor, String lectureType, String lectureCode,
                    String lectureName, String evaluateType, String diclNo, String majorType, double point, String capprType, int grade) {

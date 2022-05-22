@@ -14,6 +14,8 @@ import javax.transaction.Transactional;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Locale;
 
 @RequiredArgsConstructor
 @Transactional
@@ -24,7 +26,7 @@ public class JsonToDataTable {
 
     public void toEntity() throws IOException, ParseException, InterruptedException {
 
-        Reader reader = new FileReader("/E:/Priority/Project/SUWIKI-REMASTER/src/main/resources/USW_2022_1 thirteen.json");
+        Reader reader = new FileReader("/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2021_2 thirteen.json");
 
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(reader);
@@ -50,8 +52,25 @@ public class JsonToDataTable {
                         .lectureName(String.valueOf(jsonObject.get("subjtNm")))
                         .build();
 
+                //professor 없으면 "-" 로 채움 (null 값 들어가지 않게)
                 if(dto.getProfessor().isEmpty()){
                     dto.setProfessor("-");
+                }
+
+                //혼합수업, 비대면수업, 대면수업 제외
+                if (dto.getLectureName().contains("(대면수업)")){
+                    dto.setLectureName(dto.getLectureName().replace("(대면수업)",""));
+                }else if(dto.getLectureName().contains("(비대면수업)")){
+                    dto.setLectureName(dto.getLectureName().replace("(비대면수업)",""));
+                }else if(dto.getLectureName().contains("(혼합수업)")){
+                    dto.setLectureName(dto.getLectureName().replace("(혼합수업)",""));
+                }
+
+                //"·" to replace "-"
+                if(dto.getMajorType().contains("·")){
+                    String majorType = dto.getMajorType();
+                    majorType = majorType.replace("·", "-");
+                    dto.setMajorType(majorType);
                 }
 
                 Lecture lecture = lectureRepository.verifyJsonLecture(dto.getLectureName(), dto.getProfessor(),dto.getMajorType());
@@ -68,6 +87,7 @@ public class JsonToDataTable {
                     Lecture savedLecture = Lecture.builder().build();
                     savedLecture.toEntity(dto);
                     Thread.sleep(1);
+                    System.out.println(dto.getLectureName());
                     lectureRepository.save(savedLecture);
                 }
             }
