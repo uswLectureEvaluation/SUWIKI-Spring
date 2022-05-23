@@ -11,20 +11,22 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class UserAdminDto {
+
     @Data
-    public static class BannedTargetForm {
+    public static class EvaluatePostBanForm {
         private Long evaluateIdx; //강의평가 인덱스
+        private Long bannedTime; //정지 기간
+    }
+
+    @Data
+    public static class ExamPostBanForm {
         private Long examIdx; //시험 인덱스
-        private Boolean postType; //게시글 타입
         private Long bannedTime; //정지 기간
     }
 
     @Data
     public static class ViewAllBannedPost {
-
         private List<ExamPostReport> examPostReports;
         private List<EvaluatePostReport> evaluatePostReports;
     }
-
-
 }

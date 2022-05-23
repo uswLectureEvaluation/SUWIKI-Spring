@@ -76,59 +76,54 @@ public class UserAdminService {
 
     }
 
-    //신고받은 게시글 삭제 해주기
+    //신고받은 강의평가 게시글 삭제 해주기
     @Transactional
-    public Long banishPost(UserAdminDto.BannedTargetForm bannedTargetForm) {
-        // 포스트 타입이 true == 강의평가
-        // 포스트 타입이 false == 시험정보
+    public Long banishEvaluatePost(UserAdminDto.EvaluatePostBanForm evaluatePostBanForm) {
 
-        //강의평가에 대한 게시글 삭제
-        if (bannedTargetForm.getPostType()) {
+        // 추방할 게시글 불러오기
+        EvaluatePosts targetedEvaluatePost = userService.loadEvaluatePostsByIndex(evaluatePostBanForm.getEvaluateIdx());
 
-            // 추방할 게시글 불러오기
-            EvaluatePosts targetedEvaluatePost = userService.loadEvaluatePostsByIndex(bannedTargetForm.getEvaluateIdx());
+        // 게시글 인덱스 불러오기
+        Long targetedEvaluatePostIdx = targetedEvaluatePost.getId();
 
-            // 게시글 인덱스 불러오기
-            Long targetedEvaluatePostIdx = targetedEvaluatePost.getId();
+        // 게시글 인덱스로 신고 테이블에서 지우기(벤 하면 신고 테이블에서도 지워줘야함)
+        evaluateReportRepository.deleteById(targetedEvaluatePostIdx);
 
-            // 게시글 인덱스로 신고 테이블에서 지우기(벤 하면 신고 테이블에서도 지워줘야함)
-            evaluateReportRepository.deleteById(targetedEvaluatePostIdx);
+        // 강의평가를 작성한 작성자 인덱스 불러오기
+        Long targetedUserIdx = targetedEvaluatePost.getUser().getId();
 
-            // 강의평가를 작성한 작성자 인덱스 불러오기
-            Long targetedUserIdx = targetedEvaluatePost.getUser().getId();
+        // 강의 평가 삭제(작성한 게시글 갯수 감소, 포인트 감소 까지 반영)
+        evaluatePostsService.deleteById(targetedEvaluatePost.getId(), targetedUserIdx);
 
-            // 강의 평가 삭제(작성한 게시글 갯수 감소, 포인트 감소 까지 반영)
-            evaluatePostsService.deleteById(targetedEvaluatePost.getId(), targetedUserIdx);
+        // 밴 횟수 증가
+        increaseBannedTime(targetedUserIdx);
 
-            // 밴 횟수 증가
-            increaseBannedTime(targetedUserIdx);
+        return targetedUserIdx;
+    }
 
-            return targetedUserIdx;
-        }
+    //신고받은 시험정보 게시글 삭제 해주기
+    @Transactional
+    public Long banishExamPost(UserAdminDto.ExamPostBanForm examPostBanForm) {
 
-        //시험정보에 대한 게시글 삭제
-        else {
+        // 추방할 게시글 불러오기
+        ExamPosts targetedExamPost = userService.loadExamPostsByIndex(examPostBanForm.getExamIdx());
 
-            // 추방할 게시글 불러오기
-            ExamPosts targetedExamPost = userService.loadExamPostsByIndex(bannedTargetForm.getExamIdx());
+        // 게시글 인덱스 불러오기
+        Long targetedExamPostId = targetedExamPost.getId();
 
-            // 게시글 인덱스 불러오기
-            Long targetedExamPostId = targetedExamPost.getId();
+        // 게시글 인덱스로 신고 테이블에서 지우기(벤 하면 신고 테이블에서도 지워줘야함)
+        examReportRepository.deleteById(targetedExamPostId);
 
-            // 게시글 인덱스로 신고 테이블에서 지우기(벤 하면 신고 테이블에서도 지워줘야함)
-            examReportRepository.deleteById(targetedExamPostId);
+        // 시험정보를 작성한 작성자 인덱스 불러오기
+        Long targetedUserIdx = targetedExamPost.getUser().getId();
 
-            // 시험정보를 작성한 작성자 인덱스 불러오기
-            Long targetedUserIdx = targetedExamPost.getUser().getId();
+        // 시험 정보 삭제(작성한 게시글 갯수 감소, 포인트 감소 까지 반영)
+        examPostsService.deleteById(targetedExamPost.getId(), targetedUserIdx);
 
-            // 시험 정보 삭제(작성한 게시글 갯수 감소, 포인트 감소 까지 반영)
-            examPostsService.deleteById(targetedExamPost.getId(), targetedUserIdx);
+        // 밴 횟수 증가
+        increaseBannedTime(targetedUserIdx);
 
-            // 밴 횟수 증가
-            increaseBannedTime(targetedUserIdx);
-
-            return targetedUserIdx;
-        }
+        return targetedUserIdx;
     }
 
     // 밴 처리 후 밴 횟수 +1, 작성한 강의평가 -1
