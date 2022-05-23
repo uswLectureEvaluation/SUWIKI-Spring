@@ -176,17 +176,36 @@ public class UserService {
         SecureRandom sr = new SecureRandom();
         sr.setSeed(new Date().getTime());
 
-        char[] charSet = new char[]{
+        char[] charAllSet = new char[]{
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
                 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
                 '!', '@', '#', '$', '%', '^'};
 
+        char[] charNumberSet = new char[]{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
+        char[] charSpecialSet = new char[]{ '!', '@', '#', '$', '%', '^' };
+
         int idx = 0;
-        int len = charSet.length;
-        for (int i = 0; i < 8; i++) {
-            idx = sr.nextInt(len);
-            sb.append(charSet[idx]);
+        int allLen = charAllSet.length;
+        int numberLen = charNumberSet.length;
+        int specialLen = charSpecialSet.length;
+
+        // 숫자 최소 1개를 포함하기 위한 반복문
+        for (int i = 0; i < 1; i++) {
+            idx = sr.nextInt(numberLen);
+            sb.append(charNumberSet[idx]);
+        }
+
+        // 특수문자 최소 1개를 포함하기 위한 반복문
+        for (int i = 0; i < 1; i++) {
+            idx = sr.nextInt(specialLen);
+            sb.append(charSpecialSet[idx]);
+        }
+
+        for (int i = 0; i < 6; i++) {
+            idx = sr.nextInt(allLen);
+            sb.append(charAllSet[idx]);
         }
         return sb.toString();
     }

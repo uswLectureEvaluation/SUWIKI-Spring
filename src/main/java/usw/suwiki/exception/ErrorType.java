@@ -60,8 +60,6 @@ public enum ErrorType {
     // METHOD
     METHOD_NOT_ALLOWED("METHOD001", "Exception Message", HttpStatus.METHOD_NOT_ALLOWED); // 405
 
-
-
     private final String code;
     private final String message;
     private final HttpStatus status;
