@@ -36,6 +36,7 @@ import usw.suwiki.service.userIsolation.UserIsolationService;
 import usw.suwiki.service.viewExam.ViewExamService;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -231,19 +232,50 @@ public class UserController {
                 return token;
             }
 
-            //첫 로그인이 아닌 대상자(이미 DB에 토큰이 있음)
-            //리프레시 토큰 갱신
-            String refreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
+            //첫 로그인이 아닌 대상자(이미 DB에 토큰이 있지만 남은 기간이 1주일 이상인 경우 -> 토큰 갱신 X)
+            if (refreshTokenRepository.findByUserId(user.getId()).isPresent()) {
 
-            //리프래시 토큰 반환객체에 담기
-            token.put("RefreshToken", refreshToken);
+                // DB에 존재하는 리프레시 토큰 꺼내 담기
+                String refreshToken = refreshTokenRepository.findByUserId(user.getId()).get().getPayload();
 
-            //마지막 로그인 일자 스탬프
-            userService.setLastLogin(loginForm);
+                // RefreshToken 유효기간 검증
+                jwtTokenValidator.validateRefreshToken(refreshToken);
 
-            //회원탈퇴 요청 시각 초기화
-            userService.initQuitDateStamp(user);
-            return token;
+                // RefreshToken DB에 담겨있는지 확인(임의로 만든 토큰이 아닌지 확인하자.)
+                if (refreshTokenRepository.findByPayload(refreshToken).isEmpty())
+                    throw new AccountException(ErrorType.USER_RESTRICTED);
+
+                // 리프레시 토큰 갱신이 필요하면 (1주일 이하로 남았을 때)
+                if (jwtTokenValidator.isNeedToUpdateRefreshToken(refreshToken)) {
+
+                    // 리프레시 토큰 갱신
+                    jwtTokenProvider.updateRefreshToken(user.getId());
+                    
+                    // 반환 객체에 담기
+                    token.put("RefreshToken", refreshToken);
+
+                    // 마지막 로그인 일자 스탬프
+                    userService.setLastLogin(loginForm);
+
+                    // 회원탈퇴 요청 시각 초기화
+                    userService.initQuitDateStamp(user);
+
+                    return token;
+                }
+                
+                // 리프레시 토큰 갱신 필요 없으면
+
+                // 리프래시 토큰 반환객체에 담기
+                token.put("RefreshToken", refreshToken);
+
+                // 마지막 로그인 일자 스탬프
+                userService.setLastLogin(loginForm);
+
+                // 회원탈퇴 요청 시각 초기화
+                userService.initQuitDateStamp(user);
+
+                return token;
+            }
         }
 
         //격리 테이블에 있으며 이메일 인증을 했으면 (대상 = 휴면계정, 회원탈퇴 요청 계정)
@@ -369,7 +401,7 @@ public class UserController {
             token.put("RefreshToken", Authorization);
         }
 
-        //리프레시 토큰이 갱신 필요하면
+        //리프레시 토큰이 갱신 필요하면 갱신
         jwtTokenProvider.updateRefreshToken(userIdx);
 
         //RefreshToken 재생성
@@ -381,7 +413,8 @@ public class UserController {
     }
 
     @PostMapping("quit")
-    public HashMap<String, Boolean> userQuit(@Valid @RequestBody UserDto.UserQuitForm userQuitForm, @Valid @RequestHeader String Authorization) {
+    public HashMap<String, Boolean> userQuit(@Valid @RequestBody UserDto.UserQuitForm userQuitForm,
+                                             @Valid @RequestHeader String Authorization) {
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
@@ -416,7 +449,8 @@ public class UserController {
 
     // 시험정보 신고
     @PostMapping("/report/exam")
-    public HashMap<String, Boolean> reportExam(@Valid @RequestBody UserDto.ExamReportForm examReportForm, @Valid @RequestHeader String Authorization) {
+    public HashMap<String, Boolean> reportExam(@Valid @RequestBody UserDto.ExamReportForm examReportForm,
+                                               @Valid @RequestHeader String Authorization) {
 
         HashMap<String, Boolean> result = new HashMap<>();
 
@@ -438,7 +472,8 @@ public class UserController {
 
     // 강의평가 신고
     @PostMapping("/report/evaluate")
-    public HashMap<String, Boolean> reportEvaluate(@Valid @RequestBody UserDto.EvaluateReportForm evaluateReportForm, @Valid @RequestHeader String Authorization) {
+    public HashMap<String, Boolean> reportEvaluate(@Valid @RequestBody UserDto.EvaluateReportForm evaluateReportForm,
+                                                   @Valid @RequestHeader String Authorization) {
 
         HashMap<String, Boolean> result = new HashMap<>();
 

@@ -9,6 +9,8 @@ import usw.suwiki.repository.user.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.time.LocalDateTime;
+
 import static io.jsonwebtoken.Jwts.parser;
 
 @Component
@@ -45,9 +47,4 @@ public class JwtTokenResolver {
     public boolean getUserIsRestricted(String token) {
         return (boolean) parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody().get("restricted");
     }
-
-//    public Long getUserIdx(String token) {
-//
-//        return userRepository.findById(userIdx);
-//    }
 }
