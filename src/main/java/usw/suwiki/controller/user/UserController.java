@@ -195,7 +195,7 @@ public class UserController {
 
         HashMap<String, String> token = new HashMap<>();
 
-        //유저 본 테이블에 존재하고, 제한된 유저가 아니라면 (isRestricted 는 유저 테이블에 Restricted 컬럼을 그대로 가져옴)
+        //유저 테이블에 존재하고, 제한된 유저가 아니라면 (isRestricted 는 유저 테이블에 Restricted 컬럼을 그대로 가져옴)
         if (userService.existId(loginForm.getLoginId()).isPresent() && !userService.isRestricted(loginForm.getLoginId())) {
 
             //아이디 비밀번호 검증
@@ -209,73 +209,71 @@ public class UserController {
             String accessToken = jwtTokenProvider.createAccessToken(user);
             token.put("AccessToken", accessToken);
 
-            //첫 로그인 대상자(리프레시 토큰이 DB에 없음)
-            if (refreshTokenRepository.findByUserId(user.getId()).isEmpty()) {
-                //리프레시 토큰 신규 생성
-                String refreshToken = jwtTokenProvider.createRefreshToken();
 
-                //리프레시토큰 저장
-                refreshTokenRepository.save(
-                        RefreshToken.builder()
-                                .user(user)
-                                .payload(refreshToken)
-                                .build());
-
-                //리프래시 토큰 반환객체에 담기
-                token.put("RefreshToken", refreshToken);
-
-                //마지막 로그인 일자 스탬프
-                userService.setLastLogin(loginForm);
-
-                //회원탈퇴 요청 시각 초기화
-                userService.initQuitDateStamp(user);
-                return token;
-            }
-
-            //첫 로그인이 아닌 대상자(이미 DB에 토큰이 있지만 남은 기간이 1주일 이상인 경우 -> 토큰 갱신 X)
+            // 리프레시 토큰이 DB에 있을 때
             if (refreshTokenRepository.findByUserId(user.getId()).isPresent()) {
 
                 // DB에 존재하는 리프레시 토큰 꺼내 담기
                 String refreshToken = refreshTokenRepository.findByUserId(user.getId()).get().getPayload();
 
-                // RefreshToken 유효기간 검증
-                jwtTokenValidator.validateRefreshToken(refreshToken);
-
-                // RefreshToken DB에 담겨있는지 확인(임의로 만든 토큰이 아닌지 확인하자.)
-                if (refreshTokenRepository.findByPayload(refreshToken).isEmpty())
-                    throw new AccountException(ErrorType.USER_RESTRICTED);
-
-                // 리프레시 토큰 갱신이 필요하면 (1주일 이하로 남았을 때)
+                // 리프레시 토큰이 DB에 있지만, 갱신은 필요로 할 때
                 if (jwtTokenValidator.isNeedToUpdateRefreshToken(refreshToken)) {
 
                     // 리프레시 토큰 갱신
-                    jwtTokenProvider.updateRefreshToken(user.getId());
-                    
+                    String newRefreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
+
                     // 반환 객체에 담기
-                    token.put("RefreshToken", refreshToken);
-
-                    // 마지막 로그인 일자 스탬프
-                    userService.setLastLogin(loginForm);
-
-                    // 회원탈퇴 요청 시각 초기화
-                    userService.initQuitDateStamp(user);
-
-                    return token;
+                    token.put("RefreshToken", newRefreshToken);
                 }
-                
-                // 리프레시 토큰 갱신 필요 없으면
 
-                // 리프래시 토큰 반환객체에 담기
-                token.put("RefreshToken", refreshToken);
+                // 리프레시 토큰이 DB에 있고, 갱신을 필요로 하지 않을 때
+                else {
+                    token.put("RefreshToken", refreshToken);
+                }
 
                 // 마지막 로그인 일자 스탬프
-                userService.setLastLogin(loginForm);
-
                 // 회원탈퇴 요청 시각 초기화
+                userService.setLastLogin(loginForm);
                 userService.initQuitDateStamp(user);
-
                 return token;
             }
+        }
+
+        // 리프레시 토큰이 DB에 없을 때
+        else {
+
+            System.out.println("리프레시 토큰이 DB에 없을때");
+
+            //아이디 비밀번호 검증
+            userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
+
+            //유저 객체 생성
+            Optional<User> optionalUser = userService.loadUserFromLoginId(loginForm.getLoginId());
+            User user = userService.convertOptionalUserToDomainUser(optionalUser);
+
+            //액세스 토큰 생성
+            String accessToken = jwtTokenProvider.createAccessToken(user);
+            token.put("AccessToken", accessToken);
+
+            //리프레시 토큰 신규 생성
+            String refreshToken = jwtTokenProvider.createRefreshToken();
+
+            //리프레시토큰 저장
+            refreshTokenRepository.save(
+                    RefreshToken.builder()
+                            .user(user)
+                            .payload(refreshToken)
+                            .build());
+
+            //리프래시 토큰 반환객체에 담기
+            token.put("RefreshToken", refreshToken);
+
+            //마지막 로그인 일자 스탬프
+            userService.setLastLogin(loginForm);
+
+            //회원탈퇴 요청 시각 초기화
+            userService.initQuitDateStamp(user);
+            return token;
         }
 
         //격리 테이블에 있으며 이메일 인증을 했으면 (대상 = 휴면계정, 회원탈퇴 요청 계정)
@@ -304,51 +302,8 @@ public class UserController {
 
             //토큰 반환
             token.put("AccessToken", accessToken);
-
-            //첫 로그인 대상자(리프레시 토큰이 DB에 없음)
-            if (refreshTokenRepository.findByUserId(user.getId()).isEmpty()) {
-                //리프레시 토큰 신규 생성
-                String refreshToken = jwtTokenProvider.createRefreshToken();
-
-                //리프레시토큰 저장
-                refreshTokenRepository.save(
-                        RefreshToken.builder()
-                                .user(user)
-                                .payload(refreshToken)
-                                .build());
-
-                //리프래시 토큰 반환객체에 담기
-                token.put("RefreshToken", refreshToken);
-
-                //마지막 로그인 일자 스탬프
-                userService.setLastLogin(loginForm);
-
-                //회원탈퇴 요청 시각 초기화
-                userService.initQuitDateStamp(user);
-                return token;
-            }
-
-            //첫 로그인이 아닌 대상자(이미 DB에 토큰이 있음)
-            //리프레시 토큰 갱신
-            String refreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
-
-            //리프레시토큰 반환 객체에 담기
-            token.put("RefreshToken", refreshToken);
-
-            //리프레시토큰 저장
-            refreshTokenRepository.save(
-                    RefreshToken.builder()
-                            .user(user)
-                            .payload(refreshToken)
-                            .build());
-
-            //마지막 로그인 일자 스탬프
-            userService.setLastLogin(loginForm);
-
-            //회원탈퇴 요청 시각 초기화
-            userService.initQuitDateStamp(user);
-            return token;
         }
+
         throw new AccountException(ErrorType.USER_AND_EMAIL_NOT_EXISTS_AND_AUTH);
     }
 
@@ -394,21 +349,23 @@ public class UserController {
         //해당 RefreshToken 으로 UserIndex 를 추출하여 객체 반환
         User user = userService.loadUserFromUserIdx(userIdx);
 
-        //리프레시 토큰 갱신이 필요없으면
-        if (!jwtTokenValidator.isNeedToUpdateRefreshToken(Authorization)) {
+        //리프레시 토큰 갱신이 필요하면
+        if (jwtTokenValidator.isNeedToUpdateRefreshToken(Authorization)) {
+
+            //RefreshToken 재생성
+            String newRefreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
+
             //반환 객체에 담기
             token.put("AccessToken", jwtTokenProvider.createAccessToken(user));
-            token.put("RefreshToken", Authorization);
+            token.put("RefreshToken", newRefreshToken);
+
+            return token;
         }
 
-        //리프레시 토큰이 갱신 필요하면 갱신
-        jwtTokenProvider.updateRefreshToken(userIdx);
+        // 리프레시 토큰 갱신 필요없으면 액세스 토큰만 재생성
+        token.put("AccessToken", jwtTokenProvider.createAccessToken(user));
+        token.put("RefreshToken", Authorization);
 
-        //RefreshToken 재생성
-        String newRefreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
-
-        //반환객체에 담기
-        token.put("RefreshToken", newRefreshToken);
         return token;
     }
 
