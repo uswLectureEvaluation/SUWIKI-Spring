@@ -425,9 +425,9 @@ public class UserService {
     @Transactional
     public List<User> isTargetedQuit() {
         //회원탈퇴 신청 후 30일이 지났는지 확인
-//        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
+        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
 
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(1);
+//        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(1);
         return userRepository.findByRequestedQuitDate(targetTime);
     }
 
