@@ -89,7 +89,6 @@ public class JsonToDataTable {
                     Lecture savedLecture = Lecture.builder().build();
                     savedLecture.toEntity(dto);
                     Thread.sleep(1);
-                    System.out.println(dto.getLectureName());
                     lectureRepository.save(savedLecture);
                 }
             }

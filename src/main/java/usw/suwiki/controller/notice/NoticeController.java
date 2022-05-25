@@ -49,12 +49,12 @@ public class NoticeController {
     public ResponseEntity<String> saveNotice(@RequestBody NoticeSaveOrUpdateDto dto, @RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
             if(jwtTokenValidator.validateAccessToken(Authorization)) {
-//                if (jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) {
+                if (jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) {
                     noticeService.save(dto);
                     return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
-//                } else {
-//                    throw new AccountException(ErrorType.USER_RESTRICTED);
-//                }
+                } else {
+                    throw new AccountException(ErrorType.USER_RESTRICTED);
+                }
             } else {
                 throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
             }
@@ -64,12 +64,12 @@ public class NoticeController {
     public ResponseEntity<String> updateNotice(@RequestParam Long noticeId , @RequestBody NoticeSaveOrUpdateDto dto, @RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
-//            if (jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) {
+            if (jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) {
                 noticeService.update(dto, noticeId);
                 return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
-//            } else {
-//                throw new AccountException(ErrorType.USER_RESTRICTED);
-//            }
+            } else {
+                throw new AccountException(ErrorType.USER_RESTRICTED);
+            }
         } else {
             throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
         }
