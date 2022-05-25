@@ -1,5 +1,6 @@
 package usw.suwiki.controller.notice;
 
+import usw.suwiki.dto.PageOption;
 import usw.suwiki.dto.ToJsonArray;
 import usw.suwiki.dto.notice.NoticeDetailResponseDto;
 import usw.suwiki.dto.notice.NoticeResponseDto;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,9 +30,9 @@ public class NoticeController {
     private final JwtTokenResolver jwtTokenResolver;
 
     @GetMapping("/findAllList")
-    public ResponseEntity<ToJsonArray> findNoticeList(){
+    public ResponseEntity<ToJsonArray> findNoticeList(@RequestParam(required = false) Optional<Integer> page){
         HttpHeaders header = new HttpHeaders();
-        List<NoticeResponseDto> list = noticeService.findNoticeList();
+        List<NoticeResponseDto> list = noticeService.findNoticeList(new PageOption(page));
         ToJsonArray data = new ToJsonArray(list);
         return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
     }

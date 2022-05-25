@@ -11,7 +11,7 @@ public interface NoticeRepository {
 
     Notice findById(Long id);
 
-    List<Notice> findByNoticeList();
+    List<Notice> findByNoticeList(PageOption page);
 
     void delete(Notice notice);
 }
