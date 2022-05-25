@@ -1,5 +1,6 @@
 package usw.suwiki.service.notice;
 
+import usw.suwiki.dto.PageOption;
 import usw.suwiki.dto.notice.NoticeDetailResponseDto;
 import usw.suwiki.dto.notice.NoticeResponseDto;
 import usw.suwiki.dto.notice.NoticeSaveOrUpdateDto;
@@ -23,9 +24,9 @@ public class NoticeService {
         jpaNoticeRepository.save(notice);
     }
 
-    public List<NoticeResponseDto> findNoticeList(){
+    public List<NoticeResponseDto> findNoticeList(PageOption page){
         List<NoticeResponseDto> dtoList = new ArrayList<>();
-        List<Notice> list = jpaNoticeRepository.findByNoticeList();
+        List<Notice> list = jpaNoticeRepository.findByNoticeList(page);
         for (Notice notice : list) {
             dtoList.add(new NoticeResponseDto(notice));
         }
@@ -35,7 +36,6 @@ public class NoticeService {
     public NoticeDetailResponseDto findNoticeDetail(Long noticeId){
         Notice notice = jpaNoticeRepository.findById(noticeId);
         NoticeDetailResponseDto dto = new NoticeDetailResponseDto(notice);
-
         return dto;
     }
 

@@ -444,42 +444,39 @@ public class UserController {
     }
 
     @PostMapping("/favorite-major")
-    public ResponseEntity<String> saveFavoriteMajor(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto dto) {
+    public ResponseEntity<String> saveFavoriteMajor(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto dto){
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserIsRestricted(Authorization))
-                throw new AccountException(ErrorType.USER_RESTRICTED);
+            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
-            favoriteMajorService.save(dto, userIdx);
+            favoriteMajorService.save(dto,userIdx);
             return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
-        } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
     @DeleteMapping("/favorite-major")
-    public ResponseEntity<String> deleteFavoriteMajor(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto dto) {
+    public ResponseEntity<String> deleteFavoriteMajor(@RequestHeader String Authorization, @RequestParam String majorType){
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserIsRestricted(Authorization))
-                throw new AccountException(ErrorType.USER_RESTRICTED);
+            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
-            favoriteMajorService.save(dto, userIdx);
+            favoriteMajorService.delete(userIdx,majorType);
             return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
-        } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
     @GetMapping("/favorite-major")
-    public ResponseEntity<ToJsonArray> findByLecture(@RequestHeader String Authorization) {
+    public ResponseEntity<ToJsonArray> findByLecture(@RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserIsRestricted(Authorization))
-                throw new AccountException(ErrorType.USER_RESTRICTED);
+            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
             List<String> list = favoriteMajorService.findMajorTypeByUser(userIdx);
             ToJsonArray data = new ToJsonArray(list);
             return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
-        } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
     @GetMapping("suki")

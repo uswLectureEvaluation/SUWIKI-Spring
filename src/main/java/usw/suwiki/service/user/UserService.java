@@ -140,7 +140,7 @@ public class UserService {
         //이메일 토큰 저장
         confirmationTokenService.saveConfirmationToken(confirmationToken);
 
-        //이메일 토큰에 대한 링크 생성
+//        이메일 토큰에 대한 링크 생성
         String link = "https://api.suwiki.kr/user/verify-email/?token=" + token;
 //        String link = "http://localhost:8080/user/verify-email/?token=" + token;
 

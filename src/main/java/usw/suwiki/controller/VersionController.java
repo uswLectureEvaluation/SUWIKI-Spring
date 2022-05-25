@@ -5,6 +5,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.SuwikiVersion;
 import usw.suwiki.dto.ToJsonArray;
@@ -14,12 +16,13 @@ import usw.suwiki.service.lecture.LectureService;
 import java.util.List;
 
 @RequiredArgsConstructor
+@RequestMapping("/suwiki")
 @RestController
 public class VersionController {
 
     private final LectureService lectureService;
 
-    @GetMapping("/suwiki-version")
+    @GetMapping("/version")
     public ResponseEntity<VersionResponseDto> findVersionSuwiki(){
         HttpHeaders header = new HttpHeaders();
         float version = SuwikiVersion.version;
@@ -27,7 +30,7 @@ public class VersionController {
         return new ResponseEntity<VersionResponseDto>(dto, header, HttpStatus.valueOf(200));
     }
 
-    @GetMapping("/version-update")
+    @GetMapping ("/majorType")
     public ResponseEntity<ToJsonArray> findAllMajorType(){
         HttpHeaders header = new HttpHeaders();
         List<String> list = lectureService.findAllMajorType();

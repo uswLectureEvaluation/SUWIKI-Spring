@@ -28,7 +28,7 @@ public class EvaluateController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
-    @GetMapping("/findByLectureId")
+    @GetMapping("/")
     public ResponseEntity<FindByLectureToJson> findByLecture(@RequestHeader String Authorization, @RequestParam Long lectureId,
                                                              @RequestParam(required = false) Optional<Integer> page){
         HttpHeaders header = new HttpHeaders();
@@ -43,7 +43,7 @@ public class EvaluateController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @PostMapping("/update")
+    @PutMapping("/")
     public ResponseEntity<String> updateEvaluatePosts(@RequestParam Long evaluateIdx, @RequestHeader String Authorization, @RequestBody EvaluatePostsUpdateDto dto){
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
@@ -54,7 +54,7 @@ public class EvaluateController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @PostMapping("/write")
+    @PostMapping("/")
     public ResponseEntity<String> saveEvaluatePosts(@RequestParam Long lectureId,@RequestHeader String Authorization,@RequestBody EvaluatePostsSaveDto dto){
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
@@ -70,7 +70,7 @@ public class EvaluateController {
         } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @GetMapping("/findByUserIdx") // 이름 수정 , 널값 처리 프론트
+    @GetMapping("/written") // 이름 수정 , 널값 처리 프론트
     public ResponseEntity<ToJsonArray> findByUser(@RequestHeader String Authorization,
                                                   @RequestParam(required = false) Optional<Integer> page){
         HttpHeaders header = new HttpHeaders();
@@ -85,7 +85,7 @@ public class EvaluateController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/")
     public ResponseEntity<String> deleteEvaluatePosts(@RequestParam Long evaluateIdx,@RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);

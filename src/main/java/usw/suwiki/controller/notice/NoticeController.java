@@ -1,5 +1,6 @@
 package usw.suwiki.controller.notice;
 
+import usw.suwiki.dto.PageOption;
 import usw.suwiki.dto.ToJsonArray;
 import usw.suwiki.dto.notice.NoticeDetailResponseDto;
 import usw.suwiki.dto.notice.NoticeResponseDto;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -27,15 +29,15 @@ public class NoticeController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
-    @GetMapping("/findAllList")
-    public ResponseEntity<ToJsonArray> findNoticeList(){
+    @GetMapping("/all")
+    public ResponseEntity<ToJsonArray> findNoticeList(@RequestParam(required = false) Optional<Integer> page){
         HttpHeaders header = new HttpHeaders();
-        List<NoticeResponseDto> list = noticeService.findNoticeList();
+        List<NoticeResponseDto> list = noticeService.findNoticeList(new PageOption(page));
         ToJsonArray data = new ToJsonArray(list);
         return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<ToJsonArray> findNoticeByNoticeId(@RequestParam Long noticeId) {
         HttpHeaders header = new HttpHeaders();
         NoticeDetailResponseDto dto = noticeService.findNoticeDetail(noticeId);
@@ -43,7 +45,7 @@ public class NoticeController {
         return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
     }
 
-    @PostMapping("/write")
+    @PostMapping("/")
     public ResponseEntity<String> saveNotice(@RequestBody NoticeSaveOrUpdateDto dto, @RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
             if(jwtTokenValidator.validateAccessToken(Authorization)) {
@@ -58,7 +60,7 @@ public class NoticeController {
             }
     }
 
-    @PostMapping("/update")
+    @PutMapping("/")
     public ResponseEntity<String> updateNotice(@RequestParam Long noticeId , @RequestBody NoticeSaveOrUpdateDto dto, @RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
@@ -73,7 +75,7 @@ public class NoticeController {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/")
     public ResponseEntity<String> deleteNotice(@RequestParam Long noticeId , @RequestHeader String Authorization){
             HttpHeaders header = new HttpHeaders();
             if (jwtTokenValidator.validateAccessToken(Authorization)) {
