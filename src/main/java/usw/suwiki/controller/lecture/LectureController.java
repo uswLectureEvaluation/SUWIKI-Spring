@@ -29,7 +29,7 @@ public class LectureController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
-    @GetMapping("/findBySearchValue")
+    @GetMapping("/search")
     public ResponseEntity<LectureToJsonArray>findByLectureSearchValue(@RequestParam String searchValue, @RequestParam(required = false)
             Optional<String> option, @RequestParam(required = false) Optional<Integer> page, @RequestParam(required = false) Optional<String> majorType){
         HttpHeaders header = new HttpHeaders();
@@ -43,7 +43,7 @@ public class LectureController {
         }
     }
 
-    @GetMapping("/findAllList")
+    @GetMapping("/all")
     public ResponseEntity<LectureToJsonArray>findAllList(@RequestParam(required = false) Optional<String> option,
                                                            @RequestParam(required = false) Optional<Integer> page,
                                                          @RequestParam(required = false) Optional<String> majorType){
@@ -59,7 +59,7 @@ public class LectureController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<ToJsonArray>findLectureByLectureId(@RequestParam Long lectureId ,@RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
 

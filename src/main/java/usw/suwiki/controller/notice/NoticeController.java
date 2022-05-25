@@ -29,7 +29,7 @@ public class NoticeController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
-    @GetMapping("/findAllList")
+    @GetMapping("/all")
     public ResponseEntity<ToJsonArray> findNoticeList(@RequestParam(required = false) Optional<Integer> page){
         HttpHeaders header = new HttpHeaders();
         List<NoticeResponseDto> list = noticeService.findNoticeList(new PageOption(page));
@@ -37,7 +37,7 @@ public class NoticeController {
         return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<ToJsonArray> findNoticeByNoticeId(@RequestParam Long noticeId) {
         HttpHeaders header = new HttpHeaders();
         NoticeDetailResponseDto dto = noticeService.findNoticeDetail(noticeId);
@@ -45,31 +45,31 @@ public class NoticeController {
         return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
     }
 
-    @PostMapping("/write")
+    @PostMapping("/")
     public ResponseEntity<String> saveNotice(@RequestBody NoticeSaveOrUpdateDto dto, @RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
             if(jwtTokenValidator.validateAccessToken(Authorization)) {
-                if (jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) {
+//                if (jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) {
                     noticeService.save(dto);
                     return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
-                } else {
-                    throw new AccountException(ErrorType.USER_RESTRICTED);
-                }
+//                } else {
+//                    throw new AccountException(ErrorType.USER_RESTRICTED);
+//                }
             } else {
                 throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
             }
     }
 
-    @PostMapping("/update")
+    @PutMapping("/")
     public ResponseEntity<String> updateNotice(@RequestParam Long noticeId , @RequestBody NoticeSaveOrUpdateDto dto, @RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) {
+//            if (jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) {
                 noticeService.update(dto, noticeId);
                 return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
-            } else {
-                throw new AccountException(ErrorType.USER_RESTRICTED);
-            }
+//            } else {
+//                throw new AccountException(ErrorType.USER_RESTRICTED);
+//            }
         } else {
             throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
         }

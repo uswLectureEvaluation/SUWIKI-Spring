@@ -33,7 +33,7 @@ public class ExamPostsController {
     private final JwtTokenResolver jwtTokenResolver;
     private final ViewExamService viewExamService;
 
-    @GetMapping("/findByLectureId") // 이름 수정
+    @GetMapping("/") // 이름 수정
     public ResponseEntity<FindByLectureToExam> findByLecture(@RequestParam Long lectureId, @RequestHeader String Authorization,
                                                    @RequestParam(required = false) Optional<Integer> page){
         HttpHeaders header = new HttpHeaders();
@@ -58,7 +58,7 @@ public class ExamPostsController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @PostMapping("/buyExamInfo")
+    @PostMapping("/purchase")
     public ResponseEntity<String> buyExamInfo(@RequestParam Long lectureId,@RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)){
@@ -68,7 +68,7 @@ public class ExamPostsController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @PostMapping("/write")
+    @PostMapping("/")
     public ResponseEntity<String> saveEvaluatePosts(@RequestParam Long lectureId ,@RequestBody ExamPostsSaveDto dto, @RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
@@ -83,7 +83,7 @@ public class ExamPostsController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @PostMapping("/update")
+    @PutMapping("/")
     public ResponseEntity<String> updateExamPosts(@RequestParam Long examIdx, @RequestHeader String Authorization, @RequestBody ExamPostsUpdateDto dto){
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
@@ -94,7 +94,7 @@ public class ExamPostsController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @GetMapping("/findByUserIdx") // 이름 수정 , 널값 처리 프론트
+    @GetMapping("/written") // 이름 수정 , 널값 처리 프론트
     public ResponseEntity<ToJsonArray> findByUser(@RequestHeader String Authorization,
                                                          @RequestParam(required = false) Optional<Integer> page){
         HttpHeaders header = new HttpHeaders();
@@ -125,7 +125,7 @@ public class ExamPostsController {
         } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @GetMapping("/purchase-history") // 이름 수정 , 널값 처리 프론트
+    @GetMapping("/purchase") // 이름 수정 , 널값 처리 프론트
     public ResponseEntity<ToJsonArray> showPurchaseHistory(@RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {

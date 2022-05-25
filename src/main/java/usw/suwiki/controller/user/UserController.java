@@ -442,13 +442,13 @@ public class UserController {
     }
 
     @DeleteMapping("/favorite-major")
-    public ResponseEntity<String> deleteFavoriteMajor(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto dto){
+    public ResponseEntity<String> deleteFavoriteMajor(@RequestHeader String Authorization, @RequestParam String majorType){
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
             if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
-            favoriteMajorService.save(dto,userIdx);
+            favoriteMajorService.delete(userIdx,majorType);
             return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }

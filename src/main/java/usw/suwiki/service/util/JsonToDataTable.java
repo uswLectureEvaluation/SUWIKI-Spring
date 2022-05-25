@@ -60,11 +60,13 @@ public class JsonToDataTable {
                 //혼합수업, 비대면수업, 대면수업 제외
                 if (dto.getLectureName().contains("(대면수업)")){
                     dto.setLectureName(dto.getLectureName().replace("(대면수업)",""));
+                    dto.setLectureName(dto.getLectureName().replace("대면수업-", ""));
                 }else if(dto.getLectureName().contains("(비대면수업)")){
                     dto.setLectureName(dto.getLectureName().replace("(비대면수업)",""));
                 }else if(dto.getLectureName().contains("(혼합수업)")){
                     dto.setLectureName(dto.getLectureName().replace("(혼합수업)",""));
                 }
+
 
                 //"·" to replace "-"
                 if(dto.getMajorType().contains("·")){
