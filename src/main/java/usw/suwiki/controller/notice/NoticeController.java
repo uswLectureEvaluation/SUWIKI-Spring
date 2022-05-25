@@ -75,7 +75,7 @@ public class NoticeController {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/")
     public ResponseEntity<String> deleteNotice(@RequestParam Long noticeId , @RequestHeader String Authorization){
             HttpHeaders header = new HttpHeaders();
             if (jwtTokenValidator.validateAccessToken(Authorization)) {

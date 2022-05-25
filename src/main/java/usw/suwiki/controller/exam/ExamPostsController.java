@@ -109,7 +109,7 @@ public class ExamPostsController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/")
     public ResponseEntity<String> deleteExamPosts(@RequestParam Long examIdx,@RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
