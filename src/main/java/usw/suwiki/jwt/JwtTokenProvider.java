@@ -23,10 +23,8 @@ public class JwtTokenProvider {
     private String secretKey;
 
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; // 30분
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L; // 7일
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 14 * 24 * 60 * 60 * 1000L; // 14일
 
-    private final UserDetailsService userDetailsService;
-    private final JwtTokenResolver jwtTokenResolver;
     private final RefreshTokenRepository refreshTokenRepository;
 
     @PostConstruct
@@ -35,13 +33,13 @@ public class JwtTokenProvider {
     }
 
 
-    @Transactional
     //AccessToken 생성
+    @Transactional
     public String createAccessToken(User user) {
         Date now = new Date();
         Date accessTokenExpireIn = new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME);
 
-        //페이로드에 남길 정보들 (Id, loginId, role)
+        //페이로드에 남길 정보들 (Id, loginId, role, restricted)
         Claims claims = Jwts.claims();
         claims.put("id", user.getId());
         claims.put("loginId", user.getLoginId());
@@ -58,8 +56,8 @@ public class JwtTokenProvider {
 
     }
 
-    @Transactional
     //RefreshToken 생성
+    @Transactional
     public String createRefreshToken() {
         Date now = new Date();
 
@@ -72,8 +70,8 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    @Transactional
     //RefreshToken 업데이트
+    @Transactional
     public String updateRefreshToken(Long userIdx) {
         Date now = new Date();
 
@@ -88,10 +86,5 @@ public class JwtTokenProvider {
         refreshTokenRepository.updatePayload(newRefreshToken, userIdx);
 
         return newRefreshToken;
-    }
-
-    public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(String.valueOf(this.jwtTokenResolver.getId(token)));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 }

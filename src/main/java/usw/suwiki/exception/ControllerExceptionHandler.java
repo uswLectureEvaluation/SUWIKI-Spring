@@ -3,11 +3,14 @@ package usw.suwiki.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 @Slf4j
 @ControllerAdvice
@@ -87,4 +90,51 @@ public class ControllerExceptionHandler {
     }
 
 
+    @ExceptionHandler(value = {HttpMessageNotReadableException.class})
+    public ResponseEntity<ErrorResponse> HttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        String className = e.getClass().getName();
+        ErrorType errorType = ErrorType.BAD_REQUEST;
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .exception(className.substring(className.lastIndexOf(".") + 1))
+                .code(errorType.getCode())
+                .message(errorType.getMessage())
+                .status(errorType.getStatus().value())
+                .error(errorType.getStatus().getReasonPhrase())
+                .build();
+
+        return new ResponseEntity<>(errorResponse, errorType.getStatus());
+    }
+
+    @ExceptionHandler(value = {HttpServerErrorException.InternalServerError.class})
+    public ResponseEntity<ErrorResponse> InternalServerError(HttpServerErrorException.InternalServerError e) {
+        String className = e.getClass().getName();
+        ErrorType errorType = ErrorType.SERVER_ERROR;
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .exception(className.substring(className.lastIndexOf(".") + 1))
+                .code(errorType.getCode())
+                .message(errorType.getMessage())
+                .status(errorType.getStatus().value())
+                .error(errorType.getStatus().getReasonPhrase())
+                .build();
+
+        return new ResponseEntity<>(errorResponse, errorType.getStatus());
+    }
+
+    @ExceptionHandler(value = {IllegalArgumentException.class})
+    public ResponseEntity<ErrorResponse> IllegalArgumentException(IllegalArgumentException e) {
+        String className = e.getClass().getName();
+        ErrorType errorType = ErrorType.BAD_REQUEST;
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .exception(className.substring(className.lastIndexOf(".") + 1))
+                .code(errorType.getCode())
+                .message(errorType.getMessage())
+                .status(errorType.getStatus().value())
+                .error(errorType.getStatus().getReasonPhrase())
+                .build();
+
+        return new ResponseEntity<>(errorResponse, errorType.getStatus());
+    }
 }

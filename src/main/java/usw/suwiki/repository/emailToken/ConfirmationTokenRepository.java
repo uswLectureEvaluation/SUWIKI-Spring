@@ -19,17 +19,17 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
 
 
     //인증 시각 기록
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("UPDATE ConfirmationToken SET confirmedAt = :confirmedAt WHERE token = :token")
     void updateConfirmedAt(@Param("token") String token, @Param("confirmedAt") LocalDateTime confirmedAt);
 
     //유저 인덱스로 토큰 삭제
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("DELETE from ConfirmationToken where id = :id")
     void deleteAllByIdInQuery(@Param("id") Long tokenId);
 
     //토큰 정보로 토큰 삭제
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("DELETE from ConfirmationToken WHERE token = :token")
     void deleteAllByTokenInQuery(@Param("token") String token);
 

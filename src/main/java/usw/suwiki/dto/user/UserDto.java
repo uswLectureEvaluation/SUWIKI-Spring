@@ -44,7 +44,8 @@ public class UserDto {
     @Data
     public static class EditMyPasswordForm {
         @NotEmpty
-        private String password;
+        private String prePassword;
+        private String newPassword;
     }
 
     @Data
@@ -64,12 +65,14 @@ public class UserDto {
     }
 
     @Data
-    public static class UserReportForm {
-        private Long userIdx;
+    public static class EvaluateReportForm {
         private Long evaluateIdx;
+        private String content;
+    }
+
+    @Data
+    public static class ExamReportForm {
         private Long examIdx;
-        private Boolean postType;
-        private LocalDateTime reportedDate;
         private String content;
     }
 }

@@ -1,9 +1,7 @@
 package usw.suwiki.controller.userAdmin;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.reportTarget.ReportTarget;
 import usw.suwiki.dto.userAdmin.UserAdminDto;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
@@ -15,21 +13,19 @@ import usw.suwiki.service.userAdmin.UserAdminService;
 
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")
 public class UserAdminController {
 
-    private final UserService userService;
     private final UserAdminService userAdminService;
     private final JwtTokenResolver jwtTokenResolver;
     private final JwtTokenValidator jwtTokenValidator;
-    private final LectureService lectureService;
 
-    @PostMapping("ban")
-    public HashMap<String, Boolean> blackList(@Valid @RequestHeader String Authorization, @Valid @RequestBody UserAdminDto.BannedTargetForm bannedTargetForm) {
+    @PostMapping("/ban/evaluate-post")
+    public HashMap<String, Boolean> banEvaluatePost(@Valid @RequestHeader String Authorization,
+                                                    @Valid @RequestBody UserAdminDto.EvaluatePostBanForm evaluatePostBanForm) {
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
@@ -39,20 +35,19 @@ public class UserAdminController {
 
         HashMap<String, Boolean> result = new HashMap<>();
 
-//        //게시글 삭제
-//        userAdminService.banishPost(bannedTargetForm);
+        // 게시글 삭제
+        userAdminService.banishEvaluatePost(evaluatePostBanForm);
 
-        //게시글 삭제 및 유저 블랙리스트 테이블로
-        userAdminService.banUser(userAdminService.banishPost(bannedTargetForm), bannedTargetForm.getBannedTime());
+        // 유저 블랙리스트 테이블로
+        userAdminService.banUser(userAdminService.banishEvaluatePost(evaluatePostBanForm), evaluatePostBanForm.getBannedTime());
 
         result.put("Success", true);
         return result;
     }
 
-    @GetMapping("ban")
-    public List<ReportTarget> loadReportedPosts(@Valid @RequestHeader String Authorization) {
-
-        HttpHeaders header = new HttpHeaders();
+    @PostMapping("/ban/exam-post")
+    public HashMap<String, Boolean> blackList(@Valid @RequestHeader String Authorization,
+                                              @Valid @RequestBody UserAdminDto.ExamPostBanForm examPostBanForm) {
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
@@ -60,6 +55,32 @@ public class UserAdminController {
         //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) throw new AccountException(ErrorType.USER_RESTRICTED);
 
-        return userAdminService.getReportedPostList();
+        HashMap<String, Boolean> result = new HashMap<>();
+
+        // 게시글 삭제
+        userAdminService.banishExamPost(examPostBanForm);
+
+        // 유저 블랙리스트 테이블로
+        userAdminService.banUser(userAdminService.banishExamPost(examPostBanForm), examPostBanForm.getBannedTime());
+
+        result.put("Success", true);
+        return result;
+    }
+
+    @GetMapping("/ban/list")
+    public UserAdminDto.ViewAllBannedPost loadReportedPosts(@Valid @RequestHeader String Authorization) {
+
+        UserAdminDto.ViewAllBannedPost result = new UserAdminDto.ViewAllBannedPost();
+
+        //토큰 검증
+        jwtTokenValidator.validateAccessToken(Authorization);
+
+        //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
+        if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) throw new AccountException(ErrorType.USER_RESTRICTED);
+
+        result.setEvaluatePostReports(userAdminService.getReportedEvaluateList());
+        result.setExamPostReports(userAdminService.getReportedExamList());
+
+        return result;
     }
 }

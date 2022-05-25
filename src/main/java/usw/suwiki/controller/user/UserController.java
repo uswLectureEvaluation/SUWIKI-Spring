@@ -36,6 +36,7 @@ import usw.suwiki.service.userIsolation.UserIsolationService;
 import usw.suwiki.service.viewExam.ViewExamService;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +58,7 @@ public class UserController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
     private final RefreshTokenRepository refreshTokenRepository;
-    
+
     //게시글 관련 서비스
     private final ExamPostsService examPostsService;
     private final EvaluatePostsService evaluatePostsService;
@@ -69,7 +70,7 @@ public class UserController {
     //아이디 중복확인
     @PostMapping("check-id")
     public HashMap<String, Boolean> overlapId(@Valid @RequestBody UserDto.CheckIdForm checkId) {
-        
+
         //반환객체 생성
         HashMap<String, Boolean> overlapLoginId = new HashMap<>();
 
@@ -94,10 +95,9 @@ public class UserController {
         //이메일이 이미 존재하거나 블랙리스트 테이블에 있으면
         if (
                 userService.existEmail(checkEmailForm.getEmail()).isPresent() ||
-                userIsolationService.existEmail(checkEmailForm.getEmail()).isPresent() ||
-                userService.existBlacklistEmail(checkEmailForm.getEmail())
-            )
-        {
+                        userIsolationService.existEmail(checkEmailForm.getEmail()).isPresent() ||
+                        userService.existBlacklistEmail(checkEmailForm.getEmail())
+        ) {
             overlapEmail.put("overlap", true);
             return overlapEmail;
         }
@@ -176,6 +176,9 @@ public class UserController {
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
 
+        //로그인 아이디 및 현재 비밀번호 검증
+        userService.correctPw(jwtTokenResolver.getLoginId(Authorization), editMyPasswordForm.getPrePassword());
+
         //토큰 검증 통과 시 반환 객체 생성
         HashMap<String, Boolean> findPwSuccess = new HashMap<>();
 
@@ -192,7 +195,7 @@ public class UserController {
 
         HashMap<String, String> token = new HashMap<>();
 
-        //유저 본 테이블에 존재하고, 제한된 유저가 아니라면 (isRestricted 는 유저 테이블에 Restricted 컬럼을 그대로 가져옴)
+        //유저 테이블에 존재하고, 제한된 유저가 아니라면 (isRestricted 는 유저 테이블에 Restricted 컬럼을 그대로 가져옴)
         if (userService.existId(loginForm.getLoginId()).isPresent() && !userService.isRestricted(loginForm.getLoginId())) {
 
             //아이디 비밀번호 검증
@@ -206,8 +209,44 @@ public class UserController {
             String accessToken = jwtTokenProvider.createAccessToken(user);
             token.put("AccessToken", accessToken);
 
-            //첫 로그인 대상자(리프레시 토큰이 DB에 없음)
-            if (refreshTokenRepository.findByUserId(user.getId()).isEmpty()) {
+
+            // 리프레시 토큰이 DB에 있을 때
+            if (refreshTokenRepository.findByUserId(user.getId()).isPresent()) {
+
+                // DB에 존재하는 리프레시 토큰 꺼내 담기
+                String refreshToken = refreshTokenRepository.findByUserId(user.getId()).get().getPayload();
+
+                // 리프레시 토큰이 DB에 있지만, 갱신은 필요로 할 때
+                if (jwtTokenValidator.isNeedToUpdateRefreshToken(refreshToken)) {
+
+                    // 리프레시 토큰 갱신
+                    String newRefreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
+
+                    // 반환 객체에 담기
+                    token.put("RefreshToken", newRefreshToken);
+                }
+
+                // 리프레시 토큰이 DB에 있고, 갱신을 필요로 하지 않을 때
+                else {
+                    token.put("RefreshToken", refreshToken);
+                }
+
+                // 마지막 로그인 일자 스탬프
+                // 회원탈퇴 요청 시각 초기화
+                userService.setLastLogin(loginForm);
+                userService.initQuitDateStamp(user);
+                return token;
+            }
+
+
+            // 리프레시 토큰이 DB에 없을 때
+            else {
+
+                System.out.println("리프레시 토큰이 DB에 없을때");
+
+                //아이디 비밀번호 검증
+                userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
+
                 //리프레시 토큰 신규 생성
                 String refreshToken = jwtTokenProvider.createRefreshToken();
 
@@ -223,25 +262,11 @@ public class UserController {
 
                 //마지막 로그인 일자 스탬프
                 userService.setLastLogin(loginForm);
-                
+
                 //회원탈퇴 요청 시각 초기화
                 userService.initQuitDateStamp(user);
                 return token;
             }
-
-            //첫 로그인이 아닌 대상자(이미 DB에 토큰이 있음)
-            //리프레시 토큰 갱신
-            String refreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
-
-            //리프래시 토큰 반환객체에 담기
-            token.put("RefreshToken", refreshToken);
-
-            //마지막 로그인 일자 스탬프
-            userService.setLastLogin(loginForm);
-
-            //회원탈퇴 요청 시각 초기화
-            userService.initQuitDateStamp(user);
-            return token;
         }
 
         //격리 테이블에 있으며 이메일 인증을 했으면 (대상 = 휴면계정, 회원탈퇴 요청 계정)
@@ -270,56 +295,13 @@ public class UserController {
 
             //토큰 반환
             token.put("AccessToken", accessToken);
-
-            //첫 로그인 대상자(리프레시 토큰이 DB에 없음)
-            if (refreshTokenRepository.findByUserId(user.getId()).isEmpty()) {
-                //리프레시 토큰 신규 생성
-                String refreshToken = jwtTokenProvider.createRefreshToken();
-
-                //리프레시토큰 저장
-                refreshTokenRepository.save(
-                        RefreshToken.builder()
-                                .user(user)
-                                .payload(refreshToken)
-                                .build());
-
-                //리프래시 토큰 반환객체에 담기
-                token.put("RefreshToken", refreshToken);
-
-                //마지막 로그인 일자 스탬프
-                userService.setLastLogin(loginForm);
-
-                //회원탈퇴 요청 시각 초기화
-                userService.initQuitDateStamp(user);
-                return token;
-            }
-
-            //첫 로그인이 아닌 대상자(이미 DB에 토큰이 있음)
-            //리프레시 토큰 갱신
-            String refreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
-
-            //리프레시토큰 반환 객체에 담기
-            token.put("RefreshToken", refreshToken);
-
-            //리프레시토큰 저장
-            refreshTokenRepository.save(
-                    RefreshToken.builder()
-                            .user(user)
-                            .payload(refreshToken)
-                            .build());
-
-            //마지막 로그인 일자 스탬프
-            userService.setLastLogin(loginForm);
-
-            //회원탈퇴 요청 시각 초기화
-            userService.initQuitDateStamp(user);
-            return token;
         }
+
         throw new AccountException(ErrorType.USER_AND_EMAIL_NOT_EXISTS_AND_AUTH);
     }
 
     @GetMapping("/my-page")
-    public UserResponseDto.MyPageResponse myPage (@Valid @RequestHeader String Authorization) {
+    public UserResponseDto.MyPageResponse myPage(@Valid @RequestHeader String Authorization) {
 
         //AccessToken 만료 확인
         jwtTokenValidator.validateAccessToken(Authorization);
@@ -329,13 +311,13 @@ public class UserController {
 
         //토큰에 담김 loginId를 통해 레포지토리에 접근하여 User 불러오기
         User user = userService.loadUserFromUserIdx(userIdx);
-        
+
         //반환
         return UserResponseDto.MyPageResponse.builder()
                 .loginId(user.getLoginId())
                 .email(user.getEmail())
                 .point(user.getPoint())
-                .writtenLecture(user.getWrittenEvaluation())
+                .writtenEvaluation(user.getWrittenEvaluation())
                 .writtenExam(user.getWrittenExam())
                 .viewExam(user.getViewExamCount())
                 .build();
@@ -351,7 +333,8 @@ public class UserController {
         jwtTokenValidator.validateRefreshToken(Authorization);
 
         //RefreshToken DB에 담겨있는지 확인(임의로 만든 토큰이 아닌지 확인하자.)
-        if (refreshTokenRepository.findByPayload(Authorization).isEmpty()) throw new AccountException(ErrorType.USER_RESTRICTED);
+        if (refreshTokenRepository.findByPayload(Authorization).isEmpty())
+            throw new AccountException(ErrorType.USER_RESTRICTED);
 
         //리프레시 토큰으로 유저 인덱스 뽑아오기
         Long userIdx = refreshTokenRepository.findByPayload(Authorization).get().getUser().getId();
@@ -359,38 +342,42 @@ public class UserController {
         //해당 RefreshToken 으로 UserIndex 를 추출하여 객체 반환
         User user = userService.loadUserFromUserIdx(userIdx);
 
-        //리프레시 토큰 갱신이 필요없으면
-        if (!jwtTokenValidator.isNeedToUpdateRefreshToken(Authorization)) {
+        //리프레시 토큰 갱신이 필요하면
+        if (jwtTokenValidator.isNeedToUpdateRefreshToken(Authorization)) {
+
+            //RefreshToken 재생성
+            String newRefreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
+
             //반환 객체에 담기
             token.put("AccessToken", jwtTokenProvider.createAccessToken(user));
-            token.put("RefreshToken", Authorization);
+            token.put("RefreshToken", newRefreshToken);
+
+            return token;
         }
 
-        //리프레시 토큰이 갱신 필요하면
-        jwtTokenProvider.updateRefreshToken(userIdx);
+        // 리프레시 토큰 갱신 필요없으면 액세스 토큰만 재생성
+        token.put("AccessToken", jwtTokenProvider.createAccessToken(user));
+        token.put("RefreshToken", Authorization);
 
-        //RefreshToken 재생성
-        String newRefreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
-        
-        //반환객체에 담기
-        token.put("RefreshToken", newRefreshToken);
         return token;
     }
 
     @PostMapping("quit")
-    public HashMap<String, Boolean> userQuit(@Valid @RequestBody UserDto.UserQuitForm userQuitForm, @Valid @RequestHeader String Authorization) {
+    public HashMap<String, Boolean> userQuit(@Valid @RequestBody UserDto.UserQuitForm userQuitForm,
+                                             @Valid @RequestHeader String Authorization) {
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
 
         //AccessToken 으로 요청 접근 권한이 있는지 확인
         if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
-        
+
         HashMap<String, Boolean> result = new HashMap<>();
 
         //아이디 비밀번호 검증 후 일치하지 않으면
         if (!userService.matchingLoginIdWithPassword(
-                userQuitForm.getLoginId(), userQuitForm.getPassword())) throw new AccountException(ErrorType.USER_NOT_EXISTS);
+                userQuitForm.getLoginId(), userQuitForm.getPassword()))
+            throw new AccountException(ErrorType.USER_NOT_EXISTS);
 
         //아이디 비밀번호 검증 후 일치하면
         //해당하는 유저 가져오기
@@ -410,19 +397,46 @@ public class UserController {
         return result;
     }
 
-    @PostMapping("/report")
-    public HashMap<String, Boolean> report(@Valid @RequestBody UserDto.UserReportForm userReportForm, @Valid @RequestHeader String Authorization) {
+    // 시험정보 신고
+    @PostMapping("/report/exam")
+    public HashMap<String, Boolean> reportExam(@Valid @RequestBody UserDto.ExamReportForm examReportForm,
+                                               @Valid @RequestHeader String Authorization) {
 
         HashMap<String, Boolean> result = new HashMap<>();
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
-        
+
         //AccessToken 으로 요청 접근 권한이 있는지 확인
         if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
-        
+
+        Long reportingUser = jwtTokenResolver.getId(Authorization);
+
         //신고하기 비즈니스 로직 호출 --> 신고 테이블에 값 저장
-        userService.reportUserPost(userReportForm);
+        userService.reportExamPost(examReportForm, reportingUser);
+
+        result.put("success", true);
+
+        return result;
+    }
+
+    // 강의평가 신고
+    @PostMapping("/report/evaluate")
+    public HashMap<String, Boolean> reportEvaluate(@Valid @RequestBody UserDto.EvaluateReportForm evaluateReportForm,
+                                                   @Valid @RequestHeader String Authorization) {
+
+        HashMap<String, Boolean> result = new HashMap<>();
+
+        //토큰 검증
+        jwtTokenValidator.validateAccessToken(Authorization);
+
+        //AccessToken 으로 요청 접근 권한이 있는지 확인
+        if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
+
+        Long reportingUser = jwtTokenResolver.getId(Authorization);
+
+        //신고하기 비즈니스 로직 호출 --> 신고 테이블에 값 저장
+        userService.reportEvaluatePost(evaluateReportForm, reportingUser);
 
         result.put("success", true);
 
@@ -463,6 +477,17 @@ public class UserController {
             ToJsonArray data = new ToJsonArray(list);
             return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+    }
+
+    @GetMapping("suki")
+    public String thanksToSuki() {
+
+        return "<center>\uD83D\uDE00 Thank You Suki! \uD83D\uDE00 <br><br> You gave to me a lot of knowledge <br><br>" +
+                "He is my Tech-Mentor <br><br>" +
+                "If you wanna contact him <br><br>" +
+                "<a href = https://github.com/0xsuky> " +
+                "<b>https://github.com/0xsuky<b>" +
+                "</center>";
     }
 }
 

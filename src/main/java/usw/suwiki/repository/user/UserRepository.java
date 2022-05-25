@@ -31,28 +31,28 @@ public interface UserRepository extends JpaRepository<User, Long> {
     String findPwLogicByLoginIdAndEmail(@Param("loginId") String loginId, @Param("email") String email);
 
     //loginId와 email 에 일치하는 유저의 비밀번호 변경
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE User Set password = :resetPassword WHERE loginId = :loginId and email = :email")
     void resetPassword(@Param("resetPassword") String resetPassword, @Param("loginId") String loginId, @Param("email") String email);
 
     //User 비밀번호 수정 (마이페이지에서 비밀번호 재 설정)
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE User Set password = :editMyPassword WHERE loginId = :loginId")
     void editPassword(@Param("editMyPassword") String editMyPassword, @Param("loginId") String loginId);
 
     //User 삭제
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query(value = "DELETE from User WHERE id = :id")
     void deleteUserNotEmailCheck(@Param("id") Long id);
 
     //격리테이블에 본 테이블 데이터 옮기기
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query(value = "INSERT INTO user SELECT id, login_id, password, email, restricted, role, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at FROM user_isolation WHERE id = :id", nativeQuery = true)
     void insertUserIsolationIntoUser(@Param("id") Long id);
 
     
     //UserIdx 로 블랙리스트 출소 유저 반영해주기
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE User SET restricted = false WHERE id = :userIdx")
     void unRestricted(@Param("userIdx") Long userIdx);
 }

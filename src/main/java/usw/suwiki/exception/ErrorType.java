@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorType {
 
+    // Internal Serer Error
+    SERVER_ERROR("SERVER001", "서버 오류 입니다. 관리자에게 문의해주세요", HttpStatus.INTERNAL_SERVER_ERROR),
+
     // User 400 Error
     USER_ID_EXISTS("USER001", "아이디가 이미 존재합니다.", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTS("USER002", "이메일이 이미 존재합니다.", HttpStatus.BAD_REQUEST),
@@ -20,6 +23,8 @@ public enum ErrorType {
     USER_AND_EMAIL_NOT_EXISTS_AND_AUTH("USER0010", "아이디 혹은 이메일이 존재하지 않거나, 이메일 인증을 받지 않은 사용자 입니다.", HttpStatus.BAD_REQUEST),
     USER_RESTRICTED("USER011", "접근 권한이 없는 사용자 입니다. 관리자에게 문의하세요.", HttpStatus.FORBIDDEN), //403
     USER_AND_EMAIL_OVERLAP("USER012", "아이디 혹은 이메일이 중복됩니다.", HttpStatus.BAD_REQUEST),
+
+    BAD_REQUEST("USER013", "요청이 잘못 되었습니다.", HttpStatus.BAD_REQUEST),
 
     USER_NOT_FOUND("USER013", "해당 이메일에 대한 유저를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
 
@@ -35,8 +40,6 @@ public enum ErrorType {
     //Option error
     INVALID_ORDER_OPTION("OPTION001", "ORDER OPTION을 확인해주세요.", HttpStatus.BAD_REQUEST),
     INVALID_MAJOR_OPTION("OPTION002", "MAJOR OPTION을 확인해주세요.", HttpStatus.BAD_REQUEST),
-
-
 
     //Lecture 400 error
     NOT_EXISTS_LECTURE_NAME("LECTURE001", "강의 제목을 입력해주세요", HttpStatus.BAD_REQUEST),
@@ -56,7 +59,6 @@ public enum ErrorType {
 
     // METHOD
     METHOD_NOT_ALLOWED("METHOD001", "Exception Message", HttpStatus.METHOD_NOT_ALLOWED); // 405
-
 
     private final String code;
     private final String message;

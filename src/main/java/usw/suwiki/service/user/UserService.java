@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.emailToken.ConfirmationToken;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
 import usw.suwiki.domain.exam.ExamPosts;
-import usw.suwiki.domain.reportTarget.ReportTarget;
+import usw.suwiki.domain.reportTarget.EvaluatePostReport;
+import usw.suwiki.domain.reportTarget.ExamPostReport;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.userIsolation.UserIsolation;
 import usw.suwiki.dto.user.UserDto;
@@ -21,7 +22,8 @@ import usw.suwiki.jwt.JwtTokenResolver;
 import usw.suwiki.jwt.JwtTokenValidator;
 import usw.suwiki.repository.evaluation.JpaEvaluatePostsRepository;
 import usw.suwiki.repository.exam.JpaExamPostsRepository;
-import usw.suwiki.repository.reportTarget.ReportTargetRepository;
+import usw.suwiki.repository.reportTarget.EvaluateReportRepository;
+import usw.suwiki.repository.reportTarget.ExamReportRepository;
 import usw.suwiki.repository.user.UserRepository;
 import usw.suwiki.repository.userIsolation.UserIsolationRepository;
 import usw.suwiki.service.blacklist.BlackListService;
@@ -47,21 +49,24 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
 
-    //Another Service
+    // Another Service
     private final BlackListService blackListService;
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
     private final ViewExamService viewExamService;
 
 
-    //Repository
+    // Repository
     private final UserRepository userRepository;
     private final UserIsolationRepository userIsolationRepository;
-    private final ReportTargetRepository reportTargetRepository;
+
     private final JpaEvaluatePostsRepository jpaEvaluatePostsRepository;
     private final JpaExamPostsRepository jpaExamPostsRepository;
 
-    //Email
+    private final EvaluateReportRepository evaluateReportRepository;
+    private final ExamReportRepository examReportRepository;
+
+    // Email
     private final EmailSender emailSender;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
@@ -70,14 +75,14 @@ public class UserService {
     private final BuildFindPasswordFormService BuildFindPasswordFormService;
     private final BuildSoonDormantTargetFormService buildSoonDormantTargetFormService;
 
-    //JWT
+    // JWT
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
 
-    //아이디 중복 확인
-    //존재하면 Optional 반환, 아니면 null
+    // 아이디 중복 확인
+    // 존재하면 Optional 반환, 아니면 null
     @Transactional
     public Optional<User> existId(String loginId) {
         return userRepository.findByLoginId(loginId);
@@ -139,7 +144,6 @@ public class UserService {
         String link = "https://api.suwiki.kr/user/verify-email/?token=" + token;
 //        String link = "http://localhost:8080/user/verify-email/?token=" + token;
 
-
         //이메일 전송
         emailSender.send(joinForm.getEmail(), buildEmailAuthFormService.buildEmail(link));
     }
@@ -153,7 +157,7 @@ public class UserService {
         //만료 됐으면 true, 아니면 false
         return expiredAt.isBefore(LocalDateTime.now());
     }
-    
+
     //아이디 찾기 메일 발송
     @Transactional
     public boolean findId(UserDto.FindIdForm findIdForm) {
@@ -173,17 +177,36 @@ public class UserService {
         SecureRandom sr = new SecureRandom();
         sr.setSeed(new Date().getTime());
 
-        char[] charSet = new char[] {
+        char[] charAllSet = new char[]{
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
                 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
                 '!', '@', '#', '$', '%', '^'};
 
+        char[] charNumberSet = new char[]{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
+        char[] charSpecialSet = new char[]{ '!', '@', '#', '$', '%', '^' };
+
         int idx = 0;
-        int len = charSet.length;
-        for (int i = 0; i < 8; i++) {
-            idx = sr.nextInt(len);
-            sb.append(charSet[idx]);
+        int allLen = charAllSet.length;
+        int numberLen = charNumberSet.length;
+        int specialLen = charSpecialSet.length;
+
+        // 숫자 최소 1개를 포함하기 위한 반복문
+        for (int i = 0; i < 1; i++) {
+            idx = sr.nextInt(numberLen);
+            sb.append(charNumberSet[idx]);
+        }
+
+        // 특수문자 최소 1개를 포함하기 위한 반복문
+        for (int i = 0; i < 1; i++) {
+            idx = sr.nextInt(specialLen);
+            sb.append(charSpecialSet[idx]);
+        }
+
+        for (int i = 0; i < 6; i++) {
+            idx = sr.nextInt(allLen);
+            sb.append(charAllSet[idx]);
         }
         return sb.toString();
     }
@@ -214,7 +237,7 @@ public class UserService {
         String userLoginId = jwtTokenResolver.getLoginId(AccessToken);
 
         //재설정한 비밀번호 받아서 암호화 후 저장
-        userRepository.editPassword(bCryptPasswordEncoder.encode(editMyPasswordForm.getPassword()), userLoginId);
+        userRepository.editPassword(bCryptPasswordEncoder.encode(editMyPasswordForm.getNewPassword()), userLoginId);
 
         //UpdatedAt 타임스탬프
         Optional<User> optionalUser = loadUserFromLoginId(userLoginId);
@@ -358,10 +381,10 @@ public class UserService {
 
         //1년이상 접속하지 않은 유저 리스트 불러오기
         List<User> targetUser = isDormant();
-        
+
         //해당 유저들 격리테이블로 이동
         for (int i = 0; i < targetUser.toArray().length; i++) {
-                moveIsolation(targetUser.get(i));
+            moveIsolation(targetUser.get(i));
         }
     }
 
@@ -420,7 +443,7 @@ public class UserService {
         }
     }
 
-    // 강의평가 인덱스로 강
+    // 강의평가 인덱스로 강의평가 객체 불러오기
     @Transactional
     public EvaluatePosts loadEvaluatePostsByIndex(Long EvaluatePostsIdx) {
         return jpaEvaluatePostsRepository.findById(EvaluatePostsIdx);
@@ -433,30 +456,39 @@ public class UserService {
 
     //신고 받은 대상 신고 테이블에 저장
     @Transactional
-    public void reportUserPost(UserDto.UserReportForm userReportForm) {
+    public void reportExamPost(UserDto.ExamReportForm userReportForm, Long reportingUserIdx) {
 
-        // 강의평가 게시물을 신고했을 때
-        if (userReportForm.getPostType()) {
-            ReportTarget target = ReportTarget.builder()
-                    .evaluateIdx(userReportForm.getEvaluateIdx())
-                    .postType(userReportForm.getPostType())
-                    .content(userReportForm.getContent())
-                    .reportedDate(LocalDateTime.now())
-                    .professor(loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getProfessor())
-                    .lectureName(loadEvaluatePostsByIndex(userReportForm.getExamIdx()).getLectureName())
-                    .build();
-            reportTargetRepository.save(target);
-        } else {
-            // 시험정보 게시물을 신고했을 때
-            ReportTarget target = ReportTarget.builder()
-                    .examIdx(userReportForm.getExamIdx())
-                    .postType(userReportForm.getPostType())
-                    .content(userReportForm.getContent())
-                    .reportedDate(LocalDateTime.now())
-                    .professor(loadExamPostsByIndex(userReportForm.getExamIdx()).getProfessor())
-                    .lectureName(loadExamPostsByIndex(userReportForm.getExamIdx()).getLectureName())
-                    .build();
-            reportTargetRepository.save(target);
-        }
+        Long reportTargetUser = loadExamPostsByIndex(userReportForm.getExamIdx()).getUser().getId();
+
+        ExamPostReport target = ExamPostReport.builder()
+                .examIdx(userReportForm.getExamIdx())
+                .content(userReportForm.getContent())
+                .reportedDate(LocalDateTime.now())
+                .professor(loadExamPostsByIndex(userReportForm.getExamIdx()).getProfessor())
+                .lectureName(loadExamPostsByIndex(userReportForm.getExamIdx()).getLectureName())
+                .reportedUserIdx((reportTargetUser))
+                .reportingUserIdx(reportingUserIdx)
+                .build();
+
+        examReportRepository.save(target);
+    }
+
+    @Transactional
+    public void reportEvaluatePost(UserDto.EvaluateReportForm userReportForm, Long reportingUserIdx) {
+
+        Long reportTargetUser = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getUser().getId();
+
+        EvaluatePostReport target = EvaluatePostReport.builder()
+                .evaluateIdx(userReportForm.getEvaluateIdx())
+                .content(userReportForm.getContent())
+                .reportedDate(LocalDateTime.now())
+                .professor(loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getProfessor())
+                .lectureName(loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getLectureName())
+                .reportedUserIdx(reportTargetUser)
+                .reportingUserIdx(reportingUserIdx)
+                .build();
+
+        evaluateReportRepository.save(target);
+
     }
 }

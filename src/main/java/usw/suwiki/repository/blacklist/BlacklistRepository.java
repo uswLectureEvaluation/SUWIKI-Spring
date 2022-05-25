@@ -27,12 +27,4 @@ public interface BlacklistRepository extends JpaRepository<BlacklistDomain, Long
 
     //블랙리스트 유저 삭제
     void deleteByUserId(Long id);
-
-//    void save(String email, Long id);
-
-    @Modifying
-    @Query(value = "INSERT INTO blacklist_domain VALUES :email WHERE user_idx = :id", nativeQuery = true)
-    void insertIntoHashEmailAndExpiredAt(@Param("email") String email, @Param("id") Long id);
-
-
 }
