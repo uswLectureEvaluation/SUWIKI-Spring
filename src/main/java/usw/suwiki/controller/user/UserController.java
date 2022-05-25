@@ -237,43 +237,36 @@ public class UserController {
                 userService.initQuitDateStamp(user);
                 return token;
             }
-        }
 
-        // 리프레시 토큰이 DB에 없을 때
-        else {
 
-            System.out.println("리프레시 토큰이 DB에 없을때");
+            // 리프레시 토큰이 DB에 없을 때
+            else {
 
-            //아이디 비밀번호 검증
-            userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
+                System.out.println("리프레시 토큰이 DB에 없을때");
 
-            //유저 객체 생성
-            Optional<User> optionalUser = userService.loadUserFromLoginId(loginForm.getLoginId());
-            User user = userService.convertOptionalUserToDomainUser(optionalUser);
+                //아이디 비밀번호 검증
+                userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
 
-            //액세스 토큰 생성
-            String accessToken = jwtTokenProvider.createAccessToken(user);
-            token.put("AccessToken", accessToken);
+                //리프레시 토큰 신규 생성
+                String refreshToken = jwtTokenProvider.createRefreshToken();
 
-            //리프레시 토큰 신규 생성
-            String refreshToken = jwtTokenProvider.createRefreshToken();
+                //리프레시토큰 저장
+                refreshTokenRepository.save(
+                        RefreshToken.builder()
+                                .user(user)
+                                .payload(refreshToken)
+                                .build());
 
-            //리프레시토큰 저장
-            refreshTokenRepository.save(
-                    RefreshToken.builder()
-                            .user(user)
-                            .payload(refreshToken)
-                            .build());
+                //리프래시 토큰 반환객체에 담기
+                token.put("RefreshToken", refreshToken);
 
-            //리프래시 토큰 반환객체에 담기
-            token.put("RefreshToken", refreshToken);
+                //마지막 로그인 일자 스탬프
+                userService.setLastLogin(loginForm);
 
-            //마지막 로그인 일자 스탬프
-            userService.setLastLogin(loginForm);
-
-            //회원탈퇴 요청 시각 초기화
-            userService.initQuitDateStamp(user);
-            return token;
+                //회원탈퇴 요청 시각 초기화
+                userService.initQuitDateStamp(user);
+                return token;
+            }
         }
 
         //격리 테이블에 있으며 이메일 인증을 했으면 (대상 = 휴면계정, 회원탈퇴 요청 계정)
