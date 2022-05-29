@@ -172,16 +172,16 @@ public class UserAdminService {
             ExamPosts targetedExamPost = userService.loadExamPostsByIndex(examPostBanForm.getExamIdx());
 
             // 게시글 인덱스 불러오기
-            Long targetedExamPostId = targetedExamPost.getId();
-
-            // 게시글 인덱스로 신고 테이블에서 지우기(벤 하면 신고 테이블에서도 지워줘야함)
-            examReportRepository.deleteById(targetedExamPostId);
+            Long targetedExamPostIdx = targetedExamPost.getId();
 
             // 시험정보를 작성한 작성자 인덱스 불러오기
             Long targetedUserIdx = targetedExamPost.getUser().getId();
 
+            // 게시글 인덱스로 신고 테이블에서 지우기(벤 하면 신고 테이블에서도 지워줘야함)
+            examReportRepository.deleteById(targetedExamPostIdx);
+
             // 시험 정보 삭제(작성한 게시글 갯수 감소, 포인트 감소 까지 반영)
-            examPostsService.deleteById(targetedExamPost.getId(), targetedUserIdx);
+            examPostsService.deleteById(targetedExamPostIdx, targetedUserIdx);
 
             // 밴 횟수 증가
             increaseBannedTime(targetedUserIdx);
