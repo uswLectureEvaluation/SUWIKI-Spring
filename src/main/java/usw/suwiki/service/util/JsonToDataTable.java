@@ -1,5 +1,6 @@
 package usw.suwiki.service.util;
 
+import lombok.Synchronized;
 import usw.suwiki.dto.lecture.JsonToLectureDto;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.repository.lecture.JpaLectureRepository;
@@ -24,9 +25,43 @@ public class JsonToDataTable {
 
     private final JpaLectureRepository lectureRepository;
 
+    @Synchronized
+    public void handleException(JsonToLectureDto dto){
+        //혼합수업, 비대면수업, 대면수업, 재수강 제외
+
+        if(dto.getLectureName().contains("재수강-")){
+            int index = dto.getLectureName().indexOf("(");
+            String lectureName = dto.getLectureName().substring(0, index);
+            dto.setLectureName(lectureName);
+        }
+
+        if(dto.getLectureName().contains("재수강")){
+            dto.setLectureName(dto.getLectureName().replace("(재수강)",""));
+            dto.setLectureName(dto.getLectureName().replace("재수강",""));
+        }
+
+        if(dto.getLectureName().contains("비대면수업")){
+            dto.setLectureName(dto.getLectureName().replace("(비대면수업)",""));
+            dto.setLectureName(dto.getLectureName().replace("비대면수업-", ""));
+            dto.setLectureName(dto.getLectureName().replace("비대면수업_", ""));
+            dto.setLectureName(dto.getLectureName().replace("비대면수업", ""));
+        }
+        if (dto.getLectureName().contains("대면수업")){
+            dto.setLectureName(dto.getLectureName().replace("(대면수업)",""));
+            dto.setLectureName(dto.getLectureName().replace("대면수업-", ""));
+            dto.setLectureName(dto.getLectureName().replace("대면수업_", ""));
+            dto.setLectureName(dto.getLectureName().replace("대면수업", ""));
+        }
+        if(dto.getLectureName().contains("혼합수업")){
+            dto.setLectureName(dto.getLectureName().replace("(혼합수업)",""));
+            dto.setLectureName(dto.getLectureName().replace("혼합수업-", ""));
+            dto.setLectureName(dto.getLectureName().replace("혼합수업_", ""));
+            dto.setLectureName(dto.getLectureName().replace("혼합수업", ""));
+        }
+    }
     public void toEntity() throws IOException, ParseException, InterruptedException {
 
-        Reader reader = new FileReader("/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2021_2 thirteen.json");
+        Reader reader = new FileReader("/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2022_1 thirteen.json");
 
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(reader);
@@ -57,16 +92,7 @@ public class JsonToDataTable {
                     dto.setProfessor("-");
                 }
 
-                //혼합수업, 비대면수업, 대면수업 제외
-                if (dto.getLectureName().contains("(대면수업)")){
-                    dto.setLectureName(dto.getLectureName().replace("(대면수업)",""));
-                    dto.setLectureName(dto.getLectureName().replace("대면수업-", ""));
-                }else if(dto.getLectureName().contains("(비대면수업)")){
-                    dto.setLectureName(dto.getLectureName().replace("(비대면수업)",""));
-                }else if(dto.getLectureName().contains("(혼합수업)")){
-                    dto.setLectureName(dto.getLectureName().replace("(혼합수업)",""));
-                }
-
+                handleException(dto);
 
                 //"·" to replace "-"
                 if(dto.getMajorType().contains("·")){
@@ -89,7 +115,6 @@ public class JsonToDataTable {
                     Lecture savedLecture = Lecture.builder().build();
                     savedLecture.toEntity(dto);
                     Thread.sleep(1);
-//                    System.out.println(dto.getLectureName());
                     lectureRepository.save(savedLecture);
                 }
             }
