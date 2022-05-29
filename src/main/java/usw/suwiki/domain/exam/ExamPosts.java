@@ -1,14 +1,12 @@
 package usw.suwiki.domain.exam;
 
 import usw.suwiki.domain.lecture.Lecture;
-import usw.suwiki.domain.BaseTimeEntity;
+import usw.suwiki.global.BaseTimeEntity;
 import usw.suwiki.domain.user.User;
-import usw.suwiki.dto.exam_info.ExamPostsSaveDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
-import usw.suwiki.dto.exam_info.ExamPostsUpdateDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

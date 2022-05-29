@@ -1,14 +1,11 @@
 package usw.suwiki.domain.viewExam;
 
 import lombok.*;
-import org.springframework.data.annotation.LastModifiedDate;
-import usw.suwiki.domain.BaseTimeEntity;
-import usw.suwiki.domain.exam.ExamPosts;
+import usw.suwiki.global.BaseTimeEntity;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.user.User;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor

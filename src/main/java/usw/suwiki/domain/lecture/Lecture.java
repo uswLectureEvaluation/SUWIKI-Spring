@@ -1,19 +1,14 @@
 package usw.suwiki.domain.lecture;
 
-import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
-import usw.suwiki.domain.BaseTimeEntity;
-import usw.suwiki.domain.evaluation.EvaluatePosts;
-import usw.suwiki.dto.evaluate.EvaluatePostsToLecture;
-import usw.suwiki.dto.lecture.JsonToLectureDto;
+import usw.suwiki.global.BaseTimeEntity;
+import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor

@@ -5,9 +5,9 @@
 //import org.springframework.transaction.annotation.Transactional;
 //import usw.suwiki.SuwikiApplication;
 //import usw.suwiki.domain.lecture.Lecture;
-//import usw.suwiki.repository.evaluation.JpaEvaluatePostsRepository;
+//import usw.suwiki.domain.evaluation.JpaEvaluatePostsRepository;
 //import usw.suwiki.service.util.JsonToDataTable;
-//import usw.suwiki.repository.lecture.JpaLectureRepository;
+//import usw.suwiki.domain.lecture.JpaLectureRepository;
 //import org.json.simple.parser.ParseException;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
@@ -29,17 +29,17 @@
 //        jsonToDataTable.toEntity();
 //    }
 //
-//    @Test
-//    public void middotTest() throws IOException, ParseException, InterruptedException {
-//        HashMap<String, String> hashMap = new HashMap<>();
-//        hashMap.put("majorType", "화학공학·신소재공학부");
-//        JSONObject jsonObject1 = new JSONObject(hashMap);
-//
-//        String majorType = String.valueOf(jsonObject1.get("majorType"));
-//        if(majorType.contains("·")){
-//            majorType = majorType.replace("·", "-");
-//        }
-//        System.out.println(majorType);
-//
-//    }
+////    @Test
+////    public void middotTest() throws IOException, ParseException, InterruptedException {
+////        HashMap<String, String> hashMap = new HashMap<>();
+////        hashMap.put("majorType", "화학공학·신소재공학부");
+////        JSONObject jsonObject1 = new JSONObject(hashMap);
+////
+////        String majorType = String.valueOf(jsonObject1.get("majorType"));
+////        if(majorType.contains("·")){
+////            majorType = majorType.replace("·", "-");
+////        }
+////        System.out.println(majorType);
+////
+////    }
 //}

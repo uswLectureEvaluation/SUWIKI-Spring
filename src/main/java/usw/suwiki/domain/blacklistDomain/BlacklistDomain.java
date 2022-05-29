@@ -23,7 +23,19 @@ public class BlacklistDomain {
     @Column
     private LocalDateTime expiredAt;
 
+    @Column
+    private String bannedReason;
+
+    @Column
+    private String judgement;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
     private User user;
+
+    @Column
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime updatedAt;
 }

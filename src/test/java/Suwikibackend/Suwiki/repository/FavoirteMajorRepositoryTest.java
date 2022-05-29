@@ -4,8 +4,8 @@
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
 //import usw.suwiki.SuwikiApplication;
-//import usw.suwiki.repository.favorite_major.JpaFavoriteMajorRepository;
-//import usw.suwiki.repository.lecture.JpaLectureRepository;
+//import usw.suwiki.domain.favorite_major.JpaFavoriteMajorRepository;
+//import usw.suwiki.domain.lecture.JpaLectureRepository;
 //
 //import javax.transaction.Transactional;
 //import java.util.List;
