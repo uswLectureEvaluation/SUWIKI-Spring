@@ -270,6 +270,7 @@ public class UserService {
     //아이디 비밀번호 매칭
     @Transactional
     public boolean matchingLoginIdWithPassword(String loginId, String password) {
+
         //아이디 조회
         userRepository.findByLoginId(loginId).orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
 

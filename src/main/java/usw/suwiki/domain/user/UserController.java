@@ -19,14 +19,10 @@ import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.jwt.JwtTokenValidator;
 import usw.suwiki.domain.blacklistDomain.BlacklistRepository;
 import usw.suwiki.domain.refreshToken.RefreshTokenRepository;
-import usw.suwiki.domain.blacklistDomain.BlackListService;
 import usw.suwiki.domain.email.EmailAuthService;
 import usw.suwiki.domain.emailBuild.BuildEmailAuthSuccessFormService;
-import usw.suwiki.domain.evaluation.EvaluatePostsService;
-import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.favorite_major.FavoriteMajorService;
 import usw.suwiki.domain.userIsolation.UserIsolationService;
-import usw.suwiki.domain.viewExam.ViewExamService;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -185,8 +181,10 @@ public class UserController {
 
         HashMap<String, String> token = new HashMap<>();
 
-        //유저 테이블에 존재하고, 제한된 유저가 아니라면 (isRestricted 는 유저 테이블에 Restricted 컬럼을 그대로 가져옴)
-        if (userService.existId(loginForm.getLoginId()).isPresent() && !userService.isRestricted(loginForm.getLoginId())) {
+        //유저 테이블에 존재하면
+        if (userService.existId(loginForm.getLoginId()).isPresent()) {
+
+            userService.isRestricted(loginForm.getLoginId());
 
             //아이디 비밀번호 검증
             userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
@@ -232,8 +230,6 @@ public class UserController {
             // 리프레시 토큰이 DB에 없을 때
             else {
 
-                System.out.println("리프레시 토큰이 DB에 없을때");
-
                 //아이디 비밀번호 검증
                 userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
 
@@ -260,7 +256,10 @@ public class UserController {
         }
 
         //격리 테이블에 있으며 이메일 인증을 했으면 (대상 = 휴면계정, 회원탈퇴 요청 계정)
-        if (userIsolationService.loadUserFromLoginId(loginForm.getLoginId()).isPresent() && !userService.isRestricted(loginForm.getLoginId())) {
+        else if (userIsolationService.loadUserFromLoginId(loginForm.getLoginId()).isPresent()) {
+
+            //제한된 유저 인지 확인
+            userService.isRestricted(loginForm.getLoginId());
 
             //격리 유저 Optional 객체 생성
             Optional<UserIsolation> optionalUserIsolation = userIsolationService.loadUserFromLoginId(loginForm.getLoginId());
@@ -273,6 +272,8 @@ public class UserController {
 
             //본 도메인 객체 가져오기.
             User user = userService.loadUserFromUserIdx(userIsolation.getId());
+
+            user.setRestricted(false);
 
             //격리 테이블 해당 유저 삭제
             userIsolationService.deleteIsolationUser(userIsolation.getId());
