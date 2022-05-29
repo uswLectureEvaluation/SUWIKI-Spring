@@ -16,14 +16,15 @@ public class EvaluatePostReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //Auto Increment
 
+    // 신고당한 게시글 id
     @Column
     private Long evaluateIdx;
 
-    //신고당한 유저 Id
+    // 신고당한 유저 Id
     @Column
     private Long reportedUserIdx;
 
-    //신고한 유저 Id
+    // 신고한 유저 Id
     @Column
     private Long reportingUserIdx;
 

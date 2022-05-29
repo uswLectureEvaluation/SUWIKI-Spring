@@ -25,42 +25,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                    .antMatchers("/user/**").permitAll()
-                    .antMatchers("/lecture/**").permitAll()
-                    .antMatchers("/exam-posts/**").permitAll()
-                    .antMatchers("/evaluate-posts/**").permitAll()
-                    .antMatchers("/notice/write").permitAll()
-                    .antMatchers("/notice/update").permitAll()
-                    .antMatchers("/notice/delete").permitAll()
-                    .antMatchers("/notice").permitAll();
-
-
-//        http
-//                .authorizeRequests()
-//                    .antMatchers("/user/my-page").authenticated()
-//                    .antMatchers("/user/reset-pw").authenticated()
-//                    .antMatchers("/user/refresh").authenticated()
-//                    .antMatchers("/user/quit").authenticated()
-//                    .antMatchers("/evaluate-posts/**").authenticated()
-//                    .antMatchers("/exam-posts/**").authenticated()
-//                    .antMatchers("/notice/id=**/").authenticated()
-//                    .antMatchers("/notice/write").authenticated()
-//                    .antMatchers("/lecture/findBySearchValue/**").authenticated()
-//                    .antMatchers("/lecture/?lectureId=**").authenticated()
-//
-//                .and()
-//                    .addFilterBefore(new JwtAuthenticationFilter(), WebAsyncManagerIntegrationFilter.class);// jwt 로 접근허용 필터
+                .antMatchers("/user/**").permitAll()
+                .antMatchers("/lecture/**").permitAll()
+                .antMatchers("/exam-posts/**").permitAll()
+                .antMatchers("/evaluate-posts/**").permitAll()
+                .antMatchers("/notice/write").permitAll()
+                .antMatchers("/notice/update").permitAll()
+                .antMatchers("/notice/delete").permitAll()
+                .antMatchers("/notice").permitAll();
 
     }
-
-//    private String[] whiteListUri() {
-//        return new String [] {
-//                "/user/check-id",
-//                "/user/check-email",
-//                "/user/join",
-//                "/user/login",
-//                "/user/verify-email/**",
-//                "/lecture/findAllList/**",
-//                "/notice/findAllList/**",
-//        };
 }

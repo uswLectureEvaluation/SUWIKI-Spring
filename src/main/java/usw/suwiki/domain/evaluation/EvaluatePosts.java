@@ -1,10 +1,8 @@
 package usw.suwiki.domain.evaluation;
 
 import usw.suwiki.domain.lecture.Lecture;
-import usw.suwiki.domain.BaseTimeEntity;
+import usw.suwiki.global.BaseTimeEntity;
 import usw.suwiki.domain.user.User;
-import usw.suwiki.dto.evaluate.EvaluatePostsSaveDto;
-import usw.suwiki.dto.evaluate.EvaluatePostsUpdateDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;

@@ -24,6 +24,9 @@ public enum ErrorType {
     USER_RESTRICTED("USER011", "접근 권한이 없는 사용자 입니다. 관리자에게 문의하세요.", HttpStatus.FORBIDDEN), //403
     USER_AND_EMAIL_OVERLAP("USER012", "아이디 혹은 이메일이 중복됩니다.", HttpStatus.BAD_REQUEST),
 
+    USER_ALREADY_BLACKLISTED("USER014", "이미 블랙리스트인 사용자 입니다.", HttpStatus.BAD_REQUEST),
+    USER_IS_BLACKLISTED("USER015", "신고 당한 횟수 3회 누적으로 블랙리스트 조치 되었습니다. 더 이상 서비스를 이용할 수 없습니다.", HttpStatus.BAD_REQUEST),
+
     BAD_REQUEST("USER013", "요청이 잘못 되었습니다.", HttpStatus.BAD_REQUEST),
 
     USER_NOT_FOUND("USER013", "해당 이메일에 대한 유저를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),

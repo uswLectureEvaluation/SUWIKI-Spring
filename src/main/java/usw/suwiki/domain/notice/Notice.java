@@ -1,7 +1,6 @@
 package usw.suwiki.domain.notice;
 
-import usw.suwiki.domain.BaseTimeEntity;
-import usw.suwiki.dto.notice.NoticeSaveOrUpdateDto;
+import usw.suwiki.global.BaseTimeEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
