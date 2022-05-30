@@ -26,7 +26,7 @@ public class EvaluateController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<FindByLectureToJson> findByLecture(@RequestHeader String Authorization, @RequestParam Long lectureId,
                                                              @RequestParam(required = false) Optional<Integer> page){
         HttpHeaders header = new HttpHeaders();
@@ -41,7 +41,7 @@ public class EvaluateController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<String> updateEvaluatePosts(@RequestParam Long evaluateIdx, @RequestHeader String Authorization, @RequestBody EvaluatePostsUpdateDto dto){
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
@@ -52,7 +52,7 @@ public class EvaluateController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<String> saveEvaluatePosts(@RequestParam Long lectureId,@RequestHeader String Authorization,@RequestBody EvaluatePostsSaveDto dto){
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
@@ -83,7 +83,7 @@ public class EvaluateController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping
     public ResponseEntity<String> deleteEvaluatePosts(@RequestParam Long evaluateIdx,@RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
