@@ -2,17 +2,11 @@
 //
 //import org.json.simple.JSONObject;
 //import org.json.simple.parser.ParseException;
-//import org.springframework.transaction.annotation.Transactional;
 //import usw.suwiki.SuwikiApplication;
-//import usw.suwiki.domain.lecture.Lecture;
-//import usw.suwiki.domain.evaluation.JpaEvaluatePostsRepository;
-//import usw.suwiki.service.util.JsonToDataTable;
-//import usw.suwiki.domain.lecture.JpaLectureRepository;
-//import org.json.simple.parser.ParseException;
+//import usw.suwiki.global.util.JsonToDataTable;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
-//import usw.suwiki.service.util.JsonToDataTable;
 //
 //import java.io.IOException;
 //import java.util.HashMap;
@@ -42,7 +36,7 @@
 ////        System.out.println(majorType);
 ////
 ////    }
-
+//
 //        @Test
 //        public void handleJsonData() throws IOException, ParseException, InterruptedException {
 //                HashMap<String, String> hashMap = new HashMap<>();
