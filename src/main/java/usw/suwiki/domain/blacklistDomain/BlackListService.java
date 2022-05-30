@@ -53,7 +53,8 @@ public class BlackListService {
     @Transactional
     public void isBlackList(String email) {
 
-        blacklistRepository.findByHashedEmail(bCryptPasswordEncoder.encode(email))
-                .orElseThrow(() -> new AccountException(ErrorType.YOU_ARE_IN_BLACKLIST));
+        if (blacklistRepository.findByHashedEmail(bCryptPasswordEncoder.encode(email)).isPresent()) {
+            throw new AccountException(ErrorType.YOU_ARE_IN_BLACKLIST);
+        }
     }
 }
