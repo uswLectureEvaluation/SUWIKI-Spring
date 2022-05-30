@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import usw.suwiki.domain.refreshToken.RefreshToken;
 import usw.suwiki.domain.userIsolation.UserIsolation;
+import usw.suwiki.domain.userIsolation.UserIsolationRepository;
 import usw.suwiki.global.ToJsonArray;
 import usw.suwiki.domain.favorite_major.FavoriteSaveDto;
 import usw.suwiki.exception.AccountException;
@@ -53,6 +54,9 @@ public class UserController {
     //학과 즐겨찾기 관련 서비스
     private final FavoriteMajorService favoriteMajorService;
 
+    private final UserRepository userRepository;
+    private final UserIsolationRepository userIsolationRepository;
+
     //아이디 중복확인
     @PostMapping("check-id")
     public HashMap<String, Boolean> overlapId(@Valid @RequestBody UserDto.CheckIdForm checkId) {
@@ -61,7 +65,8 @@ public class UserController {
         HashMap<String, Boolean> overlapLoginId = new HashMap<>();
 
         //아이디가 이미 존재하면
-        if (userService.existId(checkId.getLoginId()).isPresent() || userIsolationService.existId(checkId.getLoginId()).isPresent()) {
+        if (userRepository.findByLoginId(checkId.getLoginId()).isPresent() ||
+                userIsolationRepository.findByLoginId(checkId.getLoginId()).isPresent()) {
             overlapLoginId.put("overlap", true);
             return overlapLoginId;
         }
@@ -79,11 +84,9 @@ public class UserController {
         HashMap<String, Boolean> overlapEmail = new HashMap<>();
 
         //이메일이 이미 존재하거나 블랙리스트 테이블에 있으면
-        if (
-                userService.existEmail(checkEmailForm.getEmail()).isPresent() ||
-                        userIsolationService.existEmail(checkEmailForm.getEmail()).isPresent() ||
-                        userService.existBlacklistEmail(checkEmailForm.getEmail())
-        ) {
+        if (userRepository.findByEmail(checkEmailForm.getEmail()).isPresent() ||
+                userIsolationService.existEmail(checkEmailForm.getEmail()).isPresent() ||
+                userService.existBlacklistEmail(checkEmailForm.getEmail())) {
             overlapEmail.put("overlap", true);
             return overlapEmail;
         }
@@ -118,11 +121,7 @@ public class UserController {
 
         emailAuthService.confirmToken(token); //토큰 검증 --Error Code = 400
 
-        emailAuthService.unRestricted(token); //제재 여부 false
-        emailAuthService.userSetRole(token); //유저 권한 부여(USER)
-        emailAuthService.userSetViewExamCount(token); //유저 조회한 시험 정보 갯수 0
-        emailAuthService.userSetCreatedAt(token); //유저 생성 타임스탬프
-        emailAuthService.userSetUpdatedAt(token); //유저 업데이트 타임스탬프
+        emailAuthService.mailAuthSuccess(token); // Restricted 해제 및 권한 부여
 
         return result;
     }
@@ -135,7 +134,7 @@ public class UserController {
         HashMap<String, Boolean> joinSuccess = new HashMap<>();
 
         //아이디 찾기 요청 실패 시
-        if (!userService.findId(findIdForm)) throw new AccountException(ErrorType.USER_NOT_EXISTS);
+        if (!userService.sendEmailFindId(findIdForm)) throw new AccountException(ErrorType.USER_NOT_EXISTS);
 
         joinSuccess.put("success", true);
         return joinSuccess;
@@ -149,7 +148,7 @@ public class UserController {
         HashMap<String, Boolean> findPwSuccess = new HashMap<>();
 
         //비밀번호 재설정 실패 시
-        if (!userService.findPassword(findPasswordForm)) throw new AccountException(ErrorType.USER_NOT_EXISTS);
+        if (!userService.sendEmailFindPassword(findPasswordForm)) throw new AccountException(ErrorType.USER_NOT_EXISTS);
 
         findPwSuccess.put("success", true);
         return findPwSuccess;
@@ -181,12 +180,44 @@ public class UserController {
 
         HashMap<String, String> token = new HashMap<>();
 
-        
         //이메일 인증 받았는지 확인
         userService.isUserEmailAuth(loginForm.getLoginId());
 
+        //격리 테이블에 있으며 이메일 인증을 했으면 (대상 = 휴면계정, 회원탈퇴 요청 계정)
+        if (userIsolationService.loadUserFromLoginId(loginForm.getLoginId()).isPresent()) {
+
+            //제한된 유저 인지 확인
+            userService.isRestricted(loginForm.getLoginId());
+
+            //격리 유저 Optional 객체 생성
+            Optional<UserIsolation> optionalUserIsolation = userIsolationService.loadUserFromLoginId(loginForm.getLoginId());
+
+            //격리 도메인 객체로 변환
+            UserIsolation userIsolation = userIsolationService.convertOptionalUserToDomainUser(optionalUserIsolation);
+
+            //본 테이블로 이동
+            userService.moveToUser(userIsolation);
+
+            //본 도메인 객체 가져오기.
+            User user = userService.loadUserFromUserIdx(userIsolation.getId());
+
+            user.setRestricted(false);
+
+            //격리 테이블 해당 유저 삭제
+            userIsolationService.deleteIsolationUser(userIsolation.getId());
+
+            //아이디 비밀번호 검증
+            userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
+
+            //액세스 토큰, 리프레시 토큰 발급
+            String accessToken = jwtTokenProvider.createAccessToken(user);
+
+            //토큰 반환
+            token.put("AccessToken", accessToken);
+        }
+
         //유저 테이블에 존재하면
-        if (userService.existId(loginForm.getLoginId()).isPresent()) {
+        if (userRepository.findByLoginId(loginForm.getLoginId()).isPresent()) {
 
             userService.isRestricted(loginForm.getLoginId());
 
@@ -194,8 +225,7 @@ public class UserController {
             userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
 
             //유저 객체 생성
-            Optional<User> optionalUser = userService.loadUserFromLoginId(loginForm.getLoginId());
-            User user = userService.convertOptionalUserToDomainUser(optionalUser);
+            User user = userService.loadUserFromLoginId(loginForm.getLoginId());
 
             //액세스 토큰 생성
             String accessToken = jwtTokenProvider.createAccessToken(user);
@@ -257,39 +287,6 @@ public class UserController {
                 userService.initQuitDateStamp(user);
                 return token;
             }
-        }
-
-        //격리 테이블에 있으며 이메일 인증을 했으면 (대상 = 휴면계정, 회원탈퇴 요청 계정)
-        else if (userIsolationService.loadUserFromLoginId(loginForm.getLoginId()).isPresent()) {
-
-            //제한된 유저 인지 확인
-            userService.isRestricted(loginForm.getLoginId());
-
-            //격리 유저 Optional 객체 생성
-            Optional<UserIsolation> optionalUserIsolation = userIsolationService.loadUserFromLoginId(loginForm.getLoginId());
-
-            //격리 도메인 객체로 변환
-            UserIsolation userIsolation = userIsolationService.convertOptionalUserToDomainUser(optionalUserIsolation);
-
-            //본 테이블로 이동
-            userService.moveUser(userIsolation);
-
-            //본 도메인 객체 가져오기.
-            User user = userService.loadUserFromUserIdx(userIsolation.getId());
-
-            user.setRestricted(false);
-
-            //격리 테이블 해당 유저 삭제
-            userIsolationService.deleteIsolationUser(userIsolation.getId());
-
-            //아이디 비밀번호 검증
-            userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
-
-            //액세스 토큰, 리프레시 토큰 발급
-            String accessToken = jwtTokenProvider.createAccessToken(user);
-
-            //토큰 반환
-            token.put("AccessToken", accessToken);
         }
 
         throw new AccountException(ErrorType.USER_AND_EMAIL_NOT_EXISTS_AND_AUTH);
@@ -376,10 +373,7 @@ public class UserController {
 
         //아이디 비밀번호 검증 후 일치하면
         //해당하는 유저 가져오기
-        Optional<User> optionalTheUserRequestedQuit = userService.loadUserFromLoginId(userQuitForm.getLoginId());
-
-        //User Domain 객체로 변환
-        User theUserRequestedQuit = userService.convertOptionalUserToDomainUser(optionalTheUserRequestedQuit);
+        User theUserRequestedQuit = userService.loadUserFromLoginId(userQuitForm.getLoginId());
 
         //회원탈퇴 요청 시각 스탬프
         userService.requestQuitDateStamp(theUserRequestedQuit);
@@ -439,39 +433,42 @@ public class UserController {
     }
 
     @PostMapping("/favorite-major")
-    public ResponseEntity<String> saveFavoriteMajor(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto dto){
+    public ResponseEntity<String> saveFavoriteMajor(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto dto) {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
+            if (jwtTokenResolver.getUserIsRestricted(Authorization))
+                throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
-            favoriteMajorService.save(dto,userIdx);
+            favoriteMajorService.save(dto, userIdx);
             return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
-        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+        } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
     @DeleteMapping("/favorite-major")
-    public ResponseEntity<String> deleteFavoriteMajor(@RequestHeader String Authorization, @RequestParam String majorType){
+    public ResponseEntity<String> deleteFavoriteMajor(@RequestHeader String Authorization, @RequestParam String majorType) {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
+            if (jwtTokenResolver.getUserIsRestricted(Authorization))
+                throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
-            favoriteMajorService.delete(userIdx,majorType);
+            favoriteMajorService.delete(userIdx, majorType);
             return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
-        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+        } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
     @GetMapping("/favorite-major")
-    public ResponseEntity<ToJsonArray> findByLecture(@RequestHeader String Authorization){
+    public ResponseEntity<ToJsonArray> findByLecture(@RequestHeader String Authorization) {
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
+            if (jwtTokenResolver.getUserIsRestricted(Authorization))
+                throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
             List<String> list = favoriteMajorService.findMajorTypeByUser(userIdx);
             ToJsonArray data = new ToJsonArray(list);
             return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
-        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+        } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
     @GetMapping("/suki")
@@ -514,5 +511,32 @@ public class UserController {
 //            return ResponseEntity.status(HttpStatus.OK).body(result);
 //        }
 //    }
+
+    @PostMapping("/test1")
+    public void isolationTest(@Valid @RequestBody UserDto.LoginForm loginForm) {
+
+        User targetUser = userService.loadUserFromLoginId(loginForm.getLoginId());
+
+        userService.moveToIsolation(targetUser);
+    }
+
+    @PostMapping("/test2")
+    public void deleteTest(@Valid @RequestBody UserDto.LoginForm loginForm) {
+
+        User targetUser = userService.loadUserFromLoginId(loginForm.getLoginId());
+
+        userRepository.deleteById(targetUser.getId());
+    }
+
+    @PostMapping("/test3")
+    public void moveToUserTest(@Valid @RequestBody UserDto.LoginForm loginForm) {
+
+        UserIsolation targetUser = userIsolationService.loadUserFromLoginId(loginForm.getLoginId()).get();
+
+        userService.moveToUser(targetUser);
+    }
+
+
 }
+
 

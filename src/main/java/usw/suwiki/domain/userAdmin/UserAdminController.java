@@ -51,8 +51,7 @@ public class UserAdminController {
         userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
 
         //유저 객체 생성
-        Optional<User> optionalUser = userService.loadUserFromLoginId(loginForm.getLoginId());
-        User user = userService.convertOptionalUserToDomainUser(optionalUser);
+        User user = userService.loadUserFromLoginId(loginForm.getLoginId());
 
         //액세스 토큰 생성
         String accessToken = jwtTokenProvider.createAccessToken(user);

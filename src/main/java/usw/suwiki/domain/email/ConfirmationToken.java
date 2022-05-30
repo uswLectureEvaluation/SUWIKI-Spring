@@ -1,16 +1,16 @@
 package usw.suwiki.domain.email;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import usw.suwiki.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
 @Getter @Setter
 @NoArgsConstructor
-@Entity
+@Builder
+@AllArgsConstructor
 public class ConfirmationToken {
 
     @Id
@@ -32,10 +32,10 @@ public class ConfirmationToken {
     @JoinColumn(nullable = false, name = "user_idx")
     private User user;
 
-    public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, User user) {
-        this.token = token;
-        this.createdAt = createdAt;
-        this.expiresAt = expiresAt;
-        this.user = user;
-    }
+//    public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, User user) {
+//        this.token = token;
+//        this.createdAt = createdAt;
+//        this.expiresAt = expiresAt;
+//        this.user = user;
+//    }
 }
