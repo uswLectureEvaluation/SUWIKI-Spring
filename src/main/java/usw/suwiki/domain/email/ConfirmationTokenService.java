@@ -29,7 +29,7 @@ public class ConfirmationTokenService {
 
     //이메일 인증 토큰 삭제(토큰 ID로 삭제)
     public void deleteAllById(Long tokenId) {
-        confirmationTokenRepository.deleteAllByIdInQuery(tokenId);
+        confirmationTokenRepository.deleteById(tokenId);
     }
 
     //이메일 인증 토큰 삭제 (토큰 값으로 삭제)

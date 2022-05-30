@@ -11,6 +11,9 @@ public enum ErrorType {
     // Internal Serer Error
     SERVER_ERROR("SERVER001", "서버 오류 입니다. 관리자에게 문의해주세요", HttpStatus.INTERNAL_SERVER_ERROR),
 
+    // 401 Error 이메일 인증을 받지 않았을때
+    USER_NOT_EMAIL_AUTHED("USER016", "이메일 인증을 받지 않은 사용자 입니다.", HttpStatus.UNAUTHORIZED),
+
     // User 400 Error
     USER_ID_EXISTS("USER001", "아이디가 이미 존재합니다.", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTS("USER002", "이메일이 이미 존재합니다.", HttpStatus.BAD_REQUEST),

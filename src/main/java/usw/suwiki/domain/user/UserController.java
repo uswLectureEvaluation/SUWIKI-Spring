@@ -181,6 +181,10 @@ public class UserController {
 
         HashMap<String, String> token = new HashMap<>();
 
+        
+        //이메일 인증 받았는지 확인
+        userService.isUserEmailAuth(loginForm.getLoginId());
+
         //유저 테이블에 존재하면
         if (userService.existId(loginForm.getLoginId()).isPresent()) {
 

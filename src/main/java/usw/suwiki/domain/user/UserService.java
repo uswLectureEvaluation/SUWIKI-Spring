@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import usw.suwiki.domain.email.ConfirmationToken;
+import usw.suwiki.domain.email.ConfirmationTokenRepository;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
 import usw.suwiki.domain.exam.ExamPosts;
 import usw.suwiki.domain.reportTarget.EvaluatePostReport;
@@ -15,9 +16,7 @@ import usw.suwiki.domain.userIsolation.UserIsolation;
 import usw.suwiki.domain.email.EmailSender;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
-import usw.suwiki.global.jwt.JwtTokenProvider;
 import usw.suwiki.global.jwt.JwtTokenResolver;
-import usw.suwiki.global.jwt.JwtTokenValidator;
 import usw.suwiki.domain.evaluation.JpaEvaluatePostsRepository;
 import usw.suwiki.domain.exam.JpaExamPostsRepository;
 import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
@@ -57,11 +56,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserIsolationRepository userIsolationRepository;
 
+    private final ConfirmationTokenRepository confirmationTokenRepository;
+
     private final JpaEvaluatePostsRepository jpaEvaluatePostsRepository;
     private final JpaExamPostsRepository jpaExamPostsRepository;
 
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;
+
 
     // Email
     private final EmailSender emailSender;
@@ -73,8 +75,6 @@ public class UserService {
     private final BuildSoonDormantTargetFormService buildSoonDormantTargetFormService;
 
     // JWT
-    private final JwtTokenProvider jwtTokenProvider;
-    private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
 
@@ -153,6 +153,14 @@ public class UserService {
 
         //만료 됐으면 true, 아니면 false
         return expiredAt.isBefore(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void isUserEmailAuth(String loginId) {
+        User targetUser = loadUserFromLoginId(loginId).orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
+
+        confirmationTokenRepository.verifyUserEmailAuth(targetUser.getId())
+                .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EMAIL_AUTHED));
     }
 
     //아이디 찾기 메일 발송
