@@ -4,6 +4,10 @@ package usw.suwiki.global.jwt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.refreshToken.RefreshToken;
+import usw.suwiki.domain.refreshToken.RefreshTokenRepository;
+import usw.suwiki.domain.user.User;
 
 
 import static io.jsonwebtoken.Jwts.parser;
@@ -11,6 +15,10 @@ import static io.jsonwebtoken.Jwts.parser;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenResolver {
+
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtTokenValidator jwtTokenValidator;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Value("${spring.jwt.secret-key}")
     private String secretKey;
@@ -39,5 +47,37 @@ public class JwtTokenResolver {
     //AccessToken Restricted 꺼내기
     public boolean getUserIsRestricted(String token) {
         return (boolean) parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody().get("restricted");
+    }
+
+    @Transactional
+    public String refreshTokenUpdateOrCreate(User user) {
+
+        // 리프레시 토큰이 DB에 있을 때
+        if (refreshTokenRepository.findByUserId(user.getId()).isPresent()) {
+
+            // DB에 존재하는 리프레시 토큰 꺼내 담기
+            String refreshToken = refreshTokenRepository.findByUserId(user.getId()).get().getPayload();
+
+            // 리프레시 토큰이 DB에 있지만, 갱신은 필요로 할 때
+            if (jwtTokenValidator.isNeedToUpdateRefreshToken(refreshToken)) {
+                // 리프레시 토큰 갱신
+                return jwtTokenProvider.updateRefreshToken(user.getId());
+            }
+
+            // 리프레시 토큰이 DB에 있고, 갱신을 필요로 하지 않을 때
+            else return refreshToken;
+        }
+
+        // 리프레시 토큰이 DB에 없을 때
+        //리프레시 토큰 신규 생성
+        String refreshToken = jwtTokenProvider.createRefreshToken();
+
+        //리프레시 토큰 저장
+        refreshTokenRepository.save(
+                RefreshToken.builder()
+                        .user(user)
+                        .payload(refreshToken)
+                        .build());
+        return refreshToken;
     }
 }

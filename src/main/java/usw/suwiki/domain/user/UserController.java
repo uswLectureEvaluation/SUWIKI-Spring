@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import usw.suwiki.domain.blacklistDomain.BlackListService;
 import usw.suwiki.domain.refreshToken.RefreshToken;
 import usw.suwiki.domain.userIsolation.UserIsolation;
 import usw.suwiki.domain.userIsolation.UserIsolationRepository;
@@ -43,7 +44,7 @@ public class UserController {
     private final BuildEmailAuthSuccessFormService buildEmailAuthSuccessFormService;
 
     // User 관련 레포지토리
-    private final BlacklistRepository blacklistRepository;
+    private final BlackListService blackListService;
 
     //JWT
     private final JwtTokenProvider jwtTokenProvider;
@@ -83,10 +84,13 @@ public class UserController {
         //반환객체 생성
         HashMap<String, Boolean> overlapEmail = new HashMap<>();
 
-        //이메일이 이미 존재하거나 블랙리스트 테이블에 있으면
+        // 블랙리스트 유저면 에러 터뜨리기
+        blackListService.isBlackList(checkEmailForm.getEmail());
+
+        //이메일이 이미 존재하면
         if (userRepository.findByEmail(checkEmailForm.getEmail()).isPresent() ||
-                userIsolationService.existEmail(checkEmailForm.getEmail()).isPresent() ||
-                userService.existBlacklistEmail(checkEmailForm.getEmail())) {
+                userIsolationRepository.findByEmail(checkEmailForm.getEmail()).isPresent()) {
+            
             overlapEmail.put("overlap", true);
             return overlapEmail;
         }
@@ -104,7 +108,7 @@ public class UserController {
         HashMap<String, Boolean> joinSuccess = new HashMap<>();
 
         //블랙리스트 테이블에 존재하는 유저면 에러 터뜨리기
-        if (userService.existBlacklistEmail(joinForm.getEmail())) throw new AccountException(ErrorType.USER_RESTRICTED);
+        blackListService.isBlackList(joinForm.getEmail());
 
         //회원가입 비즈니스 로직 호출
         userService.join(joinForm);
@@ -183,17 +187,14 @@ public class UserController {
         //이메일 인증 받았는지 확인
         userService.isUserEmailAuth(loginForm.getLoginId());
 
-        //격리 테이블에 있으며 이메일 인증을 했으면 (대상 = 휴면계정, 회원탈퇴 요청 계정)
-        if (userIsolationService.loadUserFromLoginId(loginForm.getLoginId()).isPresent()) {
+        //격리 테이블에 있으며 이메일 인증을 했으면 (대상 = 휴면계정)
+        if (userIsolationRepository.findByLoginId(loginForm.getLoginId()).isPresent()) {
 
-            //제한된 유저 인지 확인
-            userService.isRestricted(loginForm.getLoginId());
-
-            //격리 유저 Optional 객체 생성
-            Optional<UserIsolation> optionalUserIsolation = userIsolationService.loadUserFromLoginId(loginForm.getLoginId());
+//            //제한된 유저 인지 확인
+//            userService.isRestricted(loginForm.getLoginId());
 
             //격리 도메인 객체로 변환
-            UserIsolation userIsolation = userIsolationService.convertOptionalUserToDomainUser(optionalUserIsolation);
+            UserIsolation userIsolation = userIsolationService.loadUserFromLoginId(loginForm.getLoginId());
 
             //본 테이블로 이동
             userService.moveToUser(userIsolation);
@@ -204,7 +205,7 @@ public class UserController {
             user.setRestricted(false);
 
             //격리 테이블 해당 유저 삭제
-            userIsolationService.deleteIsolationUser(userIsolation.getId());
+            userIsolationRepository.deleteByLoginId(user.getLoginId());
 
             //아이디 비밀번호 검증
             userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
@@ -212,81 +213,48 @@ public class UserController {
             //액세스 토큰, 리프레시 토큰 발급
             String accessToken = jwtTokenProvider.createAccessToken(user);
 
+            // 리프레시 토큰 갱신 혹은 신규 생성 판단 및 생성
+            String refreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(user);
+
             //토큰 반환
             token.put("AccessToken", accessToken);
+            token.put("RefreshToken", refreshToken);
+
+            //마지막 로그인 일자 스탬프
+            userService.setLastLogin(loginForm);
+
+            //회원탈퇴 요청 시각 초기화
+            userService.initQuitDateStamp(user);
+
+            return token;
         }
 
         //유저 테이블에 존재하면
         if (userRepository.findByLoginId(loginForm.getLoginId()).isPresent()) {
-
-            userService.isRestricted(loginForm.getLoginId());
-
+            
             //아이디 비밀번호 검증
             userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
-
+            
             //유저 객체 생성
             User user = userService.loadUserFromLoginId(loginForm.getLoginId());
+
+            // 블랙리스트 유저인지 확인
+            blackListService.isBlackList(user.getEmail());
 
             //액세스 토큰 생성
             String accessToken = jwtTokenProvider.createAccessToken(user);
             token.put("AccessToken", accessToken);
 
+            // 리프레시 토큰 갱신 혹은 신규 생성 판단 및 생성
+            String refreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(user);
+            token.put("RefreshToken", refreshToken);
 
-            // 리프레시 토큰이 DB에 있을 때
-            if (refreshTokenRepository.findByUserId(user.getId()).isPresent()) {
+            //마지막 로그인 일자 스탬프
+            userService.setLastLogin(loginForm);
 
-                // DB에 존재하는 리프레시 토큰 꺼내 담기
-                String refreshToken = refreshTokenRepository.findByUserId(user.getId()).get().getPayload();
-
-                // 리프레시 토큰이 DB에 있지만, 갱신은 필요로 할 때
-                if (jwtTokenValidator.isNeedToUpdateRefreshToken(refreshToken)) {
-
-                    // 리프레시 토큰 갱신
-                    String newRefreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
-
-                    // 반환 객체에 담기
-                    token.put("RefreshToken", newRefreshToken);
-                }
-
-                // 리프레시 토큰이 DB에 있고, 갱신을 필요로 하지 않을 때
-                else {
-                    token.put("RefreshToken", refreshToken);
-                }
-
-                // 마지막 로그인 일자 스탬프
-                // 회원탈퇴 요청 시각 초기화
-                userService.setLastLogin(loginForm);
-                userService.initQuitDateStamp(user);
-                return token;
-            }
-
-
-            // 리프레시 토큰이 DB에 없을 때
-            else {
-
-                //아이디 비밀번호 검증
-                userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
-
-                //리프레시 토큰 신규 생성
-                String refreshToken = jwtTokenProvider.createRefreshToken();
-
-                //리프레시토큰 저장
-                refreshTokenRepository.save(
-                        RefreshToken.builder()
-                                .user(user)
-                                .payload(refreshToken)
-                                .build());
-
-                //리프래시 토큰 반환객체에 담기
-                token.put("RefreshToken", refreshToken);
-
-                //마지막 로그인 일자 스탬프
-                userService.setLastLogin(loginForm);
-
-                //회원탈퇴 요청 시각 초기화
-                userService.initQuitDateStamp(user);
-                return token;
-            }
+            //회원탈퇴 요청 시각 초기화
+            userService.initQuitDateStamp(user);
+            return token;
         }
 
         throw new AccountException(ErrorType.USER_AND_EMAIL_NOT_EXISTS_AND_AUTH);
@@ -299,7 +267,7 @@ public class UserController {
         jwtTokenValidator.validateAccessToken(Authorization);
 
         //토큰에 담긴 userIdx 가져오기
-        Long userIdx = userService.loadUserIndexByAccessToken(Authorization);
+        Long userIdx = jwtTokenResolver.getId(Authorization);
 
         //토큰에 담김 loginId를 통해 레포지토리에 접근하여 User 불러오기
         User user = userService.loadUserFromUserIdx(userIdx);
@@ -512,31 +480,21 @@ public class UserController {
 //        }
 //    }
 
-    @PostMapping("/test1")
-    public void isolationTest(@Valid @RequestBody UserDto.LoginForm loginForm) {
-
-        User targetUser = userService.loadUserFromLoginId(loginForm.getLoginId());
-
-        userService.moveToIsolation(targetUser);
-    }
-
-    @PostMapping("/test2")
-    public void deleteTest(@Valid @RequestBody UserDto.LoginForm loginForm) {
-
-        User targetUser = userService.loadUserFromLoginId(loginForm.getLoginId());
-
-        userRepository.deleteById(targetUser.getId());
-    }
-
-    @PostMapping("/test3")
-    public void moveToUserTest(@Valid @RequestBody UserDto.LoginForm loginForm) {
-
-        UserIsolation targetUser = userIsolationService.loadUserFromLoginId(loginForm.getLoginId()).get();
-
-        userService.moveToUser(targetUser);
-    }
-
-
+//    @PostMapping("/test1")
+//    public void isolationTest(@Valid @RequestBody UserDto.LoginForm loginForm) {
+//
+//        User targetUser = userService.loadUserFromLoginId(loginForm.getLoginId());
+//
+//        userService.moveToIsolation(targetUser);
+//    }
+//
+//    @PostMapping("/test2")
+//    public void deleteTest(@Valid @RequestBody UserDto.LoginForm loginForm) {
+//
+//        User targetUser = userService.loadUserFromLoginId(loginForm.getLoginId());
+//
+//        userRepository.deleteById(targetUser.getId());
+//    }
 }
 
 

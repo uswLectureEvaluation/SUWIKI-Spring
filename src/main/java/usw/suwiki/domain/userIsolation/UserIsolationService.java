@@ -24,18 +24,6 @@ public class UserIsolationService {
     private final BuildAutoDeletedWarningUserFormService buildAutoDeletedWarningUserFormService;
 
 
-    //아이디 중복 확인
-    @Transactional
-    public Optional<UserIsolation> existId(String loginId) {
-        return userIsolationRepository.findByLoginId(loginId);
-    }
-
-    //이메일 중복 확인
-    @Transactional
-    public Optional<UserIsolation> existEmail(String email) {
-        return userIsolationRepository.findByEmail(email);
-    }
-
     //Optional<User> -> User
     @Transactional
     public UserIsolation convertOptionalUserToDomainUser(Optional<UserIsolation> optionalUserIsolation) {
@@ -47,15 +35,10 @@ public class UserIsolationService {
 
     //loginId로 유저 격리 테이블 꺼내오기
     @Transactional
-    public Optional<UserIsolation> loadUserFromLoginId(String loginId) {
-        return Optional.ofNullable(userIsolationRepository.findByLoginId(loginId).orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS)));
+    public UserIsolation loadUserFromLoginId(String loginId) {
+        return convertOptionalUserToDomainUser(userIsolationRepository.findByLoginId(loginId));
     }
 
-    //유저 삭제
-    @Transactional
-    public void deleteIsolationUser(Long idx) {
-        userIsolationRepository.deleteById(idx);
-    }
 
     //회원탈퇴 요청 시각이 30일 전인지 확인 (매일 0시에 한번 씩 돌린다.)
     @Transactional

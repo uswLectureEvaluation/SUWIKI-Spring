@@ -13,12 +13,13 @@ import java.util.Optional;
 @Repository
 public interface BlacklistRepository extends JpaRepository<BlacklistDomain, Long> {
 
-    //블랙리스트 기간 종료 유저 리스트화
+    // 블랙리스트 기간 종료 유저 리스트화
     List<BlacklistDomain> findByExpiredAtBefore(LocalDateTime targetTime);
 
-    ///유저 인덱스로 객체 불러오기
+    // 유저 인덱스로 객체 불러오기
     Optional<BlacklistDomain> findByUserId(Long id);
-
+    
+    // 이메일 해싱으로 블랙리스트 인지 구분
     Optional<BlacklistDomain> findByHashedEmail(String email);
 
     //블랙리스트 유저 삭제

@@ -10,12 +10,14 @@ import usw.suwiki.domain.email.ConfirmationToken;
 import usw.suwiki.domain.email.ConfirmationTokenRepository;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
 import usw.suwiki.domain.exam.ExamPosts;
+import usw.suwiki.domain.refreshToken.RefreshTokenRepository;
 import usw.suwiki.domain.reportTarget.EvaluatePostReport;
 import usw.suwiki.domain.reportTarget.ExamPostReport;
 import usw.suwiki.domain.userIsolation.UserIsolation;
 import usw.suwiki.domain.email.EmailSender;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
+import usw.suwiki.global.jwt.JwtTokenProvider;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.domain.evaluation.JpaEvaluatePostsRepository;
 import usw.suwiki.domain.exam.JpaExamPostsRepository;
@@ -31,6 +33,7 @@ import usw.suwiki.domain.email.ConfirmationTokenService;
 import usw.suwiki.domain.evaluation.EvaluatePostsService;
 import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.viewExam.ViewExamService;
+import usw.suwiki.global.jwt.JwtTokenValidator;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -76,13 +79,6 @@ public class UserService {
 
     // JWT
     private final JwtTokenResolver jwtTokenResolver;
-
-
-    //블랙리스트 이메일 중복 확인
-    @Transactional
-    public boolean existBlacklistEmail(String email) {
-        return blackListService.isBlackList(email);
-    }
 
     //유저 저장
     @Transactional
@@ -308,12 +304,6 @@ public class UserService {
         return convertOptionalUserToDomainUser(userRepository.findByLoginId(loginId));
     }
 
-    //AccessToken 에서 userIndex 불러오기
-    @Transactional
-    public Long loadUserIndexByAccessToken(String AccessToken) {
-        return jwtTokenResolver.getId(AccessToken);
-    }
-
     //회원탈퇴 요청 시각 스탬프
     @Transactional
     public void requestQuitDateStamp(User user) {
@@ -326,24 +316,26 @@ public class UserService {
         user.setRequestedQuitDate(null);
     }
 
-    //격리 테이블로 옮기기
+    //본 테이블 -> 격리 테이블
     @Transactional
     public void moveToIsolation(User user) {
+        
+        // 격리 테이블로 옮기기
         userIsolationRepository.insertUserIntoIsolation(user.getId());
-        deleteUser(user);
+        
+        // 유저 테이블에서 삭제
+        userRepository.deleteById(user.getId());
     }
 
-    //격리테이블 -> 본 테이블로 이동
+    //격리 테이블 -> 본 테이블
     @Transactional
     public void moveToUser(UserIsolation userIsolation) {
+        
+        // 유저 테이블로 옮기기
         userRepository.insertUserIsolationIntoUser(userIsolation.getId());
+        
+        // 격리 테이블에서 삭제
         userIsolationRepository.deleteByLoginId(userIsolation.getLoginId());
-    }
-
-    //본 테이블에서 삭제
-    @Transactional
-    public void deleteUser(User user) {
-        userRepository.deleteById(user.getId());
     }
 
     //휴면계정 전환 30일 전 대상 뽑기
@@ -353,7 +345,7 @@ public class UserService {
         return userRepository.findByLastLoginBefore(targetTime);
     }
 
-    //휴면계정 전환 30일 전 안내 메일 보내기
+    //휴면 계정 전환 30일 전 안내 메일 보내기
     @Transactional
     @Scheduled(cron = "0 0 0 * * *") //매일 0시에 한번 씩 돌린다.
     public void sendEmailSoonDormant() {
@@ -367,20 +359,15 @@ public class UserService {
         }
     }
 
-    //휴면계정 전환 대상 뽑기
-    @Transactional
-    public List<User> isDormant() {
-        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
-        return userRepository.findByLastLoginBefore(targetTime);
-    }
-
     //휴면계정 전환
     @Transactional
     @Scheduled(cron = "0 0 0 * * *")
     public void convertDormant() {
 
+        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
+
         //1년이상 접속하지 않은 유저 리스트 불러오기
-        List<User> targetUser = isDormant();
+        List<User> targetUser = userRepository.findByLastLoginBefore(targetTime);
 
         //해당 유저들 격리테이블로 이동
         for (int i = 0; i < targetUser.toArray().length; i++) {
@@ -420,26 +407,20 @@ public class UserService {
         user.setUpdatedAt(null);
     }
 
-
-    //회원탈퇴 요청 후 30일이 지난 대상 뽑기
-    @Transactional
-    public List<User> isTargetedQuit() {
-        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
-
-        return userRepository.findByRequestedQuitDate(targetTime);
-    }
-
     //회원탈퇴 요청 후 30일 뒤 테이블에서 제거
     @Transactional
     @Scheduled(cron = "0 0 0 * * *")
     public void deleteRequestQuitUserAfter30Days() {
 
-        List<User> targetUser = isTargetedQuit();
+        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
+
+        List<User> targetUser = userRepository.findByRequestedQuitDate(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
         }
     }
+
 
     // 강의평가 인덱스로 강의평가 객체 불러오기
     @Transactional

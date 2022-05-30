@@ -6,6 +6,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.user.UserRepository;
+import usw.suwiki.exception.AccountException;
+import usw.suwiki.exception.ErrorType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,9 +49,11 @@ public class BlackListService {
         }
     }
     
-    //블랙리스트 이메일인지 확인, 블랙리스트에 없으면 true
+    //블랙리스트 이메일인지 확인, 블랙리스트에 있으면 true
     @Transactional
-    public boolean isBlackList(String email) {
-        return blacklistRepository.findByHashedEmail(bCryptPasswordEncoder.encode(email)).isPresent();
+    public void isBlackList(String email) {
+
+        blacklistRepository.findByHashedEmail(bCryptPasswordEncoder.encode(email))
+                .orElseThrow(() -> new AccountException(ErrorType.YOU_ARE_IN_BLACKLIST));
     }
 }
