@@ -2,7 +2,6 @@ package usw.suwiki.global.util;
 
 import usw.suwiki.domain.lecture.JsonToLectureDto;
 import lombok.Synchronized;
-import usw.suwiki.dto.lecture.JsonToLectureDto;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.lecture.JpaLectureRepository;
 import lombok.RequiredArgsConstructor;
@@ -108,9 +107,8 @@ public class JsonToDataTable {
                         continue;
                     }else{
                         String updateString = lecture.getSemesterList() +","+ dto.getSelectedSemester();
-                        Lecture updatedLecture = Lecture.builder().build();
-                        updatedLecture.toEntity(dto);
-                        updatedLecture.setSemester(updateString);  //refactoring 필요
+                        lecture.setSemester(updateString);  //refactoring 필요
+                        System.out.println(lecture.getLectureName() + " - " + lecture.getSemesterList());
                     }
                 } else {
                     Lecture savedLecture = Lecture.builder().build();
