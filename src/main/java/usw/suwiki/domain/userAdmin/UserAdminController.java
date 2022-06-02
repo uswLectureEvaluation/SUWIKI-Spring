@@ -76,11 +76,11 @@ public class UserAdminController {
         HashMap<String, Boolean> result = new HashMap<>();
 
         // 게시글 삭제
-        userAdminService.banishEvaluatePost(evaluatePostBanForm);
+        Long evaluateIdx = userAdminService.banishEvaluatePost(evaluatePostBanForm);
 
         // 유저 블랙리스트 테이블로
         userAdminService.banUserByEvaluate(
-                userAdminService.banishEvaluatePost(evaluatePostBanForm),
+                evaluateIdx,
                 evaluatePostBanForm.getBannedTime(),
                 evaluatePostBanForm.getBannedReason(),
                 evaluatePostBanForm.getJudgement());
@@ -104,11 +104,11 @@ public class UserAdminController {
         HashMap<String, Boolean> result = new HashMap<>();
 
         // 게시글 삭제
-        userAdminService.banishExamPost(examPostBanForm);
+        Long examIdx = userAdminService.banishExamPost(examPostBanForm);
 
         // 유저 블랙리스트 테이블로
         userAdminService.banUserByExam(
-                        userAdminService.banishExamPost(examPostBanForm),
+                        examIdx,
                         examPostBanForm.getBannedTime(),
                         examPostBanForm.getBannedReason(),
                         examPostBanForm.getJudgement());
