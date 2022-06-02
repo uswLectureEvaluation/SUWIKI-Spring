@@ -131,7 +131,7 @@ public class UserAdminController {
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(ErrorType.USER_RESTRICTED);
 
-        evaluateReportRepository.deleteById(evaluatePostNoProblemForm.getEvaluateIdx());
+        evaluateReportRepository.deleteByEvaluateIdx(evaluatePostNoProblemForm.getEvaluateIdx());
 
         result.put("Success", true);
         return result;
@@ -151,7 +151,7 @@ public class UserAdminController {
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(ErrorType.USER_RESTRICTED);
 
-        examReportRepository.deleteById(examPostNoProblemForm.getExamIdx());
+        examReportRepository.deleteByExamIdx(examPostNoProblemForm.getExamIdx());
 
         result.put("Success", true);
         return result;
