@@ -149,7 +149,7 @@ public class UserAdminService {
             Long targetedUserIdx = targetedEvaluatePost.getUser().getId();
 
             // 게시글 인덱스로 신고 테이블에서 지우기(벤 하면 신고 테이블에서도 지워줘야함)
-            evaluateReportRepository.deleteById(targetedEvaluatePostIdx);
+            evaluateReportRepository.deleteByEvaluateIdx(targetedEvaluatePostIdx);
 
             // 강의 평가 삭제(작성한 게시글 갯수 감소, 포인트 감소 까지 반영)
             evaluatePostsService.deleteById(targetedEvaluatePostIdx, targetedUserIdx);
@@ -178,7 +178,7 @@ public class UserAdminService {
             Long targetedUserIdx = targetedExamPost.getUser().getId();
 
             // 게시글 인덱스로 신고 테이블에서 지우기(벤 하면 신고 테이블에서도 지워줘야함)
-            examReportRepository.deleteById(targetedExamPostIdx);
+            examReportRepository.deleteByExamIdx(targetedExamPostIdx);
 
             // 시험 정보 삭제(작성한 게시글 갯수 감소, 포인트 감소 까지 반영)
             examPostsService.deleteById(targetedExamPostIdx, targetedUserIdx);
