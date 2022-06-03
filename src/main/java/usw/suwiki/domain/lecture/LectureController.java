@@ -52,7 +52,7 @@ public class LectureController {
         }
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<ToJsonArray>findLectureByLectureId(@RequestParam Long lectureId ,@RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
 

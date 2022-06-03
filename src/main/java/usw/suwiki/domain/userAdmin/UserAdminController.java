@@ -51,8 +51,7 @@ public class UserAdminController {
         userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
 
         //유저 객체 생성
-        Optional<User> optionalUser = userService.loadUserFromLoginId(loginForm.getLoginId());
-        User user = userService.convertOptionalUserToDomainUser(optionalUser);
+        User user = userService.loadUserFromLoginId(loginForm.getLoginId());
 
         //액세스 토큰 생성
         String accessToken = jwtTokenProvider.createAccessToken(user);
@@ -77,11 +76,11 @@ public class UserAdminController {
         HashMap<String, Boolean> result = new HashMap<>();
 
         // 게시글 삭제
-        userAdminService.banishEvaluatePost(evaluatePostBanForm);
+        Long evaluateIdx = userAdminService.banishEvaluatePost(evaluatePostBanForm);
 
         // 유저 블랙리스트 테이블로
         userAdminService.banUserByEvaluate(
-                userAdminService.banishEvaluatePost(evaluatePostBanForm),
+                evaluateIdx,
                 evaluatePostBanForm.getBannedTime(),
                 evaluatePostBanForm.getBannedReason(),
                 evaluatePostBanForm.getJudgement());
@@ -105,11 +104,11 @@ public class UserAdminController {
         HashMap<String, Boolean> result = new HashMap<>();
 
         // 게시글 삭제
-        userAdminService.banishExamPost(examPostBanForm);
+        Long examIdx = userAdminService.banishExamPost(examPostBanForm);
 
         // 유저 블랙리스트 테이블로
         userAdminService.banUserByExam(
-                        userAdminService.banishExamPost(examPostBanForm),
+                        examIdx,
                         examPostBanForm.getBannedTime(),
                         examPostBanForm.getBannedReason(),
                         examPostBanForm.getJudgement());
@@ -132,7 +131,7 @@ public class UserAdminController {
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(ErrorType.USER_RESTRICTED);
 
-        evaluateReportRepository.deleteById(evaluatePostNoProblemForm.getEvaluateIdx());
+        evaluateReportRepository.deleteByEvaluateIdx(evaluatePostNoProblemForm.getEvaluateIdx());
 
         result.put("Success", true);
         return result;
@@ -152,7 +151,7 @@ public class UserAdminController {
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(ErrorType.USER_RESTRICTED);
 
-        examReportRepository.deleteById(examPostNoProblemForm.getExamIdx());
+        examReportRepository.deleteByExamIdx(examPostNoProblemForm.getExamIdx());
 
         result.put("Success", true);
         return result;

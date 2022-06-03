@@ -11,6 +11,9 @@ public enum ErrorType {
     // Internal Serer Error
     SERVER_ERROR("SERVER001", "서버 오류 입니다. 관리자에게 문의해주세요", HttpStatus.INTERNAL_SERVER_ERROR),
 
+    // 401 Error 이메일 인증을 받지 않았을때
+    USER_NOT_EMAIL_AUTHED("USER016", "이메일 인증을 받지 않은 사용자 입니다.", HttpStatus.UNAUTHORIZED),
+
     // User 400 Error
     USER_ID_EXISTS("USER001", "아이디가 이미 존재합니다.", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTS("USER002", "이메일이 이미 존재합니다.", HttpStatus.BAD_REQUEST),
@@ -24,6 +27,7 @@ public enum ErrorType {
     USER_RESTRICTED("USER011", "접근 권한이 없는 사용자 입니다. 관리자에게 문의하세요.", HttpStatus.FORBIDDEN), //403
     USER_AND_EMAIL_OVERLAP("USER012", "아이디 혹은 이메일이 중복됩니다.", HttpStatus.BAD_REQUEST),
 
+    YOU_ARE_IN_BLACKLIST("USER016", "블랙리스트 대상입니다. 이용할 수 없습니다.", HttpStatus.UNAUTHORIZED),
     USER_ALREADY_BLACKLISTED("USER014", "이미 블랙리스트인 사용자 입니다.", HttpStatus.BAD_REQUEST),
     USER_IS_BLACKLISTED("USER015", "신고 당한 횟수 3회 누적으로 블랙리스트 조치 되었습니다. 더 이상 서비스를 이용할 수 없습니다.", HttpStatus.BAD_REQUEST),
 

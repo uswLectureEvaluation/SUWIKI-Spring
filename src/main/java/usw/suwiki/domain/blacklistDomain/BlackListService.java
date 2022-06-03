@@ -6,8 +6,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.user.UserRepository;
+import usw.suwiki.domain.user.UserResponseDto;
+import usw.suwiki.exception.AccountException;
+import usw.suwiki.exception.ErrorType;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -47,9 +51,47 @@ public class BlackListService {
         }
     }
     
-    //블랙리스트 이메일인지 확인, 블랙리스트에 없으면 true
+    //블랙리스트 이메일인지 확인, 블랙리스트에 있으면 true
     @Transactional
-    public boolean isBlackList(String email) {
-        return blacklistRepository.findByHashedEmail(bCryptPasswordEncoder.encode(email)).isPresent();
+    public void isBlackList(String email) {
+
+        if (blacklistRepository.findByHashedEmail(bCryptPasswordEncoder.encode(email)).isPresent()) {
+            throw new AccountException(ErrorType.YOU_ARE_IN_BLACKLIST);
+        }
+    }
+
+    @Transactional
+    public List<UserResponseDto.ViewMyBannedReasonForm> convertToDto(Long userIdx) {
+
+        List<BlacklistDomain> loadedDomain = blacklistRepository.findByUserIdx(userIdx);
+
+        List<UserResponseDto.ViewMyBannedReasonForm> finalResultForm = new ArrayList<>();
+
+
+        if (loadedDomain.toArray().length > 0) {
+
+            for (BlacklistDomain target : loadedDomain) {
+
+                UserResponseDto.ViewMyBannedReasonForm resultForm = new UserResponseDto.ViewMyBannedReasonForm();
+
+                String extractedBannedReason = target.getBannedReason();
+                String extractedJudgement = target.getJudgement();
+                LocalDateTime extractedCreatedAt = target.getCreatedAt();
+                LocalDateTime extractedExpiredAt = target.getExpiredAt();
+
+
+                resultForm.setBannedReason(extractedBannedReason);
+                resultForm.setJudgement(extractedJudgement);
+                resultForm.setCreatedAt(extractedCreatedAt);
+                resultForm.setExpiredAt(extractedExpiredAt);
+
+                finalResultForm.add(resultForm);
+            }
+
+            return finalResultForm;
+        }
+
+        throw new AccountException(ErrorType.METHOD_NOT_ALLOWED);
+
     }
 }

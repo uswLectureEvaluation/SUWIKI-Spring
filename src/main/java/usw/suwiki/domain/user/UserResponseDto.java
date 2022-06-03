@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import usw.suwiki.domain.blacklistDomain.BlacklistDomain;
 
 import java.time.LocalDateTime;
 
@@ -23,9 +24,9 @@ public class UserResponseDto {
 
     @Data
     public static class ViewMyBannedReasonForm {
-        private LocalDateTime bannedAt; //밴 맞은 시각
-        private LocalDateTime bannedUntil; // 밴 풀리는 시각
-        private String judgementTitle; // 정지사유 타이틀
-        private String judgement; // 조치사항
+        private String bannedReason;
+        private String judgement;
+        private LocalDateTime createdAt;
+        private LocalDateTime expiredAt;
     }
 }

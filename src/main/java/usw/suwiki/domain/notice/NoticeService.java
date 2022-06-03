@@ -1,11 +1,6 @@
 package usw.suwiki.domain.notice;
 
 import usw.suwiki.global.PageOption;
-import usw.suwiki.domain.notice.NoticeDetailResponseDto;
-import usw.suwiki.domain.notice.NoticeResponseDto;
-import usw.suwiki.domain.notice.NoticeSaveOrUpdateDto;
-import usw.suwiki.domain.notice.Notice;
-import usw.suwiki.domain.notice.JpaNoticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

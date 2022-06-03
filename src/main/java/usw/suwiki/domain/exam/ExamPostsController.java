@@ -30,7 +30,7 @@ public class ExamPostsController {
     private final JwtTokenResolver jwtTokenResolver;
     private final ViewExamService viewExamService;
 
-    @GetMapping("/") // 이름 수정
+    @GetMapping
     public ResponseEntity<FindByLectureToExam> findByLecture(@RequestParam Long lectureId, @RequestHeader String Authorization,
                                                    @RequestParam(required = false) Optional<Integer> page){
         HttpHeaders header = new HttpHeaders();
@@ -65,7 +65,7 @@ public class ExamPostsController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<String> saveEvaluatePosts(@RequestParam Long lectureId ,@RequestBody ExamPostsSaveDto dto, @RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
@@ -80,7 +80,7 @@ public class ExamPostsController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<String> updateExamPosts(@RequestParam Long examIdx, @RequestHeader String Authorization, @RequestBody ExamPostsUpdateDto dto){
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
@@ -106,7 +106,7 @@ public class ExamPostsController {
         }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping
     public ResponseEntity<String> deleteExamPosts(@RequestParam Long examIdx,@RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);

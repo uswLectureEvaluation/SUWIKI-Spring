@@ -12,4 +12,6 @@ public interface ExamReportRepository extends JpaRepository<ExamPostReport, Long
     @Query(value = "SELECT * FROM exam_post_report", nativeQuery = true)
     List<ExamPostReport> loadAllReportedPosts();
 
+    void deleteByExamIdx(Long examIdx);
+
 }

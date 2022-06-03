@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import usw.suwiki.domain.email.ConfirmationToken;
+import usw.suwiki.domain.email.ConfirmationTokenRepository;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
 import usw.suwiki.domain.exam.ExamPosts;
+import usw.suwiki.domain.refreshToken.RefreshTokenRepository;
 import usw.suwiki.domain.reportTarget.EvaluatePostReport;
 import usw.suwiki.domain.reportTarget.ExamPostReport;
 import usw.suwiki.domain.userIsolation.UserIsolation;
@@ -17,7 +19,6 @@ import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 import usw.suwiki.global.jwt.JwtTokenProvider;
 import usw.suwiki.global.jwt.JwtTokenResolver;
-import usw.suwiki.global.jwt.JwtTokenValidator;
 import usw.suwiki.domain.evaluation.JpaEvaluatePostsRepository;
 import usw.suwiki.domain.exam.JpaExamPostsRepository;
 import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
@@ -32,6 +33,7 @@ import usw.suwiki.domain.email.ConfirmationTokenService;
 import usw.suwiki.domain.evaluation.EvaluatePostsService;
 import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.viewExam.ViewExamService;
+import usw.suwiki.global.jwt.JwtTokenValidator;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -52,20 +54,23 @@ public class UserService {
     private final ExamPostsService examPostsService;
     private final ViewExamService viewExamService;
 
+    // 암호화 Bean
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    // Repository
+
+    // User 관련 Repository
     private final UserRepository userRepository;
     private final UserIsolationRepository userIsolationRepository;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
 
+    // 게시글 관련 Repository
     private final JpaEvaluatePostsRepository jpaEvaluatePostsRepository;
     private final JpaExamPostsRepository jpaExamPostsRepository;
-
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;
 
     // Email
     private final EmailSender emailSender;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
     private final BuildEmailAuthFormService buildEmailAuthFormService;
     private final BuildFindLoginIdFormService BuildFindLoginIdFormService;
@@ -73,33 +78,11 @@ public class UserService {
     private final BuildSoonDormantTargetFormService buildSoonDormantTargetFormService;
 
     // JWT
-    private final JwtTokenProvider jwtTokenProvider;
-    private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
-
-
-    // 아이디 중복 확인
-    // 존재하면 Optional 반환, 아니면 null
-    @Transactional
-    public Optional<User> existId(String loginId) {
-        return userRepository.findByLoginId(loginId);
-    }
-
-    //이메일 중복 확인
-    @Transactional
-    public Optional<User> existEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    //블랙리스트 이메일 중복 확인
-    @Transactional
-    public boolean existBlacklistEmail(String email) {
-        return blackListService.isBlackList(email);
-    }
 
     //유저 저장
     @Transactional
-    private User saveUser(UserDto.JoinForm joinForm) {
+    private User makeUser(UserDto.JoinForm joinForm) {
         User user = User.builder()
                 .loginId((joinForm.getLoginId()))
                 .password(bCryptPasswordEncoder.encode(joinForm.getPassword()))
@@ -109,6 +92,7 @@ public class UserService {
                 .writtenEvaluation(0)
                 .writtenExam(0)
                 .point(0)
+                .viewExamCount(0)
                 .build();
         userRepository.save(user);
         return user;
@@ -119,20 +103,26 @@ public class UserService {
     public void join(UserDto.JoinForm joinForm) {
 
         //최종제출 폼에서 아이디와 이메일이 중복되지 않고
-        if (existId(joinForm.getLoginId()).isPresent() || existEmail(joinForm.getEmail()).isPresent())
+        if (userRepository.findByLoginId(joinForm.getLoginId()).isPresent() ||
+                userRepository.findByEmail(joinForm.getEmail()).isPresent())
             throw new AccountException(ErrorType.USER_AND_EMAIL_OVERLAP);
 
         //학교 이메일 형식이 맞지 않으면 에러
         if (!joinForm.getEmail().contains("@suwon.ac.kr")) throw new AccountException(ErrorType.IS_NOT_EMAIL_FORM);
 
         //유저 데이터 임시 저장
-        User user = saveUser(joinForm);
+        User user = makeUser(joinForm);
 
         //이메일 토큰 발행
         String token = UUID.randomUUID().toString();
 
         //이메일 토큰 부가 정보 생성
-        ConfirmationToken confirmationToken = new ConfirmationToken(token, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
+        ConfirmationToken confirmationToken = ConfirmationToken.builder()
+                .token(token)
+                .createdAt(LocalDateTime.now())
+                .expiresAt(LocalDateTime.now().plusMinutes(15))
+                .user(user)
+                .build();
 
         //이메일 토큰 저장
         confirmationTokenService.saveConfirmationToken(confirmationToken);
@@ -147,7 +137,7 @@ public class UserService {
 
     //이메일 인증 토큰 만료 검사
     @Transactional
-    public boolean isExpired(ConfirmationToken confirmationToken) {
+    public boolean isEmailAuthTokenExpired(ConfirmationToken confirmationToken) {
 
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
 
@@ -155,9 +145,18 @@ public class UserService {
         return expiredAt.isBefore(LocalDateTime.now());
     }
 
+    // 이메일 인증을 받은 사용자인지
+    @Transactional
+    public void isUserEmailAuth(String loginId) {
+        User targetUser = loadUserFromLoginId(loginId);
+
+        confirmationTokenRepository.verifyUserEmailAuth(targetUser.getId())
+                .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EMAIL_AUTHED));
+    }
+
     //아이디 찾기 메일 발송
     @Transactional
-    public boolean findId(UserDto.FindIdForm findIdForm) {
+    public boolean sendEmailFindId(UserDto.FindIdForm findIdForm) {
         Optional<User> inquiryId = userRepository.findByEmail(findIdForm.getEmail());
 
         if (inquiryId.isPresent()) {
@@ -170,7 +169,7 @@ public class UserService {
     //임시 비밀번호 생성
     @Transactional
     public String randomizePassword() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         SecureRandom sr = new SecureRandom();
         sr.setSeed(new Date().getTime());
 
@@ -210,15 +209,20 @@ public class UserService {
 
     //임시 비밀번호 설정 후 메일 발송
     @Transactional
-    public boolean findPassword(UserDto.FindPasswordForm findPasswordForm) {
+    public boolean sendEmailFindPassword(UserDto.FindPasswordForm findPasswordForm) {
+
         //아이디 이메일 체크
         if (userRepository.findPwLogicByLoginIdAndEmail(findPasswordForm.getLoginId(), findPasswordForm.getEmail()) != null) {
+
             //임시 비밀번호 발급
             String resetPassword = randomizePassword();
+
             //DB에 암호화
             String EncodedResetPassword = bCryptPasswordEncoder.encode(resetPassword);
+
             //암호화 한 비밀번호 저장
             userRepository.resetPassword(EncodedResetPassword, findPasswordForm.getLoginId(), findPasswordForm.getEmail());
+
             //이메일 발송
             emailSender.send(findPasswordForm.getEmail(), BuildFindPasswordFormService.buildEmail(resetPassword));
 
@@ -229,7 +233,8 @@ public class UserService {
 
     //마이페이지에서 비밀번호 재설정
     @Transactional
-    public boolean editMyPassword(UserDto.EditMyPasswordForm editMyPasswordForm, String AccessToken) {
+    public void editMyPassword(UserDto.EditMyPasswordForm editMyPasswordForm, String AccessToken) {
+
         //액세스 토큰 파싱 후 user 인덱스 확인
         String userLoginId = jwtTokenResolver.getLoginId(AccessToken);
 
@@ -237,24 +242,16 @@ public class UserService {
         userRepository.editPassword(bCryptPasswordEncoder.encode(editMyPasswordForm.getNewPassword()), userLoginId);
 
         //UpdatedAt 타임스탬프
-        Optional<User> optionalUser = loadUserFromLoginId(userLoginId);
-
-        User user = convertOptionalUserToDomainUser(optionalUser);
+        User user = loadUserFromLoginId(userLoginId);
 
         user.setUpdatedAt(LocalDateTime.now());
 
-        return true;
     }
 
     //유저 제재 여부 확인
     @Transactional
-    public boolean isRestricted(String loginId) {
-
-        Optional<User> isRestrictedUser = userRepository.findByLoginId(loginId);
-
-        if (isRestrictedUser.isEmpty()) throw new AccountException(ErrorType.USER_RESTRICTED);
-
-        return isRestrictedUser.get().isRestricted();
+    public void isRestricted(String loginId) {
+        if (userRepository.loadUserRestriction(loginId)) throw new AccountException(ErrorType.USER_RESTRICTED);
     }
 
     //비밀번호 검증 True 시 비밀번호 일치
@@ -262,7 +259,7 @@ public class UserService {
     public boolean correctPw(String loginId, String password) {
 
         //로그인 아이디를 찾을 수 없으면
-        if (existId(loginId).isEmpty()) throw new AccountException(ErrorType.USER_NOT_EXISTS);
+        if (userRepository.findByLoginId(loginId).isEmpty()) throw new AccountException(ErrorType.USER_NOT_EXISTS);
 
         return bCryptPasswordEncoder.matches(password, userRepository.findByLoginId(loginId).get().getPassword());
     }
@@ -290,9 +287,8 @@ public class UserService {
     //Optional<User> -> User
     @Transactional
     public User convertOptionalUserToDomainUser(Optional<User> optionalUser) {
-        if (optionalUser.isPresent()) {
-            return optionalUser.get();
-        }
+        if (optionalUser.isPresent()) return optionalUser.get();
+
         throw new AccountException(ErrorType.USER_NOT_EXISTS);
     }
 
@@ -304,14 +300,8 @@ public class UserService {
 
     //loginId로 유저 테이블 꺼내오기
     @Transactional
-    public Optional<User> loadUserFromLoginId(String loginId) {
-        return Optional.ofNullable(userRepository.findByLoginId(loginId).orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS)));
-    }
-
-    //AccessToken 에서 userIndex 불러오기
-    @Transactional
-    public Long loadUserIndexByAccessToken(String AccessToken) {
-        return jwtTokenResolver.getId(AccessToken);
+    public User loadUserFromLoginId(String loginId) {
+        return convertOptionalUserToDomainUser(userRepository.findByLoginId(loginId));
     }
 
     //회원탈퇴 요청 시각 스탬프
@@ -326,22 +316,26 @@ public class UserService {
         user.setRequestedQuitDate(null);
     }
 
+    //본 테이블 -> 격리 테이블
     @Transactional
-    //격리 테이블로 옮기기
-    public void moveIsolation(User user) {
+    public void moveToIsolation(User user) {
+        
+        // 격리 테이블로 옮기기
         userIsolationRepository.insertUserIntoIsolation(user.getId());
-    }
-
-    //격리테이블 -> 본 테이블로 이동
-    @Transactional
-    public void moveUser(UserIsolation userIsolation) {
-        userRepository.insertUserIsolationIntoUser(userIsolation.getId());
-    }
-
-    //본 테이블에서 삭제
-    @Transactional
-    public void deleteUser(User user) {
+        
+        // 유저 테이블에서 삭제
         userRepository.deleteById(user.getId());
+    }
+
+    //격리 테이블 -> 본 테이블
+    @Transactional
+    public void moveToUser(UserIsolation userIsolation) {
+        
+        // 유저 테이블로 옮기기
+        userRepository.insertUserIsolationIntoUser(userIsolation.getId());
+        
+        // 격리 테이블에서 삭제
+        userIsolationRepository.deleteByLoginId(userIsolation.getLoginId());
     }
 
     //휴면계정 전환 30일 전 대상 뽑기
@@ -351,7 +345,7 @@ public class UserService {
         return userRepository.findByLastLoginBefore(targetTime);
     }
 
-    //휴면계정 전환 30일 전 안내 메일 보내기
+    //휴면 계정 전환 30일 전 안내 메일 보내기
     @Transactional
     @Scheduled(cron = "0 0 0 * * *") //매일 0시에 한번 씩 돌린다.
     public void sendEmailSoonDormant() {
@@ -365,24 +359,19 @@ public class UserService {
         }
     }
 
-    //휴면계정 전환 대상 뽑기
-    @Transactional
-    public List<User> isDormant() {
-        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
-        return userRepository.findByLastLoginBefore(targetTime);
-    }
-
     //휴면계정 전환
     @Transactional
     @Scheduled(cron = "0 0 0 * * *")
     public void convertDormant() {
 
+        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
+
         //1년이상 접속하지 않은 유저 리스트 불러오기
-        List<User> targetUser = isDormant();
+        List<User> targetUser = userRepository.findByLastLoginBefore(targetTime);
 
         //해당 유저들 격리테이블로 이동
         for (int i = 0; i < targetUser.toArray().length; i++) {
-            moveIsolation(targetUser.get(i));
+            moveToIsolation(targetUser.get(i));
         }
     }
 
@@ -418,28 +407,20 @@ public class UserService {
         user.setUpdatedAt(null);
     }
 
-
-    //회원탈퇴 후 30일이 지난 대상 뽑기
-    @Transactional
-    public List<User> isTargetedQuit() {
-        //회원탈퇴 신청 후 30일이 지났는지 확인
-        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
-
-//        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(1);
-        return userRepository.findByRequestedQuitDate(targetTime);
-    }
-
     //회원탈퇴 요청 후 30일 뒤 테이블에서 제거
     @Transactional
     @Scheduled(cron = "0 0 0 * * *")
-    public void deleteForever() {
+    public void deleteRequestQuitUserAfter30Days() {
 
-        List<User> targetUser = isTargetedQuit();
+        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
+
+        List<User> targetUser = userRepository.findByRequestedQuitDate(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
         }
     }
+
 
     // 강의평가 인덱스로 강의평가 객체 불러오기
     @Transactional
