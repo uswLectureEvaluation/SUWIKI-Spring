@@ -9,7 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import usw.suwiki.domain.blacklistDomain.BlackListService;
+import usw.suwiki.domain.blacklistDomain.BlacklistDomain;
 import usw.suwiki.domain.refreshToken.RefreshToken;
+import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
+import usw.suwiki.domain.reportTarget.ExamReportRepository;
 import usw.suwiki.domain.userIsolation.UserIsolation;
 import usw.suwiki.domain.userIsolation.UserIsolationRepository;
 import usw.suwiki.global.ToJsonArray;
@@ -27,9 +30,7 @@ import usw.suwiki.domain.favorite_major.FavoriteMajorService;
 import usw.suwiki.domain.userIsolation.UserIsolationService;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
@@ -43,8 +44,9 @@ public class UserController {
     private final EmailAuthService emailAuthService;
     private final BuildEmailAuthSuccessFormService buildEmailAuthSuccessFormService;
 
-    // User 관련 레포지토리
+    // 블랙리스트 관련
     private final BlackListService blackListService;
+    private final BlacklistRepository blacklistRepository;
 
     //JWT
     private final JwtTokenProvider jwtTokenProvider;
@@ -450,51 +452,18 @@ public class UserController {
                 "</center>";
     }
 
-//    // 신고 사유 불러오기
-//    @GetMapping("/ban-reason")
-//    public ResponseEntity<List<UserResponseDto.ViewMyBannedReasonForm>> banReason(@Valid @RequestHeader String Authorization) {
-//
-//        //토큰 검증
-//        jwtTokenValidator.validateAccessToken(Authorization);
-//
-//        List<UserResponseDto.ViewMyBannedReasonForm> result = new ArrayList<>();
-//
-//        // 유저 테이블의 유저 객체 불러오기
-//        User requestUser = userService.loadUserFromUserIdx(jwtTokenResolver.getId(Authorization));
-//
-//        // 블랙리스트 테이블에 있다면
-//        if (blacklistRepository.findByUserId(requestUser.getId()).isPresent()) {
-//
-//            BlacklistDomain blacklistDomain = blacklistRepository.findByUserId(requestUser.getId()).get();
-//
-//            //정지사유 타이틀(허위신고남용으로 인한 정지 안내)
-//            result.setJudgementTitle(blacklistDomain.getBannedReason());
-//
-//            //정지 기간(언제 풀리는지)
-//            result.setBannedUntil(blacklistDomain.getExpiredAt());
-//
-//            //제한 조치(30일정지)
-//            result.setJudgement(blacklistDomain.getJudgement());
-//
-//            return ResponseEntity.status(HttpStatus.OK).body(result);
-//        }
-//    }
+    // 신고 사유 불러오기
+    @GetMapping("/ban-reason")
+    public ResponseEntity<List<UserResponseDto.ViewMyBannedReasonForm>> banReason(@Valid @RequestHeader String Authorization) {
 
-//    @PostMapping("/test1")
-//    public void isolationTest(@Valid @RequestBody UserDto.LoginForm loginForm) {
-//
-//        User targetUser = userService.loadUserFromLoginId(loginForm.getLoginId());
-//
-//        userService.moveToIsolation(targetUser);
-//    }
-//
-//    @PostMapping("/test2")
-//    public void deleteTest(@Valid @RequestBody UserDto.LoginForm loginForm) {
-//
-//        User targetUser = userService.loadUserFromLoginId(loginForm.getLoginId());
-//
-//        userRepository.deleteById(targetUser.getId());
-//    }
+        //토큰 검증
+        jwtTokenValidator.validateAccessToken(Authorization);
+
+        // 유저 테이블의 유저 객체 불러오기
+        User requestUser = userService.loadUserFromUserIdx(jwtTokenResolver.getId(Authorization));
+
+        return ResponseEntity.status(HttpStatus.OK).body(blackListService.convertToDto(requestUser.getId()));
+    }
 }
 
 
