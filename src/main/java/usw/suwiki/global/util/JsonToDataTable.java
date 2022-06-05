@@ -61,7 +61,7 @@ public class JsonToDataTable {
     }
     public void toEntity() throws IOException, ParseException, InterruptedException {
 
-        Reader reader = new FileReader("/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2022_1 thirteen.json");
+        Reader reader = new FileReader("/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2021_2 thirteen.json");
 
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(reader);
@@ -108,7 +108,6 @@ public class JsonToDataTable {
                     }else{
                         String updateString = lecture.getSemesterList() +","+ dto.getSelectedSemester();
                         lecture.setSemester(updateString);  //refactoring 필요
-                        System.out.println(lecture.getLectureName() + " - " + lecture.getSemesterList());
                     }
                 } else {
                     Lecture savedLecture = Lecture.builder().build();
