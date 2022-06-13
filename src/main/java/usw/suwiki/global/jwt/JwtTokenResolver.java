@@ -1,6 +1,7 @@
 package usw.suwiki.global.jwt;
 
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -42,6 +43,11 @@ public class JwtTokenResolver {
     //AccessToken Role 꺼내기
     public String getUserRole(String token) {
         return (String) parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody().get("role");
+    }
+
+    //AccessToken Role 꺼내기
+    public String getUserRoleAdvanced(Claims claims) {
+        return (String) claims.get("role");
     }
 
     //AccessToken Restricted 꺼내기

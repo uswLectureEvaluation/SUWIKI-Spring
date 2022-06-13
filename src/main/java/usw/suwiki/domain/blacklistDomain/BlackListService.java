@@ -88,10 +88,9 @@ public class BlackListService {
                 finalResultForm.add(resultForm);
             }
 
-            return finalResultForm;
         }
 
-        throw new AccountException(ErrorType.METHOD_NOT_ALLOWED);
+        return finalResultForm;
 
     }
 }
