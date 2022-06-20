@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin")
+@RequestMapping("/proxy/admin")
 public class UserAdminController {
 
     // JWT 관련 의존성
