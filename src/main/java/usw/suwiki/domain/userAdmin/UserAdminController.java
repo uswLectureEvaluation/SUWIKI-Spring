@@ -19,11 +19,11 @@ import usw.suwiki.domain.user.UserService;
 
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.Optional;
+
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/proxy/admin")
+@RequestMapping("/admin")
 public class UserAdminController {
 
     // JWT 관련 의존성
