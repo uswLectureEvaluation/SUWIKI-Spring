@@ -42,18 +42,21 @@ public class JsonToDataTable {
 
         if(dto.getLectureName().contains("비대면수업")){
             dto.setLectureName(dto.getLectureName().replace("(비대면수업)",""));
+            dto.setLectureName(dto.getLectureName().replace("(비대면수업-)", ""));
             dto.setLectureName(dto.getLectureName().replace("비대면수업-", ""));
             dto.setLectureName(dto.getLectureName().replace("비대면수업_", ""));
             dto.setLectureName(dto.getLectureName().replace("비대면수업", ""));
         }
         if (dto.getLectureName().contains("대면수업")){
             dto.setLectureName(dto.getLectureName().replace("(대면수업)",""));
+            dto.setLectureName(dto.getLectureName().replace("(대면수업-)", ""));
             dto.setLectureName(dto.getLectureName().replace("대면수업-", ""));
             dto.setLectureName(dto.getLectureName().replace("대면수업_", ""));
             dto.setLectureName(dto.getLectureName().replace("대면수업", ""));
         }
         if(dto.getLectureName().contains("혼합수업")){
             dto.setLectureName(dto.getLectureName().replace("(혼합수업)",""));
+            dto.setLectureName(dto.getLectureName().replace("(혼합수업-)", ""));
             dto.setLectureName(dto.getLectureName().replace("혼합수업-", ""));
             dto.setLectureName(dto.getLectureName().replace("혼합수업_", ""));
             dto.setLectureName(dto.getLectureName().replace("혼합수업", ""));
@@ -61,7 +64,7 @@ public class JsonToDataTable {
     }
     public void toEntity() throws IOException, ParseException, InterruptedException {
 
-        Reader reader = new FileReader("/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2021_2 thirteen.json");
+        Reader reader = new FileReader("/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2022_1 thirteen.json");
 
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(reader);

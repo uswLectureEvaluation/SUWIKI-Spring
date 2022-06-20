@@ -89,7 +89,7 @@ public class EvaluatePostsService {
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         Integer point = posts.getUser().getPoint();
         if(point >= 10){
-            posts.getUser().setPoint(point - 10);
+            posts.getUser().setPoint(point - 30);
             return true;
         }
         return false;
