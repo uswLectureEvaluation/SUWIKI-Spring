@@ -49,6 +49,7 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        APPLICATION_YML : ${{ secrets.APPLICATOIN_YML }}
       run: | 
         aws s3 cp \
         --region ap-northeast-2 \
