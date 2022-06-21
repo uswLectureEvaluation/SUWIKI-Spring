@@ -1,10 +1,3 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
-
 name: Java CI with Gradle
 
 on:
@@ -33,7 +26,7 @@ jobs:
       run: |
           cd ./src/main/resources
           touch ./application.yml
-          echo "${{ secrets.APPLICATION_YML }}" > ./application.properties
+          echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
       shell: bash
     
     - name: Grant execute permission for gradlew
@@ -51,7 +44,7 @@ jobs:
 
     # 압축파일 형태로 전달
     - name: Make zip file
-      run: zip -r -qq -j ./suwiki-backend.zip ./deploy
+      run: zip -r -qq -j ./deploy.zip ./deploy
 
     # S3 Bucket으로 copy
     - name: Deliver to AWS S3
