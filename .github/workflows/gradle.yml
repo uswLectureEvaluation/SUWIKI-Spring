@@ -74,7 +74,7 @@ jobs:
       run: |
         aws deploy create-deployment \
         --application-name SUWIKI-BACKEND-CD \
-        --deployment-group-name springboot-intro-deploy-group \
+        --deployment-group-name SUWIKI-BACKEND \
         --file-exists-behavior OVERWRITE \
         --s3-location bucket=suwiki-backend,bundleType=zip,key=Backend-Remaster.zip \
         --region ap-northeast-2
