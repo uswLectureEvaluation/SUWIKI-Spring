@@ -63,4 +63,4 @@ jobs:
       run: | 
         aws s3 cp \
         --region ap-northeast-2 \
-        --acl private \ ./Backend-Remaster.zip s3://Backend-Remaster/
+        ./Backend-Remaster.zip s3://Backend-Remaster/
