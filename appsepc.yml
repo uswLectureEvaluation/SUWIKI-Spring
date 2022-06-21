@@ -2,4 +2,17 @@ version: 0.0
 os: linux
 files:
   - source:  /
-    destination: /home/ubuntu/build/
+    destination: /home/ubuntu/deploy # 배포될 위치
+    overwrite: yes
+
+permissions:
+  - object: /
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+
+hooks:
+  ApplicationStart:
+    - location: scripts/deploy.sh # ApplicationStart 단계에서 deploy.sh 실행
+      timeout: 60
+      runas: ubuntu
