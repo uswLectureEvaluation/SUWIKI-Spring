@@ -44,6 +44,9 @@ jobs:
     # Jar 파일 Copy
     - name: Copy Jar
       run: cp ./build/libs/*.jar ./deploy/
+    
+    - name: Where I am
+      run: pwd
 
     # 압축파일 형태로 전달
     - name: Make zip file
