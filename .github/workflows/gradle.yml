@@ -45,8 +45,8 @@ jobs:
     - name: Copy Jar
       run: cp ./build/libs/*.jar ./deploy/
     
-    - name: Appspec copy
-      run: cp ./build/libs/appspec.yml ./deploy/
+    - name: Copy Appspec
+      run: cp ./appspec.yml ./deploy/
     
     - name: Where am I
       run: pwd
