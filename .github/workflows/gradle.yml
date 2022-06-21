@@ -73,7 +73,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
         aws deploy create-deployment \
-        --application-name SUWIKI-BACKEND \
+        --application-name SUWIKI-BACKEND-CD \
         --deployment-group-name springboot-intro-deploy-group \
         --file-exists-behavior OVERWRITE \
         --s3-location bucket=suwiki-backend,bundleType=zip,key=Backend-Remaster.zip \
