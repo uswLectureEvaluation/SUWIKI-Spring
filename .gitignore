@@ -6,7 +6,7 @@ build/
 !**/src/test/**/build/
 ./java/usw/suwiki/config/MailAuthConfig.java
 !src/test/test/**/build/
-*.yml
+application.yml
 application.properties
 .idea/workspace.xml
 
