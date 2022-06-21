@@ -64,3 +64,17 @@ jobs:
         aws s3 cp \
         --region ap-northeast-2 \
         --acl private \./Backend-Remaster.zip s3://suwiki-backend/
+        
+        
+    # Deploy
+    - name: Deploy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: |
+        aws deploy create-deployment \
+        --application-name SUWIKI-BACKEND \
+        --deployment-group-name springboot-intro-deploy-group \
+        --file-exists-behavior OVERWRITE \
+        --s3-location bucket=suwiki-backend,bundleType=zip,key=Backend-Remaster.zip \
+        --region ap-northeast-2
