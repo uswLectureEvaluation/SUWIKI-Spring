@@ -63,4 +63,4 @@ jobs:
       run: | 
         aws s3 cp \
         --region ap-northeast-2 \
-        --acl private \ ./Backend-Remaster.zip s3://suwiki-backend/
+        --acl private \./Backend-Remaster.zip s3://suwiki-backend/
