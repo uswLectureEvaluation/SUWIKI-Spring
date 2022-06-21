@@ -27,6 +27,14 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+        
+    - name: make application.yml
+      if: contains(github.ref, 'main') # branch가 main 일 때, 나머지는 위와 동일
+      run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.APPLICATION_YML }}" > ./application.properties
+      shell: bash
     
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
