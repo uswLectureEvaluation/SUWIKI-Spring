@@ -48,12 +48,12 @@ jobs:
     - name: Where am I
       run: pwd
       
-    - name: .zip
-      run: find . -name "*.zip" 
-
     # 압축파일 형태로 전달
     - name: Make zip file
       run: zip -r -qq -j ./Backend-Remaster.zip ./deploy
+      
+    - name: .zip
+      run: find . -name "*.zip" 
 
     # S3 Bucket으로 copy
     - name: Deliver to AWS S3
@@ -63,4 +63,4 @@ jobs:
       run: | 
         aws s3 cp \
         --region ap-northeast-2 \
-        --acl private \ ./build/libs/Backend-Remaster.zip s3://springboot-intro-build/
+        --acl private \ ./Backend-Remaster.zip s3://springboot-intro-build/
