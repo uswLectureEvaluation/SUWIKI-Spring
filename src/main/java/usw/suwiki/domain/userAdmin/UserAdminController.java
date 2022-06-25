@@ -24,7 +24,7 @@ import java.util.HashMap;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "https://suwikiman.netlify.app/", allowedHeaders = "*")
 public class UserAdminController {
 
     // JWT 관련 의존성
