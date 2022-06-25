@@ -42,6 +42,7 @@ public class NoticeController {
     }
 
     @PostMapping("/")
+    @CrossOrigin(origins = "*")
     public ResponseEntity<String> saveNotice(@RequestBody NoticeSaveOrUpdateDto dto, @RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
             if(jwtTokenValidator.validateAccessToken(Authorization)) {
@@ -57,6 +58,7 @@ public class NoticeController {
     }
 
     @PutMapping("/")
+    @CrossOrigin(origins = "*")
     public ResponseEntity<String> updateNotice(@RequestParam Long noticeId , @RequestBody NoticeSaveOrUpdateDto dto, @RequestHeader String Authorization){
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
@@ -72,7 +74,8 @@ public class NoticeController {
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<String> deleteNotice(@RequestParam Long noticeId , @RequestHeader String Authorization){
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<String> deleteNotice(@RequestParam Long noticeId , @RequestHeader String Authorization) {
             HttpHeaders header = new HttpHeaders();
             if (jwtTokenValidator.validateAccessToken(Authorization)) {
                 if (jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) {
