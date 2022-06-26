@@ -90,7 +90,7 @@ public class EvaluateController {
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
             if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
-            if (evaluatePostsService.verifyDeleteEvaluatePosts(userIdx, evaluateIdx)) {
+            if (evaluatePostsService.verifyDeleteEvaluatePosts(evaluateIdx)) {
                 evaluatePostsService.deleteById(evaluateIdx,userIdx);
                 return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
             }else{

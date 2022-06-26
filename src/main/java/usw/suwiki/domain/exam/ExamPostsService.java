@@ -88,7 +88,7 @@ public class ExamPostsService {
         }
     }
 
-    public boolean verifyDeleteExamPosts(Long userIdx, Long examIdx){
+    public boolean verifyDeleteExamPosts(Long examIdx){
         ExamPosts posts = examPostsRepository.findById(examIdx);
         Integer point = posts.getUser().getPoint();
         if(point >= 20){

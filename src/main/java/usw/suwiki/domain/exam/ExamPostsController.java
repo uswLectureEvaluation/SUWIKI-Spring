@@ -113,7 +113,7 @@ public class ExamPostsController {
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
             if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
-            if (examPostsService.verifyDeleteExamPosts(userIdx, examIdx)) {
+            if (examPostsService.verifyDeleteExamPosts(examIdx)) {
                 examPostsService.deleteById(examIdx,userIdx);
                 return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
             }else{
