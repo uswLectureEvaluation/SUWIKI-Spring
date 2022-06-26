@@ -37,6 +37,7 @@ public class JwtTokenProvider {
 
         //페이로드에 남길 정보들 (Id, loginId, role, restricted)
         Claims claims = Jwts.claims();
+        claims.setSubject(user.getLoginId());
         claims.put("id", user.getId());
         claims.put("loginId", user.getLoginId());
         claims.put("role", user.getRole());

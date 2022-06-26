@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
+@CrossOrigin(origins = "https://suwikiman.netlify.app/", allowedHeaders = "*")
 @RequestMapping(value = "/notice")
 public class NoticeController {
 
@@ -72,7 +73,7 @@ public class NoticeController {
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<String> deleteNotice(@RequestParam Long noticeId , @RequestHeader String Authorization){
+    public ResponseEntity<String> deleteNotice(@RequestParam Long noticeId , @RequestHeader String Authorization) {
             HttpHeaders header = new HttpHeaders();
             if (jwtTokenValidator.validateAccessToken(Authorization)) {
                 if (jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) {

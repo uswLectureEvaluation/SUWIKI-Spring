@@ -19,11 +19,12 @@ import usw.suwiki.domain.user.UserService;
 
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.Optional;
+
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")
+@CrossOrigin(origins = "https://suwikiman.netlify.app/", allowedHeaders = "*")
 public class UserAdminController {
 
     // JWT 관련 의존성

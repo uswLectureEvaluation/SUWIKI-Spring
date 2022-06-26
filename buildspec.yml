@@ -1,0 +1,20 @@
+version: 0.2
+phases:
+  build:
+    commands:
+      - echo Build Starting on `date`
+      - chmod +x ./gradlew
+      - ./gradlew build
+  post_build:
+    commands:
+      - echo $(basename ./build/libs/*.jar)
+      - pwd
+artifacts:
+  files:
+    - build/libs/*.jar
+    - appspec.yml   # CodeDeploy 적용 시 추가
+    - scripts/**    # CodeDeploy 적용 시 추가
+  discard-paths: yes
+cache:
+  paths:
+    - '/root/.gradle/caches/**/*'
