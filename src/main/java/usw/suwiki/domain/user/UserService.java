@@ -338,7 +338,8 @@ public class UserService {
         userIsolationRepository.deleteByLoginId(userIsolation.getLoginId());
     }
 
-    //휴면계정 전환 30일 전 대상 뽑기
+    // 휴면계정 전환 30일 전 대상 뽑기
+    // 검사하는 시점 보다 최근 로그인 일자가 30일 이전인 유저를 리스트에 담는다.
     @Transactional
     public List<User> soonDormant() {
         LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
