@@ -315,40 +315,33 @@ public class UserService {
         user.setRequestedQuitDate(LocalDateTime.now());
     }
 
-    //회원탈퇴 요청 시각 스탬프 초기화
+    // 회원탈퇴 요청 시각 스탬프 초기화
     @Transactional
     public void initQuitDateStamp(User user) {
         user.setRequestedQuitDate(null);
     }
 
-    //본 테이블 -> 격리 테이블
+    // 본 테이블 -> 격리 테이블
     @Transactional
     public void moveToIsolation(User user) {
-        
         // 격리 테이블로 옮기기
         userIsolationRepository.insertUserIntoIsolation(user.getId());
-        
-        // 유저 테이블에서 삭제
-        userRepository.deleteById(user.getId());
     }
 
-    //격리 테이블 -> 본 테이블
+    // 격리 테이블 -> 본 테이블
     @Transactional
     public void moveToUser(UserIsolation userIsolation) {
-        
         // 유저 테이블로 옮기기
         userRepository.insertUserIsolationIntoUser(userIsolation.getId());
-        
-        // 격리 테이블에서 삭제
-        userIsolationRepository.deleteByLoginId(userIsolation.getLoginId());
     }
+
 
     // 휴면계정 전환 30일 전 대상 뽑기
     // 검사하는 시점 보다 최근 로그인 일자가 30일 이전인 유저를 리스트에 담는다.
     @Transactional
     public List<User> soonDormant() {
 //        LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(3);
         return userRepository.findByLastLoginBefore(targetTime);
     }
 

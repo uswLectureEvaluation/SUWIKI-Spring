@@ -189,7 +189,7 @@ public class UserController {
         //이메일 인증 받았는지 확인
         userService.isUserEmailAuth(loginForm.getLoginId());
 
-        //격리 테이블에 있으며 이메일 인증을 했으면 (대상 = 휴면계정)
+        //격리 테이블에 있으면
         if (userIsolationRepository.findByLoginId(loginForm.getLoginId()).isPresent()) {
 
             //제한된 유저 인지 확인
@@ -204,10 +204,13 @@ public class UserController {
             //본 도메인 객체 가져오기.
             User user = userService.loadUserFromUserIdx(userIsolation.getId());
 
-            user.setRestricted(false);
-
             //격리 테이블 해당 유저 삭제
             userIsolationRepository.deleteByLoginId(user.getLoginId());
+
+            // 블랙리스트 유저인지 확인
+            blackListService.isBlackList(user.getEmail());
+
+            user.setRestricted(false);
 
             //아이디 비밀번호 검증
             userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
