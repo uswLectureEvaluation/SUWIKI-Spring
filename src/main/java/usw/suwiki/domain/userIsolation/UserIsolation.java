@@ -57,4 +57,8 @@ public class UserIsolation {
 
     @Column
     private LocalDateTime updatedAt;
+
+    // 정지 언제 풀리는지
+    @Column
+    private LocalDateTime restrictingDate;
 }

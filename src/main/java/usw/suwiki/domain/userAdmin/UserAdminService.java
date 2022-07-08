@@ -130,6 +130,7 @@ public class UserAdminService {
         expiredAtSetTarget.get().setCreatedAt(LocalDateTime.now());
         expiredAtSetTarget.get().setCreatedAt(LocalDateTime.now());
     }
+
     // 신고받은 시험저보 작성자 유저 정지먹이기 (블랙리스트가 아님)
     @Transactional
     public void restrictUserByExam(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {

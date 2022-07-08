@@ -29,7 +29,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "UPDATE User Set restricted = True WHERE id = :userIdx ")
     void restrictUser(@Param("userIdx") Long userIdx);
 
-    @Query(value = "SELECT restricted FROM User WHERE loginId =: loginId")
+    @Query(value = "SELECT restricted FROM User WHERE loginId = :loginId")
     boolean loadUserRestriction(@Param("loginId") String loginId);
 
     //loginId, email 입력값 검증

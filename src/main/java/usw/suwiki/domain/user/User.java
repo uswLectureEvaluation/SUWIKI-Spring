@@ -56,4 +56,7 @@ public class User {
 
     @Column
     private LocalDateTime updatedAt;
+
+    @Column
+    private LocalDateTime restrictingDate;
 }

@@ -365,7 +365,7 @@ public class UserService {
     public void convertDormant() {
 
 //        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(3);
 
         //1년이상 접속하지 않은 유저 리스트 불러오기
         List<User> targetUser = userRepository.findByLastLoginBefore(targetTime);
@@ -424,10 +424,22 @@ public class UserService {
         }
     }
 
+    // 이용정지를 풀기 위한 메서드
+    @Transactional
+    @Scheduled(cron = "0 * * * * *")
+    public void isUnrestrictedTarget() {
+
+        // 현재시각으로부터 - 30일
+        LocalDateTime targetTime = LocalDateTime.now();
+        
+        List<UserIsolation> targetUser = userIsolationRepository.findByRestrictingDateBefore(targetTime);
+    }
+
 
     // 강의평가 인덱스로 강의평가 객체 불러오기
     @Transactional
     public EvaluatePosts loadEvaluatePostsByIndex(Long EvaluatePostsIdx) {
+
         return jpaEvaluatePostsRepository.findById(EvaluatePostsIdx);
     }
 
@@ -476,6 +488,5 @@ public class UserService {
                 .build();
 
         evaluateReportRepository.save(target);
-
     }
 }
