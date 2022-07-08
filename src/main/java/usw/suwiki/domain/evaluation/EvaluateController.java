@@ -13,7 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import usw.suwiki.global.util.BadWordFiltering;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +27,7 @@ public class EvaluateController {
     private final EvaluatePostsService evaluatePostsService;
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
+    private final BadWordFiltering badWordFiltering;
 
     @GetMapping
     public ResponseEntity<FindByLectureToJson> findByLecture(@RequestHeader String Authorization, @RequestParam Long lectureId,
@@ -53,13 +56,18 @@ public class EvaluateController {
     }
 
     @PostMapping
-    public ResponseEntity<String> saveEvaluatePosts(@RequestParam Long lectureId,@RequestHeader String Authorization,@RequestBody EvaluatePostsSaveDto dto){
+    public ResponseEntity<String> saveEvaluatePosts(@RequestParam Long lectureId,@RequestHeader String Authorization,@RequestBody EvaluatePostsSaveDto dto) throws IOException {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
+
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
             if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
             if (evaluatePostsService.verifyWriteEvaluatePosts(userIdx, lectureId)) {
+//                if (badWordFiltering.filtering(dto.getContent()).isPresent()) {
+//                    String FilteredBadWord = badWordFiltering.filtering(dto.getContent()).get();
+//                    return new ResponseEntity<String>(FilteredBadWord, header, HttpStatus.valueOf(406));
+//                }
                 evaluatePostsService.save(dto, userIdx , lectureId);
                 return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
             }else{

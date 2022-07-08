@@ -15,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.viewExam.ViewExamService;
+import usw.suwiki.global.util.BadWordFiltering;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +31,7 @@ public class ExamPostsController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
     private final ViewExamService viewExamService;
+    private final BadWordFiltering badWordFiltering;
 
     @GetMapping
     public ResponseEntity<FindByLectureToExam> findByLecture(@RequestParam Long lectureId, @RequestHeader String Authorization,
@@ -66,7 +69,7 @@ public class ExamPostsController {
     }
 
     @PostMapping
-    public ResponseEntity<String> saveEvaluatePosts(@RequestParam Long lectureId ,@RequestBody ExamPostsSaveDto dto, @RequestHeader String Authorization){
+    public ResponseEntity<String> saveEvaluatePosts(@RequestParam Long lectureId ,@RequestBody ExamPostsSaveDto dto, @RequestHeader String Authorization) throws IOException {
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
             if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);

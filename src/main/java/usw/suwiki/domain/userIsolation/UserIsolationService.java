@@ -42,9 +42,11 @@ public class UserIsolationService {
 
     //회원탈퇴 요청 시각이 30일 전인지 확인 (매일 0시마다 검사한다.)
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
+//    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void requestQuitDateStamp() {
-        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
+//        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
         List<UserIsolation> targetUser = userIsolationRepository.findByRequestedQuitDateBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
@@ -54,9 +56,11 @@ public class UserIsolationService {
 
     //격리 후 3년간 로그인 하지 않는 대상에 지정되기 한달 전에 이메일 보내기
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
+//    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void autoDeleteTargetIsThreeYearsSendEmail() {
-        LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
+//        LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
+        LocalDateTime targetTime = LocalDateTime.now().plusMinutes(60);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
@@ -66,9 +70,11 @@ public class UserIsolationService {
 
     //격리 후 3년간 로그인 하지 않으면 계정 자동 삭제
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
+//    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void autoDeleteTargetIsThreeYears() {
-        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
+//        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(60);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {

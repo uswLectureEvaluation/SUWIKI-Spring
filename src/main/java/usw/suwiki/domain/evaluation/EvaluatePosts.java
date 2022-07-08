@@ -1,6 +1,7 @@
 package usw.suwiki.domain.evaluation;
 
 import usw.suwiki.domain.lecture.Lecture;
+import usw.suwiki.domain.reportTarget.EvaluatePostReport;
 import usw.suwiki.global.BaseTimeEntity;
 import usw.suwiki.domain.user.User;
 import lombok.Getter;

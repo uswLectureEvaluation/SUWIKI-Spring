@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import usw.suwiki.domain.evaluation.EvaluatePostsRepository;
+import usw.suwiki.domain.evaluation.EvaluatePostsService;
+import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.reportTarget.EvaluatePostReport;
 import usw.suwiki.domain.reportTarget.ExamPostReport;
 import usw.suwiki.domain.user.User;
@@ -41,6 +44,9 @@ public class UserAdminController {
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;
 
+    private final EvaluatePostsService evaluatePostsService;
+    private final ExamPostsService examPostsService;
+
 
     // 관리자 전용 로그인 API
     @PostMapping("/login")
@@ -61,6 +67,62 @@ public class UserAdminController {
         return ResponseEntity.status(HttpStatus.OK).body(token);
     }
 
+    // 강의평가 게시물 정지 먹이기
+    @PostMapping("/restrict/evaluate-post")
+    public HashMap<String, Boolean> restrictEvaluatePost(@Valid @RequestHeader String Authorization,
+                                                    @Valid @RequestBody UserAdminRequestDto.EvaluatePostBanForm evaluatePostBanForm) {
+
+        //토큰 검증
+        jwtTokenValidator.validateAccessToken(Authorization);
+
+        //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
+        if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
+            throw new AccountException(ErrorType.USER_RESTRICTED);
+
+        HashMap<String, Boolean> result = new HashMap<>();
+
+        // 게시글 삭제
+        Long evaluateIdx = userAdminService.banishEvaluatePost(evaluatePostBanForm);
+
+        // 유저 restricted True
+        userService.restrictedUser(userService
+                        .loadEvaluatePostsByIndex(evaluatePostBanForm
+                        .getEvaluateIdx())
+                        .getUser()
+                        .getId());
+
+        result.put("Success", true);
+        return result;
+    }
+
+    // 시험정보 게시물 정지 먹이기
+    @PostMapping("/restrict/exam-post")
+    public HashMap<String, Boolean> restrictExamPost(@Valid @RequestHeader String Authorization,
+                                                         @Valid @RequestBody UserAdminRequestDto.ExamPostBanForm examPostBanForm) {
+
+        //토큰 검증
+        jwtTokenValidator.validateAccessToken(Authorization);
+
+        //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
+        if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
+            throw new AccountException(ErrorType.USER_RESTRICTED);
+
+        HashMap<String, Boolean> result = new HashMap<>();
+
+        // 게시글 삭제
+        Long examIdx = userAdminService.banishExamPost(examPostBanForm);
+
+        // 유저 restricted True
+        userService.restrictedUser(userService
+                        .loadEvaluatePostsByIndex(examPostBanForm
+                        .getExamIdx())
+                        .getUser()
+                        .getId());
+
+        result.put("Success", true);
+        return result;
+    }
+
     
     // 강의평가 게시물 벤 먹이기
     @PostMapping("/ban/evaluate-post")
@@ -78,6 +140,13 @@ public class UserAdminController {
 
         // 게시글 삭제
         Long evaluateIdx = userAdminService.banishEvaluatePost(evaluatePostBanForm);
+
+        // 유저 restricted True
+        userService.restrictedUser(userService
+                        .loadEvaluatePostsByIndex(evaluatePostBanForm
+                        .getEvaluateIdx())
+                        .getUser()
+                        .getId());
 
         // 유저 블랙리스트 테이블로
         userAdminService.banUserByEvaluate(
@@ -106,6 +175,14 @@ public class UserAdminController {
 
         // 게시글 삭제
         Long examIdx = userAdminService.banishExamPost(examPostBanForm);
+
+        
+        // 유저 restricted True
+        userService.restrictedUser(userService.loadExamPostsByIndex(
+                examPostBanForm
+                        .getExamIdx())
+                        .getUser()
+                        .getId());
 
         // 유저 블랙리스트 테이블로
         userAdminService.banUserByExam(

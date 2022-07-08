@@ -26,6 +26,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByRequestedQuitDate(LocalDateTime localDateTime);
 
+    @Query(value = "UPDATE User Set restricted = True WHERE id = :userIdx ")
+    void restrictUser(@Param("userIdx") Long userIdx);
+
     @Query(value = "SELECT restricted FROM User WHERE loginId =: loginId")
     boolean loadUserRestriction(@Param("loginId") String loginId);
 

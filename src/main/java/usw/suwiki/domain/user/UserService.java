@@ -128,8 +128,8 @@ public class UserService {
         confirmationTokenService.saveConfirmationToken(confirmationToken);
 
 //        이메일 토큰에 대한 링크 생성
-        String link = "https://api.suwiki.kr/user/verify-email/?token=" + token;
-//        String link = "http://localhost:8080/user/verify-email/?token=" + token;
+//        String link = "https://api.suwiki.kr/user/verify-email/?token=" + token;
+        String link = "http://localhost:8080/user/verify-email/?token=" + token;
 
         //이메일 전송
         emailSender.send(joinForm.getEmail(), buildEmailAuthFormService.buildEmail(link));
@@ -254,6 +254,11 @@ public class UserService {
         if (userRepository.loadUserRestriction(loginId)) throw new AccountException(ErrorType.USER_RESTRICTED);
     }
 
+    @Transactional
+    public void restrictedUser(Long userIdx) {
+        userRepository.restrictUser(userIdx);
+    }
+
     //비밀번호 검증 True 시 비밀번호 일치
     @Transactional
     public boolean correctPw(String loginId, String password) {
@@ -342,13 +347,14 @@ public class UserService {
     // 검사하는 시점 보다 최근 로그인 일자가 30일 이전인 유저를 리스트에 담는다.
     @Transactional
     public List<User> soonDormant() {
-        LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
+//        LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
         return userRepository.findByLastLoginBefore(targetTime);
     }
 
     //휴면 계정 전환 30일 전 안내 메일 보내기
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *") //매일 0시에 한번 씩 돌린다.
+    @Scheduled(cron = "0 * * * * *") //매일 0시에 한번 씩 돌린다.
     public void sendEmailSoonDormant() {
 
         //대상 유저 가져오기
@@ -362,10 +368,11 @@ public class UserService {
 
     //휴면계정 전환
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void convertDormant() {
 
-        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
+//        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
 
         //1년이상 접속하지 않은 유저 리스트 불러오기
         List<User> targetUser = userRepository.findByLastLoginBefore(targetTime);
@@ -410,10 +417,12 @@ public class UserService {
 
     //회원탈퇴 요청 후 30일 뒤 테이블에서 제거
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
+//    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void deleteRequestQuitUserAfter30Days() {
 
-        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
+//        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(3);
 
         List<User> targetUser = userRepository.findByRequestedQuitDate(targetTime);
 

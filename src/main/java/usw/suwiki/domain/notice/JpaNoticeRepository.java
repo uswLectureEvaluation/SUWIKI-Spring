@@ -23,7 +23,7 @@ public class JpaNoticeRepository implements NoticeRepository{
     @Override
     public List<Notice> findByNoticeList(PageOption page) {
         Optional<Integer> pageNumber = page.getPageNumber();
-        List resultList = em.createQuery("SELECT n from Notice n ORDER BY n.modifiedDate")
+        List resultList = em.createQuery("SELECT n from Notice n ORDER BY n.modifiedDate desc")
                 .setFirstResult((pageNumber.get()-1)*10)
                 .setMaxResults(10)
                 .getResultList();

@@ -11,7 +11,7 @@ public class Filtering {
     @Test
     boolean filter() throws IOException {
 
-        BufferedReader br = new BufferedReader(new FileReader("src/test/java/KDH/BadWordTest/BadWordList.txt"));
+        BufferedReader br = new BufferedReader(new FileReader("src/main/resources/BadWordList.txt"));
 
         ArrayList<String> badWordList = new ArrayList<>();
 

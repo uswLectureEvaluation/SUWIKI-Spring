@@ -1,6 +1,8 @@
 package usw.suwiki.domain.reportTarget;
 
 import lombok.*;
+import usw.suwiki.domain.evaluation.EvaluatePosts;
+import usw.suwiki.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -21,11 +23,9 @@ public class EvaluatePostReport {
     private Long evaluateIdx;
 
     // 신고당한 유저 Id
-    @Column
     private Long reportedUserIdx;
 
     // 신고한 유저 Id
-    @Column
     private Long reportingUserIdx;
 
     // 교수이름
