@@ -192,8 +192,8 @@ public class UserController {
         //격리 테이블에 있으며 이메일 인증을 했으면 (대상 = 휴면계정)
         if (userIsolationRepository.findByLoginId(loginForm.getLoginId()).isPresent()) {
 
-//            //제한된 유저 인지 확인
-//            userService.isRestricted(loginForm.getLoginId());
+            //제한된 유저 인지 확인
+            userService.isRestricted(loginForm.getLoginId());
 
             //격리 도메인 객체로 변환
             UserIsolation userIsolation = userIsolationService.loadUserFromLoginId(loginForm.getLoginId());
@@ -232,7 +232,7 @@ public class UserController {
         }
 
         //유저 테이블에 존재하면
-        if (userRepository.findByLoginId(loginForm.getLoginId()).isPresent()) {
+        else if (userRepository.findByLoginId(loginForm.getLoginId()).isPresent()) {
             
             //아이디 비밀번호 검증
             userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
