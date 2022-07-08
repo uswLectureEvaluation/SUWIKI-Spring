@@ -333,6 +333,9 @@ public class UserService {
     public void moveToUser(UserIsolation userIsolation) {
         // 유저 테이블로 옮기기
         userRepository.insertUserIsolationIntoUser(userIsolation.getId());
+
+        // 유저테이블로 옮겼으면 격리 테이블에서 삭제하기
+        userIsolationRepository.deleteByLoginId(userIsolation.getLoginId());
     }
 
 
@@ -370,11 +373,13 @@ public class UserService {
         //1년이상 접속하지 않은 유저 리스트 불러오기
         List<User> targetUser = userRepository.findByLastLoginBefore(targetTime);
 
-        //해당 유저들 격리테이블로 이동
+        //해당 유저들 격리테이블로 이동 후, 본 테이블에서 삭제
         for (int i = 0; i < targetUser.toArray().length; i++) {
             moveToIsolation(targetUser.get(i));
+            userRepository.deleteById(targetUser.get(i).getId());
         }
     }
+
 
     //회원탈퇴 대기
     @Transactional
