@@ -23,10 +23,10 @@ public class UserResponseDto {
 
     @Data
     public static class ViewMyRestrictedReasonForm {
-        private String RestrictedReason;
+        private String restrictedReason;
         private String judgement;
-        private LocalDateTime restrictingDate;
         private LocalDateTime createdAt;
+        private LocalDateTime restrictingDate;
     }
 
     @Data

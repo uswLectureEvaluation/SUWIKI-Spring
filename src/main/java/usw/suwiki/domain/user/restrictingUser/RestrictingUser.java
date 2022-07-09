@@ -1,6 +1,8 @@
 package usw.suwiki.domain.user.restrictingUser;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.user.User;
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class RestrictingUser {
 
     @Id

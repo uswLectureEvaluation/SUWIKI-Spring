@@ -26,9 +26,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByRequestedQuitDate(LocalDateTime localDateTime);
 
-    // 유저 정지 처리
-    @Query(value = "UPDATE User Set restricted = True WHERE id = :userIdx")
-    void restrictUser(@Param("userIdx") Long userIdx);
+    // UserIdx 로 정지 해제
+    @Modifying(clearAutomatically = true)
+    @Query(value = "UPDATE User SET restricted = false WHERE id = :userIdx")
+    void unRestricted(@Param("userIdx") Long userIdx);
 
     //loginId, email 입력값 검증
     @Query(value = "SELECT loginId, email FROM User WHERE loginId = :loginId and email = :email")
@@ -52,8 +53,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "SELECT user_idx, login_id, password, email, role, restricted, restricted_count, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at FROM user_isolation WHERE user_idx = :id", nativeQuery = true)
     void insertUserIsolationIntoUser(@Param("id") Long id);
 
-    //UserIdx 로 블랙리스트 출소 유저 반영해주기
-    @Modifying(clearAutomatically = true)
-    @Query(value = "UPDATE User SET restricted = false WHERE id = :userIdx")
-    void unRestricted(@Param("userIdx") Long userIdx);
+
 }

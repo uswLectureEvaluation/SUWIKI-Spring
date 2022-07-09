@@ -1,9 +1,16 @@
 package usw.suwiki.domain.user.restrictingUser;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.evaluation.EvaluatePosts;
+import usw.suwiki.domain.exam.ExamPosts;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.UserResponseDto;
+import usw.suwiki.domain.user.UserService;
+import usw.suwiki.domain.userAdmin.UserAdminRequestDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +22,44 @@ public class RestrictingUserService {
 
     private final RestrictingUserRepository restrictingUserRepository;
 
+    private final UserService userService;
+
+    private final UserRepository userRepository;
+
+    // 강의평가 게시글로 유저 정지 먹이기
+    @Transactional
+    public void addRestrictingTableByEvaluatePost(UserAdminRequestDto.EvaluatePostRestrictForm restrictForm) {
+
+        EvaluatePosts evaluatePosts = userService.loadEvaluatePostsByIndex(restrictForm.getEvaluateIdx());
+        User user = userService.loadUserFromUserIdx(evaluatePosts.getUser().getId());
+
+        RestrictingUser restrictingUser = RestrictingUser.builder()
+                .user(user)
+                .restrictingDate(LocalDateTime.now().plusDays(restrictForm.getRestrictingDate()))
+                .restrictingReason(restrictForm.getRestrictingReason())
+                .judgement(restrictForm.getJudgement())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now()).build();
+        restrictingUserRepository.save(restrictingUser);
+    }
+
+    // 강의평가 게시글로 유저 정지 먹이기
+    @Transactional
+    public void addRestrictingTableByExamPost(UserAdminRequestDto.ExamPostRestrictForm restrictForm) {
+
+        ExamPosts examPosts = userService.loadExamPostsByIndex(restrictForm.getExamIdx());
+        User user = userService.loadUserFromUserIdx(examPosts.getUser().getId());
+
+        RestrictingUser restrictingUser = RestrictingUser.builder()
+                .user(user)
+                .restrictingDate(LocalDateTime.now().plusDays(restrictForm.getRestrictingDate()))
+                .restrictingReason(restrictForm.getRestrictingReason())
+                .judgement(restrictForm.getJudgement())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now()).build();
+        restrictingUserRepository.save(restrictingUser);
+    }
+
     // 정지내역 내역 모두보기 DTO 로 Typing
     @Transactional
     public List<UserResponseDto.ViewMyRestrictedReasonForm> getRestrictedLog(Long userIdx) {
@@ -24,7 +69,7 @@ public class RestrictingUserService {
         List<UserResponseDto.ViewMyRestrictedReasonForm> finalResultForm = new ArrayList<>();
 
 
-        // 블랙리스트 내역 조회하기
+        // 정지 내역 조회하기
         if (loadedDomain.toArray().length > 0) {
 
             for (RestrictingUser target : loadedDomain) {
@@ -50,10 +95,26 @@ public class RestrictingUserService {
 
                 finalResultForm.add(resultForm);
             }
-
         }
-
-
         return finalResultForm;
+    }
+
+    // 이용정지를 풀기 위한 메서드 --> 정지 테이블에서 유저 삭제
+    @Transactional
+    @Scheduled(cron = "0 * * * * *")
+    public void isUnrestrictedTarget() {
+
+        // 현재시각으로부터 - 30일
+        // LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(2);
+
+        List<RestrictingUser> targetUser = restrictingUserRepository.findByRestrictingDateBefore(targetTime);
+
+        for (RestrictingUser target : targetUser) {
+            Long userIdx = target.getUser().getId();
+
+            restrictingUserRepository.deleteByUserIdx(userIdx);
+            userRepository.unRestricted(userIdx);
+        }
     }
 }

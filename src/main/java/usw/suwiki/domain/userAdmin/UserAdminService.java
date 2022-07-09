@@ -45,7 +45,7 @@ public class UserAdminService {
 
     // 신고받은 유저 데이터 -> 블랙리스트 테이블로 해싱
     @Transactional
-    public void banUserByEvaluate(Long userIdx, Long bannedPeriod, String bannedReason) {
+    public void banUserByEvaluate(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
 
         User user = userService.loadUserFromUserIdx(userIdx);
 
@@ -93,41 +93,8 @@ public class UserAdminService {
         User user = userService.loadUserFromUserIdx(userIdx);
 
         user.setRestricted(true);
+        user.setRestrictedCount(user.getRestrictedCount()+1);
 
-        //이메일 해싱
-        String hashTargetEmail = bCryptPasswordEncoder.encode(user.getEmail());
-
-        if (blacklistRepository.findByUserId(user.getId()).isPresent()) {
-            throw new AccountException(ErrorType.USER_ALREADY_BLACKLISTED);
-        }
-
-        //블랙리스트 도메인 데이터 생성
-        BlacklistDomain blacklistDomain = BlacklistDomain.builder()
-                .user(user)
-                .bannedReason(bannedReason)
-                .judgement(judgement)
-                .hashedEmail(hashTargetEmail)
-                .build();
-
-        //이메일 해싱 값, 유저인덱스 블랙리스트 테이블에 넣기
-        blacklistRepository.save(blacklistDomain);
-
-        //유저 index 로 객체 받아오기
-        if (blacklistRepository.findByUserId(user.getId()).isEmpty())
-            throw new AccountException(ErrorType.USER_NOT_EXISTS);
-
-        //Optional 객체 받아오기
-        Optional<BlacklistDomain> expiredAtSetTarget = blacklistRepository.findByUserId(user.getId());
-
-        // 신고 누적 횟수가 3회 이상일 경우
-        if (user.getRestrictedCount() >= 3) {
-            bannedPeriod += 365L;
-        }
-
-        //index 로 받온 객체에 제한 시간 걸기
-        expiredAtSetTarget.get().setExpiredAt(LocalDateTime.now().plusDays(bannedPeriod));
-        expiredAtSetTarget.get().setCreatedAt(LocalDateTime.now());
-        expiredAtSetTarget.get().setCreatedAt(LocalDateTime.now());
     }
 
     // 신고받은 시험정보 작성자 유저 정지먹이기 (블랙리스트가 아님)
@@ -176,7 +143,7 @@ public class UserAdminService {
 
     // 신고받은 유저 데이터 -> 블랙리스트 테이블로 해싱
     @Transactional
-    public void banUserByExam(Long userIdx, Long bannedPeriod, String bannedReason) {
+    public void banUserByExam(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
 
         User user = userService.loadUserFromUserIdx(userIdx);
 
@@ -193,6 +160,7 @@ public class UserAdminService {
         BlacklistDomain blacklistDomain = BlacklistDomain.builder()
                 .user(user)
                 .bannedReason(bannedReason)
+                .judgement(judgement)
                 .hashedEmail(hashTargetEmail)
                 .build();
 
@@ -214,7 +182,7 @@ public class UserAdminService {
         //index 로 받온 객체에 제한 시간 걸기
         expiredAtSetTarget.get().setExpiredAt(LocalDateTime.now().plusDays(bannedPeriod));
         expiredAtSetTarget.get().setCreatedAt(LocalDateTime.now());
-        expiredAtSetTarget.get().setCreatedAt(LocalDateTime.now());
+        expiredAtSetTarget.get().setUpdatedAt(LocalDateTime.now());
 
         throw new AccountException(ErrorType.SERVER_ERROR);
 
@@ -241,9 +209,6 @@ public class UserAdminService {
             // 강의 평가 삭제(작성한 게시글 갯수 감소, 포인트 감소 까지 반영)
             evaluatePostsService.deleteById(targetedEvaluatePostIdx, targetedUserIdx);
 
-            // 밴 횟수 증가
-            plushRestrictCount(targetedUserIdx);
-
             return targetedUserIdx;
         }
 
@@ -269,9 +234,6 @@ public class UserAdminService {
 
             // 시험 정보 삭제(작성한 게시글 갯수 감소, 포인트 감소 까지 반영)
             examPostsService.deleteById(targetedExamPostIdx, targetedUserIdx);
-
-            // 밴 횟수 증가
-            plushRestrictCount(targetedUserIdx);
 
             return targetedUserIdx;
         }

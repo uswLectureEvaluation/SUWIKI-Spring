@@ -239,11 +239,6 @@ public class UserService {
 
     }
 
-    @Transactional
-    public void restrictedUser(Long userIdx, LocalDateTime restrictingDate) {
-        userRepository.restrictUser(userIdx);
-    }
-
     //비밀번호 검증 True 시 비밀번호 일치
     @Transactional
     public boolean validatePasswordAtEditPW(String loginId, String password) {
@@ -286,25 +281,6 @@ public class UserService {
     @Transactional
     public User loadUserFromLoginId(String loginId) {
         return convertOptionalUserToDomainUser(userRepository.findByLoginId(loginId));
-    }
-
-
-    // 이용정지를 풀기 위한 메서드 --> 정지 테이블에서 유저 삭제
-    @Transactional
-    @Scheduled(cron = "0 * * * * *")
-    public void isUnrestrictedTarget() {
-
-        // 현재시각으로부터 - 30일
-        // LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(2);
-
-        List<RestrictingUser> targetUser = restrictingUserRepository.findByRestrictingDateBefore(targetTime);
-
-        for (RestrictingUser target : targetUser) {
-            Long userIdx = target.getUser().getId();
-
-            restrictingUserRepository.deleteByUserIdx(userIdx);
-        }
     }
 
 
