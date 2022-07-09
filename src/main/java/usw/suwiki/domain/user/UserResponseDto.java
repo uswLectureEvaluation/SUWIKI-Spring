@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.blacklistDomain.BlacklistDomain;
 
 import java.time.LocalDateTime;
 
@@ -23,8 +22,16 @@ public class UserResponseDto {
     }
 
     @Data
-    public static class ViewMyBannedReasonForm {
-        private String bannedReason;
+    public static class ViewMyRestrictedReasonForm {
+        private String RestrictedReason;
+        private String judgement;
+        private LocalDateTime restrictingDate;
+        private LocalDateTime createdAt;
+    }
+
+    @Data
+    public static class ViewMyBlackListReasonForm {
+        private String blackListReason;
         private String judgement;
         private LocalDateTime createdAt;
         private LocalDateTime expiredAt;

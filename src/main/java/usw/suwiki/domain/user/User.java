@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 @Entity
 @Builder @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-@Table(schema = "suwiki")
 public class User {
 
     @Id
@@ -28,7 +27,7 @@ public class User {
     private boolean restricted; //이메일 인증 유무 + 제재유저 대상
 
     @Column
-    private Integer bannedCount; //정지횟수
+    private Integer restrictedCount; //정지횟수
 
     @Enumerated(EnumType.STRING)
     private Role role; //User Auth
@@ -56,7 +55,4 @@ public class User {
 
     @Column
     private LocalDateTime updatedAt;
-
-    @Column
-    private LocalDateTime restrictingDate;
 }

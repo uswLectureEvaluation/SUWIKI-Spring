@@ -26,16 +26,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByRequestedQuitDate(LocalDateTime localDateTime);
 
-    @Query(value = "UPDATE User Set restricted = True WHERE id = :userIdx ")
+    // 유저 정지 처리
+    @Query(value = "UPDATE User Set restricted = True WHERE id = :userIdx")
     void restrictUser(@Param("userIdx") Long userIdx);
-
-    @Query(value = "SELECT restricted FROM User WHERE loginId = :loginId")
-    boolean loadUserRestriction(@Param("loginId") String loginId);
 
     //loginId, email 입력값 검증
     @Query(value = "SELECT loginId, email FROM User WHERE loginId = :loginId and email = :email")
     String findPwLogicByLoginIdAndEmail(@Param("loginId") String loginId, @Param("email") String email);
-
 
     //loginId와 email 에 일치하는 유저의 비밀번호 변경
     @Modifying(clearAutomatically = true)
@@ -51,8 +48,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     //격리테이블 -> 본 테이블
     @Modifying(clearAutomatically = true)
     @Query(value = "INSERT INTO user " +
-            "(id, login_id, password, email, role, restricted, banned_count, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at)" +
-            "SELECT user_idx, login_id, password, email, role, restricted, banned_count, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at FROM user_isolation WHERE user_idx = :id", nativeQuery = true)
+            "(id, login_id, password, email, role, restricted, restricted_count, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at)" +
+            "SELECT user_idx, login_id, password, email, role, restricted, restricted_count, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at FROM user_isolation WHERE user_idx = :id", nativeQuery = true)
     void insertUserIsolationIntoUser(@Param("id") Long id);
 
     //UserIdx 로 블랙리스트 출소 유저 반영해주기

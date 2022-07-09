@@ -10,30 +10,26 @@ import usw.suwiki.domain.email.ConfirmationToken;
 import usw.suwiki.domain.email.ConfirmationTokenRepository;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
 import usw.suwiki.domain.exam.ExamPosts;
-import usw.suwiki.domain.refreshToken.RefreshTokenRepository;
 import usw.suwiki.domain.reportTarget.EvaluatePostReport;
 import usw.suwiki.domain.reportTarget.ExamPostReport;
+import usw.suwiki.domain.user.restrictingUser.RestrictingUser;
+import usw.suwiki.domain.user.restrictingUser.RestrictingUserRepository;
+import usw.suwiki.domain.user.restrictingUser.RestrictingUserService;
 import usw.suwiki.domain.userIsolation.UserIsolation;
 import usw.suwiki.domain.email.EmailSender;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
-import usw.suwiki.global.jwt.JwtTokenProvider;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.domain.evaluation.JpaEvaluatePostsRepository;
 import usw.suwiki.domain.exam.JpaExamPostsRepository;
 import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
 import usw.suwiki.domain.reportTarget.ExamReportRepository;
 import usw.suwiki.domain.userIsolation.UserIsolationRepository;
-import usw.suwiki.domain.blacklistDomain.BlackListService;
 import usw.suwiki.domain.emailBuild.BuildEmailAuthFormService;
 import usw.suwiki.domain.emailBuild.BuildFindLoginIdFormService;
 import usw.suwiki.domain.emailBuild.BuildFindPasswordFormService;
-import usw.suwiki.domain.emailBuild.BuildSoonDormantTargetFormService;
 import usw.suwiki.domain.email.ConfirmationTokenService;
-import usw.suwiki.domain.evaluation.EvaluatePostsService;
-import usw.suwiki.domain.exam.ExamPostsService;
-import usw.suwiki.domain.viewExam.ViewExamService;
-import usw.suwiki.global.jwt.JwtTokenValidator;
+
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -44,24 +40,20 @@ import java.util.UUID;
 
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class UserService {
-
-    // Another Service
-    private final BlackListService blackListService;
-    private final EvaluatePostsService evaluatePostsService;
-    private final ExamPostsService examPostsService;
-    private final ViewExamService viewExamService;
 
     // 암호화 Bean
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-
     // User 관련 Repository
     private final UserRepository userRepository;
-    private final UserIsolationRepository userIsolationRepository;
+    private final RestrictingUserRepository restrictingUserRepository;
+
     private final ConfirmationTokenRepository confirmationTokenRepository;
+
+    // 휴면계정 관련 Repository
+    private final UserIsolationRepository userIsolationRepository;
 
     // 게시글 관련 Repository
     private final JpaEvaluatePostsRepository jpaEvaluatePostsRepository;
@@ -75,7 +67,6 @@ public class UserService {
     private final BuildEmailAuthFormService buildEmailAuthFormService;
     private final BuildFindLoginIdFormService BuildFindLoginIdFormService;
     private final BuildFindPasswordFormService BuildFindPasswordFormService;
-    private final BuildSoonDormantTargetFormService buildSoonDormantTargetFormService;
 
     // JWT
     private final JwtTokenResolver jwtTokenResolver;
@@ -88,7 +79,7 @@ public class UserService {
                 .password(bCryptPasswordEncoder.encode(joinForm.getPassword()))
                 .email(joinForm.getEmail())
                 .restricted(true)
-                .bannedCount(0)
+                .restrictedCount(0)
                 .writtenEvaluation(0)
                 .writtenExam(0)
                 .point(0)
@@ -145,7 +136,7 @@ public class UserService {
         return expiredAt.isBefore(LocalDateTime.now());
     }
 
-    // 이메일 인증을 받은 사용자인지
+    // 이메일 인증을 받은 사용자인지 유저 테이블에서 검사
     @Transactional
     public void isUserEmailAuth(String loginId) {
         User targetUser = loadUserFromLoginId(loginId);
@@ -248,38 +239,26 @@ public class UserService {
 
     }
 
-    //유저 제재 여부 확인
     @Transactional
-    public void isRestricted(String loginId) {
-        if (userRepository.loadUserRestriction(loginId)) throw new AccountException(ErrorType.USER_RESTRICTED);
-    }
-
-    @Transactional
-    public void restrictedUser(Long userIdx) {
+    public void restrictedUser(Long userIdx, LocalDateTime restrictingDate) {
         userRepository.restrictUser(userIdx);
     }
 
     //비밀번호 검증 True 시 비밀번호 일치
     @Transactional
-    public boolean correctPw(String loginId, String password) {
+    public boolean validatePasswordAtEditPW(String loginId, String password) {
 
-        //로그인 아이디를 찾을 수 없으면
+        // 로그인 아이디를 찾을 수 없으면
         if (userRepository.findByLoginId(loginId).isEmpty()) throw new AccountException(ErrorType.USER_NOT_EXISTS);
 
         return bCryptPasswordEncoder.matches(password, userRepository.findByLoginId(loginId).get().getPassword());
     }
 
-    //아이디 비밀번호 매칭
+    // 유저 테이블에서 아이디 비밀번호 매칭
     @Transactional
-    public boolean matchingLoginIdWithPassword(String loginId, String password) {
-
-        //아이디 조회
-        userRepository.findByLoginId(loginId).orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
-
-        //비밀번호 일치하지 않으면
-        if (!correctPw(loginId, password)) throw new AccountException(ErrorType.PASSWORD_ERROR);
-
-        return true;
+    public boolean validatePasswordAtUserTable(String loginId, String password) {
+        // 본 테이블에 유저가 존재하면 본 테이블에서 비밀번호 비교
+        return bCryptPasswordEncoder.matches(password, userRepository.findByLoginId(loginId).get().getPassword());
     }
 
     //최근 로그인 일자 갱신
@@ -297,154 +276,41 @@ public class UserService {
         throw new AccountException(ErrorType.USER_NOT_EXISTS);
     }
 
-    //userIdx 로 유저 꺼내오기
+    // 유저 인덱스로, User 타입 객체 꺼내기
     @Transactional
     public User loadUserFromUserIdx(Long userIdx) {
         return convertOptionalUserToDomainUser(userRepository.findById(userIdx));
     }
 
-    //loginId로 유저 테이블 꺼내오기
+    // 유저 로그인 아이디로, User 타입 객체 꺼내기
     @Transactional
     public User loadUserFromLoginId(String loginId) {
         return convertOptionalUserToDomainUser(userRepository.findByLoginId(loginId));
     }
 
-    //회원탈퇴 요청 시각 스탬프
-    @Transactional
-    public void requestQuitDateStamp(User user) {
-        user.setRequestedQuitDate(LocalDateTime.now());
-    }
 
-    // 회원탈퇴 요청 시각 스탬프 초기화
-    @Transactional
-    public void initQuitDateStamp(User user) {
-        user.setRequestedQuitDate(null);
-    }
-
-    // 본 테이블 -> 격리 테이블
-    @Transactional
-    public void moveToIsolation(User user) {
-        // 격리 테이블로 옮기기
-        userIsolationRepository.insertUserIntoIsolation(user.getId());
-    }
-
-    // 격리 테이블 -> 본 테이블
-    @Transactional
-    public void moveToUser(UserIsolation userIsolation) {
-        // 유저 테이블로 옮기기
-        userRepository.insertUserIsolationIntoUser(userIsolation.getId());
-
-        // 유저테이블로 옮겼으면 격리 테이블에서 삭제하기
-        userIsolationRepository.deleteByLoginId(userIsolation.getLoginId());
-    }
-
-
-    // 휴면계정 전환 30일 전 대상 뽑기
-    // 검사하는 시점 보다 최근 로그인 일자가 30일 이전인 유저를 리스트에 담는다.
-    @Transactional
-    public List<User> soonDormant() {
-//        LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(3);
-        return userRepository.findByLastLoginBefore(targetTime);
-    }
-
-    //휴면 계정 전환 30일 전 안내 메일 보내기
-    @Transactional
-    @Scheduled(cron = "0 * * * * *") //매일 0시에 한번 씩 돌린다.
-    public void sendEmailSoonDormant() {
-
-        //대상 유저 가져오기
-        List<User> user = soonDormant();
-
-        //대상 유저들에 이메일 보내기
-        for (int i = 0; i < user.toArray().length; i++) {
-            emailSender.send(user.get(i).getEmail(), buildSoonDormantTargetFormService.buildEmail());
-        }
-    }
-
-    //휴면계정 전환
-    @Transactional
-    @Scheduled(cron = "0 * * * * *")
-    public void convertDormant() {
-
-//        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(3);
-
-        //1년이상 접속하지 않은 유저 리스트 불러오기
-        List<User> targetUser = userRepository.findByLastLoginBefore(targetTime);
-
-        //해당 유저들 격리테이블로 이동 후, 본 테이블에서 삭제
-        for (int i = 0; i < targetUser.toArray().length; i++) {
-            moveToIsolation(targetUser.get(i));
-            userRepository.deleteById(targetUser.get(i).getId());
-        }
-    }
-
-
-    //회원탈퇴 대기
-    @Transactional
-    public void waitQuit(Long userIdx) {
-
-        //구매한 시험 정보 삭제
-        viewExamService.deleteByUserIdx(userIdx);
-
-        //회원탈퇴 요청한 유저의 강의평가 삭제
-        evaluatePostsService.deleteByUser(userIdx);
-
-        //회원탈퇴 요청한 유저의 시험정보 삭제
-        examPostsService.deleteByUser(userIdx);
-
-        //유저 이용불가 처리
-        disableUser(loadUserFromUserIdx(userIdx));
-    }
-
-    //회원탈퇴 요청 유저 일부 데이터 초기화
-    @Transactional
-    public void disableUser(User user) {
-        user.setRestricted(true);
-        user.setBannedCount(null);
-        user.setRole(null);
-        user.setWrittenEvaluation(null);
-        user.setWrittenExam(null);
-        user.setViewExamCount(null);
-        user.setPoint(null);
-        user.setLastLogin(null);
-        user.setCreatedAt(null);
-        user.setUpdatedAt(null);
-    }
-
-    //회원탈퇴 요청 후 30일 뒤 테이블에서 제거
-    @Transactional
-//    @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(cron = "0 * * * * *")
-    public void deleteRequestQuitUserAfter30Days() {
-
-//        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(3);
-
-        List<User> targetUser = userRepository.findByRequestedQuitDate(targetTime);
-
-        for (int i = 0; i < targetUser.toArray().length; i++) {
-            userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
-        }
-    }
-
-    // 이용정지를 풀기 위한 메서드
+    // 이용정지를 풀기 위한 메서드 --> 정지 테이블에서 유저 삭제
     @Transactional
     @Scheduled(cron = "0 * * * * *")
     public void isUnrestrictedTarget() {
 
         // 현재시각으로부터 - 30일
-        LocalDateTime targetTime = LocalDateTime.now();
-        
-        List<UserIsolation> targetUser = userIsolationRepository.findByRestrictingDateBefore(targetTime);
+        // LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(2);
+
+        List<RestrictingUser> targetUser = restrictingUserRepository.findByRestrictingDateBefore(targetTime);
+
+        for (RestrictingUser target : targetUser) {
+            Long userIdx = target.getUser().getId();
+
+            restrictingUserRepository.deleteByUserIdx(userIdx);
+        }
     }
 
 
     // 강의평가 인덱스로 강의평가 객체 불러오기
     @Transactional
     public EvaluatePosts loadEvaluatePostsByIndex(Long EvaluatePostsIdx) {
-
         return jpaEvaluatePostsRepository.findById(EvaluatePostsIdx);
     }
 
@@ -458,7 +324,6 @@ public class UserService {
     public void reportExamPost(UserDto.ExamReportForm userReportForm, Long reportingUserIdx) {
 
         Long reportTargetUser = loadExamPostsByIndex(userReportForm.getExamIdx()).getUser().getId();
-
         ExamPosts reportedTargetPost = loadExamPostsByIndex(userReportForm.getExamIdx());
 
         ExamPostReport target = ExamPostReport.builder()
@@ -479,7 +344,6 @@ public class UserService {
     public void reportEvaluatePost(UserDto.EvaluateReportForm userReportForm, Long reportingUserIdx) {
 
         Long reportTargetUser = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getUser().getId();
-
         EvaluatePosts reportTargetPost = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx());
 
         EvaluatePostReport target = EvaluatePostReport.builder()

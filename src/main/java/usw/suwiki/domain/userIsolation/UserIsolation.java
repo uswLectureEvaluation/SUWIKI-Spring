@@ -31,6 +31,9 @@ public class UserIsolation {
     @Column
     private boolean restricted; //이메일 인증 유무 + 제재유저 대상
 
+    @Column
+    private Integer restrictedCount; //정지횟수
+
     @Enumerated(EnumType.STRING)
     private Role role; //User Auth
 
@@ -57,8 +60,4 @@ public class UserIsolation {
 
     @Column
     private LocalDateTime updatedAt;
-
-    // 정지 언제 풀리는지
-    @Column
-    private LocalDateTime restrictingDate;
 }

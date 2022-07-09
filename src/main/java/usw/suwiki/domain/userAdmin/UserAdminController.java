@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.evaluation.EvaluatePostsRepository;
+import usw.suwiki.domain.blacklistDomain.BlackListService;
+import usw.suwiki.domain.blacklistDomain.BlacklistRepository;
 import usw.suwiki.domain.evaluation.EvaluatePostsService;
 import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.reportTarget.EvaluatePostReport;
@@ -21,6 +22,7 @@ import usw.suwiki.domain.reportTarget.ExamReportRepository;
 import usw.suwiki.domain.user.UserService;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 
@@ -44,9 +46,8 @@ public class UserAdminController {
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;
 
-    private final EvaluatePostsService evaluatePostsService;
-    private final ExamPostsService examPostsService;
-
+    private final BlacklistRepository blacklistRepository;
+    private final BlackListService blackListService;
 
     // 관리자 전용 로그인 API
     @PostMapping("/login")
@@ -55,7 +56,7 @@ public class UserAdminController {
         HashMap<String, String> token = new HashMap<>();
 
         //아이디 비밀번호 검증
-        userService.matchingLoginIdWithPassword(loginForm.getLoginId(), loginForm.getPassword());
+        userService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword());
 
         //유저 객체 생성
         User user = userService.loadUserFromLoginId(loginForm.getLoginId());
@@ -70,7 +71,7 @@ public class UserAdminController {
     // 강의평가 게시물 정지 먹이기
     @PostMapping("/restrict/evaluate-post")
     public HashMap<String, Boolean> restrictEvaluatePost(@Valid @RequestHeader String Authorization,
-                                                    @Valid @RequestBody UserAdminRequestDto.EvaluatePostBanForm evaluatePostBanForm) {
+                                                    @Valid @RequestBody UserAdminRequestDto.EvaluatePostRestrictForm evaluatePostRestrictForm) {
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
@@ -82,14 +83,14 @@ public class UserAdminController {
         HashMap<String, Boolean> result = new HashMap<>();
 
         // 게시글 삭제
-        Long evaluateIdx = userAdminService.banishEvaluatePost(evaluatePostBanForm);
+        Long targetUserIdx = userAdminService.banishEvaluatePost(evaluatePostRestrictForm.getEvaluateIdx());
 
         // 유저 restricted True
-        userService.restrictedUser(userService
-                        .loadEvaluatePostsByIndex(evaluatePostBanForm
-                        .getEvaluateIdx())
+        userService.restrictedUser(
+                userService
+                        .loadEvaluatePostsByIndex(evaluatePostRestrictForm.getEvaluateIdx())
                         .getUser()
-                        .getId());
+                        .getId(), LocalDateTime.now().plusDays(evaluatePostRestrictForm.getPeriod()));
 
         result.put("Success", true);
         return result;
@@ -98,7 +99,10 @@ public class UserAdminController {
     // 시험정보 게시물 정지 먹이기
     @PostMapping("/restrict/exam-post")
     public HashMap<String, Boolean> restrictExamPost(@Valid @RequestHeader String Authorization,
-                                                         @Valid @RequestBody UserAdminRequestDto.ExamPostBanForm examPostBanForm) {
+                                                         @Valid @RequestBody UserAdminRequestDto.ExamPostRestrictForm examPostRestrictForm) {
+
+        HashMap<String, Boolean> result = new HashMap<>();
+
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
@@ -107,27 +111,25 @@ public class UserAdminController {
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(ErrorType.USER_RESTRICTED);
 
-        HashMap<String, Boolean> result = new HashMap<>();
-
         // 게시글 삭제
-        Long examIdx = userAdminService.banishExamPost(examPostBanForm);
+        Long examIdx = userAdminService.banishExamPost(examPostRestrictForm.getExamIdx());
 
         // 유저 restricted True
-        userService.restrictedUser(userService
-                        .loadEvaluatePostsByIndex(examPostBanForm
-                        .getExamIdx())
+        userService.restrictedUser(
+                userService
+                        .loadEvaluatePostsByIndex(examPostRestrictForm.getExamIdx())
                         .getUser()
-                        .getId());
+                        .getId(), LocalDateTime.now().plusDays(examPostRestrictForm.getPeriod()));
 
         result.put("Success", true);
         return result;
     }
 
     
-    // 강의평가 게시물 벤 먹이기
-    @PostMapping("/ban/evaluate-post")
+    // 강의평가 게시물 블랙리스트 먹이기
+    @PostMapping("/blacklist/evaluate-post")
     public HashMap<String, Boolean> banEvaluatePost(@Valid @RequestHeader String Authorization,
-                                                    @Valid @RequestBody UserAdminRequestDto.EvaluatePostBanForm evaluatePostBanForm) {
+                                                    @Valid @RequestBody UserAdminRequestDto.EvaluatePostBlacklistForm evaluatePostBlacklistForm) {
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
@@ -138,31 +140,29 @@ public class UserAdminController {
 
         HashMap<String, Boolean> result = new HashMap<>();
 
-        // 게시글 삭제
-        Long evaluateIdx = userAdminService.banishEvaluatePost(evaluatePostBanForm);
+        // 게시글 인덱스
+        Long evaluateIdx = userAdminService.banishEvaluatePost(evaluatePostBlacklistForm.getEvaluateIdx());
 
-        // 유저 restricted True
-        userService.restrictedUser(userService
-                        .loadEvaluatePostsByIndex(evaluatePostBanForm
-                        .getEvaluateIdx())
-                        .getUser()
-                        .getId());
+        // 이미 블랙리스트 사용자 일 경우
+        if (blacklistRepository.findByUserId(userService.loadEvaluatePostsByIndex(evaluateIdx).getUser().getId()).isPresent()) {
+            result.put("이미 블랙리스트에 지정된 사용자 입니다.", false);
+            return result;
+        }
 
         // 유저 블랙리스트 테이블로
         userAdminService.banUserByEvaluate(
-                evaluateIdx,
-                evaluatePostBanForm.getBannedTime(),
-                evaluatePostBanForm.getBannedReason(),
-                evaluatePostBanForm.getJudgement());
+                userService.loadEvaluatePostsByIndex(evaluateIdx).getUser().getId(),
+                365L,
+                evaluatePostBlacklistForm.getBannedReason());
 
         result.put("Success", true);
         return result;
     }
 
-    // 시험정보 게시물 벤 먹이기
-    @PostMapping("/ban/exam-post")
+    // 시험정보 게시물 블랙리스트 먹이기
+    @PostMapping("/blacklist/exam-post")
     public HashMap<String, Boolean> banExamPost(@Valid @RequestHeader String Authorization,
-                                              @Valid @RequestBody UserAdminRequestDto.ExamPostBanForm examPostBanForm) {
+                                              @Valid @RequestBody UserAdminRequestDto.ExamPostBlacklistForm examPostBlacklistForm) {
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
@@ -171,25 +171,24 @@ public class UserAdminController {
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(ErrorType.USER_RESTRICTED);
 
+
+
         HashMap<String, Boolean> result = new HashMap<>();
 
-        // 게시글 삭제
-        Long examIdx = userAdminService.banishExamPost(examPostBanForm);
+        // 게시글 인덱스
+        Long examIdx = userAdminService.banishExamPost(examPostBlacklistForm.getExamIdx());
 
-        
-        // 유저 restricted True
-        userService.restrictedUser(userService.loadExamPostsByIndex(
-                examPostBanForm
-                        .getExamIdx())
-                        .getUser()
-                        .getId());
+        // 이미 블랙리스트 사용자 일 경우
+        if (blacklistRepository.findByUserId(userService.loadExamPostsByIndex(examIdx).getUser().getId()).isPresent()) {
+            result.put("이미 블랙리스트에 지정된 사용자 입니다.", false);
+            return result;
+        }
 
         // 유저 블랙리스트 테이블로
         userAdminService.banUserByExam(
-                        examIdx,
-                        examPostBanForm.getBannedTime(),
-                        examPostBanForm.getBannedReason(),
-                        examPostBanForm.getJudgement());
+                userService.loadExamPostsByIndex(examIdx).getUser().getId(),
+                365L,
+                examPostBlacklistForm.getBannedReason());
 
         result.put("Success", true);
         return result;

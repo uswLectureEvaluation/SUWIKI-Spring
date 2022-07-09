@@ -45,7 +45,7 @@ public class UserAdminService {
 
     // 신고받은 유저 데이터 -> 블랙리스트 테이블로 해싱
     @Transactional
-    public void banUserByEvaluate(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
+    public void banUserByEvaluate(Long userIdx, Long bannedPeriod, String bannedReason) {
 
         User user = userService.loadUserFromUserIdx(userIdx);
 
@@ -62,7 +62,6 @@ public class UserAdminService {
         BlacklistDomain blacklistDomain = BlacklistDomain.builder()
                 .user(user)
                 .bannedReason(bannedReason)
-                .judgement(judgement)
                 .hashedEmail(hashTargetEmail)
                 .build();
 
@@ -77,7 +76,7 @@ public class UserAdminService {
         Optional<BlacklistDomain> expiredAtSetTarget = blacklistRepository.findByUserId(user.getId());
 
         // 신고 누적 횟수가 3회 이상일 경우
-        if (user.getBannedCount() >= 3) {
+        if (user.getRestrictedCount() >= 3) {
             bannedPeriod += 365L;
         }
 
@@ -121,7 +120,7 @@ public class UserAdminService {
         Optional<BlacklistDomain> expiredAtSetTarget = blacklistRepository.findByUserId(user.getId());
 
         // 신고 누적 횟수가 3회 이상일 경우
-        if (user.getBannedCount() >= 3) {
+        if (user.getRestrictedCount() >= 3) {
             bannedPeriod += 365L;
         }
 
@@ -131,7 +130,7 @@ public class UserAdminService {
         expiredAtSetTarget.get().setCreatedAt(LocalDateTime.now());
     }
 
-    // 신고받은 시험저보 작성자 유저 정지먹이기 (블랙리스트가 아님)
+    // 신고받은 시험정보 작성자 유저 정지먹이기 (블랙리스트가 아님)
     @Transactional
     public void restrictUserByExam(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
 
@@ -165,7 +164,7 @@ public class UserAdminService {
         Optional<BlacklistDomain> expiredAtSetTarget = blacklistRepository.findByUserId(user.getId());
 
         // 신고 누적 횟수가 3회 이상일 경우
-        if (user.getBannedCount() >= 3) {
+        if (user.getRestrictedCount() >= 3) {
             bannedPeriod += 365L;
         }
 
@@ -177,7 +176,7 @@ public class UserAdminService {
 
     // 신고받은 유저 데이터 -> 블랙리스트 테이블로 해싱
     @Transactional
-    public void banUserByExam(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
+    public void banUserByExam(Long userIdx, Long bannedPeriod, String bannedReason) {
 
         User user = userService.loadUserFromUserIdx(userIdx);
 
@@ -194,7 +193,6 @@ public class UserAdminService {
         BlacklistDomain blacklistDomain = BlacklistDomain.builder()
                 .user(user)
                 .bannedReason(bannedReason)
-                .judgement(judgement)
                 .hashedEmail(hashTargetEmail)
                 .build();
 
@@ -208,10 +206,10 @@ public class UserAdminService {
         //Optional 객체 받아오기
         Optional<BlacklistDomain> expiredAtSetTarget = blacklistRepository.findByUserId(user.getId());
 
-        // 신고 누적 횟수가 3회 이상일 경우
-        if (user.getBannedCount() >= 3) {
-            bannedPeriod += 365L;
-        }
+//        // 신고 누적 횟수가 3회 이상일 경우
+//        if (user.getBannedCount() >= 3) {
+//            bannedPeriod += 365L;
+//        }
 
         //index 로 받온 객체에 제한 시간 걸기
         expiredAtSetTarget.get().setExpiredAt(LocalDateTime.now().plusDays(bannedPeriod));
@@ -222,13 +220,14 @@ public class UserAdminService {
 
     }
 
-    //신고받은 강의평가 게시글 삭제 해주기
+    // 신고받은 강의평가 게시글 삭제 해주기
     @Transactional
-    public Long banishEvaluatePost(UserAdminRequestDto.EvaluatePostBanForm evaluatePostBanForm) {
+    public Long banishEvaluatePost(Long evaluateIdx) {
 
-        if (userService.loadEvaluatePostsByIndex(evaluatePostBanForm.getEvaluateIdx()) != null) {
+        if (userService.loadEvaluatePostsByIndex(evaluateIdx) != null) {
+
             // 추방할 게시글 불러오기
-            EvaluatePosts targetedEvaluatePost = userService.loadEvaluatePostsByIndex(evaluatePostBanForm.getEvaluateIdx());
+            EvaluatePosts targetedEvaluatePost = userService.loadEvaluatePostsByIndex(evaluateIdx);
 
             // 게시글 인덱스 불러오기
             Long targetedEvaluatePostIdx = targetedEvaluatePost.getId();
@@ -243,7 +242,7 @@ public class UserAdminService {
             evaluatePostsService.deleteById(targetedEvaluatePostIdx, targetedUserIdx);
 
             // 밴 횟수 증가
-            increaseBannedTime(targetedUserIdx);
+            plushRestrictCount(targetedUserIdx);
 
             return targetedUserIdx;
         }
@@ -253,11 +252,11 @@ public class UserAdminService {
 
     //신고받은 시험정보 게시글 삭제 해주기
     @Transactional
-    public Long banishExamPost(UserAdminRequestDto.ExamPostBanForm examPostBanForm) {
+    public Long banishExamPost(Long examIdx) {
 
-        if (userService.loadExamPostsByIndex(examPostBanForm.getExamIdx()) != null) {
+        if (userService.loadExamPostsByIndex(examIdx) != null) {
             // 추방할 게시글 불러오기
-            ExamPosts targetedExamPost = userService.loadExamPostsByIndex(examPostBanForm.getExamIdx());
+            ExamPosts targetedExamPost = userService.loadExamPostsByIndex(examIdx);
 
             // 게시글 인덱스 불러오기
             Long targetedExamPostIdx = targetedExamPost.getId();
@@ -272,7 +271,7 @@ public class UserAdminService {
             examPostsService.deleteById(targetedExamPostIdx, targetedUserIdx);
 
             // 밴 횟수 증가
-            increaseBannedTime(targetedUserIdx);
+            plushRestrictCount(targetedUserIdx);
 
             return targetedUserIdx;
         }
@@ -280,11 +279,11 @@ public class UserAdminService {
         throw new AccountException(ErrorType.SERVER_ERROR);
     }
 
-    // 밴 처리 후 밴 횟수 +1, 작성한 강의평가 -1
+    // 정지 횟수 +1
     @Transactional
-    public void increaseBannedTime(Long userIdx) {
+    public void plushRestrictCount(Long userIdx) {
         User user = userService.loadUserFromUserIdx(userIdx);
-        user.setBannedCount(user.getBannedCount() + 1);
+        user.setRestrictedCount(user.getRestrictedCount() + 1);
     }
 
     //신고 받은 강의평가 모두 불러오기

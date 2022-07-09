@@ -23,16 +23,17 @@ public interface UserIsolationRepository extends JpaRepository<UserIsolation, Lo
 
     Optional<UserIsolation> deleteByLoginId(String loginId);
 
+    @Query(value = "SELECT restricted FROM UserIsolation WHERE loginId = :loginId")
+    boolean loadUserRestriction(@Param("loginId") String loginId);
+
     List<UserIsolation> findByRequestedQuitDateBefore(LocalDateTime localDateTime);
 
     List<UserIsolation> findByLastLoginBefore(LocalDateTime localDateTime);
 
-    List<UserIsolation> findByRestrictingDateBefore(LocalDateTime localDateTime);
-
     @Modifying(clearAutomatically = true)
     @Query(value = "INSERT INTO user_isolation " +
-            "(user_idx, login_id, password, email, role, restricted, banned_count, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at)" +
-            "SELECT id, login_id, password, email, role, restricted, banned_count, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at FROM user WHERE id = :id", nativeQuery = true)
+            "(user_idx, login_id, password, email, role, restricted, restricted_count, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at)" +
+            "SELECT id, login_id, password, email, role, restricted, restricted_count, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at FROM user WHERE id = :id", nativeQuery = true)
     void insertUserIntoIsolation(@Param("id") Long id);
 
 }

@@ -24,7 +24,7 @@ public class UserIsolationService {
     private final BuildAutoDeletedWarningUserFormService buildAutoDeletedWarningUserFormService;
 
 
-    //Optional<User> -> User
+    // Optional<User> -> User
     @Transactional
     public UserIsolation convertOptionalUserToDomainUser(Optional<UserIsolation> optionalUserIsolation) {
         if (optionalUserIsolation.isPresent()) {
@@ -37,6 +37,11 @@ public class UserIsolationService {
     @Transactional
     public UserIsolation loadUserFromLoginId(String loginId) {
         return convertOptionalUserToDomainUser(userIsolationRepository.findByLoginId(loginId));
+    }
+
+    @Transactional
+    public void isRestricted(String loginId) {
+        if (userIsolationRepository.loadUserRestriction(loginId)) throw new AccountException(ErrorType.USER_RESTRICTED);
     }
 
 
@@ -54,31 +59,5 @@ public class UserIsolationService {
         }
     }
 
-    //격리 후 3년간 로그인 하지 않는 대상에 지정되기 한달 전에 이메일 보내기
-    @Transactional
-//    @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(cron = "0 * * * * *")
-    public void autoDeleteTargetIsThreeYearsSendEmail() {
-//        LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
-        LocalDateTime targetTime = LocalDateTime.now().plusMinutes(60);
-        List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
-        for (int i = 0; i < targetUser.toArray().length; i++) {
-            emailSender.send(targetUser.get(i).getEmail(), buildAutoDeletedWarningUserFormService.buildEmail());
-        }
-    }
-
-    //격리 후 3년간 로그인 하지 않으면 계정 자동 삭제
-    @Transactional
-//    @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(cron = "0 * * * * *")
-    public void autoDeleteTargetIsThreeYears() {
-//        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(60);
-        List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
-
-        for (int i = 0; i < targetUser.toArray().length; i++) {
-            userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
-        }
-    }
 }
