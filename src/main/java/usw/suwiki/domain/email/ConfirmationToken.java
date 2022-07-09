@@ -28,7 +28,7 @@ public class ConfirmationToken {
 
     private LocalDateTime confirmedAt;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "user_idx")
     private User user;
 
