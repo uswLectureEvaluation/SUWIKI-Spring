@@ -112,7 +112,7 @@ public class UserService {
                 .token(token)
                 .createdAt(LocalDateTime.now())
                 .expiresAt(LocalDateTime.now().plusMinutes(15))
-                .user(user)
+                .userIdx(user.getId())
                 .build();
 
         //이메일 토큰 저장
