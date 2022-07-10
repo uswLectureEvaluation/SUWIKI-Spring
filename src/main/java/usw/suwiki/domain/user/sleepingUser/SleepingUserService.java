@@ -9,6 +9,8 @@ import usw.suwiki.domain.blacklistDomain.BlackListService;
 import usw.suwiki.domain.email.EmailSender;
 import usw.suwiki.domain.emailBuild.BuildAutoDeletedWarningUserFormService;
 import usw.suwiki.domain.emailBuild.BuildSoonDormantTargetFormService;
+import usw.suwiki.domain.evaluation.EvaluatePostsService;
+import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserDto;
 import usw.suwiki.domain.user.UserRepository;
@@ -36,6 +38,9 @@ public class SleepingUserService {
     private final BuildSoonDormantTargetFormService buildSoonDormantTargetFormService;
     private final BuildAutoDeletedWarningUserFormService buildAutoDeletedWarningUserFormService;
     private final EmailSender emailSender;
+
+    private final EvaluatePostsService evaluatePostsService;
+    private final ExamPostsService examPostsService;
 
 
     // 블랙리스트 계정
@@ -145,6 +150,12 @@ public class SleepingUserService {
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
+            
+            //회원탈퇴 요청한 유저의 강의평가 삭제
+            evaluatePostsService.deleteByUser(targetUser.get(i).getUserIdx());
+
+            //회원탈퇴 요청한 유저의 시험정보 삭제
+            examPostsService.deleteByUser(targetUser.get(i).getUserIdx());
         }
     }
 }
