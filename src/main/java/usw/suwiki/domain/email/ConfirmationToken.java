@@ -17,6 +17,9 @@ public class ConfirmationToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private Long userIdx;
+
     @Column(nullable = false)
     private String token;
 
@@ -28,9 +31,6 @@ public class ConfirmationToken {
 
     private LocalDateTime confirmedAt;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "user_idx")
-    private User user;
 
 //    public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, User user) {
 //        this.token = token;

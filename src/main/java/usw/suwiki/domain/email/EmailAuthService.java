@@ -36,7 +36,7 @@ public class EmailAuthService {
         if (userService.isEmailAuthTokenExpired(confirmationToken)) {
 
             //토큰이 만료되었으면 임시 저장한 유저 삭제
-            userRepository.deleteById(confirmationToken.getUser().getId());
+            userRepository.deleteById(confirmationToken.getUserIdx());
 
             //토큰 테이블에서도 삭제
             confirmationTokenService.deleteAllByToken(token);
@@ -51,9 +51,11 @@ public class EmailAuthService {
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
                 .orElseThrow(() -> new AccountException(ErrorType.EMAIL_VALIDATED_ERROR));
 
-        confirmationToken.getUser().setRestricted(false);
-        confirmationToken.getUser().setCreatedAt(LocalDateTime.now());
-        confirmationToken.getUser().setUpdatedAt(LocalDateTime.now());
-        confirmationToken.getUser().setRole(Role.USER);
+        Long userIdx = confirmationToken.getUserIdx();
+
+        userService.loadUserFromUserIdx(userIdx).setRestricted(false);
+        userService.loadUserFromUserIdx(userIdx).setCreatedAt(LocalDateTime.now());
+        userService.loadUserFromUserIdx(userIdx).setUpdatedAt(LocalDateTime.now());
+        userService.loadUserFromUserIdx(userIdx).setRole(Role.USER);
     }
 }

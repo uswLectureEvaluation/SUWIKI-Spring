@@ -130,7 +130,7 @@ public class SleepingUserService {
     @Scheduled(cron = "0 * * * * *")
     public void autoDeleteTargetIsThreeYearsSendEmail() {
 //        LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
-        LocalDateTime targetTime = LocalDateTime.now().plusMinutes(30);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(30);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
@@ -149,13 +149,16 @@ public class SleepingUserService {
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
-            userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
-            
+
             //회원탈퇴 요청한 유저의 강의평가 삭제
             evaluatePostsService.deleteByUser(targetUser.get(i).getUserIdx());
 
             //회원탈퇴 요청한 유저의 시험정보 삭제
             examPostsService.deleteByUser(targetUser.get(i).getUserIdx());
+
+            userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
+
+
         }
     }
 }
