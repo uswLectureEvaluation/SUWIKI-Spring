@@ -92,7 +92,7 @@ public class SleepingUserService {
         // 마지막 로그인 일자가 지금으로부터 11달 전인 유저에게
 //        LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
 
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(3);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
 
         // 휴면계정 전환 30일 전인 유저 목록 가져오기
         List<User> user = userRepository.findByLastLoginBefore(targetTime);
@@ -111,7 +111,7 @@ public class SleepingUserService {
     public void convertDormant() {
 
 //        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(30);
 
         //1년이상 접속하지 않은 유저 리스트 불러오기
         List<User> targetUser = userRepository.findByLastLoginBefore(targetTime);
@@ -125,12 +125,13 @@ public class SleepingUserService {
 
     // 휴면계정 전환 후 3년간 로그인 하지 않는 대상에 지정되기 한달 전에 이메일 보내기
     // 테스트 환경 -> 30분 미 접속 시 자동 삭제 대상 메일 전송
+    // 테스트 환경 2 -> 60분 미 접속 시 자동 삭제 대상 메일 전송
     @Transactional
 //    @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "0 * * * * *")
     public void autoDeleteTargetIsThreeYearsSendEmail() {
 //        LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(30);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(60);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
@@ -140,12 +141,13 @@ public class SleepingUserService {
 
     // 휴면계정 전환 후 3년간 로그인 하지 않으면 계정 자동 삭제
     // 테스트 환경 -> 35분 미 접속 시 자동 삭제
+    // 테스트 환경2 -> 70분 미 접속 시 자동 삭제
     @Transactional
 //    @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "0 * * * * *")
     public void autoDeleteTargetIsThreeYears() {
 //        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(35);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(80);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
@@ -157,8 +159,6 @@ public class SleepingUserService {
             examPostsService.deleteByUser(targetUser.get(i).getUserIdx());
 
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
-
-
         }
     }
 }
