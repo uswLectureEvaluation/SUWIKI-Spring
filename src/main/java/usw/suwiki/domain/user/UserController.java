@@ -216,7 +216,7 @@ public class UserController {
             return token;
         }
 
-        User user = sleepingUserService.dormantUserCheck(loginForm);
+        User user = sleepingUserService.sleepingUserLogin(loginForm);
 
         //액세스 토큰 생성
         String accessToken = jwtTokenProvider.createAccessToken(user);

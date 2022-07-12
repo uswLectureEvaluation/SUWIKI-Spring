@@ -60,7 +60,7 @@ public class UserAdminService {
 
         //블랙리스트 도메인 데이터 생성
         BlacklistDomain blacklistDomain = BlacklistDomain.builder()
-                .user(user)
+                .userIdx(user.getId())
                 .bannedReason(bannedReason)
                 .hashedEmail(hashTargetEmail)
                 .build();
@@ -114,7 +114,7 @@ public class UserAdminService {
 
         //블랙리스트 도메인 데이터 생성
         BlacklistDomain blacklistDomain = BlacklistDomain.builder()
-                .user(user)
+                .userIdx(user.getId())
                 .bannedReason(bannedReason)
                 .judgement(judgement)
                 .hashedEmail(hashTargetEmail)
@@ -158,7 +158,7 @@ public class UserAdminService {
 
         //블랙리스트 도메인 데이터 생성
         BlacklistDomain blacklistDomain = BlacklistDomain.builder()
-                .user(user)
+                .userIdx(user.getId())
                 .bannedReason(bannedReason)
                 .judgement(judgement)
                 .hashedEmail(hashTargetEmail)

@@ -30,5 +30,5 @@ public interface BlacklistRepository extends JpaRepository<BlacklistDomain, Long
     Optional<BlacklistDomain> findByHashedEmail(String email);
 
     //블랙리스트 유저 삭제
-    void deleteByUserId(Long id);
+    void deleteByUserIdx(Long id);
 }

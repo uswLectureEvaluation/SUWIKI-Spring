@@ -7,7 +7,7 @@ import usw.suwiki.domain.evaluation.EvaluatePosts;
 
 import java.util.List;
 
-public interface EvaluatePostsRepository{
+public interface EvaluatePostsRepository {
 
     void save(EvaluatePosts EvaluatePosts);
 

@@ -61,7 +61,7 @@ public class SleepingUserService {
     }
 
     @Transactional
-    public User dormantUserCheck(UserDto.LoginForm loginForm) {
+    public User sleepingUserLogin(UserDto.LoginForm loginForm) {
         //격리 테이블에 있으면
         if (userIsolationRepository.findByLoginId(loginForm.getLoginId()).isPresent()) {
 
@@ -69,7 +69,10 @@ public class SleepingUserService {
             UserIsolation userIsolation = userIsolationService.loadUserFromLoginId(loginForm.getLoginId());
 
             // 블랙리스트 유저인지 확인 --> 블랙리스트면 에러
-//            blackListService.isBlackList(userIsolation.getEmail());
+            blackListService.isBlackList(userIsolation.getEmail());
+
+            // 정지 유저인지 확인
+            userIsolationService.isRestricted(loginForm.getLoginId());
 
             //아이디 비밀번호 검증
             validatePasswordAtIsolationTable(loginForm.getLoginId(), loginForm.getPassword());
@@ -152,12 +155,13 @@ public class SleepingUserService {
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
 
-            //회원탈퇴 요청한 유저의 강의평가 삭제
+            // 회원탈퇴 요청한 유저의 강의평가 삭제
             evaluatePostsService.deleteByUser(targetUser.get(i).getUserIdx());
 
-            //회원탈퇴 요청한 유저의 시험정보 삭제
+            // 회원탈퇴 요청한 유저의 시험정보 삭제
             examPostsService.deleteByUser(targetUser.get(i).getUserIdx());
 
+            // 회원탈퇴 후 휴면계정으로 전환된 유저 삭제
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
         }
     }

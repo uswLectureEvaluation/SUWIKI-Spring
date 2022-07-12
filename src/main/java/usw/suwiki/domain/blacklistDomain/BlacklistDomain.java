@@ -18,6 +18,9 @@ public class BlacklistDomain {
     private Long id; //Auto Increment
 
     @Column
+    private Long userIdx;
+
+    @Column
     private String hashedEmail;
 
     @Column
@@ -28,10 +31,6 @@ public class BlacklistDomain {
 
     @Column
     private String judgement;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_idx")
-    private User user;
 
     @Column
     private LocalDateTime createdAt;

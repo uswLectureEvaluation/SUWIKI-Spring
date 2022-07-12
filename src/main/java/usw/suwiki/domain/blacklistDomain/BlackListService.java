@@ -47,7 +47,7 @@ public class BlackListService {
             userRepository.unRestricted(userIdx);
 
             //블랙리스트 테이블에서 제거
-            blacklistRepository.deleteByUserId(userIdx);
+            blacklistRepository.deleteByUserIdx(userIdx);
         }
     }
     
