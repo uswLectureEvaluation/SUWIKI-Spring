@@ -161,7 +161,7 @@ public class SleepingUserService {
             // 회원탈퇴 요청한 유저의 시험정보 삭제
             examPostsService.deleteByUser(targetUser.get(i).getUserIdx());
 
-            // 회원탈퇴 후 휴면계정으로 전환된 유저 삭제
+            // 유저 삭제
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
         }
     }

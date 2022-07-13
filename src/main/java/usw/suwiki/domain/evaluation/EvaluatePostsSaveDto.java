@@ -1,10 +1,12 @@
 package usw.suwiki.domain.evaluation;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@Builder
 public class EvaluatePostsSaveDto {
 
     private String lectureName; //과목

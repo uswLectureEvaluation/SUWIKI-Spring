@@ -103,15 +103,9 @@ public class EvaluatePostsService {
         } else {
             for (EvaluatePosts evaluatePosts : list) {
                 EvaluatePostsToLecture dto = new EvaluatePostsToLecture(evaluatePosts);
-                System.out.println("cancleLectureValue 시작");
                 lectureService.cancelLectureValue(dto);
-                System.out.println("cancleLectureValue 종료");
-                System.out.println("cancleLectureAVG 시작");
                 lectureService.calcLectureAvg(dto);
-                System.out.println("cancleLectureAVG 종료");
-                System.out.println("delete 시작");
                 evaluatePostsRepository.delete(evaluatePosts);
-                System.out.println("delete 종료");
             }
         }
 
@@ -122,6 +116,7 @@ public class EvaluatePostsService {
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         Optional<User> user = userRepository.findById(userIdx);
         EvaluatePostsToLecture dto = new EvaluatePostsToLecture(posts);
+
         lectureService.cancelLectureValue(dto);
         lectureService.calcLectureAvg(dto);
         Integer postsCount = user.get().getWrittenEvaluation();

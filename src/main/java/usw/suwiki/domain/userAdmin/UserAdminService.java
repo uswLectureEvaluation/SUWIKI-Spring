@@ -243,9 +243,16 @@ public class UserAdminService {
 
     // 정지 횟수 +1
     @Transactional
-    public void plushRestrictCount(Long userIdx) {
+    public void plusRestrictCount(Long userIdx) {
         User user = userService.loadUserFromUserIdx(userIdx);
         user.setRestrictedCount(user.getRestrictedCount() + 1);
+    }
+
+    // 신고한 유저 포인트 1 증가
+    @Transactional
+    public void plusReportingUserPoint(Long reportingUserIdx) {
+        User user = userService.loadUserFromUserIdx(reportingUserIdx);
+        user.setPoint(user.getPoint() + 1);
     }
 
     //신고 받은 강의평가 모두 불러오기

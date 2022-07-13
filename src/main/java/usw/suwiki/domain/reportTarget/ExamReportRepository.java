@@ -16,4 +16,6 @@ public interface ExamReportRepository extends JpaRepository<ExamPostReport, Long
 
     void deleteByExamIdx(Long examIdx);
 
+    Long findByReportingUserIdx(Long examIdx);
+
 }

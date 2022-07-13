@@ -4,12 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.blacklistDomain.BlackListService;
 import usw.suwiki.domain.blacklistDomain.BlacklistRepository;
-import usw.suwiki.domain.evaluation.EvaluatePosts;
-import usw.suwiki.domain.evaluation.EvaluatePostsService;
-import usw.suwiki.domain.exam.ExamPosts;
-import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.reportTarget.EvaluatePostReport;
 import usw.suwiki.domain.reportTarget.ExamPostReport;
 import usw.suwiki.domain.user.User;
@@ -87,11 +82,17 @@ public class UserAdminController {
         // 게시글 삭제 후 해당 게시글 작성자 인덱스 받아오기
         Long targetUserIdx = userAdminService.banishEvaluatePost(evaluatePostRestrictForm.getEvaluateIdx());
         
-        // 유저 정지테이블에 값 추가
+        // 유저 정지 테이블에 값 추가
         restrictingUserService.addRestrictingTableByEvaluatePost(evaluatePostRestrictForm);
 
         // 유저 restricted True, 정지 카운트 증가
-        userAdminService.plushRestrictCount(targetUserIdx);
+        userAdminService.plusRestrictCount(targetUserIdx);
+
+        // 신고한 유저 인덱스 가져오기
+        Long reportingUserIdx = userService.whoIsEvaluateReporting(evaluatePostRestrictForm.getEvaluateIdx());
+
+        // 신고한 유저 포인트 증가
+        userAdminService.plusReportingUserPoint(reportingUserIdx);
 
         result.put("Success", true);
         return result;
@@ -118,7 +119,13 @@ public class UserAdminController {
         restrictingUserService.addRestrictingTableByExamPost(examPostRestrictForm);
 
         // 유저 restricted True, 정지 카운트 증가
-        userAdminService.plushRestrictCount(targetUserIdx);
+        userAdminService.plusRestrictCount(targetUserIdx);
+
+        // 신고한 유저 인덱스 가져오기
+        Long reportingUserIdx = userService.whoIsExamReporting(examPostRestrictForm.getExamIdx());
+
+        // 신고한 유저 포인트 증가
+        userAdminService.plusReportingUserPoint(reportingUserIdx);
 
         result.put("Success", true);
         return result;
@@ -157,7 +164,7 @@ public class UserAdminController {
                 evaluatePostBlacklistForm.getBannedReason(),
                 evaluatePostBlacklistForm.getJudgement());
 
-        userAdminService.plushRestrictCount(userIdx);
+        userAdminService.plusRestrictCount(userIdx);
 
 
         result.put("Success", true);
@@ -195,7 +202,7 @@ public class UserAdminController {
                 examPostBlacklistForm.getBannedReason(),
                 examPostBlacklistForm.getJudgement());
 
-        userAdminService.plushRestrictCount(userIdx);
+        userAdminService.plusRestrictCount(userIdx);
 
 
         result.put("Success", true);
