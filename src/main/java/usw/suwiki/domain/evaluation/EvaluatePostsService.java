@@ -108,7 +108,6 @@ public class EvaluatePostsService {
                 evaluatePostsRepository.delete(evaluatePosts);
             }
         }
-
     }
 
     @Synchronized
