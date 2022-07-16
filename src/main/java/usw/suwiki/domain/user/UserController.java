@@ -184,8 +184,9 @@ public class UserController {
     }
 
     //로그인 요청 시
+//    @CrossOrigin(origins = "http://suwiki.kr")
+    @CrossOrigin(origins = "https://suwiki.kr")
     @PostMapping("login")
-    @CrossOrigin(origins = "http://suwiki.kr")
     public HashMap<String, String> login(@Valid @RequestBody UserDto.LoginForm loginForm) {
 
         HashMap<String, String> token = new HashMap<>();
