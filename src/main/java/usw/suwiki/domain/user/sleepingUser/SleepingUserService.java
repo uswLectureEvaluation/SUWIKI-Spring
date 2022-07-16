@@ -18,6 +18,8 @@ import usw.suwiki.domain.user.UserService;
 import usw.suwiki.domain.userIsolation.UserIsolation;
 import usw.suwiki.domain.userIsolation.UserIsolationRepository;
 import usw.suwiki.domain.userIsolation.UserIsolationService;
+import usw.suwiki.exception.AccountException;
+import usw.suwiki.exception.ErrorType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -75,12 +77,15 @@ public class SleepingUserService {
             userIsolationService.isRestricted(loginForm.getLoginId());
 
             //아이디 비밀번호 검증
-            validatePasswordAtIsolationTable(loginForm.getLoginId(), loginForm.getPassword());
+            if (validatePasswordAtIsolationTable(loginForm.getLoginId(), loginForm.getPassword())) {
 
-            // 격리 테이블 객체 정보를 본 테이블로 이동
-            userRepository.insertUserIsolationIntoUser(userIsolation.getUserIdx());
+                // 격리 테이블 객체 정보를 본 테이블로 이동
+                userRepository.insertUserIsolationIntoUser(userIsolation.getUserIdx());
 
-            userIsolationRepository.deleteByLoginId(loginForm.getLoginId());
+                userIsolationRepository.deleteByLoginId(loginForm.getLoginId());
+            } else {
+                throw new AccountException(ErrorType.PASSWORD_ERROR);
+            }
         }
 
         return userService.loadUserFromLoginId(loginForm.getLoginId());

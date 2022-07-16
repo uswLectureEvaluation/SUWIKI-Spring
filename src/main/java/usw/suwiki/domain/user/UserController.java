@@ -184,8 +184,7 @@ public class UserController {
     }
 
     //로그인 요청 시
-//    @CrossOrigin(origins = "http://suwiki.kr")
-    @CrossOrigin(origins = "https://suwiki.kr")
+    @CrossOrigin(origins = "*", methods = RequestMethod.POST, allowedHeaders = "*")
     @PostMapping("login")
     public HashMap<String, String> login(@Valid @RequestBody UserDto.LoginForm loginForm) {
 
@@ -202,20 +201,22 @@ public class UserController {
 //            blackListService.isBlackList(user.getEmail());
 
             //아이디 비밀번호 검증
-            userService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword());
+            if (userService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword())) {
+                //액세스 토큰 생성
+                String accessToken = jwtTokenProvider.createAccessToken(user);
+                token.put("AccessToken", accessToken);
 
-            //액세스 토큰 생성
-            String accessToken = jwtTokenProvider.createAccessToken(user);
-            token.put("AccessToken", accessToken);
+                // 리프레시 토큰 갱신 혹은 신규 생성 판단 및 생성
+                String refreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(user);
+                token.put("RefreshToken", refreshToken);
 
-            // 리프레시 토큰 갱신 혹은 신규 생성 판단 및 생성
-            String refreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(user);
-            token.put("RefreshToken", refreshToken);
+                //마지막 로그인 일자 스탬프
+                userService.setLastLogin(loginForm);
 
-            //마지막 로그인 일자 스탬프
-            userService.setLastLogin(loginForm);
+                return token;
+            }
 
-            return token;
+            throw new AccountException(ErrorType.PASSWORD_ERROR);
         }
 
         User user = sleepingUserService.sleepingUserLogin(loginForm);
