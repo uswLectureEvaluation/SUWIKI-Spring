@@ -1,19 +1,18 @@
 package usw.suwiki.config;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import usw.suwiki.global.jwt.JwtAuthenticationProvider;
 
 
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
@@ -79,7 +78,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").permitAll()
                 .and()
                 .apply(new JwtSecurityConfig(authenticationManagerBuilder.getOrBuild()));
-
 
 
     }
