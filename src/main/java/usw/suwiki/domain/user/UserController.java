@@ -240,6 +240,7 @@ public class UserController {
 
         HashMap<String, String> responseWrapper = new HashMap<>();
 
+        // 휴면계정이 아닌 유저 -> 일반유저의 로그인로직
         if (userIsolationRepository.findByLoginId(loginForm.getLoginId()).isEmpty()) {
 
             User user = userService.loadUserFromLoginId(loginForm.getLoginId());
@@ -322,6 +323,47 @@ public class UserController {
                 .writtenExam(user.getWrittenExam())
                 .viewExam(user.getViewExamCount())
                 .build();
+    }
+
+    @PostMapping("/client-refresh")
+    public ResponseEntity<?> clientTokenRefresh(@CookieValue(value = "refreshToken") Cookie reqRefreshCookie, HttpServletResponse response) {
+
+        HashMap<String, String> responseWrapper = new HashMap<>();
+
+        String refreshToken = reqRefreshCookie.getValue();
+
+        // RefreshToken 유효기간 검증
+        jwtTokenValidator.validateRefreshToken(refreshToken);
+
+        // RefreshToken DB에 담겨있는지 확인(임의로 만든 토큰이 아닌지 확인하자.)
+        if (refreshTokenRepository.findByPayload(refreshToken).isEmpty())
+            throw new AccountException(ErrorType.USER_RESTRICTED);
+
+        // 리프레시 토큰으로 유저 인덱스 뽑아오기
+        Long userIdx = refreshTokenRepository.findByPayload(refreshToken).get().getUser().getId();
+
+        // 해당 RefreshToken 으로 UserIndex 를 추출하여 객체 반환
+        User user = userService.loadUserFromUserIdx(userIdx);
+
+        // 액세스 토큰 생성 및 반환 객체에 담기
+        String accessToken = jwtTokenProvider.createAccessToken(user);
+        responseWrapper.put("AccessToken", accessToken);
+
+        // 리프레시 토큰 갱신이 필요하면 갱신 해주기
+        if (jwtTokenValidator.isNeedToUpdateRefreshToken(refreshToken)) {
+            refreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
+        }
+        
+        // 리프레시 토큰 쿠키에 담기
+        Cookie refreshCookie = new Cookie("refreshToken", "");
+        refreshCookie.setValue(refreshToken);
+        refreshCookie.setMaxAge(14 * 24 * 60 * 60); // expires in 7 days
+        refreshCookie.setSecure(true);
+        refreshCookie.setHttpOnly(true);
+
+        response.addCookie(refreshCookie);
+
+        return new ResponseEntity<>(responseWrapper, HttpStatus.OK);
     }
 
     @PostMapping("/refresh")
