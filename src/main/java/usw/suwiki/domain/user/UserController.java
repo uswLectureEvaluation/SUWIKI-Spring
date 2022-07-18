@@ -3,10 +3,8 @@ package usw.suwiki.domain.user;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.apache.coyote.Response;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import usw.suwiki.domain.blacklistDomain.BlackListService;
@@ -26,6 +24,8 @@ import usw.suwiki.domain.email.EmailAuthService;
 import usw.suwiki.domain.emailBuild.BuildEmailAuthSuccessFormService;
 import usw.suwiki.domain.favorite_major.FavoriteMajorService;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -183,10 +183,9 @@ public class UserController {
         return findPwSuccess;
     }
 
-    //로그인 요청 시
-    @CrossOrigin(origins = "*", methods = RequestMethod.POST, allowedHeaders = "*")
+    // 안드, IOS 로그인 요청 시
     @PostMapping("login")
-    public HashMap<String, String> login(@Valid @RequestBody UserDto.LoginForm loginForm) {
+    public HashMap<String, String> mobileLogin(@Valid @RequestBody UserDto.LoginForm loginForm) {
 
         HashMap<String, String> token = new HashMap<>();
 
@@ -233,6 +232,73 @@ public class UserController {
         userService.setLastLogin(loginForm);
 
         return token;
+    }
+
+    // 프론트 로그인 요청 시 --> RefreshToken, AccessToken 쿠키로 셋팅
+    @PostMapping("client-login")
+    public ResponseEntity<?> clientLogin(@Valid @RequestBody UserDto.LoginForm loginForm, HttpServletResponse response) {
+
+        HashMap<String, String> responseWrapper = new HashMap<>();
+
+        if (userIsolationRepository.findByLoginId(loginForm.getLoginId()).isEmpty()) {
+
+            User user = userService.loadUserFromLoginId(loginForm.getLoginId());
+
+            //이메일 인증 받았는지 확인
+            userService.isUserEmailAuth(loginForm.getLoginId());
+
+            //아이디 비밀번호 검증
+            if (userService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword())) {
+                
+                // 액세스 토큰 생성
+                String accessToken = jwtTokenProvider.createAccessToken(user);
+
+                responseWrapper.put("AccessToken", accessToken);
+
+                // 리프레시 토큰 갱신 혹은 신규 생성 판단 및 생성
+                String refreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(user);
+
+                Cookie refreshCookie = new Cookie("refreshToken", "");
+                refreshCookie.setValue(refreshToken);
+                refreshCookie.setMaxAge(14 * 24 * 60 * 60); // expires in 7 days
+                refreshCookie.setSecure(true);
+                refreshCookie.setHttpOnly(true);
+
+                response.addCookie(refreshCookie);
+
+                //마지막 로그인 일자 스탬프
+                userService.setLastLogin(loginForm);
+
+                return new ResponseEntity<>(responseWrapper, HttpStatus.OK);
+            }
+            throw new AccountException(ErrorType.PASSWORD_ERROR);
+        }
+
+        // 휴면계정일 경우의 로그인 로직
+        else if (userIsolationRepository.findByLoginId(loginForm.getLoginId()).isPresent()) {
+            User user = sleepingUserService.sleepingUserLogin(loginForm);
+
+            // 액세스 토큰 생성
+            String accessToken = jwtTokenProvider.createAccessToken(user);
+            responseWrapper.put("AccessToken", accessToken);
+
+            // 리프레시 토큰 갱신 혹은 신규 생성 판단 및 생성
+            String refreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(user);
+
+            Cookie refreshCookie = new Cookie("refreshToken", "");
+            refreshCookie.setValue(refreshToken);
+            refreshCookie.setMaxAge(14 * 24 * 60 * 60); // expires in 7 days
+            refreshCookie.setSecure(true);
+            refreshCookie.setHttpOnly(true);
+
+            response.addCookie(refreshCookie);
+
+            //마지막 로그인 일자 스탬프
+            userService.setLastLogin(loginForm);
+
+            return new ResponseEntity<>(responseWrapper, HttpStatus.OK);
+        }
+        throw new AccountException(ErrorType.PASSWORD_ERROR);
     }
 
     @GetMapping("/my-page")
