@@ -80,7 +80,7 @@ public class QuitRequestUserService {
 //        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
         LocalDateTime targetTime = LocalDateTime.now().minusMinutes(1);
 
-        List<User> targetUser = userRepository.findByRequestedQuitDate(targetTime);
+        List<User> targetUser = userRepository.findByRequestedQuitDateBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
             userRepository.deleteById(targetUser.get(i).getId());

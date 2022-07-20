@@ -24,7 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByLastLoginBefore(LocalDateTime localDateTime);
 
-    List<User> findByRequestedQuitDate(LocalDateTime localDateTime);
+    List<User> findByRequestedQuitDateBefore(LocalDateTime localDateTime);
 
     // UserIdx 로 정지 해제
     @Modifying(clearAutomatically = true)
