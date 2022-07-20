@@ -258,9 +258,8 @@ public class UserService {
 
     //최근 로그인 일자 갱신
     @Transactional
-    public void setLastLogin(UserDto.LoginForm loginForm) {
-        Optional<User> user = userRepository.findByLoginId(loginForm.getLoginId());
-        user.ifPresent(value -> value.setLastLogin(LocalDateTime.now()));
+    public void setLastLogin(User user) {
+        user.setLastLogin(LocalDateTime.now());
     }
 
     //Optional<User> -> User

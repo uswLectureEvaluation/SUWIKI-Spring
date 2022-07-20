@@ -94,7 +94,7 @@ public class SleepingUserService {
     }
 
     // 휴면 계정 전환 30일 전 안내 메일 보내기
-    // 테스트 환경 -> 휴면 계정 전환 10분 전에 메일 보냄
+    // 테스트 환경 -> 휴면 계정 전환 5분 전에 메일 보냄
     @Transactional
     @Scheduled(cron = "0 * * * * *")
     public void sendEmailSoonDormant() {
@@ -102,7 +102,7 @@ public class SleepingUserService {
         // 마지막 로그인 일자가 지금으로부터 11달 전인 유저에게
 //        LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
 
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(45);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(5);
 
         // 휴면계정 전환 30일 전인 유저 목록 가져오기
         List<User> user = userRepository.findByLastLoginBefore(targetTime);
@@ -114,14 +114,14 @@ public class SleepingUserService {
     }
 
     // 휴면계정 전환 --> 1년 이상 접속하지 않으면 휴면계정임
-    // 테스트 환경 -> 35분 미 접속 시 휴면계정으로 전환
+    // 테스트 환경 -> 10분 미 접속 시 휴면계정으로 전환
     @Transactional
     //    @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "0 * * * * *")
     public void convertDormant() {
 
 //        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(35);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(7);
 
         //1년이상 접속하지 않은 유저 리스트 불러오기
         List<User> targetUser = userRepository.findByLastLoginBefore(targetTime);
@@ -134,14 +134,13 @@ public class SleepingUserService {
     }
 
     // 휴면계정 전환 후 3년간 로그인 하지 않는 대상에 지정되기 한달 전에 이메일 보내기
-    // 테스트 환경 -> 30분 미 접속 시 자동 삭제 대상 메일 전송
-    // 테스트 환경 2 -> 60분 미 접속 시 자동 삭제 대상 메일 전송
+    // 테스트 환경 -> 20분 미 접속 시 자동 삭제 대상 메일 전송
     @Transactional
 //    @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "0 * * * * *")
     public void autoDeleteTargetIsThreeYearsSendEmail() {
 //        LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(60);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(8);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
@@ -157,7 +156,7 @@ public class SleepingUserService {
     @Scheduled(cron = "0 * * * * *")
     public void autoDeleteTargetIsThreeYears() {
 //        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(65);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {

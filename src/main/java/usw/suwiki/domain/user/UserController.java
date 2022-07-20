@@ -210,7 +210,7 @@ public class UserController {
                 token.put("RefreshToken", refreshToken);
 
                 //마지막 로그인 일자 스탬프
-                userService.setLastLogin(loginForm);
+                userService.setLastLogin(user);
 
                 return token;
             }
@@ -229,7 +229,7 @@ public class UserController {
         token.put("RefreshToken", refreshToken);
 
         //마지막 로그인 일자 스탬프
-        userService.setLastLogin(loginForm);
+        userService.setLastLogin(user);
 
         return token;
     }
@@ -268,7 +268,7 @@ public class UserController {
                 response.addCookie(refreshCookie);
 
                 //마지막 로그인 일자 스탬프
-                userService.setLastLogin(loginForm);
+                userService.setLastLogin(user);
 
                 return new ResponseEntity<>(responseWrapper, HttpStatus.OK);
             }
@@ -295,7 +295,7 @@ public class UserController {
             response.addCookie(refreshCookie);
 
             //마지막 로그인 일자 스탬프
-            userService.setLastLogin(loginForm);
+            userService.setLastLogin(user);
 
             return new ResponseEntity<>(responseWrapper, HttpStatus.OK);
         }
@@ -363,6 +363,9 @@ public class UserController {
 
         response.addCookie(refreshCookie);
 
+        //마지막 로그인 일자 스탬프
+        userService.setLastLogin(user);
+
         return new ResponseEntity<>(responseWrapper, HttpStatus.OK);
     }
 
@@ -395,12 +398,18 @@ public class UserController {
             token.put("AccessToken", jwtTokenProvider.createAccessToken(user));
             token.put("RefreshToken", newRefreshToken);
 
+            //마지막 로그인 일자 스탬프
+            userService.setLastLogin(user);
+
             return token;
         }
 
         // 리프레시 토큰 갱신 필요없으면 액세스 토큰만 재생성
         token.put("AccessToken", jwtTokenProvider.createAccessToken(user));
         token.put("RefreshToken", Authorization);
+
+        //마지막 로그인 일자 스탬프
+        userService.setLastLogin(user);
 
         return token;
     }
