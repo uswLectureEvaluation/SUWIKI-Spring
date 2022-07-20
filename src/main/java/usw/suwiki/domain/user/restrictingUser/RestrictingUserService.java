@@ -43,7 +43,7 @@ public class RestrictingUserService {
         restrictingUserRepository.save(restrictingUser);
     }
 
-    // 강의평가 게시글로 유저 정지 먹이기
+    // 시험정보 게시글로 유저 정지 먹이기
     @Transactional
     public void addRestrictingTableByExamPost(UserAdminRequestDto.ExamPostRestrictForm restrictForm) {
 

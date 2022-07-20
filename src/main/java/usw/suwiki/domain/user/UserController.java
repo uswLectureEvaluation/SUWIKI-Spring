@@ -340,7 +340,7 @@ public class UserController {
             throw new AccountException(ErrorType.USER_RESTRICTED);
 
         // 리프레시 토큰으로 유저 인덱스 뽑아오기
-        Long userIdx = refreshTokenRepository.findByPayload(refreshToken).get().getUser().getId();
+        Long userIdx = refreshTokenRepository.findByPayload(refreshToken).get().getUserIdx();
 
         // 해당 RefreshToken 으로 UserIndex 를 추출하여 객체 반환
         User user = userService.loadUserFromUserIdx(userIdx);
@@ -383,7 +383,7 @@ public class UserController {
             throw new AccountException(ErrorType.USER_RESTRICTED);
 
         //리프레시 토큰으로 유저 인덱스 뽑아오기
-        Long userIdx = refreshTokenRepository.findByPayload(Authorization).get().getUser().getId();
+        Long userIdx = refreshTokenRepository.findByPayload(Authorization).get().getUserIdx();
 
         //해당 RefreshToken 으로 UserIndex 를 추출하여 객체 반환
         User user = userService.loadUserFromUserIdx(userIdx);

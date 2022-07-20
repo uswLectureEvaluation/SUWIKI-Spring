@@ -81,7 +81,7 @@ public class JwtTokenResolver {
         //리프레시 토큰 저장
         refreshTokenRepository.save(
                 RefreshToken.builder()
-                        .user(user)
+                        .userIdx(user.getId())
                         .payload(refreshToken)
                         .build());
         return refreshToken;

@@ -70,26 +70,28 @@ public class UserAdminController {
     public HashMap<String, Boolean> restrictEvaluatePost(@Valid @RequestHeader String Authorization,
                                                     @Valid @RequestBody UserAdminRequestDto.EvaluatePostRestrictForm evaluatePostRestrictForm) {
 
-        //토큰 검증
+        // 토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
 
-        //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
+        // 토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(ErrorType.USER_RESTRICTED);
 
         HashMap<String, Boolean> result = new HashMap<>();
 
-        // 게시글 삭제 후 해당 게시글 작성자 인덱스 받아오기
-        Long targetUserIdx = userAdminService.banishEvaluatePost(evaluatePostRestrictForm.getEvaluateIdx());
-        
         // 유저 정지 테이블에 값 추가
         restrictingUserService.addRestrictingTableByEvaluatePost(evaluatePostRestrictForm);
 
-        // 유저 restricted True, 정지 카운트 증가
-        userAdminService.plusRestrictCount(targetUserIdx);
-
         // 신고한 유저 인덱스 가져오기
         Long reportingUserIdx = userService.whoIsEvaluateReporting(evaluatePostRestrictForm.getEvaluateIdx());
+
+        // 게시글 삭제 후 해당 게시글 작성자 인덱스 받아오기
+        Long targetUserIdx = userAdminService.banishEvaluatePost(evaluatePostRestrictForm.getEvaluateIdx());
+
+        System.out.println("test1");
+
+        // 유저 restricted True, 정지 카운트 증가
+        userAdminService.plusRestrictCount(targetUserIdx);
 
         // 신고한 유저 포인트 증가
         userAdminService.plusReportingUserPoint(reportingUserIdx);
@@ -112,17 +114,17 @@ public class UserAdminController {
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(ErrorType.USER_RESTRICTED);
 
-        // 게시글 삭제 후 해당 게시글 작성자 인덱스 받아오기
-        Long targetUserIdx = userAdminService.banishExamPost(examPostRestrictForm.getExamIdx());
-
         // 유저 정지테이블에 값 추가
         restrictingUserService.addRestrictingTableByExamPost(examPostRestrictForm);
 
-        // 유저 restricted True, 정지 카운트 증가
-        userAdminService.plusRestrictCount(targetUserIdx);
-
         // 신고한 유저 인덱스 가져오기
         Long reportingUserIdx = userService.whoIsExamReporting(examPostRestrictForm.getExamIdx());
+
+        // 게시글 삭제 후 해당 게시글 작성자 인덱스 받아오기
+        Long targetUserIdx = userAdminService.banishExamPost(examPostRestrictForm.getExamIdx());
+
+        // 유저 restricted True, 정지 카운트 증가
+        userAdminService.plusRestrictCount(targetUserIdx);
 
         // 신고한 유저 포인트 증가
         userAdminService.plusReportingUserPoint(reportingUserIdx);
