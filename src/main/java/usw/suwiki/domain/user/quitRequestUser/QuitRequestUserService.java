@@ -70,14 +70,15 @@ public class QuitRequestUserService {
         disableUser(userService.loadUserFromUserIdx(userIdx));
     }
 
-    //회원탈퇴 요청 후 30일 뒤 테이블에서 제거
+    // 회원탈퇴 요청 후 30일 뒤 테이블에서 제거
+    // 테스트환경 : 회원탈퇴 요청 후 1분 후 테이블에서 제거
     @Transactional
 //    @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "0 * * * * *")
     public void deleteRequestQuitUserAfter30Days() {
 
 //        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(3);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(1);
 
         List<User> targetUser = userRepository.findByRequestedQuitDate(targetTime);
 

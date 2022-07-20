@@ -283,7 +283,6 @@ public class UserService {
         return convertOptionalUserToDomainUser(userRepository.findByLoginId(loginId));
     }
 
-
     // 강의평가 인덱스로 강의평가 객체 불러오기
     @Transactional
     public EvaluatePosts loadEvaluatePostsByIndex(Long EvaluatePostsIdx) {
