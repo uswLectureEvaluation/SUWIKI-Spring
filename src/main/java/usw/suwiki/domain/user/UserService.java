@@ -336,7 +336,7 @@ public class UserService {
     // 강의평가 신고한 유저 찾아오기
     @Transactional
     public Long whoIsEvaluateReporting(Long evaluateIdx) {
-        return evaluateReportRepository.findByReportingUserIdx(evaluateIdx);
+        return evaluateReportRepository.findByEvaluateIdx(evaluateIdx).get().getReportingUserIdx();
     }
 
     // 시험정보 신고한 유저 찾아오기
