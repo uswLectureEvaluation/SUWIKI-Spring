@@ -13,7 +13,8 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
 
     Optional<RefreshToken> findByPayload(String payload);
 
-    Optional<RefreshToken> findByUser(Long id);
+    @Query(value = "SELECT * FROM RefreshToken WHERE user_idx = :id", nativeQuery = true)
+    Optional<RefreshToken> findByUser(@Param("id") Long id);
 
     //페이로드 업데이트
     @Modifying(clearAutomatically = true)
