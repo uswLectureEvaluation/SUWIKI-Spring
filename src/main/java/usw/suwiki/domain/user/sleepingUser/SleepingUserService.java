@@ -113,7 +113,7 @@ public class SleepingUserService {
     }
 
     // 휴면계정 전환 --> 1년 이상 접속하지 않으면 휴면계정임
-    // 테스트 환경 -> 7분 미 접속 시 휴면계정으로 전환
+    // 테스트 환경 -> 10분 미 접속 시 휴면계정으로 전환
     @Transactional
     // @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "0 * * * * *")

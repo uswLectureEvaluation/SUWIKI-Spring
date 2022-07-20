@@ -64,6 +64,9 @@ public class JwtTokenResolver {
             // DB에 존재하는 리프레시 토큰 꺼내 담기
             String refreshToken = refreshTokenRepository.findPayLoadByUserIdx(user.getId()).get();
 
+            // 리프레시 토큰 만료 시 401
+            jwtTokenValidator.validateRefreshToken(refreshToken);
+
             // 리프레시 토큰이 DB에 있지만, 갱신은 필요로 할 때
             if (jwtTokenValidator.isNeedToUpdateRefreshToken(refreshToken)) {
                 // 리프레시 토큰 갱신
