@@ -13,7 +13,7 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
 
     Optional<RefreshToken> findByPayload(String payload);
 
-    Optional<RefreshToken> findByUserId(Long id);
+    Optional<RefreshToken> findByUserIdx(Long id);
 
     //페이로드 업데이트
     @Modifying(clearAutomatically = true)

@@ -59,10 +59,10 @@ public class JwtTokenResolver {
     public String refreshTokenUpdateOrCreate(User user) {
 
         // 리프레시 토큰이 DB에 있을 때
-        if (refreshTokenRepository.findByUserId(user.getId()).isPresent()) {
+        if (refreshTokenRepository.findByUserIdx(user.getId()).isPresent()) {
 
             // DB에 존재하는 리프레시 토큰 꺼내 담기
-            String refreshToken = refreshTokenRepository.findByUserId(user.getId()).get().getPayload();
+            String refreshToken = refreshTokenRepository.findByUserIdx(user.getId()).get().getPayload();
 
             // 리프레시 토큰이 DB에 있지만, 갱신은 필요로 할 때
             if (jwtTokenValidator.isNeedToUpdateRefreshToken(refreshToken)) {
