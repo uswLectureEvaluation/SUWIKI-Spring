@@ -34,12 +34,13 @@ public class RestrictingUserService {
         User user = userService.loadUserFromUserIdx(evaluatePosts.getUser().getId());
 
         RestrictingUser restrictingUser = RestrictingUser.builder()
-                .user(user)
+                .userIdx(user.getId())
                 .restrictingDate(LocalDateTime.now().plusDays(restrictForm.getRestrictingDate()))
                 .restrictingReason(restrictForm.getRestrictingReason())
                 .judgement(restrictForm.getJudgement())
                 .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now()).build();
+                .updatedAt(LocalDateTime.now())
+                .build();
         restrictingUserRepository.save(restrictingUser);
     }
 
@@ -51,7 +52,7 @@ public class RestrictingUserService {
         User user = userService.loadUserFromUserIdx(examPosts.getUser().getId());
 
         RestrictingUser restrictingUser = RestrictingUser.builder()
-                .user(user)
+                .userIdx(user.getId())
                 .restrictingDate(LocalDateTime.now().plusDays(restrictForm.getRestrictingDate()))
                 .restrictingReason(restrictForm.getRestrictingReason())
                 .judgement(restrictForm.getJudgement())
@@ -111,7 +112,7 @@ public class RestrictingUserService {
         List<RestrictingUser> targetUser = restrictingUserRepository.findByRestrictingDateBefore(targetTime);
 
         for (RestrictingUser target : targetUser) {
-            Long userIdx = target.getUser().getId();
+            Long userIdx = target.getUserIdx();
 
             restrictingUserRepository.deleteByUserIdx(userIdx);
             userRepository.unRestricted(userIdx);

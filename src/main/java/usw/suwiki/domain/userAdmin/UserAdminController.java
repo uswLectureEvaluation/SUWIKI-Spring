@@ -88,8 +88,6 @@ public class UserAdminController {
         // 게시글 삭제 후 해당 게시글 작성자 인덱스 받아오기
         Long targetUserIdx = userAdminService.banishEvaluatePost(evaluatePostRestrictForm.getEvaluateIdx());
 
-        System.out.println("test1");
-
         // 유저 restricted True, 정지 카운트 증가
         userAdminService.plusRestrictCount(targetUserIdx);
 

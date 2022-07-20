@@ -21,9 +21,8 @@ public class RestrictingUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_idx")
-    private User user;
+    @Column
+    private Long userIdx;
 
     @Column
     private LocalDateTime restrictingDate;

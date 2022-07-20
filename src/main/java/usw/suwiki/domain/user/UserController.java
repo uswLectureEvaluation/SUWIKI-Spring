@@ -421,9 +421,6 @@ public class UserController {
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
 
-        //AccessToken 으로 요청 접근 권한이 있는지 확인
-        if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
-
         HashMap<String, Boolean> result = new HashMap<>();
 
         //아이디 비밀번호 검증 후 일치하지 않으면
