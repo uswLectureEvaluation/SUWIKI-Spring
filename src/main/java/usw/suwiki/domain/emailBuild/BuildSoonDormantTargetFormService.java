@@ -61,7 +61,7 @@ public class BuildSoonDormantTargetFormService {
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
                 "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
                 "        \n" +
-                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">반갑습니다 " + "</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> 5개월간 접속하지 않아 30일 후 휴면계정으로 전환됨을 알려드립니다. \n (이 안내는 매일 발송 되기 때문에, 휴면계정 전환 시점은 첫 안내를 수신한 시점부터 30일 입니다.) \n 만약 전환을 원치 않으시다면, SUWIKI 로그인을 해주세요 </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> </p></blockquote>\n <p>감사합니다.</p>" +
+                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">반갑습니다 " + "</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> 11개월간 접속하지 않아 30일 후 휴면계정으로 전환됨을 알려드립니다. \n (이 안내는 매일 발송 되기 때문에, 휴면계정 전환 시점은 첫 안내를 수신한 시점부터 30일 입니다.) \n 만약 전환을 원치 않으시다면, SUWIKI 로그인을 해주세요 </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> </p></blockquote>\n <p>감사합니다.</p>" +
                 "        \n" +
                 "      </td>\n" +
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
