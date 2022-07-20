@@ -86,6 +86,4 @@ public class QuitRequestUserService {
             userRepository.deleteById(targetUser.get(i).getId());
         }
     }
-
-
 }

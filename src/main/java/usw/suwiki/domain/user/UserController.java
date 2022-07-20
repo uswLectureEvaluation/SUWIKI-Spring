@@ -435,12 +435,12 @@ public class UserController {
         //해당하는 유저 가져오기
         User theUserRequestedQuit = userService.loadUserFromLoginId(userQuitForm.getLoginId());
 
-        //회원탈퇴 요청 시각 스탬프
-        quitRequestUserService.requestQuitDateStamp(theUserRequestedQuit);
-
         // 해당 유저 아이디, 이메일 제외 모두 삭제
         // 작성한 강의평가, 시험정보도 모두 삭제
         quitRequestUserService.waitQuit(theUserRequestedQuit.getId());
+
+        //회원탈퇴 요청 시각 스탬프
+        quitRequestUserService.requestQuitDateStamp(theUserRequestedQuit);
 
         result.put("success", true);
 

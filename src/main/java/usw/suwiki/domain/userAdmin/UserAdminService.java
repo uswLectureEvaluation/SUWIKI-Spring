@@ -184,8 +184,6 @@ public class UserAdminService {
         expiredAtSetTarget.get().setCreatedAt(LocalDateTime.now());
         expiredAtSetTarget.get().setUpdatedAt(LocalDateTime.now());
 
-        throw new AccountException(ErrorType.SERVER_ERROR);
-
     }
 
     // 신고받은 강의평가 게시글 삭제 해주기
