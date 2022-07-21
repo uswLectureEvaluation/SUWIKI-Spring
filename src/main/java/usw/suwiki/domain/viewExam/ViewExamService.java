@@ -40,7 +40,7 @@ public class ViewExamService {
 
             user.get().setViewExamCount(count + 1);
             user.get().setPoint(point - 20);
-            viewExam.setUserInViewExam(user.get());
+            viewExam.setUserInViewExam(user.get().getId());
             viewExam.setLectureInViewExam(lecture);
             jpaViewExamRepository.save(viewExam);
         }

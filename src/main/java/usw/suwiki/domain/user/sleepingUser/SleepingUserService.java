@@ -54,8 +54,9 @@ public class SleepingUserService {
     public void moveToIsolation(User user) {
         // 격리 테이블로 옮기기
         userIsolationRepository.insertUserIntoIsolation(user.getId());
-    }
 
+
+    }
 
     // 휴면계정 아이디 비밀번호 매칭
     @Transactional
