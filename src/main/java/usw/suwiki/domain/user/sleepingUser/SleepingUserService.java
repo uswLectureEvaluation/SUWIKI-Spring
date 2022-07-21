@@ -57,7 +57,6 @@ public class SleepingUserService {
     }
 
 
-
     // 휴면계정 아이디 비밀번호 매칭
     @Transactional
     public boolean validatePasswordAtIsolationTable(String loginId, String password) {
@@ -92,11 +91,16 @@ public class SleepingUserService {
 
         return userService.loadUserFromLoginId(loginForm.getLoginId());
     }
+    
+    /**
+    배포환경 : 휴면 계정 전환 30일 전(마지막 로그인 일자가 11달 전) 안내 메일 보내기
+     
+     테스트환경 : 휴면 계정 전환 5분 전 안내 메일 보내기
+     
+     **/
 
-    // 휴면 계정 전환 30일 전 안내 메일 보내기
-    // 테스트 환경 -> 휴면 계정 전환 5분 전에 메일 보냄
     @Transactional
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "2 * * * * *")
     public void sendEmailSoonDormant() {
 
         // 마지막 로그인 일자가 지금으로부터 11달 전인 유저에게
@@ -112,11 +116,15 @@ public class SleepingUserService {
         }
     }
 
-    // 휴면계정 전환 --> 1년 이상 접속하지 않으면 휴면계정임
-    // 테스트 환경 -> 10분 미 접속 시 휴면계정으로 전환
+    /**
+     배포환경 : 마지막 로그인 일자가 12달 전 유저 휴면계정처리
+
+     테스트환경 : 마지막 로그인 일자가 10분 전인 유저 휴면계정처리
+
+     **/
     @Transactional
     // @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "4 * * * * *")
     public void convertDormant() {
 
 //        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
@@ -136,7 +144,7 @@ public class SleepingUserService {
     // 테스트 환경 -> 20분 미 접속 시 자동 삭제 대상 메일 전송
     @Transactional
 //    @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "6 * * * * *")
     public void autoDeleteTargetIsThreeYearsSendEmail() {
         LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
 //        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(8);
@@ -152,7 +160,7 @@ public class SleepingUserService {
     // 테스트 환경2 -> 30분 미 접속 시 자동 삭제
     @Transactional
 //    @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "8 * * * * *")
     public void autoDeleteTargetIsThreeYears() {
 //        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
         LocalDateTime targetTime = LocalDateTime.now().minusMinutes(30);

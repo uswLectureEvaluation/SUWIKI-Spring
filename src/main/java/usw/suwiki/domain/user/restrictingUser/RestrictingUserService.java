@@ -102,7 +102,8 @@ public class RestrictingUserService {
 
     // 이용정지를 풀기 위한 메서드 --> 정지 테이블에서 유저 삭제
     @Transactional
-    @Scheduled(cron = "0 * * * * *")
+    // 초 분 시 일 월 주 년
+    @Scheduled(cron = "10 * * * * *")
     public void isUnrestrictedTarget() {
 
         // 현재시각으로부터 - 30일

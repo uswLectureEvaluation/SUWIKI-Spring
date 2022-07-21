@@ -9,6 +9,7 @@ import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.UserService;
+import usw.suwiki.domain.userIsolation.UserIsolation;
 import usw.suwiki.domain.userIsolation.UserIsolationRepository;
 import usw.suwiki.domain.viewExam.ViewExamService;
 
@@ -81,9 +82,16 @@ public class QuitRequestUserService {
         LocalDateTime targetTime = LocalDateTime.now().minusMinutes(1);
 
         List<User> targetUser = userRepository.findByRequestedQuitDateBefore(targetTime);
+        List<UserIsolation> targetUserIsolation = userIsolationRepository.findByRequestedQuitDateBefore(targetTime);
 
-        for (int i = 0; i < targetUser.toArray().length; i++) {
-            userRepository.deleteById(targetUser.get(i).getId());
+        if (targetUser.size() > 0) {
+            for (int i = 0; i < targetUser.toArray().length; i++) {
+                userRepository.deleteById(targetUser.get(i).getId());
+            }
+        }
+
+        for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
+            userIsolationRepository.deleteById(targetUserIsolation.get(i).getId());
         }
     }
 }

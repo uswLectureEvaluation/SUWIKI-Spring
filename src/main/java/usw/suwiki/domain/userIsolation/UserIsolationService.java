@@ -45,19 +45,4 @@ public class UserIsolationService {
     }
 
 
-    //회원탈퇴 요청 시각이 30일 전인지 확인 (매일 0시마다 검사한다.)
-    @Transactional
-//    @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(cron = "0 * * * * *")
-    public void requestQuitDateStamp() {
-//        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
-        List<UserIsolation> targetUser = userIsolationRepository.findByRequestedQuitDateBefore(targetTime);
-
-        for (int i = 0; i < targetUser.toArray().length; i++) {
-            userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
-        }
-    }
-
-
 }
