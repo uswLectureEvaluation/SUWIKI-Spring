@@ -106,8 +106,7 @@ public class RestrictingUserService {
     public void isUnrestrictedTarget() {
 
         // 현재시각으로부터 - 30일
-        // LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
+         LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
 
         List<RestrictingUser> targetUser = restrictingUserRepository.findByRestrictingDateBefore(targetTime);
 

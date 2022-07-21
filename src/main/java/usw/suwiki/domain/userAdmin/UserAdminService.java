@@ -162,7 +162,7 @@ public class UserAdminService {
 
     //신고받은 시험정보 게시글 삭제 해주기
     @Transactional
-    public Long banishExamPost(Long examIdx) {
+    public Long blacklistOrRestrictAndDeleteExamPost(Long examIdx) {
 
         if (userService.loadExamPostsByIndex(examIdx) != null) {
             // 추방할 게시글 불러오기

@@ -119,7 +119,7 @@ public class UserAdminController {
         Long reportingUserIdx = userService.whoIsExamReporting(examPostRestrictForm.getExamIdx());
 
         // 게시글 삭제 후 해당 게시글 작성자 인덱스 받아오기
-        Long targetUserIdx = userAdminService.banishExamPost(examPostRestrictForm.getExamIdx());
+        Long targetUserIdx = userAdminService.blacklistOrRestrictAndDeleteExamPost(examPostRestrictForm.getExamIdx());
 
         // 유저 restricted True, 정지 카운트 증가
         userAdminService.plusRestrictCount(targetUserIdx);
@@ -188,7 +188,7 @@ public class UserAdminController {
 
         // 게시글 작성자 인덱스
         Long userIdx = userService.loadExamPostsByIndex(examPostBlacklistForm.getExamIdx()).getUser().getId();
-        userAdminService.banishExamPost(examPostBlacklistForm.getExamIdx());
+        userAdminService.blacklistOrRestrictAndDeleteExamPost(examPostBlacklistForm.getExamIdx());
 
         // 이미 블랙리스트 사용자 일 경우
         if (blacklistRepository.findByUserId(userIdx).isPresent()) {
@@ -204,7 +204,6 @@ public class UserAdminController {
                 examPostBlacklistForm.getJudgement());
 
         userAdminService.plusRestrictCount(userIdx);
-
 
         result.put("Success", true);
         return result;
