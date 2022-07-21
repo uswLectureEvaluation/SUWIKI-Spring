@@ -146,13 +146,14 @@ public class UserAdminController {
 
         HashMap<String, Boolean> result = new HashMap<>();
 
-        // 게시글 인덱스
-        Long evaluateIdx = userAdminService.banishEvaluatePost(evaluatePostBlacklistForm.getEvaluateIdx());
-        Long userIdx = userService.loadEvaluatePostsByIndex(evaluateIdx).getUser().getId();
-
+        // 게시글 작성자 인덱스
+        Long userIdx = userService.loadEvaluatePostsByIndex(evaluatePostBlacklistForm.getEvaluateIdx()).getUser().getId();
+        
+        // 게시글 제거
+        userAdminService.banishEvaluatePost(evaluatePostBlacklistForm.getEvaluateIdx());
 
         // 이미 블랙리스트 사용자 일 경우
-        if (blacklistRepository.findByUserId(userService.loadEvaluatePostsByIndex(evaluateIdx).getUser().getId()).isPresent()) {
+        if (blacklistRepository.findByUserId(userIdx).isPresent()) {
             result.put("이미 블랙리스트에 지정된 사용자 입니다.", false);
             return result;
         }
@@ -185,9 +186,9 @@ public class UserAdminController {
 
         HashMap<String, Boolean> result = new HashMap<>();
 
-        // 게시글 인덱스
-        Long examIdx = userAdminService.banishExamPost(examPostBlacklistForm.getExamIdx());
-        Long userIdx = userService.loadExamPostsByIndex(examIdx).getUser().getId();
+        // 게시글 작성자 인덱스
+        Long userIdx = userService.loadExamPostsByIndex(examPostBlacklistForm.getExamIdx()).getUser().getId();
+        userAdminService.banishExamPost(examPostBlacklistForm.getExamIdx());
 
         // 이미 블랙리스트 사용자 일 경우
         if (blacklistRepository.findByUserId(userIdx).isPresent()) {
