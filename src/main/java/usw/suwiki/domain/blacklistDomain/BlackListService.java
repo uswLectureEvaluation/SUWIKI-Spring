@@ -54,9 +54,7 @@ public class BlackListService {
     // 블랙리스트 이메일인지 확인, 블랙리스트에 있으면 true
     @Transactional
     public void isBlackList(String email) {
-        if (blacklistRepository.findByHashedEmail(bCryptPasswordEncoder
-                .encode(email))
-                .isPresent())
+        if (blacklistRepository.findByHashedEmail(bCryptPasswordEncoder.encode(email)).isPresent())
             throw new AccountException(ErrorType.YOU_ARE_IN_BLACKLIST);
     }
 

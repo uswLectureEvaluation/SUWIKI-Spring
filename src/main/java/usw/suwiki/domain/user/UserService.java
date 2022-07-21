@@ -342,7 +342,7 @@ public class UserService {
     // 시험정보 신고한 유저 찾아오기
     @Transactional
     public Long whoIsExamReporting(Long examIdx) {
-        return examReportRepository.findByReportingUserIdx(examIdx);
+        return examReportRepository.findByExamIdx(examIdx).get().getReportingUserIdx();
     }
 
 }

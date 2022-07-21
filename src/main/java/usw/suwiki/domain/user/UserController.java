@@ -92,7 +92,7 @@ public class UserController {
         // 블랙리스트 유저면 에러 터뜨리기
         blackListService.isBlackList(checkEmailForm.getEmail());
 
-        //이메일이 이미 존재하면
+        // 이메일이 이미 존재하면
         if (userRepository.findByEmail(checkEmailForm.getEmail()).isPresent() ||
                 userIsolationRepository.findByEmail(checkEmailForm.getEmail()).isPresent()) {
             
@@ -100,7 +100,7 @@ public class UserController {
             return overlapEmail;
         }
 
-        //이메일이 존재하지 않으면
+        // 이메일이 존재하지 않으면
         overlapEmail.put("overlap", false);
         return overlapEmail;
     }
