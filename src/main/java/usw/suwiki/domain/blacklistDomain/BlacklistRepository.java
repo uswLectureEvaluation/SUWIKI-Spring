@@ -26,6 +26,9 @@ public interface BlacklistRepository extends JpaRepository<BlacklistDomain, Long
     @Query(value = "SELECT * FROM blacklist_domain WHERE user_idx = :userIdx", nativeQuery = true)
     List<BlacklistDomain> findByUserIdx(@Param("userIdx") Long userIdx);
 
+    @Query(value = "SELECT * FROM blacklist_domain", nativeQuery = true)
+    List<BlacklistDomain> findAllBlacklist();
+
     // 이메일 해싱으로 블랙리스트 인지 구분
     Optional<BlacklistDomain> findByHashedEmail(String email);
 

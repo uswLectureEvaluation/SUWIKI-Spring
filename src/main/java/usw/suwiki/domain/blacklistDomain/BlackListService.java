@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.UserResponseDto;
+import usw.suwiki.domain.user.restrictingUser.RestrictingUser;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 
@@ -57,12 +58,13 @@ public class BlackListService {
     @Transactional
     public void isBlackList(String email) {
 
-        Optional<User> targetUser = userRepository.findByEmail(email);
+        List<BlacklistDomain> blacklist = blacklistRepository.findAllBlacklist();
 
-        Optional<BlacklistDomain> dbUser = blacklistRepository.findByUserId(targetUser.get().getId());
-
-        if (bCryptPasswordEncoder.matches(email, dbUser.get().getHashedEmail()))
-            throw new AccountException(ErrorType.YOU_ARE_IN_BLACKLIST);
+        for (BlacklistDomain bUser : blacklist) {
+            if (bCryptPasswordEncoder.matches(email, bUser.getHashedEmail())) {
+                throw new AccountException(ErrorType.YOU_ARE_IN_BLACKLIST);
+            }
+        }
     }
 
     // 블랙리스트 내역 모두보기 DTO 로 Typing
