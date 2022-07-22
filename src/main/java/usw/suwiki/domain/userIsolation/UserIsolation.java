@@ -29,8 +29,8 @@ public class UserIsolation {
     private String email; //Email
 
     @Column
-    private LocalDateTime requested_quit_date;
+    private LocalDateTime requestedQuitDate;
 
     @Column
-    private LocalDateTime last_login;
+    private LocalDateTime lastLogin;
 }
