@@ -138,8 +138,8 @@ public class UserService {
 
     // 이메일 인증을 받은 사용자인지 유저 테이블에서 검사
     @Transactional
-    public void isUserEmailAuth(String loginId) {
-        User targetUser = loadUserFromLoginId(loginId);
+    public void isUserEmailAuth(Long userIdx) {
+        User targetUser = loadUserFromUserIdx(userIdx);
 
         confirmationTokenRepository.verifyUserEmailAuth(targetUser.getId())
                 .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EMAIL_AUTHED));

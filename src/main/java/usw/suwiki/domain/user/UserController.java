@@ -195,7 +195,7 @@ public class UserController {
             User user = userService.loadUserFromLoginId(loginForm.getLoginId());
 
             //이메일 인증 받았는지 확인
-            userService.isUserEmailAuth(loginForm.getLoginId());
+            userService.isUserEmailAuth(user.getId());
 
             //아이디 비밀번호 검증
             if (userService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword())) {
@@ -243,7 +243,7 @@ public class UserController {
             User user = userService.loadUserFromLoginId(loginForm.getLoginId());
 
             //이메일 인증 받았는지 확인
-            userService.isUserEmailAuth(loginForm.getLoginId());
+            userService.isUserEmailAuth(user.getId());
 
             //아이디 비밀번호 검증
             if (userService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword())) {
