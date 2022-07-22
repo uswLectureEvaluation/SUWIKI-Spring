@@ -329,14 +329,11 @@ public class UserController {
 
         String refreshToken = reqRefreshCookie.getValue();
 
-        // RefreshToken 유효기간 검증
-        jwtTokenValidator.validateRefreshToken(refreshToken);
-
         // RefreshToken DB에 담겨있는지 확인(임의로 만든 토큰이 아닌지 확인하자.)
         if (refreshTokenRepository.findByPayload(refreshToken).isEmpty())
             throw new AccountException(ErrorType.USER_RESTRICTED);
 
-        // 리프레시 토큰으로 유저 인덱스 뽑아오기
+        //리프레시 토큰으로 유저 인덱스 뽑아오기
         Long userIdx = refreshTokenRepository.findByPayload(refreshToken).get().getUserIdx();
 
         // 해당 RefreshToken 으로 UserIndex 를 추출하여 객체 반환
@@ -346,14 +343,12 @@ public class UserController {
         String accessToken = jwtTokenProvider.createAccessToken(user);
         responseWrapper.put("AccessToken", accessToken);
 
-        // 리프레시 토큰 갱신이 필요하면 갱신 해주기
-        if (jwtTokenValidator.isNeedToUpdateRefreshToken(refreshToken)) {
-            refreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
-        }
+        // UserIndex 로 RefreshToken 토큰 재생성 판별
+        String newRefreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(user);
         
         // 리프레시 토큰 쿠키에 담기
         Cookie refreshCookie = new Cookie("refreshToken", "");
-        refreshCookie.setValue(refreshToken);
+        refreshCookie.setValue(newRefreshToken);
         refreshCookie.setMaxAge(14 * 24 * 60 * 60); // expires in 7 days
         refreshCookie.setSecure(true);
         refreshCookie.setHttpOnly(true);
@@ -372,9 +367,6 @@ public class UserController {
         //반환객체
         HashMap<String, String> token = new HashMap<>();
 
-        //RefreshToken 유효기간 검증
-        jwtTokenValidator.validateRefreshToken(Authorization);
-
         //RefreshToken DB에 담겨있는지 확인(임의로 만든 토큰이 아닌지 확인하자.)
         if (refreshTokenRepository.findByPayload(Authorization).isEmpty())
             throw new AccountException(ErrorType.USER_RESTRICTED);
@@ -384,26 +376,13 @@ public class UserController {
 
         //해당 RefreshToken 으로 UserIndex 를 추출하여 객체 반환
         User user = userService.loadUserFromUserIdx(userIdx);
+        
+        // UserIndex 로 RefreshToken 토큰 재생성 판별
+        String newRefreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(user);
 
-        //리프레시 토큰 갱신이 필요하면
-        if (jwtTokenValidator.isNeedToUpdateRefreshToken(Authorization)) {
-
-            //RefreshToken 재생성
-            String newRefreshToken = jwtTokenProvider.updateRefreshToken(user.getId());
-
-            //반환 객체에 담기
-            token.put("AccessToken", jwtTokenProvider.createAccessToken(user));
-            token.put("RefreshToken", newRefreshToken);
-
-            //마지막 로그인 일자 스탬프
-            userService.setLastLogin(user);
-
-            return token;
-        }
-
-        // 리프레시 토큰 갱신 필요없으면 액세스 토큰만 재생성
+        //반환 객체에 담기
         token.put("AccessToken", jwtTokenProvider.createAccessToken(user));
-        token.put("RefreshToken", Authorization);
+        token.put("RefreshToken", newRefreshToken);
 
         //마지막 로그인 일자 스탬프
         userService.setLastLogin(user);

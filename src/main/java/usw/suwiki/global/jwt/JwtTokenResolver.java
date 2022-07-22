@@ -75,14 +75,16 @@ public class JwtTokenResolver {
         // 리프레시 토큰이 DB에 있을 때
         if (refreshTokenRepository.findPayLoadByUserIdx(user.getId()).isPresent()) {
 
-            // DB에 존재하는 리프레시 토큰 꺼내 담기
-            String refreshToken = refreshTokenRepository.findPayLoadByUserIdx(user.getId()).get();
-
+            // DB 토큰 꺼내서, 바로 토큰 만료기한 검증, 만료 시 업데이트
             try {
-                Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(refreshToken);
+                Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(
+                        refreshTokenRepository.findPayLoadByUserIdx(user.getId()).get());
             } catch (ExpiredJwtException exception) {
                 return jwtTokenProvider.updateRefreshToken(user.getId());
             }
+
+            // DB에 존재하는 리프레시 토큰 꺼내 담기
+            String refreshToken = refreshTokenRepository.findPayLoadByUserIdx(user.getId()).get();
 
             // 리프레시 토큰이 DB에 있지만, 갱신은 필요로 할 때
             if (jwtTokenValidator.isNeedToUpdateRefreshToken(refreshToken)) {
