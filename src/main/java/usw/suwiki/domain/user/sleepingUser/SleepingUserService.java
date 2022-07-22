@@ -18,6 +18,7 @@ import usw.suwiki.domain.user.UserService;
 import usw.suwiki.domain.userIsolation.UserIsolation;
 import usw.suwiki.domain.userIsolation.UserIsolationRepository;
 import usw.suwiki.domain.userIsolation.UserIsolationService;
+import usw.suwiki.domain.viewExam.ViewExamService;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 
@@ -43,6 +44,8 @@ public class SleepingUserService {
 
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
+
+    private final ViewExamService viewExamService;
 
 
     // 블랙리스트 계정
@@ -119,17 +122,16 @@ public class SleepingUserService {
     @Transactional
     // @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "4 * * * * *")
-    public void convertDormant() {
+    public void convertSleepingTable() {
 
 //        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(1);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
 
         // 1년이상 접속하지 않은 유저 리스트 불러오기
         List<User> targetUser = userRepository.findByLastLoginBefore(targetTime);
 
-        // 해당 유저들 격리테이블로 이동 후, 본 테이블에서 삭제
         for (int i = 0; i < targetUser.toArray().length; i++) {
-            // 해당 유저가 휴면계정에 없을 때
+            // 해당 유저가 휴면계정에 없을 때만 휴면계정에 삽입
             if (userIsolationRepository.findByUserIdx(targetUser.get(i).getId()).isEmpty()) {
                 moveToIsolation(targetUser.get(i));
             }
@@ -164,10 +166,13 @@ public class SleepingUserService {
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
 
-            // 회원탈퇴 요청한 유저의 강의평가 삭제
+            // 삭제 예정 유저의 구매한 시험 정보 삭제
+            viewExamService.deleteByUserIdx(targetUser.get(i).getUserIdx());
+
+            // 삭제 예정 유저의 강의평가 삭제
             evaluatePostsService.deleteByUser(targetUser.get(i).getUserIdx());
 
-            // 회원탈퇴 요청한 유저의 시험정보 삭제
+            // 삭제 예정 유저의 시험정보 삭제
             examPostsService.deleteByUser(targetUser.get(i).getUserIdx());
 
             // 휴면계정에서 유저 삭제
