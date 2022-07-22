@@ -48,10 +48,6 @@ public class SleepingUserService {
     private final ViewExamService viewExamService;
 
 
-    // 블랙리스트 계정
-    private final BlackListService blackListService;
-
-
     // 본 테이블 -> 격리 테이블
     @Transactional
     public void moveToIsolation(User user) {
