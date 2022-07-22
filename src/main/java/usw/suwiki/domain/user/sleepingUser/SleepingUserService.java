@@ -157,7 +157,7 @@ public class SleepingUserService {
     @Scheduled(cron = "8 * * * * *")
     public void autoDeleteTargetIsThreeYears() {
 //        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(5);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(15);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
