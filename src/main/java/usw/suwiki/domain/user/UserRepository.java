@@ -49,8 +49,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "id = (SELECT user_idx FROM user_isolation WHERE user_idx = :id)," +
             "login_id = (SELECT login_id FROM user_isolation WHERE user_idx = :id)," +
             "password = (SELECT password FROM user_isolation WHERE user_idx = :id)," +
-            "email = (SELECT email FROM user_isolation WHERE user_idx = :id)" +
-            "last_login = (SELECT last_login FROM user_isolation WHERE user_idx = :id)" +
+            "email = (SELECT email FROM user_isolation WHERE user_idx = :id)," +
+            "last_login = (SELECT last_login FROM user_isolation WHERE user_idx = :id)," +
             "requested_quit_date = (SELECT requested_date FROM user_isolation WHERE user_idx = :id)", nativeQuery = true)
     void convertToWakeUp(@Param("id") Long id);
 
