@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.blacklistDomain.BlackListService;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
 import usw.suwiki.domain.exam.ExamPosts;
 import usw.suwiki.domain.user.User;
@@ -11,6 +12,7 @@ import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.UserResponseDto;
 import usw.suwiki.domain.user.UserService;
 import usw.suwiki.domain.userAdmin.UserAdminRequestDto;
+import usw.suwiki.domain.userAdmin.UserAdminService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,6 +28,8 @@ public class RestrictingUserService {
 
     private final UserRepository userRepository;
 
+    private final UserAdminService userAdminService;
+
     // 강의평가 게시글로 유저 정지 먹이기
     @Transactional
     public void addRestrictingTableByEvaluatePost(UserAdminRequestDto.EvaluatePostRestrictForm restrictForm) {
@@ -33,15 +37,24 @@ public class RestrictingUserService {
         EvaluatePosts evaluatePosts = userService.loadEvaluatePostsByIndex(restrictForm.getEvaluateIdx());
         User user = userService.loadUserFromUserIdx(evaluatePosts.getUser().getId());
 
-        RestrictingUser restrictingUser = RestrictingUser.builder()
-                .userIdx(user.getId())
-                .restrictingDate(LocalDateTime.now().plusDays(restrictForm.getRestrictingDate()))
-                .restrictingReason(restrictForm.getRestrictingReason())
-                .judgement(restrictForm.getJudgement())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        restrictingUserRepository.save(restrictingUser);
+
+        if (user.getRestrictedCount() >= 2) {
+            userAdminService.blacklistOrRestrictAndDeleteExamPost(evaluatePosts.getId());
+            userAdminService.banUserByExam(user.getId(), 90L, "신고 누적으로 인한 블랙리스트", "신고누적 블랙리스트 1년");
+        } else if (user.getRestrictedCount() < 3) {
+            // 유저 Restricted True
+            user.setRestricted(true);
+
+            RestrictingUser restrictingUser = RestrictingUser.builder()
+                    .userIdx(user.getId())
+                    .restrictingDate(LocalDateTime.now().plusDays(restrictForm.getRestrictingDate()))
+                    .restrictingReason(restrictForm.getRestrictingReason())
+                    .judgement(restrictForm.getJudgement())
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+            restrictingUserRepository.save(restrictingUser);
+        }
     }
 
     // 시험정보 게시글로 유저 정지 먹이기
@@ -51,14 +64,22 @@ public class RestrictingUserService {
         ExamPosts examPosts = userService.loadExamPostsByIndex(restrictForm.getExamIdx());
         User user = userService.loadUserFromUserIdx(examPosts.getUser().getId());
 
-        RestrictingUser restrictingUser = RestrictingUser.builder()
-                .userIdx(user.getId())
-                .restrictingDate(LocalDateTime.now().plusDays(restrictForm.getRestrictingDate()))
-                .restrictingReason(restrictForm.getRestrictingReason())
-                .judgement(restrictForm.getJudgement())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now()).build();
-        restrictingUserRepository.save(restrictingUser);
+        if (user.getRestrictedCount() >= 2) {
+            userAdminService.blacklistOrRestrictAndDeleteExamPost(examPosts.getId());
+            userAdminService.banUserByExam(user.getId(), 90L, "신고 누적으로 인한 블랙리스트", "신고누적 블랙리스트 1년");
+        } else if (user.getRestrictedCount() < 3) {
+            // 유저 Restricted True
+            user.setRestricted(true);
+
+            RestrictingUser restrictingUser = RestrictingUser.builder()
+                    .userIdx(user.getId())
+                    .restrictingDate(LocalDateTime.now().plusDays(restrictForm.getRestrictingDate()))
+                    .restrictingReason(restrictForm.getRestrictingReason())
+                    .judgement(restrictForm.getJudgement())
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now()).build();
+            restrictingUserRepository.save(restrictingUser);
+        }
     }
 
     // 정지내역 내역 모두보기 DTO 로 Typing

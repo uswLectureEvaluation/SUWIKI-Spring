@@ -43,6 +43,4 @@ public class UserIsolationService {
     public void isRestricted(String loginId) {
         if (userIsolationRepository.loadUserRestriction(loginId)) throw new AccountException(ErrorType.USER_RESTRICTED);
     }
-
-
 }

@@ -16,18 +16,16 @@ public class ViewExam extends BaseTimeEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //Auto Increment
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_idx")
-//    private User user;
-
-    private Long userIdx;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_idx")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id")
     private Lecture lecture;
 
-    public void setUserInViewExam(Long userIdx) {
-        this.userIdx = userIdx;
+    public void setUserInViewExam(User user) {
+        this.user = user;
     }
 
     public void setLectureInViewExam(Lecture lecture) {

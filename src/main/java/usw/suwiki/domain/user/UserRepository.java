@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.user.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,14 +43,24 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE User Set password = :editMyPassword WHERE loginId = :loginId")
     void editPassword(@Param("editMyPassword") String editMyPassword, @Param("loginId") String loginId);
-    
 
-    //격리테이블 -> 본 테이블
+
+    /**
+     
+     휴면계정 테이블의 userIdx, loginId, password, Email 불러오기
+
+     */
     @Modifying(clearAutomatically = true)
-    @Query(value = "INSERT INTO user " +
-            "(id, login_id, password, email, role, restricted, restricted_count, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at)" +
-            "SELECT user_idx, login_id, password, email, role, restricted, restricted_count, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at FROM user_isolation WHERE user_idx = :id", nativeQuery = true)
-    void insertUserIsolationIntoUser(@Param("id") Long id);
+    @Query(value = "UPDATE user SET " +
+            "id = (SELECT user_idx FROM user_isolation WHERE user_idx =: id)," +
+            "login_id = (SELECT login_id FROM user_isolation WHERE user_idx =: id)," +
+            "password = (SELECT password FROM user_isolation WHERE user_idx =: id)," +
+            "email = (SELECT email FROM user_isolation WHERE user_idx =: id);", nativeQuery = true)
+    void convertToWakeUp(@Param("id") Long id);
 
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "UPDATE user SET login_id = null, password = null, email = null WHERE id = :id", nativeQuery = true)
+    void convertToSleeping(@Param("id") Long id);
 
 }

@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.user.User;
-import usw.suwiki.domain.viewExam.ViewExam;
-import usw.suwiki.domain.viewExam.PurchaseHistoryDto;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 import usw.suwiki.domain.user.UserRepository;
@@ -32,7 +30,7 @@ public class ViewExamService {
         int point = user.get().getPoint();
         if (point < 20) {
             throw new AccountException(ErrorType.USER_POINT_LACK);
-        }else {
+        } else {
             Lecture lecture = lectureService.findById(lectureId);
 
             ViewExam viewExam = new ViewExam();
@@ -40,7 +38,7 @@ public class ViewExamService {
 
             user.get().setViewExamCount(count + 1);
             user.get().setPoint(point - 20);
-            viewExam.setUserInViewExam(user.get().getId());
+            viewExam.setUserInViewExam(user.get());
             viewExam.setLectureInViewExam(lecture);
             jpaViewExamRepository.save(viewExam);
         }

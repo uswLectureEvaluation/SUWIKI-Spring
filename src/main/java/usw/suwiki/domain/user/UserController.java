@@ -189,15 +189,13 @@ public class UserController {
 
         HashMap<String, String> token = new HashMap<>();
 
+        // 휴면 계정이 아닌 유저가 로그인 시
         if (userIsolationRepository.findByLoginId(loginForm.getLoginId()).isEmpty()) {
 
             User user = userService.loadUserFromLoginId(loginForm.getLoginId());
 
             //이메일 인증 받았는지 확인
             userService.isUserEmailAuth(loginForm.getLoginId());
-
-            // 블랙리스트 유저인지 확인
-//            blackListService.isBlackList(user.getEmail());
 
             //아이디 비밀번호 검증
             if (userService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword())) {
@@ -214,7 +212,6 @@ public class UserController {
 
                 return token;
             }
-
             throw new AccountException(ErrorType.PASSWORD_ERROR);
         }
 

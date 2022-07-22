@@ -52,10 +52,12 @@ public class SleepingUserService {
     // 본 테이블 -> 격리 테이블
     @Transactional
     public void moveToIsolation(User user) {
-        // 격리 테이블로 옮기기
-        userIsolationRepository.insertUserIntoIsolation(user.getId());
 
+        // 격리 테이블로 유저 인덱스, 유저 로그인 아이디, 유저 비밀번호, 유저 이메일 옮기기
+        userIsolationRepository.convertSleepingUser(user.getId());
 
+        // 유저 테이블 개인정보 컬럼 null 값 처리.
+        userRepository.convertToSleeping(user.getId());
     }
 
     // 휴면계정 아이디 비밀번호 매칭
@@ -64,32 +66,23 @@ public class SleepingUserService {
         return bCryptPasswordEncoder.matches(password, userIsolationRepository.findByLoginId(loginId).get().getPassword());
     }
 
+    // 휴면계정 테이블에 있으면
     @Transactional
     public User sleepingUserLogin(UserDto.LoginForm loginForm) {
-        //격리 테이블에 있으면
-        if (userIsolationRepository.findByLoginId(loginForm.getLoginId()).isPresent()) {
 
-            // 로그인 아이디로 격리 테이블 객체로 뽑아오기
-            UserIsolation userIsolation = userIsolationService.loadUserFromLoginId(loginForm.getLoginId());
+        // 로그인 아이디로 격리 테이블 객체로 뽑아오기
+        UserIsolation userIsolation = userIsolationService.loadUserFromLoginId(loginForm.getLoginId());
 
-            // 블랙리스트 유저인지 확인 --> 블랙리스트면 에러
-            blackListService.isBlackList(userIsolation.getEmail());
+        // 휴면계정 테이블에서 아이디 비밀번호 검증
+        if (validatePasswordAtIsolationTable(loginForm.getLoginId(), loginForm.getPassword())) {
+            // 휴면 계정 테이블(userIdx, loginId, password, email) -> 유저 테이블 (id, loginId, password, email)
+            userRepository.convertToWakeUp(userIsolation.getUserIdx());
 
-            // 정지 유저인지 확인
-            userIsolationService.isRestricted(loginForm.getLoginId());
-
-            //아이디 비밀번호 검증
-            if (validatePasswordAtIsolationTable(loginForm.getLoginId(), loginForm.getPassword())) {
-
-                // 격리 테이블 객체 정보를 본 테이블로 이동
-                userRepository.insertUserIsolationIntoUser(userIsolation.getUserIdx());
-
-                userIsolationRepository.deleteByLoginId(loginForm.getLoginId());
-            } else {
-                throw new AccountException(ErrorType.PASSWORD_ERROR);
-            }
+            // 휴면 계정 테이블에서 삭제
+            userIsolationRepository.deleteByLoginId(loginForm.getLoginId());
+        } else {
+            throw new AccountException(ErrorType.PASSWORD_ERROR);
         }
-
         return userService.loadUserFromLoginId(loginForm.getLoginId());
     }
     
@@ -104,11 +97,11 @@ public class SleepingUserService {
     @Scheduled(cron = "2 * * * * *")
     public void sendEmailSoonDormant() {
 
-        // 마지막 로그인 일자가 지금으로부터 11달 전인 유저에게
+        // 마지막 로그인 일자가 지금으로부터 11개월 전인 유저에게
         LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
 //        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(5);
 
-        // 휴면계정 전환 30일 전인 유저 목록 가져오기
+        // 11개월 접속안한 유저 목록 가져오기
         List<User> user = userRepository.findByLastLoginBefore(targetTime);
 
         // 대상 유저들에 이메일 보내기
@@ -136,8 +129,10 @@ public class SleepingUserService {
 
         // 해당 유저들 격리테이블로 이동 후, 본 테이블에서 삭제
         for (int i = 0; i < targetUser.toArray().length; i++) {
-            moveToIsolation(targetUser.get(i));
-            userRepository.deleteById(targetUser.get(i).getId());
+            // 해당 유저가 휴면계정에 없을 때
+            if (userIsolationRepository.findByUserIdx(targetUser.get(i).getId()).isEmpty()) {
+                moveToIsolation(targetUser.get(i));
+            }
         }
     }
 
@@ -175,8 +170,11 @@ public class SleepingUserService {
             // 회원탈퇴 요청한 유저의 시험정보 삭제
             examPostsService.deleteByUser(targetUser.get(i).getUserIdx());
 
-            // 유저 삭제
+            // 휴면계정에서 유저 삭제
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
+
+            // 본 테이블에서 유저 삭제
+            userRepository.deleteById(targetUser.get(i).getId());
         }
     }
 }

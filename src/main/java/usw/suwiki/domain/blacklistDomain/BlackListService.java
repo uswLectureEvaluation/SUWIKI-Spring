@@ -5,10 +5,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.UserResponseDto;
-import usw.suwiki.domain.user.restrictingUser.RestrictingUser;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 

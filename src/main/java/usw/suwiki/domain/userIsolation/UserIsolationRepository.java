@@ -15,7 +15,7 @@ import java.util.Optional;
 @Transactional
 public interface UserIsolationRepository extends JpaRepository<UserIsolation, Long> {
 
-    Optional<UserIsolation> findById(Long userIdx);
+    Optional<UserIsolation> findByUserIdx(Long userIdx);
 
     Optional<UserIsolation> findByLoginId(String loginId);
 
@@ -32,8 +32,8 @@ public interface UserIsolationRepository extends JpaRepository<UserIsolation, Lo
 
     @Modifying(clearAutomatically = true)
     @Query(value = "INSERT INTO user_isolation " +
-            "(user_idx, login_id, password, email, role, restricted, restricted_count, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at)" +
-            "SELECT id, login_id, password, email, role, restricted, restricted_count, written_evaluation, written_exam, view_exam_count, point, last_login, requested_quit_date, created_at, updated_at FROM user WHERE id = :id", nativeQuery = true)
-    void insertUserIntoIsolation(@Param("id") Long id);
+            "(user_idx, login_id, password, email)" +
+            "SELECT id, login_id, password, email FROM user WHERE id = :id", nativeQuery = true)
+    void convertSleepingUser(@Param("id") Long id);
 
 }

@@ -160,7 +160,7 @@ public class UserAdminService {
         throw new AccountException(ErrorType.SERVER_ERROR);
     }
 
-    //신고받은 시험정보 게시글 삭제 해주기
+    // 신고받은 시험정보 게시글 삭제 해주기
     @Transactional
     public Long blacklistOrRestrictAndDeleteExamPost(Long examIdx) {
 
