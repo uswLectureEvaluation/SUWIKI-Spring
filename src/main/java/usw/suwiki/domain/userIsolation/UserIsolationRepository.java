@@ -29,8 +29,8 @@ public interface UserIsolationRepository extends JpaRepository<UserIsolation, Lo
 
     @Modifying(clearAutomatically = true)
     @Query(value = "INSERT INTO user_isolation " +
-            "(user_idx, login_id, password, email)" +
-            "SELECT id, login_id, password, email FROM user WHERE id = :id", nativeQuery = true)
+            "(user_idx, login_id, password, email, last_login, requested_quit_date)" +
+            "SELECT id, login_id, password, email, last_login, requested_quit_date FROM user WHERE id = :id", nativeQuery = true)
     void convertSleepingUser(@Param("id") Long id);
 
 }
