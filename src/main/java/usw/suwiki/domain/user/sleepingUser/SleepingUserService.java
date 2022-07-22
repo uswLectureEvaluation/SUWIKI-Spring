@@ -151,7 +151,7 @@ public class SleepingUserService {
 
     // 휴면계정 전환 후 3년간 로그인 하지 않으면 계정 자동 삭제
     // 테스트 환경 -> 35분 미 접속 시 자동 삭제
-    // 테스트 환경2 -> 30분 미 접속 시 자동 삭제
+    // 테스트 환경2 -> 15분 미 접속 시 자동 삭제
     @Transactional
 //    @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "8 * * * * *")
@@ -175,7 +175,7 @@ public class SleepingUserService {
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
 
             // 본 테이블에서 유저 삭제
-            userRepository.deleteById(targetUser.get(i).getId());
+            userRepository.deleteById(targetUser.get(i).getUserIdx());
         }
     }
 }
