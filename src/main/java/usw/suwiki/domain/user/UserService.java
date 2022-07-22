@@ -259,7 +259,8 @@ public class UserService {
     //최근 로그인 일자 갱신
     @Transactional
     public void setLastLogin(User user) {
-        user.setLastLogin(LocalDateTime.now());
+//        user.setLastLogin(LocalDateTime.now());
+        userRepository.lastLoginStamp(LocalDateTime.now(), user.getId());
     }
 
     //Optional<User> -> User

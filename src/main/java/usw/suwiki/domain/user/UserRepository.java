@@ -25,6 +25,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByRequestedQuitDateBefore(LocalDateTime localDateTime);
 
+    @Modifying(clearAutomatically = true)
+    @Query(value = "UPDATE User SET lastLogin = :now WHERE id = :userIdx")
+    void lastLoginStamp(@Param("now") LocalDateTime now, @Param("userIdx") Long userIdx);
+
     // UserIdx 로 정지 해제
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE User SET restricted = false WHERE id = :userIdx")
