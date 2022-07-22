@@ -23,24 +23,9 @@ public class UserIsolationService {
     private final EmailSender emailSender;
     private final BuildAutoDeletedWarningUserFormService buildAutoDeletedWarningUserFormService;
 
-
-    // Optional<User> -> User
-    @Transactional
-    public UserIsolation convertOptionalUserToDomainUser(Optional<UserIsolation> optionalUserIsolation) {
-        if (optionalUserIsolation.isPresent()) {
-            return optionalUserIsolation.get();
-        }
-        throw new AccountException(ErrorType.USER_NOT_EXISTS);
-    }
-
     //loginId로 유저 격리 테이블 꺼내오기
     @Transactional
     public UserIsolation loadUserFromLoginId(String loginId) {
-        return convertOptionalUserToDomainUser(userIsolationRepository.findByLoginId(loginId));
-    }
-
-    @Transactional
-    public void isRestricted(String loginId) {
-        if (userIsolationRepository.loadUserRestriction(loginId)) throw new AccountException(ErrorType.USER_RESTRICTED);
+        return userIsolationRepository.findByLoginId(loginId).orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
     }
 }

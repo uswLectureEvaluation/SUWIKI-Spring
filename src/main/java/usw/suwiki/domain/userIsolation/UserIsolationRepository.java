@@ -23,9 +23,6 @@ public interface UserIsolationRepository extends JpaRepository<UserIsolation, Lo
 
     Optional<UserIsolation> deleteByLoginId(String loginId);
 
-    @Query(value = "SELECT restricted FROM UserIsolation WHERE loginId = :loginId")
-    boolean loadUserRestriction(@Param("loginId") String loginId);
-
     List<UserIsolation> findByRequestedQuitDateBefore(LocalDateTime localDateTime);
 
     List<UserIsolation> findByLastLoginBefore(LocalDateTime localDateTime);
