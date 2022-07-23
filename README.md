@@ -1,10 +1,13 @@
-# 🦁 Backend [JIWON-JEONG]
-||담당기능||
-|:------:|:---:|:---:|
-|||
+# 🦁 JIWON-JEONG - [깃허브](https://github.com/JIWEON-JEONG)
+<details>
+  <summary> <h2> 담당기능(눌러서 확인하기) </summary>
+  <div markdown="Jiwon-jeong">
+
+  </div>
+</details>
 
 
-# 🐯 Backend [diger-king]
+# 🐯 diger-king [깃허브](https://github.com/diger-king)
 
 <details>
   <summary> <h2> 담당기능(눌러서 확인하기) </summary>
