@@ -1,26 +1,95 @@
 # 🦁 Backend [JIWON-JEONG]
 ||담당기능||
 |:------:|:---:|:---:|
-|메인페이지 미리보기|통합 검색|검색결과 자세히 보기|
-|내가 쓴 글 조회|내가 쓴 글 수정|시험정보 구매|
-|강의 평가 쓰기|시험 정보 쓰기|공지사항|
-|공지사항 자세히보기|공지사항 쓰기|비 로그인 요청 차단|
-||회원탈퇴 시 게시글 처리|
+|||
 
-![Java_11](https://img.shields.io/badge/java11-red?style=flat-square&logo=java&logoColor=white)
-![Spring_Boot](https://img.shields.io/badge/Spring_Boot-6DB33F.svg?style=flat-square&logo=spring&logoColor=white)
-![Spring_Data_JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F.svg?style=flat-square&logo=spring&logoColor=white)
-![Spring_Security](https://img.shields.io/badge/Spring_Security-6DB33F.svg?style=flat-square&logo=spring&logoColor=white)
-![Gradle](https://img.shields.io/badge/Gradle-02303A.svg?style=flat-square&logo=Gradle&logoColor=white)
 
 # 🐯 Backend [diger-king]
-||담당기능||
-|:------:|:---:|:---:|
-|아이디 중복확인|이메일 중복확인|회원가입|
-|비밀번호 검증|이메일발송(회원가입 시 이메일 인증, 휴면계정 등)|로그인|
-|JWT (재)발급 및 검증|블랙리스트 처리|비밀번호 재설정|
-|휴면계정 로그인 처리|제재 유저 로그인 차단|비 로그인 요청 차단|
-|마이페이지||회원탈퇴|
+
+<details>
+  <summary> <h2> 담당기능 </summary>
+  <div markdown="diger">
+
+### 아이디 중복확인
+POST api.suwiki.kr/user/check-id
+
+### 이메일 중복확인
+POST api.suwiki.kr/user/check-email
+
+### 회원가입
+POST api.suwiki.kr/user/join
+
+### 이메일 인증
+GET api.suwiki.kr/user/verify-email/?token{}
+
+### 아이디 찾기
+POST api.suwiki.kr/user/find-id
+
+### 비밀번호 찾기 
+POST api.suwiki.kr/user/find-pw
+
+### 비밀번호 재설정
+POST api.suwiki.kr/user/reset-pw
+
+### 로그인 (Mobile Environment)
+POST api.suwiki.kr/user/login
+
+### 로그인 (Web Environment)
+POST api.suwiki.kr/user/client-login
+
+### 토큰 재발급
+POST api.suwiki.kr/user/refresh
+
+### 토큰 재발급
+POST api.suwiki.kr/user/client-refresh
+
+### 회원탈퇴
+POST api.suwiki.kr/user/quit
+
+### 내 정보
+GET api.suwiki.kr/user/my-page
+
+### 이용제한 내역 조회
+GET api.suwiki.kr/user/restricted-reason
+
+### 블랙리스트 내역 조회
+GET api.suwiki.kr/user/blacklist-reason
+
+### 강의평가 신고하기
+POST api.suwiki.kr/user/report/evaluate
+
+### 시험정보 신고하기
+POST api.suwiki.kr/user/report/exam
+
+
+---
+
+
+### 관리자 로그인
+
+### 신고된 게시글 리스트 불러오기
+
+### 신고된 게시글 자세히 보기(강의평가)
+
+### 신고된 게시글 자세히 보기(시험정보)
+
+### 강의평가 삭제 및 유저 정지조치
+
+### 시험정보 삭제 및 유저 정지조치
+
+### 강의평가 삭제 및 유저 블랙리스트
+
+### 시험정보 삭제 및 유저 블랙리스트
+
+### 신고된 시험정보 이상 없음
+
+### 신고된 강의평가 이상 없음
+
+  </div>
+</details>
+
+---
+
 
 ![Java_11](https://img.shields.io/badge/java11-red?style=flat-square&logo=java&logoColor=white)
 ![Spring_Boot](https://img.shields.io/badge/Spring_Boot-6DB33F.svg?style=flat-square&logo=spring&logoColor=white)
