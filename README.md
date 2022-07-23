@@ -7,7 +7,7 @@
 # 🐯 Backend [diger-king]
 
 <details>
-  <summary> <h2> 담당기능 </summary>
+  <summary> <h2> 담당기능(눌러서 확인하기) </summary>
   <div markdown="diger">
 
 ### 아이디 중복확인
@@ -64,7 +64,8 @@ POST api.suwiki.kr/user/report/exam
 
 ---
 
-
+## 관리자 API 는 구현이 되었지만, 보안상 명시하지 않음
+    
 ### 관리자 로그인
 
 ### 신고된 게시글 리스트 불러오기
