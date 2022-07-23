@@ -21,7 +21,9 @@ public interface UserIsolationRepository extends JpaRepository<UserIsolation, Lo
 
     Optional<UserIsolation> findByEmail(String email);
 
-    Optional<UserIsolation> deleteByLoginId(String loginId);
+    void deleteByLoginId(String loginId);
+
+    void deleteByUserIdx(Long userIdx);
 
     List<UserIsolation> findByRequestedQuitDateBefore(LocalDateTime localDateTime);
 

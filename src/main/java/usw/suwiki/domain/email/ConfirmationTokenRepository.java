@@ -32,8 +32,8 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
     @Query("DELETE from ConfirmationToken WHERE token = :token")
     void deleteAllByTokenInQuery(@Param("token") String token);
 
-    //로그인 시 이메일 인증하지 않은 사용자 필터링
-    @Query(value = "SELECT * FROM confirmation_token WHERE user_idx = :userIdx AND confirmed_at IS NOT NULL", nativeQuery = true)
-    Optional<ConfirmationToken> isUserConfirmed(@Param("userIdx") Long userIdx);
+
+    @Query(value = "SELECT * FROM confirmation_token WHERE confirmed_at IS NULL AND expires_at < :targetTime", nativeQuery = true)
+    List<ConfirmationToken> isUserConfirmed(@Param("targetTime") LocalDateTime targetTime);
 
 }
