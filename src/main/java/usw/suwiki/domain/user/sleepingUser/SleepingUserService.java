@@ -120,8 +120,8 @@ public class SleepingUserService {
     @Scheduled(cron = "4 * * * * *")
     public void convertSleepingTable() {
 
-//        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
+        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
+//        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
 
         // 1년이상 접속하지 않은 유저 리스트 불러오기
         List<User> targetUser = userRepository.findByLastLoginBefore(targetTime);
@@ -156,8 +156,8 @@ public class SleepingUserService {
 //    @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "8 * * * * *")
     public void autoDeleteTargetIsThreeYears() {
-//        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(15);
+        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
+//        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(15);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {

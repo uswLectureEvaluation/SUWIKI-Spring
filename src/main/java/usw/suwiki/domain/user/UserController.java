@@ -258,7 +258,7 @@ public class UserController {
 
                 Cookie refreshCookie = new Cookie("refreshToken", "");
                 refreshCookie.setValue(refreshToken);
-                refreshCookie.setMaxAge(14 * 24 * 60 * 60); // expires in 7 days
+                refreshCookie.setMaxAge(14 * 24 * 60 * 60); // expires in 14 days
                 refreshCookie.setSecure(true);
                 refreshCookie.setHttpOnly(true);
 
