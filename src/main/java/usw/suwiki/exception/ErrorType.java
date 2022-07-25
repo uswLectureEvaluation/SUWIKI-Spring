@@ -35,6 +35,9 @@ public enum ErrorType {
 
     USER_NOT_FOUND("USER013", "해당 이메일에 대한 유저를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
 
+    // 리프레시 토큰 DB와 일치하지 않을때
+    REFRESH_TOKEN_IS_NOT_GOOD("USER020", "R TOKEN NOT CORRESPOND", HttpStatus.BAD_REQUEST),
+
     // JWT 401 Error
     TOKEN_IS_NOT_FOUND("SECURITY005", "토큰이 만료되었거나, 유효하지 않습니다. 다시 로그인 해주세요", HttpStatus.UNAUTHORIZED),
 

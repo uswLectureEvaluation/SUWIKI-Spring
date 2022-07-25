@@ -329,7 +329,7 @@ public class UserController {
 
         String refreshToken = reqRefreshCookie.getValue();
 
-        // RefreshToken DB에 담겨있는지 확인(임의로 만든 토큰이 아닌지 확인하자.)
+        //RefreshToken DB에 담겨있는지 확인(임의로 만든 토큰이 아닌지 확인하자.)
         if (refreshTokenRepository.findByPayload(refreshToken).isEmpty())
             throw new AccountException(ErrorType.USER_RESTRICTED);
 
