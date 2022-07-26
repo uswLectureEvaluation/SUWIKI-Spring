@@ -8,10 +8,10 @@ public class EvaluateResponseByLectureIdDto {
 
     private Long id;
     private String selectedSemester;
-    private Float totalAvg;   // 평균지수
-    private Float satisfaction;    //수업 만족도
-    private Float learning; //배움지수
-    private Float honey;    //꿀강지수
+    private float totalAvg;   // 평균지수
+    private float satisfaction;    //수업 만족도
+    private float learning; //배움지수
+    private float honey;    //꿀강지수
 
     private int team;    //조모임 횟수
     private int difficulty;   //학점비율
