@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.blacklistDomain.BlackListService;
+import usw.suwiki.domain.email.ConfirmationTokenRepository;
 import usw.suwiki.domain.email.EmailSender;
 import usw.suwiki.domain.emailBuild.BuildAutoDeletedWarningUserFormService;
 import usw.suwiki.domain.emailBuild.BuildSoonDormantTargetFormService;
@@ -35,6 +36,7 @@ public class SleepingUserService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final FavoriteMajorService favoriteMajorService;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
 
     // 휴면 계정
     private final UserIsolationService userIsolationService;
@@ -156,6 +158,9 @@ public class SleepingUserService {
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
+
+            // 이메일 인증 토큰 삭제
+            confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
 
             // 즐겨찾기 게시글 삭제
             favoriteMajorService.deleteAllByUser(targetUser.get(i).getId());

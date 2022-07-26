@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.email.ConfirmationTokenRepository;
+import usw.suwiki.domain.email.ConfirmationTokenService;
 import usw.suwiki.domain.evaluation.EvaluatePostsService;
 import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.favorite_major.FavoriteMajorService;
@@ -26,6 +28,7 @@ public class QuitRequestUserService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final FavoriteMajorService favoriteMajorService;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
 
     // 휴면 계정
     private final UserIsolationRepository userIsolationRepository;
@@ -89,12 +92,14 @@ public class QuitRequestUserService {
 
         if (targetUser.size() > 0) {
             for (int i = 0; i < targetUser.toArray().length; i++) {
+                confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
                 favoriteMajorService.deleteAllByUser(targetUser.get(i).getId());
                 userRepository.deleteById(targetUser.get(i).getId());
             }
         }
 
         for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
+            confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
             favoriteMajorService.deleteAllByUser(targetUser.get(i).getId());
             userIsolationRepository.deleteById(targetUserIsolation.get(i).getId());
         }

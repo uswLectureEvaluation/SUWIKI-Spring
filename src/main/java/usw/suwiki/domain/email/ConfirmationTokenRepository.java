@@ -17,6 +17,8 @@ import java.util.Optional;
 public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationToken, Long> {
 
     Optional<ConfirmationToken> findByToken(String token);
+
+    void deleteByUserIdx(Long userIdx);
     
     //유저 인덱스로 해당 유저 이메일 인증 받았는지 검증
     @Query(value = "SELECT * FROM confirmation_token WHERE user_idx = :userIdx and confirmed_at IS NOT NULL", nativeQuery = true)
