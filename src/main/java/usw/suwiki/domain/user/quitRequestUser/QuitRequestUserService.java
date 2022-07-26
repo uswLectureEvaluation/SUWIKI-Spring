@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.evaluation.EvaluatePostsService;
 import usw.suwiki.domain.exam.ExamPostsService;
+import usw.suwiki.domain.favorite_major.FavoriteMajorService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.UserService;
@@ -24,6 +25,7 @@ public class QuitRequestUserService {
     // User
     private final UserService userService;
     private final UserRepository userRepository;
+    private final FavoriteMajorService favoriteMajorService;
 
     // 휴면 계정
     private final UserIsolationRepository userIsolationRepository;
@@ -82,15 +84,18 @@ public class QuitRequestUserService {
         LocalDateTime targetTime = LocalDateTime.now().minusMinutes(1);
 
         List<User> targetUser = userRepository.findByRequestedQuitDateBefore(targetTime);
+
         List<UserIsolation> targetUserIsolation = userIsolationRepository.findByRequestedQuitDateBefore(targetTime);
 
         if (targetUser.size() > 0) {
             for (int i = 0; i < targetUser.toArray().length; i++) {
+                favoriteMajorService.deleteAllByUser(targetUser.get(i).getId());
                 userRepository.deleteById(targetUser.get(i).getId());
             }
         }
 
         for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
+            favoriteMajorService.deleteAllByUser(targetUser.get(i).getId());
             userIsolationRepository.deleteById(targetUserIsolation.get(i).getId());
         }
     }

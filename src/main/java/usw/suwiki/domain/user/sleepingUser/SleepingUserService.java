@@ -11,6 +11,7 @@ import usw.suwiki.domain.emailBuild.BuildAutoDeletedWarningUserFormService;
 import usw.suwiki.domain.emailBuild.BuildSoonDormantTargetFormService;
 import usw.suwiki.domain.evaluation.EvaluatePostsService;
 import usw.suwiki.domain.exam.ExamPostsService;
+import usw.suwiki.domain.favorite_major.FavoriteMajorService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserDto;
 import usw.suwiki.domain.user.UserRepository;
@@ -33,6 +34,7 @@ public class SleepingUserService {
     // User
     private final UserService userService;
     private final UserRepository userRepository;
+    private final FavoriteMajorService favoriteMajorService;
 
     // 휴면 계정
     private final UserIsolationService userIsolationService;
@@ -87,9 +89,6 @@ public class SleepingUserService {
     
     /**
     배포환경 : 휴면 계정 전환 30일 전(마지막 로그인 일자가 11달 전) 안내 메일 보내기
-     
-     테스트환경 : 휴면 계정 전환 5분 전 안내 메일 보내기
-     
      **/
 
     @Transactional
@@ -141,7 +140,6 @@ public class SleepingUserService {
     @Scheduled(cron = "6 * * * * *")
     public void autoDeleteTargetIsThreeYearsSendEmail() {
         LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
-//        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(8);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
@@ -149,18 +147,18 @@ public class SleepingUserService {
         }
     }
 
-    // 휴면계정 전환 후 3년간 로그인 하지 않으면 계정 자동 삭제
-    // 테스트 환경 -> 35분 미 접속 시 자동 삭제
-    // 테스트 환경2 -> 15분 미 접속 시 자동 삭제
+    // 3년간 로그인 하지 않으면 계정 자동 삭제
     @Transactional
 //    @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "8 * * * * *")
     public void autoDeleteTargetIsThreeYears() {
         LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
-//        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(15);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
+
+            // 즐겨찾기 게시글 삭제
+            favoriteMajorService.deleteAllByUser(targetUser.get(i).getId());
 
             // 삭제 예정 유저의 구매한 시험 정보 삭제
             viewExamService.deleteByUserIdx(targetUser.get(i).getUserIdx());
