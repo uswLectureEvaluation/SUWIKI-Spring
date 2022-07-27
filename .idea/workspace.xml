@@ -6,9 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="501b0fc5-c352-4174-9aa9-b56b765d5a08" name="Changes" comment="# &lt;타입&gt;: &lt;제목&gt;&#10;&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/UserController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/util/JsonToDataTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/util/JsonToDataTable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/Suwikibackend/LectureDataTestPackage/Json/JsonTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/Suwikibackend/LectureDataTestPackage/Json/JsonTest.java" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/src/test/java/KDH/BadWordTest/Filtering.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/KDH/BadWordTest/Filtering.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/Suwikibackend/Suwiki/service/evaluatePostsTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/Suwikibackend/Suwiki/service/evaluatePostsTest.java" afterDir="false" />
+>>>>>>> 7cb799af85d9dff4257cdf2a07e75345d7abcfac
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,6 +37,11 @@
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="suwiki" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="suwiki" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
               </path>
             </expand>
             <select />
@@ -99,13 +109,13 @@
     </option>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/ExamPostsSaveDto.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/favorite_major/FavoriteSaveDto.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/resources/USW_2022_1 thirteen.json" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userIsolation/UserIsolationRepository.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/reportTarget/EvaluateReportRepository.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/UserController.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/UserService.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/UserController.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/reportTarget/EvaluateReportRepository.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userIsolation/UserIsolationRepository.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/favorite_major/FavoriteSaveDto.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/ExamPostsSaveDto.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/resources/USW_2022_1 thirteen.json" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/resources/application.yml" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="JpbToolWindowState">
@@ -138,7 +148,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../ArtiStep" />
-    <property name="project.structure.last.edited" value="프로젝트" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="settings.editor.selected.configurable" value="preferences.editor" />
@@ -148,7 +158,7 @@
       <recent name="E:\Priority\Project\SUWIKI-REMASTER\src\main\resources" />
     </key>
   </component>
-  <component name="RunManager" selected="애플리케이션.SuwikiApplication">
+  <component name="RunManager" selected="JUnit.evaluatePostsTest.write_exam_point">
     <configuration name="SuwikiApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="usw.suwiki.SuwikiApplication" />
       <module name="suwiki.main" />
@@ -178,13 +188,48 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="evaluatePostsTest.write_evaluation_point" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="suwiki.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Suwikibackend.Suwiki.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Suwikibackend.Suwiki.service" />
+      <option name="MAIN_CLASS_NAME" value="Suwikibackend.Suwiki.service.evaluatePostsTest" />
+      <option name="METHOD_NAME" value="write_evaluation_point" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="evaluatePostsTest.write_exam_point" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="suwiki.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Suwikibackend.Suwiki.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Suwikibackend.Suwiki.service" />
+      <option name="MAIN_CLASS_NAME" value="Suwikibackend.Suwiki.service.evaluatePostsTest" />
+      <option name="METHOD_NAME" value="write_exam_point" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
+      <item itemvalue="Application.SuwikiApplication" />
       <item itemvalue="JUnit.JsonTest.registration_json (1)" />
-      <item itemvalue="애플리케이션.SuwikiApplication" />
+      <item itemvalue="JUnit.evaluatePostsTest.write_evaluation_point" />
+      <item itemvalue="JUnit.evaluatePostsTest.write_exam_point" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="애플리케이션.SuwikiApplication" />
+        <item itemvalue="JUnit.evaluatePostsTest.write_exam_point" />
+        <item itemvalue="JUnit.evaluatePostsTest.write_evaluation_point" />
         <item itemvalue="JUnit.JsonTest.registration_json (1)" />
       </list>
     </recent_temporary>

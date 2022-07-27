@@ -3,8 +3,8 @@ package usw.suwiki.token;
 import org.springframework.boot.test.context.SpringBootTest;
 import usw.suwiki.SuwikiApplication;
 
-@SpringBootTest(classes = SuwikiApplication.class)
-public class testAccessToken {
+//@SpringBootTest(classes = SuwikiApplication.class)
+//public class testAccessToken {
 
 //    @Autowired
 //    JwtTokenProvider jwtTokenProvider;
@@ -27,4 +27,4 @@ public class testAccessToken {
 //
 //    }
 
-}
+//}

@@ -69,7 +69,7 @@ public class ExamPostsController {
     }
 
     @PostMapping
-    public ResponseEntity<String> saveEvaluatePosts(@RequestParam Long lectureId ,@RequestBody ExamPostsSaveDto dto, @RequestHeader String Authorization) throws IOException {
+    public ResponseEntity<String> saveExamPosts(@RequestParam Long lectureId ,@RequestBody ExamPostsSaveDto dto, @RequestHeader String Authorization) throws IOException {
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
             if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);

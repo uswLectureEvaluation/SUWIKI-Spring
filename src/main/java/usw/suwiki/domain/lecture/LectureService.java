@@ -1,8 +1,6 @@
 package usw.suwiki.domain.lecture;
 
 import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
-import usw.suwiki.domain.lecture.*;
-import usw.suwiki.domain.lecture.JpaLectureRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

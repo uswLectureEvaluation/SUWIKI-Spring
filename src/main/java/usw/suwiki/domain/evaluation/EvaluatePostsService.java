@@ -88,8 +88,8 @@ public class EvaluatePostsService {
     public boolean verifyDeleteEvaluatePosts(Long userIdx, Long evaluateIdx){
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         Integer point = posts.getUser().getPoint();
-        if(point >= 10){
-            posts.getUser().setPoint(point - 10);
+        if(point >= 30){
+            posts.getUser().setPoint(point - 30);
             return true;
         }
         return false;
