@@ -299,6 +299,22 @@ public class UserController {
         throw new AccountException(ErrorType.PASSWORD_ERROR);
     }
 
+    // 프론트 로그아웃
+    @PostMapping("client-logout")
+    public ResponseEntity<HashMap<String, Boolean>> clientLogout(HttpServletResponse response) {
+
+        HashMap<String, Boolean> data = new HashMap<>();
+
+        Cookie refreshCookie = new Cookie("refreshToken", "");
+        refreshCookie.setMaxAge(0);
+
+        response.addCookie(refreshCookie);
+
+        data.put("Success", true);
+
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
     @GetMapping("/my-page")
     public UserResponseDto.MyPageResponse myPage(@Valid @RequestHeader String Authorization) {
 
