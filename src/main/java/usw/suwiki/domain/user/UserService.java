@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.email.ConfirmationToken;
 import usw.suwiki.domain.email.ConfirmationTokenRepository;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
+import usw.suwiki.domain.evaluation.EvaluatePostsRepository;
 import usw.suwiki.domain.exam.ExamPosts;
+import usw.suwiki.domain.exam.ExamPostsRepository;
 import usw.suwiki.domain.reportTarget.EvaluatePostReport;
 import usw.suwiki.domain.reportTarget.ExamPostReport;
 import usw.suwiki.domain.user.restrictingUser.RestrictingUser;
@@ -56,8 +58,8 @@ public class UserService {
     private final UserIsolationRepository userIsolationRepository;
 
     // 게시글 관련 Repository
-    private final JpaEvaluatePostsRepository jpaEvaluatePostsRepository;
-    private final JpaExamPostsRepository jpaExamPostsRepository;
+    private final EvaluatePostsRepository evaluatePostsRepository;
+    private final ExamPostsRepository examPostsRepository;
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;
 
@@ -286,12 +288,12 @@ public class UserService {
     // 강의평가 인덱스로 강의평가 객체 불러오기
     @Transactional
     public EvaluatePosts loadEvaluatePostsByIndex(Long EvaluatePostsIdx) {
-        return jpaEvaluatePostsRepository.findById(EvaluatePostsIdx);
+        return evaluatePostsRepository.findById(EvaluatePostsIdx);
     }
 
     @Transactional
     public ExamPosts loadExamPostsByIndex(Long ExamPostsIdx) {
-        return jpaExamPostsRepository.findById(ExamPostsIdx);
+        return examPostsRepository.findById(ExamPostsIdx);
     }
 
     //신고 받은 대상 신고 테이블에 저장

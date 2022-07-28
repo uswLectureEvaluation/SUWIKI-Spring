@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class LectureService {
 
-    private final JpaLectureRepository lectureRepository;
+    private final LectureRepository lectureRepository;
 
     public void cancelLectureValue(EvaluatePostsToLecture dto){
         Lecture lecture = lectureRepository.findById(dto.getLectureId());

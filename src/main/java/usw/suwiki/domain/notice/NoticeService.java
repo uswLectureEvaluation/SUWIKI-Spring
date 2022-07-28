@@ -12,16 +12,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class NoticeService {
-    private final JpaNoticeRepository jpaNoticeRepository;
+    private final NoticeRepository noticeRepository;
 
     public void save(NoticeSaveOrUpdateDto dto){
         Notice notice = new Notice(dto);
-        jpaNoticeRepository.save(notice);
+        noticeRepository.save(notice);
     }
 
     public List<NoticeResponseDto> findNoticeList(PageOption page){
         List<NoticeResponseDto> dtoList = new ArrayList<>();
-        List<Notice> list = jpaNoticeRepository.findByNoticeList(page);
+        List<Notice> list = noticeRepository.findByNoticeList(page);
         for (Notice notice : list) {
             dtoList.add(new NoticeResponseDto(notice));
         }
@@ -29,19 +29,19 @@ public class NoticeService {
     }
 
     public NoticeDetailResponseDto findNoticeDetail(Long noticeId){
-        Notice notice = jpaNoticeRepository.findById(noticeId);
+        Notice notice = noticeRepository.findById(noticeId);
         NoticeDetailResponseDto dto = new NoticeDetailResponseDto(notice);
         return dto;
     }
 
     public void update(NoticeSaveOrUpdateDto dto, Long noticeId){
-        Notice notice = jpaNoticeRepository.findById(noticeId);
+        Notice notice = noticeRepository.findById(noticeId);
         notice.update(dto);
     }
 
     public void delete(Long noticeId){
-        Notice notice = jpaNoticeRepository.findById(noticeId);
-        jpaNoticeRepository.delete(notice);
+        Notice notice = noticeRepository.findById(noticeId);
+        noticeRepository.delete(notice);
     }
 
 }
