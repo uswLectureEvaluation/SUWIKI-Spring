@@ -9,6 +9,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
+import usw.suwiki.domain.lecture.LectureRepository;
 
 import javax.transaction.Transactional;
 import java.io.FileReader;
@@ -20,7 +21,7 @@ import java.io.Reader;
 @Service
 public class JsonToDataTable {
 
-    private final JpaLectureRepository lectureRepository;
+    private final LectureRepository lectureRepository;
 
     public void toEntity() throws IOException, ParseException, InterruptedException {
 

@@ -3,6 +3,7 @@ package usw.suwiki.domain.viewExam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.exam.ViewExamRepository;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.exception.AccountException;
@@ -20,7 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ViewExamService {
 
-    private final JpaViewExamRepository jpaViewExamRepository;
+    private final ViewExamRepository viewExamRepository;
     private final LectureService lectureService;
     private final UserRepository userRepository;
 
@@ -40,12 +41,12 @@ public class ViewExamService {
             user.get().setPoint(point - 20);
             viewExam.setUserInViewExam(user.get());
             viewExam.setLectureInViewExam(lecture);
-            jpaViewExamRepository.save(viewExam);
+            viewExamRepository.save(viewExam);
         }
     }
 
     public boolean verifyAuth(Long lectureId, Long userIdx){
-        List<ViewExam> list = jpaViewExamRepository.findByUserId(userIdx);
+        List<ViewExam> list = viewExamRepository.findByUserId(userIdx);
 
         for (ViewExam viewExam : list) {
             if(viewExam.getLecture().getId().equals(lectureId)){
@@ -57,7 +58,7 @@ public class ViewExamService {
 
     public List<PurchaseHistoryDto> findByUserId(Long userIdx){
         List<PurchaseHistoryDto> dtoList = new ArrayList<PurchaseHistoryDto>();
-        List<ViewExam> list = jpaViewExamRepository.findByUserId(userIdx);
+        List<ViewExam> list = viewExamRepository.findByUserId(userIdx);
         for (ViewExam viewExam : list) {
             PurchaseHistoryDto dto = PurchaseHistoryDto.builder()
                     .id(viewExam.getId())
@@ -74,9 +75,9 @@ public class ViewExamService {
     }
 
     public void deleteByUserIdx(Long userIdx){
-        List<ViewExam> list = jpaViewExamRepository.findByUserId(userIdx);
+        List<ViewExam> list = viewExamRepository.findByUserId(userIdx);
         for (ViewExam viewExam : list) {
-            jpaViewExamRepository.delete(viewExam);
+            viewExamRepository.delete(viewExam);
         }
     }
 

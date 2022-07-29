@@ -16,30 +16,30 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class FavoriteMajorService {
-    private final JpaFavoriteMajorRepository jpaFavoriteMajorRepository;
+    private final FavoriteMajorRepository favoriteMajorRepository;
     private final UserRepository userRepository;
 
     public void save(FavoriteSaveDto dto, Long userIdx){
         FavoriteMajor favorite = new FavoriteMajor(dto.getMajorType());
         Optional<User> user = userRepository.findById(userIdx);
         favorite.setUser(user.get());
-        jpaFavoriteMajorRepository.save(favorite);
+        favoriteMajorRepository.save(favorite);
     }
 
     public List<String> findMajorTypeByUser(Long userIdx){
-        List<String> list = jpaFavoriteMajorRepository.findOnlyMajorTypeByUser(userIdx);
+        List<String> list = favoriteMajorRepository.findOnlyMajorTypeByUser(userIdx);
         return list;
     }
 
     public void delete(Long userIdx, String majorType){
-        FavoriteMajor favorite = jpaFavoriteMajorRepository.findByUserAndMajorType(userIdx, majorType);
-        jpaFavoriteMajorRepository.delete(favorite);
+        FavoriteMajor favorite = favoriteMajorRepository.findByUserAndMajorType(userIdx, majorType);
+        favoriteMajorRepository.delete(favorite);
     }
 
     public void deleteAllByUser(Long userIdx){
-        List<FavoriteMajor> list = jpaFavoriteMajorRepository.findAllByUser(userIdx);
+        List<FavoriteMajor> list = favoriteMajorRepository.findAllByUser(userIdx);
         for (FavoriteMajor favorite : list) {
-            jpaFavoriteMajorRepository.delete(favorite);
+            favoriteMajorRepository.delete(favorite);
         }
     }
 
