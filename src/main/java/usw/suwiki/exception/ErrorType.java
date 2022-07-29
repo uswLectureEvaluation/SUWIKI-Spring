@@ -30,6 +30,7 @@ public enum ErrorType {
     YOU_ARE_IN_BLACKLIST("USER016", "블랙리스트 대상입니다. 이용할 수 없습니다.", HttpStatus.FORBIDDEN),
     USER_ALREADY_BLACKLISTED("USER014", "이미 블랙리스트인 사용자 입니다.", HttpStatus.BAD_REQUEST),
     USER_IS_BLACKLISTED("USER015", "신고 당한 횟수 3회 누적으로 블랙리스트 조치 되었습니다. 더 이상 서비스를 이용할 수 없습니다.", HttpStatus.BAD_REQUEST),
+    PASSWORD_NOT_CHANGED("USER016", "이전 비밀번호와 동일하게 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
 
     BAD_REQUEST("USER013", "요청이 잘못 되었습니다.", HttpStatus.BAD_REQUEST),
 

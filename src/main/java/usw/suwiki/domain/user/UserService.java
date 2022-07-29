@@ -241,12 +241,26 @@ public class UserService {
 
     //비밀번호 검증 True 시 비밀번호 일치
     @Transactional
-    public boolean validatePasswordAtEditPW(String loginId, String password) {
+    public boolean validatePasswordAtEditPW(String loginId, String prePassword) {
 
         // 로그인 아이디를 찾을 수 없으면
         if (userRepository.findByLoginId(loginId).isEmpty()) throw new AccountException(ErrorType.USER_NOT_EXISTS);
 
-        return bCryptPasswordEncoder.matches(password, userRepository.findByLoginId(loginId).get().getPassword());
+        if (bCryptPasswordEncoder.matches(prePassword, userRepository.findByLoginId(loginId).get().getPassword())) {
+            return bCryptPasswordEncoder.matches(prePassword, userRepository.findByLoginId(loginId).get().getPassword());
+        }
+
+        throw new AccountException(ErrorType.PASSWORD_ERROR);
+    }
+
+    // 이전 비밀번호와 같으면 400 Error 아니면 True
+    @Transactional
+    public boolean compareNewPasswordVsPrePassword(String loginId, String newPassword) {
+
+        if (bCryptPasswordEncoder.matches(newPassword, userRepository.findByLoginId(loginId).get().getPassword())) {
+            throw new AccountException(ErrorType.PASSWORD_NOT_CHANGED);
+        }
+        return true;
     }
 
     // 유저 테이블에서 아이디 비밀번호 매칭

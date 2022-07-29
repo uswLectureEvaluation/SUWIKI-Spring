@@ -170,8 +170,11 @@ public class UserController {
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
 
-        //로그인 아이디 및 현재 비밀번호 검증
+        //로그인 아이디 및 현재 비밀번호 검증 -> 비밀번호 틀리면 400
         userService.validatePasswordAtEditPW(jwtTokenResolver.getLoginId(Authorization), editMyPasswordForm.getPrePassword());
+
+        //로그인 아이디 및 현재 비밀번호, 신규 비밀번호 검증 -> 이전 비밀번호, 신규 비밀번호 같으면 400
+        userService.compareNewPasswordVsPrePassword(jwtTokenResolver.getLoginId(Authorization), editMyPasswordForm.getNewPassword());
 
         //토큰 검증 통과 시 반환 객체 생성
         HashMap<String, Boolean> findPwSuccess = new HashMap<>();
