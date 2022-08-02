@@ -2,6 +2,23 @@
 <details>
   <summary> <h2> 담당기능(눌러서 확인하기) </summary>
   <div markdown="Jiwon-jeong">
+    
+# 담당 로직 (API 주소는 보안상 삭제)
+
+## Evaluation API
+- 추가 예정
+    
+## Exam API
+- 추가 예정
+
+## Lecture API
+- 추가 예정
+
+## Notice API
+- 추가 예정
+
+## ViewExam API
+- 추가 예정
 
   </div>
 </details>
