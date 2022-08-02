@@ -13,81 +13,44 @@
   <summary> <h2> 담당기능(눌러서 확인하기) </summary>
   <div markdown="diger">
 
-### 아이디 중복확인
-POST api.suwiki.kr/user/check-id
+# 담당 로직 (API 주소는 보안상 삭제)
 
-### 이메일 중복확인
-POST api.suwiki.kr/user/check-email
+## User API
 
-### 회원가입
-POST api.suwiki.kr/user/join
-
-### 이메일 인증
-GET api.suwiki.kr/user/verify-email/?token{}
-
-### 아이디 찾기
-POST api.suwiki.kr/user/find-id
-
-### 비밀번호 찾기 
-POST api.suwiki.kr/user/find-pw
-
-### 비밀번호 재설정
-POST api.suwiki.kr/user/reset-pw
-
-### 로그인 (Mobile Environment)
-POST api.suwiki.kr/user/login
-
-### 로그인 (Web Environment)
-POST api.suwiki.kr/user/client-login
-
-### 토큰 재발급
-POST api.suwiki.kr/user/refresh
-
-### 토큰 재발급
-POST api.suwiki.kr/user/client-refresh
-
-### 회원탈퇴
-POST api.suwiki.kr/user/quit
-
-### 내 정보
-GET api.suwiki.kr/user/my-page
-
-### 이용제한 내역 조회
-GET api.suwiki.kr/user/restricted-reason
-
-### 블랙리스트 내역 조회
-GET api.suwiki.kr/user/blacklist-reason
-
-### 강의평가 신고하기
-POST api.suwiki.kr/user/report/evaluate
-
-### 시험정보 신고하기
-POST api.suwiki.kr/user/report/exam
+- 아이디 중복확인
+- 이메일 중복확인
+- 회원가입
+- 이메일 인증
+- 아이디 찾기
+- 비밀번호 찾기
+- 비밀번호 재설정
+- 로그인 (Mobile Environment)
+- 로그인 (Web Environment)
+- 로그아웃 (Web Environment)
+- 토큰 재발급
+- 휴면 계정 처리
+- 회원탈퇴
+- 내 정보
+- 이용제한 내역 조회
+- 블랙리스트 내역 조회
+- 강의평가 신고하기
+- 시험정보 신고하기
 
 
 ---
 
-## 관리자 API 는 구현이 되었지만, 보안상 명시하지 않음
-    
-### 관리자 로그인
+## Admin API
 
-### 신고된 게시글 리스트 불러오기
-
-### 신고된 게시글 자세히 보기(강의평가)
-
-### 신고된 게시글 자세히 보기(시험정보)
-
-### 강의평가 삭제 및 유저 정지조치
-
-### 시험정보 삭제 및 유저 정지조치
-
-### 강의평가 삭제 및 유저 블랙리스트
-
-### 시험정보 삭제 및 유저 블랙리스트
-
-### 신고된 시험정보 이상 없음
-
-### 신고된 강의평가 이상 없음
+-  관리자 로그인
+-  신고된 게시글 리스트 불러오기
+-  신고된 게시글 자세히 보기(강의평가)
+-  신고된 게시글 자세히 보기(시험정보)
+-  강의평가 삭제 및 유저 정지 조치
+-  시험정보 삭제 및 유저 정지 조치
+-  강의평가 삭제 및 유저 블랙리스트 조치
+-  시험정보 삭제 및 유저 블랙리스트 조치
+-  신고된 시험정보 이상 없음 조치
+-  신고된 강의평가 이상 없음 조치
 
   </div>
 </details>
