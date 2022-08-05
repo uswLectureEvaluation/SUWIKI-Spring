@@ -119,10 +119,12 @@ public class QuitRequestUserService {
                 confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
 
                 // 신고된 시험정보 삭제
-                examReportRepository.deleteByUserIdx(targetUser.get(i).getId());
-                
+                examReportRepository.deleteByReportedUserIdx(targetUser.get(i).getId());
+                examReportRepository.deleteByReportingUserIdx(targetUser.get(i).getId());
+
                 // 신고된 강의평가 삭제
-                evaluateReportRepository.deleteByEvaluateIdx(targetUser.get(i).getId());
+                evaluateReportRepository.deleteByReportingUserIdx(targetUser.get(i).getId());
+                evaluateReportRepository.deleteByReportedUserIdx(targetUser.get(i).getId());
 
                 // 본 테이블에서 유저 삭제
                 userRepository.deleteById(targetUser.get(i).getId());
