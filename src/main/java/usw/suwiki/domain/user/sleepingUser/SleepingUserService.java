@@ -189,12 +189,12 @@ public class SleepingUserService {
             confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getUserIdx());
 
             // 신고된 시험정보 삭제
-            examReportRepository.deleteByReportedUserIdx(targetUser.get(i).getId());
-            examReportRepository.deleteByReportingUserIdx(targetUser.get(i).getId());
+            examReportRepository.deleteByReportedUserIdx(targetUser.get(i).getUserIdx());
+            examReportRepository.deleteByReportingUserIdx(targetUser.get(i).getUserIdx());
 
             // 신고된 강의평가 삭제
-            evaluateReportRepository.deleteByReportingUserIdx(targetUser.get(i).getId());
-            evaluateReportRepository.deleteByReportedUserIdx(targetUser.get(i).getId());
+            evaluateReportRepository.deleteByReportingUserIdx(targetUser.get(i).getUserIdx());
+            evaluateReportRepository.deleteByReportedUserIdx(targetUser.get(i).getUserIdx());
 
             // 휴면계정에서 유저 삭제
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
