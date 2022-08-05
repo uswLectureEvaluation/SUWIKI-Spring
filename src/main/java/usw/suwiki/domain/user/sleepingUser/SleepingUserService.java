@@ -13,6 +13,7 @@ import usw.suwiki.domain.emailBuild.BuildSoonDormantTargetFormService;
 import usw.suwiki.domain.evaluation.EvaluatePostsService;
 import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.favorite_major.FavoriteMajorService;
+import usw.suwiki.domain.refreshToken.RefreshTokenRepository;
 import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
 import usw.suwiki.domain.reportTarget.ExamReportRepository;
 import usw.suwiki.domain.user.User;
@@ -55,6 +56,8 @@ public class SleepingUserService {
 
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private final ViewExamService viewExamService;
 
@@ -172,6 +175,9 @@ public class SleepingUserService {
 
             // 삭제 예정 유저의 구매한 시험 정보 삭제
             viewExamService.deleteByUserIdx(targetUser.get(i).getUserIdx());
+
+            // 리프레시 토큰 삭제
+            refreshTokenRepository.deleteByUserIdx(targetUser.get(i).getUserIdx());
 
             // 신고된 시험정보 삭제
             examReportRepository.deleteByReportedUserIdx(targetUser.get(i).getUserIdx());

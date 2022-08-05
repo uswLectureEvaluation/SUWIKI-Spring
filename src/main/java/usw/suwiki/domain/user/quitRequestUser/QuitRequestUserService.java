@@ -10,6 +10,7 @@ import usw.suwiki.domain.evaluation.EvaluatePostsService;
 import usw.suwiki.domain.exam.ExamPostsRepository;
 import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.favorite_major.FavoriteMajorService;
+import usw.suwiki.domain.refreshToken.RefreshTokenRepository;
 import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
 import usw.suwiki.domain.reportTarget.ExamReportRepository;
 import usw.suwiki.domain.user.User;
@@ -33,6 +34,7 @@ public class QuitRequestUserService {
     private final UserRepository userRepository;
     private final FavoriteMajorService favoriteMajorService;
     private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // 휴면 계정
     private final UserIsolationRepository userIsolationRepository;
@@ -103,6 +105,9 @@ public class QuitRequestUserService {
                 // 삭제 예정 유저의 구매한 시험 정보 삭제
                 viewExamService.deleteByUserIdx(targetUser.get(i).getId());
 
+                // 리프레시 토큰 삭제
+                refreshTokenRepository.deleteByUserIdx(targetUserIsolation.get(i).getId());
+
                 // 신고된 시험정보 삭제
                 examReportRepository.deleteByReportedUserIdx(targetUser.get(i).getId());
                 examReportRepository.deleteByReportingUserIdx(targetUser.get(i).getId());
@@ -134,6 +139,9 @@ public class QuitRequestUserService {
 
                 // 삭제 예정 유저의 구매한 시험 정보 삭제
                 viewExamService.deleteByUserIdx(targetUserIsolation.get(i).getId());
+                
+                // 리프레시 토큰 삭제
+                refreshTokenRepository.deleteByUserIdx(targetUserIsolation.get(i).getUserIdx());
 
                 // 신고된 시험정보 삭제
                 examReportRepository.deleteByReportedUserIdx(targetUserIsolation.get(i).getUserIdx());
