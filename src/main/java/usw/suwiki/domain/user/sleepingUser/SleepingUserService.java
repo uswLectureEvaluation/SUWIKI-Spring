@@ -13,6 +13,8 @@ import usw.suwiki.domain.emailBuild.BuildSoonDormantTargetFormService;
 import usw.suwiki.domain.evaluation.EvaluatePostsService;
 import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.favorite_major.FavoriteMajorService;
+import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
+import usw.suwiki.domain.reportTarget.ExamReportRepository;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserDto;
 import usw.suwiki.domain.user.UserRepository;
@@ -47,8 +49,9 @@ public class SleepingUserService {
     private final BuildSoonDormantTargetFormService buildSoonDormantTargetFormService;
     private final BuildAutoDeletedWarningUserFormService buildAutoDeletedWarningUserFormService;
     private final EmailSender emailSender;
-    private final RestrictingUserService restrictingUserService;
     private final RestrictingUserRepository restrictingUserRepository;
+    private final ExamReportRepository examReportRepository;
+    private final EvaluateReportRepository evaluateReportRepository;
 
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
@@ -184,6 +187,12 @@ public class SleepingUserService {
 
             // 이메일 인증 토큰 삭제
             confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getUserIdx());
+
+            // 신고된 시험정보 삭제
+            examReportRepository.deleteByUserIdx(targetUser.get(i).getId());
+
+            // 신고된 강의평가 삭제
+            evaluateReportRepository.deleteByEvaluateIdx(targetUser.get(i).getId());
 
             // 휴면계정에서 유저 삭제
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());

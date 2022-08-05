@@ -7,8 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.email.ConfirmationTokenRepository;
 import usw.suwiki.domain.email.ConfirmationTokenService;
 import usw.suwiki.domain.evaluation.EvaluatePostsService;
+import usw.suwiki.domain.exam.ExamPostsRepository;
 import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.favorite_major.FavoriteMajorService;
+import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
+import usw.suwiki.domain.reportTarget.ExamReportRepository;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.UserService;
@@ -39,6 +42,8 @@ public class QuitRequestUserService {
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
     private final RestrictingUserRepository restrictingUserRepository;
+    private final ExamReportRepository examReportRepository;
+    private final EvaluateReportRepository evaluateReportRepository;
 
     //회원탈퇴 요청 유저 일부 데이터 초기화
     @Transactional
@@ -112,7 +117,13 @@ public class QuitRequestUserService {
 
                 // 이메일 인증 토큰 삭제
                 confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
+
+                // 신고된 시험정보 삭제
+                examReportRepository.deleteByUserIdx(targetUser.get(i).getId());
                 
+                // 신고된 강의평가 삭제
+                evaluateReportRepository.deleteByEvaluateIdx(targetUser.get(i).getId());
+
                 // 본 테이블에서 유저 삭제
                 userRepository.deleteById(targetUser.get(i).getId());
             }
@@ -137,6 +148,13 @@ public class QuitRequestUserService {
 
             // 이메일 인증 토큰 삭제
             confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
+
+            // 신고된 시험정보 삭제
+            examReportRepository.deleteByUserIdx(targetUser.get(i).getId());
+
+            // 신고된 강의평가 삭제
+            evaluateReportRepository.deleteByEvaluateIdx(targetUser.get(i).getId());
+
 
             // 휴면계정에서 유저 삭제
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
