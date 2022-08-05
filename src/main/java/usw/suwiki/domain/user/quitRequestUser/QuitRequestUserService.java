@@ -94,11 +94,6 @@ public class QuitRequestUserService {
 
         if (targetUser.size() > 0) {
             for (int i = 0; i < targetUser.toArray().length; i++) {
-                // 이메일 인증 토큰 삭제
-                confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
-
-                // 즐겨찾기 게시글 삭제
-                favoriteMajorService.deleteAllByUser(targetUser.get(i).getId());
 
                 // 삭제 예정 유저의 구매한 시험 정보 삭제
                 viewExamService.deleteByUserIdx(targetUser.get(i).getId());
@@ -109,8 +104,14 @@ public class QuitRequestUserService {
                 // 삭제 예정 유저의 시험정보 삭제
                 examPostsService.deleteByUser(targetUser.get(i).getId());
 
+                // 즐겨찾기 게시글 삭제
+                favoriteMajorService.deleteAllByUser(targetUser.get(i).getId());
+
                 // 제한 테이블에서 삭제
                 restrictingUserRepository.deleteByUserIdx(targetUser.get(i).getId());
+
+                // 이메일 인증 토큰 삭제
+                confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
                 
                 // 본 테이블에서 유저 삭제
                 userRepository.deleteById(targetUser.get(i).getId());
@@ -118,11 +119,6 @@ public class QuitRequestUserService {
         }
 
         for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
-            // 이메일 인증 토큰 삭제
-            confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
-
-            // 즐겨찾기 게시글 삭제
-            favoriteMajorService.deleteAllByUser(targetUser.get(i).getId());
 
             // 삭제 예정 유저의 구매한 시험 정보 삭제
             viewExamService.deleteByUserIdx(targetUser.get(i).getId());
@@ -133,8 +129,14 @@ public class QuitRequestUserService {
             // 삭제 예정 유저의 시험정보 삭제
             examPostsService.deleteByUser(targetUser.get(i).getId());
 
+            // 즐겨찾기 게시글 삭제
+            favoriteMajorService.deleteAllByUser(targetUser.get(i).getId());
+
             // 제한 테이블에서 삭제
             restrictingUserRepository.deleteByUserIdx(targetUser.get(i).getId());
+
+            // 이메일 인증 토큰 삭제
+            confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
 
             // 휴면계정에서 유저 삭제
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
