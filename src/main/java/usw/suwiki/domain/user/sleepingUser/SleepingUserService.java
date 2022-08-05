@@ -17,6 +17,8 @@ import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserDto;
 import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.UserService;
+import usw.suwiki.domain.user.restrictingUser.RestrictingUserRepository;
+import usw.suwiki.domain.user.restrictingUser.RestrictingUserService;
 import usw.suwiki.domain.userIsolation.UserIsolation;
 import usw.suwiki.domain.userIsolation.UserIsolationRepository;
 import usw.suwiki.domain.userIsolation.UserIsolationService;
@@ -45,6 +47,8 @@ public class SleepingUserService {
     private final BuildSoonDormantTargetFormService buildSoonDormantTargetFormService;
     private final BuildAutoDeletedWarningUserFormService buildAutoDeletedWarningUserFormService;
     private final EmailSender emailSender;
+    private final RestrictingUserService restrictingUserService;
+    private final RestrictingUserRepository restrictingUserRepository;
 
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
@@ -141,7 +145,7 @@ public class SleepingUserService {
 //    @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "6 * * * * *")
     public void autoDeleteTargetIsThreeYearsSendEmail() {
-//        LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
+//        LocalDateTime endTime = LocalDateTime.now().minusYears(3).plusDays(30);
         LocalDateTime targetTime = LocalDateTime.now().minusMinutes(5);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
@@ -175,6 +179,8 @@ public class SleepingUserService {
 
             // 삭제 예정 유저의 시험정보 삭제
             examPostsService.deleteByUser(targetUser.get(i).getUserIdx());
+
+            restrictingUserRepository.deleteByUserIdx(targetUser.get(i).getUserIdx());
 
             // 휴면계정에서 유저 삭제
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());

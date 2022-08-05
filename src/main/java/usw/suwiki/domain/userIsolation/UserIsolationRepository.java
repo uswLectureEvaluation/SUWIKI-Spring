@@ -29,6 +29,8 @@ public interface UserIsolationRepository extends JpaRepository<UserIsolation, Lo
 
     List<UserIsolation> findByLastLoginBefore(LocalDateTime localDateTime);
 
+    List<UserIsolation> findByLastLoginBetween(LocalDateTime localDateTimeStart, LocalDateTime localDateTimeEnd);
+
     @Modifying(clearAutomatically = true)
     @Query(value = "INSERT INTO user_isolation " +
             "(user_idx, login_id, password, email, last_login, requested_quit_date)" +

@@ -12,6 +12,7 @@ import usw.suwiki.domain.favorite_major.FavoriteMajorService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.UserService;
+import usw.suwiki.domain.user.restrictingUser.RestrictingUserRepository;
 import usw.suwiki.domain.userIsolation.UserIsolation;
 import usw.suwiki.domain.userIsolation.UserIsolationRepository;
 import usw.suwiki.domain.viewExam.ViewExamService;
@@ -37,6 +38,7 @@ public class QuitRequestUserService {
     private final ViewExamService viewExamService;
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
+    private final RestrictingUserRepository restrictingUserRepository;
 
     //회원탈퇴 요청 유저 일부 데이터 초기화
     @Transactional
@@ -92,16 +94,50 @@ public class QuitRequestUserService {
 
         if (targetUser.size() > 0) {
             for (int i = 0; i < targetUser.toArray().length; i++) {
+                // 이메일 인증 토큰 삭제
                 confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
+
+                // 즐겨찾기 게시글 삭제
                 favoriteMajorService.deleteAllByUser(targetUser.get(i).getId());
+
+                // 삭제 예정 유저의 구매한 시험 정보 삭제
+                viewExamService.deleteByUserIdx(targetUser.get(i).getId());
+
+                // 삭제 예정 유저의 강의평가 삭제
+                evaluatePostsService.deleteByUser(targetUser.get(i).getId());
+
+                // 삭제 예정 유저의 시험정보 삭제
+                examPostsService.deleteByUser(targetUser.get(i).getId());
+
+                // 제한 테이블에서 삭제
+                restrictingUserRepository.deleteByUserIdx(targetUser.get(i).getId());
+                
+                // 본 테이블에서 유저 삭제
                 userRepository.deleteById(targetUser.get(i).getId());
             }
         }
 
         for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
+            // 이메일 인증 토큰 삭제
             confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
+
+            // 즐겨찾기 게시글 삭제
             favoriteMajorService.deleteAllByUser(targetUser.get(i).getId());
-            userIsolationRepository.deleteById(targetUserIsolation.get(i).getId());
+
+            // 삭제 예정 유저의 구매한 시험 정보 삭제
+            viewExamService.deleteByUserIdx(targetUser.get(i).getId());
+
+            // 삭제 예정 유저의 강의평가 삭제
+            evaluatePostsService.deleteByUser(targetUser.get(i).getId());
+
+            // 삭제 예정 유저의 시험정보 삭제
+            examPostsService.deleteByUser(targetUser.get(i).getId());
+
+            // 제한 테이블에서 삭제
+            restrictingUserRepository.deleteByUserIdx(targetUser.get(i).getId());
+
+            // 휴면계정에서 유저 삭제
+            userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
         }
     }
 }
