@@ -180,6 +180,7 @@ public class SleepingUserService {
             // 삭제 예정 유저의 시험정보 삭제
             examPostsService.deleteByUser(targetUser.get(i).getUserIdx());
 
+            // 삭제 예정 유저의 정지 테이블 삭제
             restrictingUserRepository.deleteByUserIdx(targetUser.get(i).getUserIdx());
 
             // 휴면계정에서 유저 삭제
