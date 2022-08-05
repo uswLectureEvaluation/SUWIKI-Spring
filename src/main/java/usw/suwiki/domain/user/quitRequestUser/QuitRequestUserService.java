@@ -103,6 +103,14 @@ public class QuitRequestUserService {
                 // 삭제 예정 유저의 구매한 시험 정보 삭제
                 viewExamService.deleteByUserIdx(targetUser.get(i).getId());
 
+                // 신고된 시험정보 삭제
+                examReportRepository.deleteByReportedUserIdx(targetUser.get(i).getId());
+                examReportRepository.deleteByReportingUserIdx(targetUser.get(i).getId());
+
+                // 신고된 강의평가 삭제
+                evaluateReportRepository.deleteByReportingUserIdx(targetUser.get(i).getId());
+                evaluateReportRepository.deleteByReportedUserIdx(targetUser.get(i).getId());
+
                 // 삭제 예정 유저의 강의평가 삭제
                 evaluatePostsService.deleteByUser(targetUser.get(i).getId());
 
@@ -118,50 +126,42 @@ public class QuitRequestUserService {
                 // 이메일 인증 토큰 삭제
                 confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
 
-                // 신고된 시험정보 삭제
-                examReportRepository.deleteByReportedUserIdx(targetUser.get(i).getId());
-                examReportRepository.deleteByReportingUserIdx(targetUser.get(i).getId());
-
-                // 신고된 강의평가 삭제
-                evaluateReportRepository.deleteByReportingUserIdx(targetUser.get(i).getId());
-                evaluateReportRepository.deleteByReportedUserIdx(targetUser.get(i).getId());
-
                 // 본 테이블에서 유저 삭제
                 userRepository.deleteById(targetUser.get(i).getId());
             }
+        } else if (targetUser.size() == 0) {
+            for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
+
+                // 삭제 예정 유저의 구매한 시험 정보 삭제
+                viewExamService.deleteByUserIdx(targetUserIsolation.get(i).getId());
+
+                // 신고된 시험정보 삭제
+                examReportRepository.deleteByReportedUserIdx(targetUserIsolation.get(i).getUserIdx());
+                examReportRepository.deleteByReportingUserIdx(targetUserIsolation.get(i).getUserIdx());
+
+                // 신고된 강의평가 삭제
+                evaluateReportRepository.deleteByReportingUserIdx(targetUserIsolation.get(i).getUserIdx());
+                evaluateReportRepository.deleteByReportedUserIdx(targetUserIsolation.get(i).getUserIdx());
+
+                // 삭제 예정 유저의 강의평가 삭제
+                evaluatePostsService.deleteByUser(targetUserIsolation.get(i).getId());
+
+                // 삭제 예정 유저의 시험정보 삭제
+                examPostsService.deleteByUser(targetUserIsolation.get(i).getId());
+
+                // 즐겨찾기 게시글 삭제
+                favoriteMajorService.deleteAllByUser(targetUserIsolation.get(i).getId());
+
+                // 제한 테이블에서 삭제
+                restrictingUserRepository.deleteByUserIdx(targetUserIsolation.get(i).getId());
+
+                // 이메일 인증 토큰 삭제
+                confirmationTokenRepository.deleteByUserIdx(targetUserIsolation.get(i).getId());
+
+                // 휴면계정에서 유저 삭제
+                userIsolationRepository.deleteByLoginId(targetUserIsolation.get(i).getLoginId());
+            }
         }
 
-        for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
-
-            // 삭제 예정 유저의 구매한 시험 정보 삭제
-            viewExamService.deleteByUserIdx(targetUserIsolation.get(i).getId());
-
-            // 삭제 예정 유저의 강의평가 삭제
-            evaluatePostsService.deleteByUser(targetUserIsolation.get(i).getId());
-
-            // 삭제 예정 유저의 시험정보 삭제
-            examPostsService.deleteByUser(targetUserIsolation.get(i).getId());
-
-            // 즐겨찾기 게시글 삭제
-            favoriteMajorService.deleteAllByUser(targetUserIsolation.get(i).getId());
-
-            // 제한 테이블에서 삭제
-            restrictingUserRepository.deleteByUserIdx(targetUserIsolation.get(i).getId());
-
-            // 이메일 인증 토큰 삭제
-            confirmationTokenRepository.deleteByUserIdx(targetUserIsolation.get(i).getId());
-
-            // 신고된 시험정보 삭제
-            examReportRepository.deleteByReportedUserIdx(targetUserIsolation.get(i).getUserIdx());
-            examReportRepository.deleteByReportingUserIdx(targetUserIsolation.get(i).getUserIdx());
-
-            // 신고된 강의평가 삭제
-            evaluateReportRepository.deleteByReportingUserIdx(targetUserIsolation.get(i).getUserIdx());
-            evaluateReportRepository.deleteByReportedUserIdx(targetUserIsolation.get(i).getUserIdx());
-
-
-            // 휴면계정에서 유저 삭제
-            userIsolationRepository.deleteByLoginId(targetUserIsolation.get(i).getLoginId());
-        }
     }
 }

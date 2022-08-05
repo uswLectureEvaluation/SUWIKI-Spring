@@ -173,6 +173,14 @@ public class SleepingUserService {
             // 삭제 예정 유저의 구매한 시험 정보 삭제
             viewExamService.deleteByUserIdx(targetUser.get(i).getUserIdx());
 
+            // 신고된 시험정보 삭제
+            examReportRepository.deleteByReportedUserIdx(targetUser.get(i).getUserIdx());
+            examReportRepository.deleteByReportingUserIdx(targetUser.get(i).getUserIdx());
+
+            // 신고된 강의평가 삭제
+            evaluateReportRepository.deleteByReportingUserIdx(targetUser.get(i).getUserIdx());
+            evaluateReportRepository.deleteByReportedUserIdx(targetUser.get(i).getUserIdx());
+
             // 삭제 예정 유저의 강의평가 삭제
             evaluatePostsService.deleteByUser(targetUser.get(i).getUserIdx());
 
@@ -187,14 +195,6 @@ public class SleepingUserService {
 
             // 이메일 인증 토큰 삭제
             confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getUserIdx());
-
-            // 신고된 시험정보 삭제
-            examReportRepository.deleteByReportedUserIdx(targetUser.get(i).getUserIdx());
-            examReportRepository.deleteByReportingUserIdx(targetUser.get(i).getUserIdx());
-
-            // 신고된 강의평가 삭제
-            evaluateReportRepository.deleteByReportingUserIdx(targetUser.get(i).getUserIdx());
-            evaluateReportRepository.deleteByReportedUserIdx(targetUser.get(i).getUserIdx());
 
             // 휴면계정에서 유저 삭제
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
