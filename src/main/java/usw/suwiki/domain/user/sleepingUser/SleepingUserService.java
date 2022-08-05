@@ -98,8 +98,8 @@ public class SleepingUserService {
     public void sendEmailSoonDormant() {
 
         // 마지막 로그인 일자가 지금으로부터 11개월 전인 유저에게
-        LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
-//        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(5);
+//        LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(1);
 
         // 11개월 접속안한 유저 목록 가져오기
         List<User> user = userRepository.findByLastLoginBefore(targetTime);
@@ -121,8 +121,8 @@ public class SleepingUserService {
     @Scheduled(cron = "4 * * * * *")
     public void convertSleepingTable() {
 
-        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
-//        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
+//        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(2);
 
         // 1년이상 접속하지 않은 유저 리스트 불러오기
         List<User> targetUser = userRepository.findByLastLoginBefore(targetTime);
@@ -141,7 +141,8 @@ public class SleepingUserService {
 //    @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "6 * * * * *")
     public void autoDeleteTargetIsThreeYearsSendEmail() {
-        LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
+//        LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(5);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
@@ -154,7 +155,8 @@ public class SleepingUserService {
 //    @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "8 * * * * *")
     public void autoDeleteTargetIsThreeYears() {
-        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
+//        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
+        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(7);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
