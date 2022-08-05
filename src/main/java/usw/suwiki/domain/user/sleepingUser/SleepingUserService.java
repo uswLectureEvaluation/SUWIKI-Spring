@@ -104,12 +104,11 @@ public class SleepingUserService {
      **/
 
     @Transactional
-    @Scheduled(cron = "2 * * * * *")
+    @Scheduled(cron = "2 0 0 * * *")
     public void sendEmailSoonDormant() {
 
         // 마지막 로그인 일자가 지금으로부터 11개월 전인 유저에게
-//        LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(1);
+        LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
 
         // 11개월 접속안한 유저 목록 가져오기
         List<User> user = userRepository.findByLastLoginBefore(targetTime);
@@ -129,12 +128,10 @@ public class SleepingUserService {
 
      **/
     @Transactional
-    // @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(cron = "4 * * * * *")
+     @Scheduled(cron = "4 0 0 * * *")
     public void convertSleepingTable() {
 
-//        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(2);
+        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
 
         // 1년이상 접속하지 않은 유저 리스트 불러오기
         List<User> targetUser = userRepository.findByLastLoginBefore(targetTime);
@@ -150,11 +147,9 @@ public class SleepingUserService {
     // 휴면계정 전환 후 3년간 로그인 하지 않는 대상에 지정되기 한달 전에 이메일 보내기
     // 테스트 환경 -> 20분 미 접속 시 자동 삭제 대상 메일 전송
     @Transactional
-//    @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(cron = "6 * * * * *")
+    @Scheduled(cron = "6 0 0 * * *")
     public void autoDeleteTargetIsThreeYearsSendEmail() {
-//        LocalDateTime endTime = LocalDateTime.now().minusYears(3).plusDays(30);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(5);
+        LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
@@ -165,10 +160,9 @@ public class SleepingUserService {
     // 3년간 로그인 하지 않으면 계정 자동 삭제
     @Transactional
 //    @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(cron = "8 * * * * *")
+    @Scheduled(cron = "8 0 0 * * *")
     public void autoDeleteTargetIsThreeYears() {
-//        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
-        LocalDateTime targetTime = LocalDateTime.now().minusMinutes(7);
+        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
 
         for (int i = 0; i < targetUser.toArray().length; i++) {
