@@ -23,9 +23,43 @@ public class JsonToDataTable {
 
     private final LectureRepository lectureRepository;
 
+    //이상한 강의명 예외 처리 로직.
+    private void handleLectureNameException(JsonToLectureDto dto) {
+
+        if (dto.getLectureName().contains("재수강-")) {
+            int index = dto.getLectureName().indexOf("(");
+            String lectureName = dto.getLectureName().substring(0, index);
+            dto.setLectureName(lectureName);
+        }
+
+        if (dto.getLectureName().contains("재수강")) {
+            dto.setLectureName(dto.getLectureName().replace("(재수강)", ""));
+            dto.setLectureName(dto.getLectureName().replace("재수강", ""));
+        }
+
+        if (dto.getLectureName().contains("비대면수업")) {
+            dto.setLectureName(dto.getLectureName().replace("(비대면수업)", ""));
+            dto.setLectureName(dto.getLectureName().replace("비대면수업-", ""));
+            dto.setLectureName(dto.getLectureName().replace("비대면수업_", ""));
+            dto.setLectureName(dto.getLectureName().replace("비대면수업", ""));
+        }
+        if (dto.getLectureName().contains("대면수업")) {
+            dto.setLectureName(dto.getLectureName().replace("(대면수업)", ""));
+            dto.setLectureName(dto.getLectureName().replace("대면수업-", ""));
+            dto.setLectureName(dto.getLectureName().replace("대면수업_", ""));
+            dto.setLectureName(dto.getLectureName().replace("대면수업", ""));
+        }
+        if (dto.getLectureName().contains("혼합수업")) {
+            dto.setLectureName(dto.getLectureName().replace("(혼합수업)", ""));
+            dto.setLectureName(dto.getLectureName().replace("혼합수업-", ""));
+            dto.setLectureName(dto.getLectureName().replace("혼합수업_", ""));
+            dto.setLectureName(dto.getLectureName().replace("혼합수업", ""));
+        }
+    }
+
     public void toEntity() throws IOException, ParseException, InterruptedException {
 
-        Reader reader = new FileReader("E:/Priority/Project/SUWIKI-REMASTER/src/main/resources/USW_2021_2 thirteen.json");
+        Reader reader = new FileReader("/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2021_2 thirteen.json");
 
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(reader);
@@ -56,29 +90,8 @@ public class JsonToDataTable {
                     dto.setProfessor("-");
                 }
 
-                if(dto.getLectureName().contains("재수강")){
-                    dto.setLectureName(dto.getLectureName().replace("(재수강)",""));
-                }
-
-                if(dto.getLectureName().contains("비대면수업")){
-                    dto.setLectureName(dto.getLectureName().replace("(비대면수업)",""));
-                    dto.setLectureName(dto.getLectureName().replace("비대면수업-", ""));
-                    dto.setLectureName(dto.getLectureName().replace("비대면수업_", ""));
-                }
-
-                if (dto.getLectureName().contains("대면수업")){
-                    dto.setLectureName(dto.getLectureName().replace("(대면수업)",""));
-                    dto.setLectureName(dto.getLectureName().replace("대면수업-", ""));
-                    dto.setLectureName(dto.getLectureName().replace("대면수업_", ""));
-                    dto.setLectureName(dto.getLectureName().replace("대면수업", ""));
-                }
-
-                if(dto.getLectureName().contains("혼합수업")){
-                    dto.setLectureName(dto.getLectureName().replace("(혼합수업)",""));
-                    dto.setLectureName(dto.getLectureName().replace("혼합수업-", ""));
-                    dto.setLectureName(dto.getLectureName().replace("혼합수업_", ""));
-                }
-
+                //handleException
+                handleLectureNameException(dto);
 
                 //"·" to replace "-"
                 if(dto.getMajorType().contains("·")){
@@ -102,7 +115,6 @@ public class JsonToDataTable {
                     Lecture savedLecture = Lecture.builder().build();
                     savedLecture.toEntity(dto);
                     Thread.sleep(1);
-//                    System.out.println(dto.getLectureName());
                     lectureRepository.save(savedLecture);
                 }
             }
