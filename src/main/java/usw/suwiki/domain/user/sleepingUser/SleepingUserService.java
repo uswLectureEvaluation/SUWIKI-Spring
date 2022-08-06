@@ -128,7 +128,7 @@ public class SleepingUserService {
 
      **/
     @Transactional
-     @Scheduled(cron = "4 0 0 * * *")
+    @Scheduled(cron = "4 0 0 * * *")
     public void convertSleepingTable() {
 
         LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
@@ -159,7 +159,6 @@ public class SleepingUserService {
 
     // 3년간 로그인 하지 않으면 계정 자동 삭제
     @Transactional
-//    @Scheduled(cron = "0 0 0 * * *")
     @Scheduled(cron = "8 0 0 * * *")
     public void autoDeleteTargetIsThreeYears() {
         LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
