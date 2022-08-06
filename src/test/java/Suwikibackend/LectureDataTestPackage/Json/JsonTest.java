@@ -1,32 +1,32 @@
-package Suwikibackend.LectureDataTestPackage.Json;
-
-import org.json.simple.parser.ParseException;
-import usw.suwiki.SuwikiApplication;
-import usw.suwiki.global.util.JsonToDataTable;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.io.IOException;
-
-//@Transactional
-@SpringBootTest(classes = SuwikiApplication.class)
-public class JsonTest {
-
-    @Autowired
-    JsonToDataTable jsonToDataTable;
-
-    @Test
-    public synchronized void registration_json_2021() throws IOException, ParseException, InterruptedException {
-        String path21_02 = "/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2021_2 thirteen.json";
-        jsonToDataTable.toEntity(path21_02);
-    }
-
-    @Test
-    public synchronized void registration_json_2022() throws IOException, ParseException, InterruptedException {
-        String path22_01 = "/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2022_1 thirteen.json";
-        jsonToDataTable.toEntity(path22_01);
-    }
+//package Suwikibackend.LectureDataTestPackage.Json;
+//
+//import org.json.simple.parser.ParseException;
+//import usw.suwiki.SuwikiApplication;
+//import usw.suwiki.global.util.JsonToDataTable;
+//import org.junit.jupiter.api.Test;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.test.context.SpringBootTest;
+//
+//import java.io.IOException;
+//
+////@Transactional
+//@SpringBootTest(classes = SuwikiApplication.class)
+//public class JsonTest {
+//
+//    @Autowired
+//    JsonToDataTable jsonToDataTable;
+//
+//    @Test
+//    public synchronized void registration_json_2021() throws IOException, ParseException, InterruptedException {
+//        String path21_02 = "/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2021_2 thirteen.json";
+//        jsonToDataTable.toEntity(path21_02);
+//    }
+//
+//    @Test
+//    public synchronized void registration_json_2022() throws IOException, ParseException, InterruptedException {
+//        String path22_01 = "/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2022_1 thirteen.json";
+//        jsonToDataTable.toEntity(path22_01);
+//    }
 
 //    @Test
 //    public void middotTest() throws IOException, ParseException, InterruptedException {
@@ -75,4 +75,4 @@ public class JsonTest {
 //                System.out.println(majorType);
 //
 //                }
-}
+//}
