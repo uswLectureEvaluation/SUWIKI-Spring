@@ -24,7 +24,7 @@ public class JsonToDataTable {
     private final LectureRepository lectureRepository;
 
     //이상한 강의명 예외 처리 로직.
-    private void handleLectureNameException(JsonToLectureDto dto) {
+    private JsonToLectureDto handleLectureNameException(JsonToLectureDto dto) {
 
         if (dto.getLectureName().contains("재수강-")) {
             int index = dto.getLectureName().indexOf("(");
@@ -55,11 +55,13 @@ public class JsonToDataTable {
             dto.setLectureName(dto.getLectureName().replace("혼합수업_", ""));
             dto.setLectureName(dto.getLectureName().replace("혼합수업", ""));
         }
+
+        return dto;
     }
 
-    public void toEntity() throws IOException, ParseException, InterruptedException {
+    public void toEntity(String path) throws IOException, ParseException, InterruptedException {
 
-        Reader reader = new FileReader("/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2021_2 thirteen.json");
+        Reader reader = new FileReader(path);
 
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(reader);
@@ -91,7 +93,7 @@ public class JsonToDataTable {
                 }
 
                 //handleException
-                handleLectureNameException(dto);
+                dto = handleLectureNameException(dto);
 
                 //"·" to replace "-"
                 if(dto.getMajorType().contains("·")){
@@ -100,15 +102,13 @@ public class JsonToDataTable {
                     dto.setMajorType(majorType);
                 }
 
-                Lecture lecture = lectureRepository.verifyJsonLecture(dto.getLectureName(), dto.getProfessor(),dto.getMajorType());
+                Lecture lecture = lectureRepository.verifyJsonLecture(dto.getLectureName(), dto.getProfessor(), dto.getMajorType());
 
                 if (lecture != null) {
                     if (!lecture.getSemesterList().contains(dto.getSelectedSemester())) {
                         String updateString = lecture.getSemesterList() + ", " + dto.getSelectedSemester();
-                        Lecture updatedLecture = Lecture.builder().build();
-                        updatedLecture.toEntity(dto);
-                        updatedLecture.setSemester(updateString);  //refactoring 필요
-                        lectureRepository.save(updatedLecture);
+                        lecture.setSemester(updateString);  //refactoring 필요
+                        lectureRepository.save(lecture);
                     }
                 }
                 else if (lecture == null){
