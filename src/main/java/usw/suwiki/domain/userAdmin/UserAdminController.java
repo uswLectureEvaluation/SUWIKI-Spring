@@ -9,7 +9,9 @@ import usw.suwiki.domain.reportTarget.EvaluatePostReport;
 import usw.suwiki.domain.reportTarget.ExamPostReport;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserDto;
+import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.restrictingUser.RestrictingUserService;
+import usw.suwiki.domain.userIsolation.UserIsolationRepository;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 import usw.suwiki.global.jwt.JwtTokenProvider;
@@ -28,6 +30,9 @@ import java.util.HashMap;
 @RequestMapping("/admin")
 @CrossOrigin(origins = "https://suwikiman.netlify.app/", allowedHeaders = "*")
 public class UserAdminController {
+
+    private final UserRepository userRepository;
+    private final UserIsolationRepository userIsolationRepository;
 
     // JWT 관련 의존성
     private final JwtTokenResolver jwtTokenResolver;
@@ -310,5 +315,14 @@ public class UserAdminController {
         ExamPostReport examPostReport = examReportRepository.findById(target).get();
 
         return ResponseEntity.status(HttpStatus.OK).body(examPostReport);
+    }
+
+    @GetMapping
+    public ResponseEntity<HashMap<String, Long>> loadTotalUserCounting(@Valid @RequestHeader String Authorization) {
+        HashMap<String, Long> theNumberOfUser = new HashMap<>();
+
+        theNumberOfUser.put("UserCount", userRepository.countUser() + userIsolationRepository.countUserIsolation());
+
+        return ResponseEntity.status(HttpStatus.OK).body(theNumberOfUser);
     }
 }

@@ -1,5 +1,6 @@
 //package Suwikibackend.LectureDataTestPackage.Json;
 //
+//import org.json.simple.JSONObject;
 //import org.json.simple.parser.ParseException;
 //import usw.suwiki.SuwikiApplication;
 //import usw.suwiki.global.util.JsonToDataTable;
@@ -8,6 +9,7 @@
 //import org.springframework.boot.test.context.SpringBootTest;
 //
 //import java.io.IOException;
+//import java.util.HashMap;
 //
 ////@Transactional
 //@SpringBootTest(classes = SuwikiApplication.class)
@@ -18,16 +20,18 @@
 //
 //    @Test
 //    public synchronized void registration_json_2021() throws IOException, ParseException, InterruptedException {
-//        String path21_02 = "/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2021_2 thirteen.json";
+////        String path21_02 = "/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2021_2 thirteen.json";
+//         String path21_02 = "E:/Priority/Project/SUWIKI-REMASTER/src/main/resources/USW_2021_2 thirteen.json";
 //        jsonToDataTable.toEntity(path21_02);
 //    }
 //
 //    @Test
 //    public synchronized void registration_json_2022() throws IOException, ParseException, InterruptedException {
-//        String path22_01 = "/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2022_1 thirteen.json";
+////        String path22_01 = "/Users/BestFriend/Desktop/suwiki-remaster/src/main/resources/USW_2022_1 thirteen.json";
+//         String path22_01 = "E:/Priority/Project/SUWIKI-REMASTER/src/main/resources/USW_2022_1 thirteen.json";
 //        jsonToDataTable.toEntity(path22_01);
 //    }
-
+//
 //    @Test
 //    public void middotTest() throws IOException, ParseException, InterruptedException {
 //        HashMap<String, String> hashMap = new HashMap<>();
@@ -41,7 +45,7 @@
 //        System.out.println(majorType);
 //
 //    }
-
+//
 //        @Test
 //        public void handleJsonData() throws IOException, ParseException, InterruptedException {
 //                HashMap<String, String> hashMap = new HashMap<>();
@@ -73,6 +77,5 @@
 //                majorType = majorType.replace("(재수강)", "");
 //                }
 //                System.out.println(majorType);
-//
-//                }
+//    }
 //}

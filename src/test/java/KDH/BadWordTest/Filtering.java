@@ -1,13 +1,13 @@
-package KDH.BadWordTest;
-
-import org.junit.jupiter.api.Test;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
-
+//package KDH.BadWordTest;
+//
+//import org.junit.jupiter.api.Test;
+//
+//import java.io.*;
+//import java.util.ArrayList;
+//import java.util.regex.Pattern;
+//
 //public class Filtering {
-
+//
 //    @Test
 //    boolean filter() throws IOException {
 //
@@ -35,6 +35,6 @@ import java.util.regex.Pattern;
 //        return isBadWord;
 //
 //    }
-
+//
 //}
-
+//
