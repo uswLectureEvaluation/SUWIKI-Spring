@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping(value = "/lecture")
+@RequestMapping(value = "//lecture")
 public class LectureController {
     private final LectureService lectureService;
     private final JwtTokenValidator jwtTokenValidator;

@@ -249,7 +249,6 @@ public class UserAdminController {
         return result;
     }
 
-
     // 신고받은 게시글 리스트 불러오기
     @GetMapping("/report/list")
     public ResponseEntity<UserAdminResponseDto.ViewAllReportedPost> loadReportedPost(@Valid @RequestHeader String Authorization) {
