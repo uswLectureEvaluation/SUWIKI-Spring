@@ -88,7 +88,7 @@ public class JsonToDataTable {
                         .build();
 
                 //professor 없으면 "-" 로 채움 (null 값 들어가지 않게)
-                if(dto.getProfessor().isEmpty()){
+                if(dto.getProfessor().isEmpty() || dto.getProfessor() == null){
                     dto.setProfessor("-");
                 }
 
