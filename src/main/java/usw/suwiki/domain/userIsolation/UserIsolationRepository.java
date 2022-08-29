@@ -21,9 +21,6 @@ public interface UserIsolationRepository extends JpaRepository<UserIsolation, Lo
 
     Optional<UserIsolation> findByEmail(String email);
 
-    @Query(value = "SELECT count(*) FROM user_isolation", nativeQuery = true)
-    long countUserIsolation();
-
     void deleteByLoginId(String loginId);
 
     void deleteByUserIdx(Long userIdx);

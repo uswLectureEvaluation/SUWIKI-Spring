@@ -25,9 +25,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByRequestedQuitDateBefore(LocalDateTime localDateTime);
 
-    @Query(value = "SELECT count(*) FROM user", nativeQuery = true)
-    long countUser();
-
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE User SET lastLogin = :now WHERE id = :userIdx")
     void lastLoginStamp(@Param("now") LocalDateTime now, @Param("userIdx") Long userIdx);
