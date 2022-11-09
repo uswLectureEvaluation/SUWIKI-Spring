@@ -101,7 +101,7 @@ public class JpaLectureRepository implements LectureRepository {
             throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
         }
 
-        String query = "SELECT l FROM Lecture l ";
+        String query = "SELECT l FROM Lecture l where l.postsCount > 0 ";
         query += String.format("ORDER BY l.%s DESC", orderOption.get());
 
         List<Lecture> lectureList = em.createQuery(query, Lecture.class)

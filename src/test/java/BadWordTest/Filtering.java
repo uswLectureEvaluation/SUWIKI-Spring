@@ -1,4 +1,4 @@
-package KDH.BadWordTest;
+package BadWordTest;
 
 import org.junit.jupiter.api.Test;
 
