@@ -1,6 +1,13 @@
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+	}
+}
+
 plugins {
 	id 'org.springframework.boot' version '2.6.3'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 	id 'java'
 }
 
@@ -37,8 +44,11 @@ dependencies {
 	implementation 'mysql:mysql-connector-java'
 
 	// JPA
-	implementation 'com.querydsl:querydsl-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// Querydsl
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
 	//BATCH
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
@@ -65,8 +75,6 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	compileOnly 'org.projectlombok:lombok:1.18.22'
-	annotationProcessor 'org.projectlombok:lombok:1.18.22'
 	testCompileOnly 'org.projectlombok:lombok:1.18.22'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 	implementation 'org.apache.commons:commons-text:1.9'
@@ -76,6 +84,29 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// Querydsl 추가 설정.
+def querydslDir = "$buildDir/generated/querydsl"
+// JPA 사용 여부와 사용할 경로를 설정
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+// build 시 사용할 sourceSet 추가
+sourceSets {
+	main.java.srcDir querydslDir
+}
+// querydsl 컴파일시 사용할 옵션 설정
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+// querydsl 이 compileClassPath 를 상속하도록 설정
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
 }
 
 def void id(String s) {}

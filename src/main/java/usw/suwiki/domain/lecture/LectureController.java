@@ -14,10 +14,12 @@ import org.springframework.stereotype.Controller;
 
 import java.util.Optional;
 
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping(value = "/lecture")
 public class LectureController {
+
     private final LectureService lectureService;
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
@@ -38,10 +40,10 @@ public class LectureController {
 
     @GetMapping("/all")
     public ResponseEntity<LectureToJsonArray>findAllList(@RequestParam(required = false) Optional<String> option,
-                                                           @RequestParam(required = false) Optional<Integer> page,
+                                                         @RequestParam(required = false) Optional<Integer> page,
                                                          @RequestParam(required = false) Optional<String> majorType){
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!");
         HttpHeaders header = new HttpHeaders();
-
         LectureFindOption findOption = LectureFindOption.builder().orderOption(option).pageNumber(page).majorType(majorType).build();
         if(findOption.getMajorType().get().equals("")){
             LectureToJsonArray  data = lectureService.findAllLectureByFindOption(findOption);
