@@ -17,7 +17,7 @@ public class ExamPostsSaveDto {
 
     private String content;
 
-    public ExamPostsSaveDto( String lectureName, String selectedSemester, String professor,String examType, String examInfo,
+    public ExamPostsSaveDto(String lectureName, String selectedSemester, String professor, String examType, String examInfo,
                             String examDifficulty, String content) {
         this.lectureName = lectureName;
         this.selectedSemester = selectedSemester;

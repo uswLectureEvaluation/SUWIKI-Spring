@@ -1,13 +1,13 @@
 package usw.suwiki.domain.email;
 
 import lombok.*;
-import usw.suwiki.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor

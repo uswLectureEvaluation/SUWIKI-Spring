@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.blacklistDomain.BlackListService;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
 import usw.suwiki.domain.exam.ExamPosts;
 import usw.suwiki.domain.user.User;
@@ -128,7 +127,7 @@ public class RestrictingUserService {
     public void isUnrestrictedTarget() {
 
         // 현재시각으로부터 - 30일
-         LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
+        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
 
         List<RestrictingUser> targetUser = restrictingUserRepository.findByRestrictingDateBefore(targetTime);
 

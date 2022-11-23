@@ -1,12 +1,11 @@
 package usw.suwiki.domain.evaluation;
 
-import usw.suwiki.domain.lecture.Lecture;
-import usw.suwiki.domain.reportTarget.EvaluatePostReport;
-import usw.suwiki.global.BaseTimeEntity;
-import usw.suwiki.domain.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
+import usw.suwiki.domain.lecture.Lecture;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.global.BaseTimeEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity
-public class EvaluatePosts extends BaseTimeEntity{
+public class EvaluatePosts extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //autoIncrement

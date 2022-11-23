@@ -18,7 +18,7 @@ public class EvaluatePostsUpdateDto {
 
     private String content;    //주관적인 강의평가 입력내용
 
-    public EvaluatePostsUpdateDto(String selectedSemester,float satisfaction, float learning, float honey,
+    public EvaluatePostsUpdateDto(String selectedSemester, float satisfaction, float learning, float honey,
                                   int team, int difficulty, int homework, String content) {
         this.selectedSemester = selectedSemester;
         this.satisfaction = satisfaction;

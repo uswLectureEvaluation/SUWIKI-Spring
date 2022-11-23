@@ -2,7 +2,6 @@ package usw.suwiki.domain.lecture;
 
 import lombok.Builder;
 import lombok.Getter;
-import usw.suwiki.domain.lecture.Lecture;
 
 import java.util.List;
 

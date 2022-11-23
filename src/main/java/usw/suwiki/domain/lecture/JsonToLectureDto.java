@@ -35,7 +35,7 @@ public class JsonToLectureDto {
     @Builder
     public JsonToLectureDto(String selectedSemester, String placeSchedule, String professor, String lectureType, String lectureCode,
                             String lectureName, String evaluateType, String diclNo, String majorType, double point,
-                            String capprType , int grade) {
+                            String capprType, int grade) {
         this.selectedSemester = selectedSemester;
         this.placeSchedule = placeSchedule;
         this.professor = professor;

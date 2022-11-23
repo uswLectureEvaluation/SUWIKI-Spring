@@ -3,7 +3,6 @@ package usw.suwiki.domain.evaluation;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.global.PageOption;
-import usw.suwiki.domain.evaluation.EvaluatePosts;
 
 import java.util.List;
 

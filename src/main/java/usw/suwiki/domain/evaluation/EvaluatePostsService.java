@@ -1,15 +1,15 @@
 package usw.suwiki.domain.evaluation;
 
+import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
+import org.springframework.stereotype.Service;
+import usw.suwiki.domain.lecture.Lecture;
+import usw.suwiki.domain.lecture.LectureService;
 import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
-import usw.suwiki.domain.user.UserRepository;
-import usw.suwiki.domain.lecture.LectureService;
 import usw.suwiki.global.PageOption;
-import usw.suwiki.domain.lecture.Lecture;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -24,13 +24,13 @@ public class EvaluatePostsService {
     private final LectureService lectureService;
     private final UserRepository userRepository;
 
-    public void save(EvaluatePostsSaveDto dto, Long userIdx, Long lectureId){
+    public void save(EvaluatePostsSaveDto dto, Long userIdx, Long lectureId) {
         EvaluatePosts posts = new EvaluatePosts(dto);
 
         Lecture lecture = lectureService.findById(lectureId);
         Optional<User> user = userRepository.findById(userIdx);
 
-        if(lecture == null){
+        if (lecture == null) {
             new AccountException(ErrorType.NOT_EXISTS_LECTURE);
         } else {
             posts.setLecture(lecture);
@@ -46,11 +46,11 @@ public class EvaluatePostsService {
         }
     }
 
-    public EvaluatePosts findById(Long evaluateIdx){
+    public EvaluatePosts findById(Long evaluateIdx) {
         return evaluatePostsRepository.findById(evaluateIdx);
     }
 
-    public void update(Long evaluateIdx , EvaluatePostsUpdateDto dto){
+    public void update(Long evaluateIdx, EvaluatePostsUpdateDto dto) {
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         lectureService.cancelLectureValue(new EvaluatePostsToLecture(posts));
         posts.update(dto);
@@ -59,7 +59,7 @@ public class EvaluatePostsService {
         lectureService.calcLectureAvg(newDto);
     }
 
-    public List<EvaluateResponseByLectureIdDto> findEvaluatePostsByLectureId(PageOption option , Long lectureId){
+    public List<EvaluateResponseByLectureIdDto> findEvaluatePostsByLectureId(PageOption option, Long lectureId) {
         List<EvaluateResponseByLectureIdDto> dtoList = new ArrayList<>();
         List<EvaluatePosts> list = evaluatePostsRepository.findByLectureId(option, lectureId);
         for (EvaluatePosts post : list) {
@@ -68,7 +68,7 @@ public class EvaluatePostsService {
         return dtoList;
     }
 
-    public List<EvaluateResponseByUserIdxDto> findEvaluatePostsByUserId (PageOption option , Long userId){
+    public List<EvaluateResponseByUserIdxDto> findEvaluatePostsByUserId(PageOption option, Long userId) {
         List<EvaluateResponseByUserIdxDto> dtoList = new ArrayList<>();
         List<EvaluatePosts> list = evaluatePostsRepository.findByUserId(option, userId);
         for (EvaluatePosts post : list) {
@@ -79,23 +79,23 @@ public class EvaluatePostsService {
         return dtoList;
     }
 
-    public boolean verifyWriteEvaluatePosts(Long userIdx, Long lectureId){
+    public boolean verifyWriteEvaluatePosts(Long userIdx, Long lectureId) {
         Lecture lecture = lectureService.findById(lectureId);
         Optional<User> user = userRepository.findById(userIdx);
         return evaluatePostsRepository.verifyPostsByIdx(user.get(), lecture);
     }
 
-    public boolean verifyDeleteEvaluatePosts(Long userIdx, Long evaluateIdx){
+    public boolean verifyDeleteEvaluatePosts(Long userIdx, Long evaluateIdx) {
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         Integer point = posts.getUser().getPoint();
-        if(point >= 30){
+        if (point >= 30) {
             posts.getUser().setPoint(point - 30);
             return true;
         }
         return false;
     }
 
-    public void deleteByUser(Long userIdx){
+    public void deleteByUser(Long userIdx) {
         List<EvaluatePosts> list = evaluatePostsRepository.findAllByUserId(userIdx);
 
         if (list.isEmpty()) {
@@ -111,7 +111,7 @@ public class EvaluatePostsService {
     }
 
     @Synchronized
-    public void deleteById(Long evaluateIdx, Long userIdx){
+    public void deleteById(Long evaluateIdx, Long userIdx) {
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         Optional<User> user = userRepository.findById(userIdx);
         EvaluatePostsToLecture dto = new EvaluatePostsToLecture(posts);

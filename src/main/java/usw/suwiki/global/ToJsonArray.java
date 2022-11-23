@@ -2,8 +2,6 @@ package usw.suwiki.global;
 
 import lombok.Getter;
 
-import java.util.Optional;
-
 @Getter
 public class ToJsonArray {
     Object data;

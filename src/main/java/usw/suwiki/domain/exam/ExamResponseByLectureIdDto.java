@@ -1,6 +1,5 @@
 package usw.suwiki.domain.exam;
 
-import usw.suwiki.domain.exam.ExamPosts;
 import lombok.Getter;
 
 @Getter

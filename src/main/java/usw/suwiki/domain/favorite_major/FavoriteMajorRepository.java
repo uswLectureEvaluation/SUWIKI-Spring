@@ -1,7 +1,5 @@
 package usw.suwiki.domain.favorite_major;
 
-import usw.suwiki.domain.favorite_major.FavoriteMajor;
-
 import java.util.List;
 
 public interface FavoriteMajorRepository {

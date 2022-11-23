@@ -1,14 +1,15 @@
 package usw.suwiki.domain.reportTarget;
 
 import lombok.*;
-import usw.suwiki.domain.exam.ExamPosts;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 
 @Entity
-@Builder @Getter @Setter
+@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExamPostReport {

@@ -14,12 +14,12 @@ public class LectureFindOption {
     private Optional<String> majorType;
 
     @Builder
-    public LectureFindOption(Optional<String> orderOption, Optional<Integer> pageNumber,Optional<String> majorType) {
+    public LectureFindOption(Optional<String> orderOption, Optional<Integer> pageNumber, Optional<String> majorType) {
         this.orderOption = orderOption;
         this.pageNumber = pageNumber;
-        if(majorType.isEmpty()){
+        if (majorType.isEmpty()) {
             this.majorType = Optional.of("");
-        }else {
+        } else {
             this.majorType = majorType;
         }
     }

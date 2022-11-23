@@ -5,9 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.email.ConfirmationTokenRepository;
-import usw.suwiki.domain.email.ConfirmationTokenService;
 import usw.suwiki.domain.evaluation.EvaluatePostsService;
-import usw.suwiki.domain.exam.ExamPostsRepository;
 import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.favorite_major.FavoriteMajorService;
 import usw.suwiki.domain.refreshToken.RefreshTokenRepository;
@@ -136,7 +134,7 @@ public class QuitRequestUserService {
 
                 // 삭제 예정 유저의 구매한 시험 정보 삭제
                 viewExamService.deleteByUserIdx(targetUserIsolation.get(i).getUserIdx());
-                
+
                 // 리프레시 토큰 삭제
                 refreshTokenRepository.deleteByUserIdx(targetUserIsolation.get(i).getUserIdx());
 

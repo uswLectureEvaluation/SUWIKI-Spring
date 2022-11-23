@@ -1,14 +1,14 @@
 package usw.suwiki.domain.blacklistDomain;
 
 import lombok.*;
-import usw.suwiki.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Builder
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class BlacklistDomain {

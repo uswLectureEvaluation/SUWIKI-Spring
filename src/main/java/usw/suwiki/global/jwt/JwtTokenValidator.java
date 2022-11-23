@@ -51,7 +51,7 @@ public class JwtTokenValidator {
     // True 면 업데이트 해줘야함
     public boolean isNeedToUpdateRefreshToken(String refreshToken) {
         Date claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(refreshToken).getBody().getExpiration();
-        
+
         // Jwt Claims LocalDateTime 으로 형변환
         LocalDateTime localDateTimeClaims = claims.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 

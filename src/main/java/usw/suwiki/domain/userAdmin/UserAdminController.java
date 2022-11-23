@@ -6,18 +6,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.blacklistDomain.BlacklistRepository;
 import usw.suwiki.domain.reportTarget.EvaluatePostReport;
+import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
 import usw.suwiki.domain.reportTarget.ExamPostReport;
+import usw.suwiki.domain.reportTarget.ExamReportRepository;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserDto;
+import usw.suwiki.domain.user.UserService;
 import usw.suwiki.domain.user.restrictingUser.RestrictingUserService;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 import usw.suwiki.global.jwt.JwtTokenProvider;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.jwt.JwtTokenValidator;
-import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
-import usw.suwiki.domain.reportTarget.ExamReportRepository;
-import usw.suwiki.domain.user.UserService;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -68,7 +68,7 @@ public class UserAdminController {
     // 강의평가 게시물 정지 먹이기
     @PostMapping("/restrict/evaluate-post")
     public HashMap<String, Boolean> restrictEvaluatePost(@Valid @RequestHeader String Authorization,
-                                                    @Valid @RequestBody UserAdminRequestDto.EvaluatePostRestrictForm evaluatePostRestrictForm) {
+                                                         @Valid @RequestBody UserAdminRequestDto.EvaluatePostRestrictForm evaluatePostRestrictForm) {
 
         // 토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
@@ -101,7 +101,7 @@ public class UserAdminController {
     // 시험정보 게시물 정지 먹이기
     @PostMapping("/restrict/exam-post")
     public HashMap<String, Boolean> restrictExamPost(@Valid @RequestHeader String Authorization,
-                                                         @Valid @RequestBody UserAdminRequestDto.ExamPostRestrictForm examPostRestrictForm) {
+                                                     @Valid @RequestBody UserAdminRequestDto.ExamPostRestrictForm examPostRestrictForm) {
 
         HashMap<String, Boolean> result = new HashMap<>();
 
@@ -131,7 +131,7 @@ public class UserAdminController {
         return result;
     }
 
-    
+
     // 강의평가 게시물 블랙리스트 먹이기
     @PostMapping("/blacklist/evaluate-post")
     public HashMap<String, Boolean> banEvaluatePost(@Valid @RequestHeader String Authorization,
@@ -148,7 +148,7 @@ public class UserAdminController {
 
         // 게시글 작성자 인덱스
         Long userIdx = userService.loadEvaluatePostsByIndex(evaluatePostBlacklistForm.getEvaluateIdx()).getUser().getId();
-        
+
         // 게시글 제거
         userAdminService.banishEvaluatePost(evaluatePostBlacklistForm.getEvaluateIdx());
 
@@ -175,7 +175,7 @@ public class UserAdminController {
     // 시험정보 게시물 블랙리스트 먹이기
     @PostMapping("/blacklist/exam-post")
     public HashMap<String, Boolean> banExamPost(@Valid @RequestHeader String Authorization,
-                                              @Valid @RequestBody UserAdminRequestDto.ExamPostBlacklistForm examPostBlacklistForm) {
+                                                @Valid @RequestBody UserAdminRequestDto.ExamPostBlacklistForm examPostBlacklistForm) {
 
         //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
@@ -212,7 +212,7 @@ public class UserAdminController {
     // 이상 없는 신고 강의평가 게시글이면 지워주기
     @PostMapping("/no-problem/evaluate-post")
     public HashMap<String, Boolean> noProblemEv(@Valid @RequestHeader String Authorization,
-                                                         @Valid @RequestBody UserAdminRequestDto.EvaluatePostNoProblemForm evaluatePostNoProblemForm) {
+                                                @Valid @RequestBody UserAdminRequestDto.EvaluatePostNoProblemForm evaluatePostNoProblemForm) {
 
         HashMap<String, Boolean> result = new HashMap<>();
 
@@ -232,7 +232,7 @@ public class UserAdminController {
     // 이상 없는 신고 시험정보 게시글이면 지워주기
     @PostMapping("/no-problem/exam-post")
     public HashMap<String, Boolean> noProblemEx(@Valid @RequestHeader String Authorization,
-                                              @Valid @RequestBody UserAdminRequestDto.ExamPostNoProblemForm examPostNoProblemForm) {
+                                                @Valid @RequestBody UserAdminRequestDto.ExamPostNoProblemForm examPostNoProblemForm) {
 
         HashMap<String, Boolean> result = new HashMap<>();
 
@@ -268,7 +268,7 @@ public class UserAdminController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    
+
     // 강의평가에 관련된 신고 게시글 자세히 보기
     @GetMapping("/report/evaluate/")
     public ResponseEntity<EvaluatePostReport> loadDetailReportedEvaluatePost(

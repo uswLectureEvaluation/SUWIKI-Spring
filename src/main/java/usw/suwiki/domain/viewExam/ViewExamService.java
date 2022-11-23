@@ -5,12 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.exam.ViewExamRepository;
 import usw.suwiki.domain.lecture.Lecture;
+import usw.suwiki.domain.lecture.LectureService;
 import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
-import usw.suwiki.domain.user.UserRepository;
-import usw.suwiki.domain.exam.JpaViewExamRepository;
-import usw.suwiki.domain.lecture.LectureService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,7 @@ public class ViewExamService {
     private final LectureService lectureService;
     private final UserRepository userRepository;
 
-    public void save(Long lectureId, Long userIdx){     // 연관관계를 맺지 않고 Id 로만 저장 할까 고민중
+    public void save(Long lectureId, Long userIdx) {     // 연관관계를 맺지 않고 Id 로만 저장 할까 고민중
 
         Optional<User> user = userRepository.findById(userIdx);
         int point = user.get().getPoint();
@@ -45,18 +44,18 @@ public class ViewExamService {
         }
     }
 
-    public boolean verifyAuth(Long lectureId, Long userIdx){
+    public boolean verifyAuth(Long lectureId, Long userIdx) {
         List<ViewExam> list = viewExamRepository.findByUserId(userIdx);
 
         for (ViewExam viewExam : list) {
-            if(viewExam.getLecture().getId().equals(lectureId)){
+            if (viewExam.getLecture().getId().equals(lectureId)) {
                 return true;
             }
         }
         return false;
     }
 
-    public List<PurchaseHistoryDto> findByUserId(Long userIdx){
+    public List<PurchaseHistoryDto> findByUserId(Long userIdx) {
         List<PurchaseHistoryDto> dtoList = new ArrayList<PurchaseHistoryDto>();
         List<ViewExam> list = viewExamRepository.findByUserId(userIdx);
         for (ViewExam viewExam : list) {
@@ -67,14 +66,14 @@ public class ViewExamService {
                     .majorType(viewExam.getLecture().getMajorType())
                     .createDate(viewExam.getCreateDate())
                     .build();
-            
+
             dtoList.add(dto);
         }
 
         return dtoList;
     }
 
-    public void deleteByUserIdx(Long userIdx){
+    public void deleteByUserIdx(Long userIdx) {
         List<ViewExam> list = viewExamRepository.findByUserId(userIdx);
         for (ViewExam viewExam : list) {
             viewExamRepository.delete(viewExam);

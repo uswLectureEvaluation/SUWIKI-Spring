@@ -1,4 +1,4 @@
-package usw.suwiki.domain.emailBuild;
+package usw.suwiki.global.util.emailBuild;
 
 
 import lombok.AllArgsConstructor;

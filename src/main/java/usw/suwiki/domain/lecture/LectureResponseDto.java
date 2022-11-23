@@ -1,6 +1,5 @@
 package usw.suwiki.domain.lecture;
 
-import usw.suwiki.domain.lecture.Lecture;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

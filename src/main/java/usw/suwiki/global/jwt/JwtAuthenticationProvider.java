@@ -49,7 +49,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         Claims claims;
         try {
             claims = Jwts.parser().setSigningKey(secretKeyByte).parseClaimsJws(((JwtAuthenticationToken) authentication).getJsonWebToken()).getBody();
-        } catch (SignatureException | IllegalArgumentException | MalformedJwtException | ExpiredJwtException signatureException) {
+        } catch (SignatureException | IllegalArgumentException | MalformedJwtException |
+                 ExpiredJwtException signatureException) {
             throw new AccountException(ErrorType.NOT_EXISTS_LECTURE);
         }
 

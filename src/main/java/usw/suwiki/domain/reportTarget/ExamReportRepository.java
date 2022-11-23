@@ -22,15 +22,15 @@ public interface ExamReportRepository extends JpaRepository<ExamPostReport, Long
 
     @Modifying
     @Query(value = "DELETE FROM exam_post_report where reported_user_idx =:userIdx", nativeQuery = true)
-    void deleteByUserIdx(@Param ("userIdx") Long userIdx);
+    void deleteByUserIdx(@Param("userIdx") Long userIdx);
 
     @Modifying
     @Query(value = "DELETE FROM exam_post_report where reporting_user_idx =:userIdx", nativeQuery = true)
-    void deleteByReportingUserIdx(@Param ("userIdx") Long userIdx);
+    void deleteByReportingUserIdx(@Param("userIdx") Long userIdx);
 
     @Modifying
     @Query(value = "DELETE FROM exam_post_report where reported_user_idx =:userIdx", nativeQuery = true)
-    void deleteByReportedUserIdx(@Param ("userIdx") Long userIdx);
+    void deleteByReportedUserIdx(@Param("userIdx") Long userIdx);
 
     Optional<ExamPostReport> findByExamIdx(Long examIdx);
 

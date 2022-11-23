@@ -1,16 +1,17 @@
 package usw.suwiki.domain.viewExam;
 
-import lombok.*;
-import usw.suwiki.global.BaseTimeEntity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.user.User;
+import usw.suwiki.global.BaseTimeEntity;
 
 import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
 @Entity
-public class ViewExam extends BaseTimeEntity{
+public class ViewExam extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

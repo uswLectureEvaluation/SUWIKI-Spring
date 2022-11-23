@@ -1,6 +1,5 @@
 package usw.suwiki.domain.notice;
 
-import usw.suwiki.domain.notice.Notice;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

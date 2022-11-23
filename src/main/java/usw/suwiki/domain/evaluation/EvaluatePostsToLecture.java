@@ -1,6 +1,5 @@
 package usw.suwiki.domain.evaluation;
 
-import usw.suwiki.domain.evaluation.EvaluatePosts;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

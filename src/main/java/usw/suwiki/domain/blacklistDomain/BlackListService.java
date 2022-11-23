@@ -13,7 +13,6 @@ import usw.suwiki.exception.ErrorType;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -37,7 +36,7 @@ public class BlackListService {
     @Transactional
     @Scheduled(cron = "0 0 0 * * *")
     public void whiteList() {
-        
+
         //정지 풀렸는지 확인하는 로직 호출
         List<BlacklistDomain> whiteListTarget = beReleased();
 
@@ -51,7 +50,7 @@ public class BlackListService {
             blacklistRepository.deleteByUserIdx(userIdx);
         }
     }
-    
+
     // 블랙리스트 이메일인지 확인, 블랙리스트에 있으면 true
     @Transactional
     public void isBlackList(String email) {
@@ -70,7 +69,7 @@ public class BlackListService {
     public List<UserResponseDto.ViewMyBlackListReasonForm> getBlacklistLog(Long userIdx) {
 
         List<BlacklistDomain> loadedDomain = blacklistRepository.findByUserIdx(userIdx);
-        
+
         List<UserResponseDto.ViewMyBlackListReasonForm> finalResultForm = new ArrayList<>();
 
 

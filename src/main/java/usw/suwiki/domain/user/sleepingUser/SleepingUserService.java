@@ -5,11 +5,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.blacklistDomain.BlackListService;
 import usw.suwiki.domain.email.ConfirmationTokenRepository;
 import usw.suwiki.domain.email.EmailSender;
-import usw.suwiki.domain.emailBuild.BuildAutoDeletedWarningUserFormService;
-import usw.suwiki.domain.emailBuild.BuildSoonDormantTargetFormService;
 import usw.suwiki.domain.evaluation.EvaluatePostsService;
 import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.favorite_major.FavoriteMajorService;
@@ -21,13 +18,14 @@ import usw.suwiki.domain.user.UserDto;
 import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.UserService;
 import usw.suwiki.domain.user.restrictingUser.RestrictingUserRepository;
-import usw.suwiki.domain.user.restrictingUser.RestrictingUserService;
 import usw.suwiki.domain.userIsolation.UserIsolation;
 import usw.suwiki.domain.userIsolation.UserIsolationRepository;
 import usw.suwiki.domain.userIsolation.UserIsolationService;
 import usw.suwiki.domain.viewExam.ViewExamService;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
+import usw.suwiki.global.util.emailBuild.BuildAutoDeletedWarningUserFormService;
+import usw.suwiki.global.util.emailBuild.BuildSoonDormantTargetFormService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -98,9 +96,9 @@ public class SleepingUserService {
         }
         return userService.loadUserFromLoginId(loginForm.getLoginId());
     }
-    
+
     /**
-    배포환경 : 휴면 계정 전환 30일 전(마지막 로그인 일자가 11달 전) 안내 메일 보내기
+     * 배포환경 : 휴면 계정 전환 30일 전(마지막 로그인 일자가 11달 전) 안내 메일 보내기
      **/
 
     @Transactional
@@ -122,10 +120,9 @@ public class SleepingUserService {
     }
 
     /**
-     배포환경 : 마지막 로그인 일자가 12달 전 유저 휴면계정처리
-
-     테스트환경 : 마지막 로그인 일자가 10분 전인 유저 휴면계정처리
-
+     * 배포환경 : 마지막 로그인 일자가 12달 전 유저 휴면계정처리
+     * <p>
+     * 테스트환경 : 마지막 로그인 일자가 10분 전인 유저 휴면계정처리
      **/
     @Transactional
     @Scheduled(cron = "4 0 0 * * *")

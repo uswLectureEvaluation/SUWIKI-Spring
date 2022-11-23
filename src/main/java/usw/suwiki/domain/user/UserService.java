@@ -1,42 +1,33 @@
 package usw.suwiki.domain.user;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import usw.suwiki.domain.email.ConfirmationToken;
 import usw.suwiki.domain.email.ConfirmationTokenRepository;
+import usw.suwiki.domain.email.ConfirmationTokenService;
+import usw.suwiki.domain.email.EmailSender;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
 import usw.suwiki.domain.evaluation.EvaluatePostsRepository;
 import usw.suwiki.domain.exam.ExamPosts;
 import usw.suwiki.domain.exam.ExamPostsRepository;
 import usw.suwiki.domain.reportTarget.EvaluatePostReport;
+import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
 import usw.suwiki.domain.reportTarget.ExamPostReport;
-import usw.suwiki.domain.user.restrictingUser.RestrictingUser;
+import usw.suwiki.domain.reportTarget.ExamReportRepository;
 import usw.suwiki.domain.user.restrictingUser.RestrictingUserRepository;
-import usw.suwiki.domain.user.restrictingUser.RestrictingUserService;
-import usw.suwiki.domain.userIsolation.UserIsolation;
-import usw.suwiki.domain.email.EmailSender;
+import usw.suwiki.domain.userIsolation.UserIsolationRepository;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
 import usw.suwiki.global.jwt.JwtTokenResolver;
-import usw.suwiki.domain.evaluation.JpaEvaluatePostsRepository;
-import usw.suwiki.domain.exam.JpaExamPostsRepository;
-import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
-import usw.suwiki.domain.reportTarget.ExamReportRepository;
-import usw.suwiki.domain.userIsolation.UserIsolationRepository;
-import usw.suwiki.domain.emailBuild.BuildEmailAuthFormService;
-import usw.suwiki.domain.emailBuild.BuildFindLoginIdFormService;
-import usw.suwiki.domain.emailBuild.BuildFindPasswordFormService;
-import usw.suwiki.domain.email.ConfirmationTokenService;
-
+import usw.suwiki.global.util.emailBuild.BuildEmailAuthFormService;
+import usw.suwiki.global.util.emailBuild.BuildFindLoginIdFormService;
+import usw.suwiki.global.util.emailBuild.BuildFindPasswordFormService;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -75,7 +66,7 @@ public class UserService {
 
     //유저 저장
     @Transactional
-    private User makeUser(UserDto.JoinForm joinForm) {
+    public User makeUser(UserDto.JoinForm joinForm) {
         User user = User.builder()
                 .loginId((joinForm.getLoginId()))
                 .password(bCryptPasswordEncoder.encode(joinForm.getPassword()))
@@ -172,9 +163,9 @@ public class UserService {
                 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
                 '!', '@', '#', '$', '%', '^'};
 
-        char[] charNumberSet = new char[]{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+        char[] charNumberSet = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
-        char[] charSpecialSet = new char[]{ '!', '@', '#', '$', '%', '^' };
+        char[] charSpecialSet = new char[]{'!', '@', '#', '$', '%', '^'};
 
         int idx = 0;
         int allLen = charAllSet.length;

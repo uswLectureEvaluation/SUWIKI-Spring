@@ -1,11 +1,14 @@
 package usw.suwiki.domain.notice;
 
-import usw.suwiki.global.BaseTimeEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
+import usw.suwiki.global.BaseTimeEntity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Getter
@@ -27,7 +30,7 @@ public class Notice extends BaseTimeEntity {
         this.content = dto.getContent();
     }
 
-    public void update(NoticeSaveOrUpdateDto dto){
+    public void update(NoticeSaveOrUpdateDto dto) {
         this.title = dto.getTitle();
         this.content = dto.getContent();
     }

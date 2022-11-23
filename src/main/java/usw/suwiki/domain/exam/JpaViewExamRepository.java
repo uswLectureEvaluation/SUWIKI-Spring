@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class JpaViewExamRepository implements ViewExamRepository{
+public class JpaViewExamRepository implements ViewExamRepository {
 
     private final EntityManager em;
 

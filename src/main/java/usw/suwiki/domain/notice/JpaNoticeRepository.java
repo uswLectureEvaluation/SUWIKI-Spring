@@ -1,4 +1,5 @@
 package usw.suwiki.domain.notice;
+
 import org.springframework.stereotype.Repository;
 import usw.suwiki.global.PageOption;
 
@@ -7,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JpaNoticeRepository implements NoticeRepository{
+public class JpaNoticeRepository implements NoticeRepository {
 
     private final EntityManager em;
 
@@ -24,7 +25,7 @@ public class JpaNoticeRepository implements NoticeRepository{
     public List<Notice> findByNoticeList(PageOption page) {
         Optional<Integer> pageNumber = page.getPageNumber();
         List resultList = em.createQuery("SELECT n from Notice n ORDER BY n.modifiedDate DESC")
-                .setFirstResult((pageNumber.get()-1)*10)
+                .setFirstResult((pageNumber.get() - 1) * 10)
                 .setMaxResults(10)
                 .getResultList();
         return resultList;
@@ -37,7 +38,7 @@ public class JpaNoticeRepository implements NoticeRepository{
 
     @Override
     public Notice findById(Long id) {
-        return em.find(Notice.class,id);
+        return em.find(Notice.class, id);
     }
 
 }

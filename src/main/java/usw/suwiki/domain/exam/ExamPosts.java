@@ -1,13 +1,12 @@
 package usw.suwiki.domain.exam;
 
-import usw.suwiki.domain.lecture.Lecture;
-import usw.suwiki.domain.reportTarget.ExamPostReport;
-import usw.suwiki.global.BaseTimeEntity;
-import usw.suwiki.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
+import usw.suwiki.domain.lecture.Lecture;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.global.BaseTimeEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity
-public class ExamPosts extends BaseTimeEntity{
+public class ExamPosts extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -61,7 +60,7 @@ public class ExamPosts extends BaseTimeEntity{
         this.content = dto.getContent();
     }
 
-    public void update(ExamPostsUpdateDto dto){
+    public void update(ExamPostsUpdateDto dto) {
         this.selectedSemester = dto.getSelectedSemester();
         this.examType = dto.getExamType();
         this.examInfo = dto.getExamInfo();

@@ -1,13 +1,16 @@
 package usw.suwiki.domain.lecture;
 
-import org.springframework.data.annotation.LastModifiedDate;
-import usw.suwiki.global.BaseTimeEntity;
-import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
+import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
+import usw.suwiki.global.BaseTimeEntity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Getter
@@ -39,7 +42,7 @@ public class Lecture extends BaseTimeEntity {
     private float lectureDifficultyAvg = 0;
     private float lectureHomeworkAvg = 0;
 
-    private float lectureSatisfactionValue= 0;
+    private float lectureSatisfactionValue = 0;
     private float lectureHoneyValue = 0;
     private float lectureLearningValue = 0;
     private float lectureTeamValue = 0;
@@ -73,7 +76,7 @@ public class Lecture extends BaseTimeEntity {
     }
 
 
-    public void addLectureValue(EvaluatePostsToLecture dto){
+    public void addLectureValue(EvaluatePostsToLecture dto) {
         this.lectureSatisfactionValue += dto.getLectureSatisfaction();
         this.lectureHoneyValue += dto.getLectureHoney();
         this.lectureLearningValue += dto.getLectureLearning();
@@ -83,7 +86,7 @@ public class Lecture extends BaseTimeEntity {
         this.postsCount += 1;
     }
 
-    public void cancelLectureValue(EvaluatePostsToLecture dto){
+    public void cancelLectureValue(EvaluatePostsToLecture dto) {
         this.lectureSatisfactionValue -= dto.getLectureSatisfaction();
         this.lectureHoneyValue -= dto.getLectureHoney();
         this.lectureLearningValue -= dto.getLectureLearning();
@@ -93,8 +96,8 @@ public class Lecture extends BaseTimeEntity {
         this.postsCount -= 1;
     }
 
-    public void calcLectureAvg(){
-        if(postsCount < 1){
+    public void calcLectureAvg() {
+        if (postsCount < 1) {
             this.lectureTotalAvg = 0;
             this.lectureSatisfactionAvg = 0;
             this.lectureHoneyAvg = 0;
@@ -102,7 +105,7 @@ public class Lecture extends BaseTimeEntity {
             this.lectureTeamAvg = 0;
             this.lectureDifficultyAvg = 0;
             this.lectureHomeworkAvg = 0;
-        }else {
+        } else {
             this.lectureSatisfactionAvg = lectureSatisfactionValue / postsCount;
             this.lectureHoneyAvg = lectureHoneyValue / postsCount;
             this.lectureLearningAvg = lectureLearningValue / postsCount;
@@ -114,7 +117,7 @@ public class Lecture extends BaseTimeEntity {
     }
 
 
-    public void toEntity(JsonToLectureDto dto){
+    public void toEntity(JsonToLectureDto dto) {
         this.semesterList = dto.getSelectedSemester();
         this.placeSchedule = dto.getPlaceSchedule();
         this.professor = dto.getProfessor();

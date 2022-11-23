@@ -1,7 +1,6 @@
 package usw.suwiki.domain.notice;
 
 import usw.suwiki.global.PageOption;
-import usw.suwiki.domain.notice.Notice;
 
 import java.util.List;
 

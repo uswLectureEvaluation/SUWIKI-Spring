@@ -30,7 +30,7 @@ public class LectureController {
         if(findOption.getMajorType().get().equals("")){
             LectureToJsonArray  data = lectureService.findLectureByFindOption(searchValue, findOption);
             return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
-        }else {
+        } else {
             LectureToJsonArray data = lectureService.findLectureByMajorType(searchValue, findOption);
             return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
         }

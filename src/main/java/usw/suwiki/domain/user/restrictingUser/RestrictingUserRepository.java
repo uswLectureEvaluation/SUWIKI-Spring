@@ -13,11 +13,11 @@ import java.util.List;
 public interface RestrictingUserRepository extends JpaRepository<RestrictingUser, Long> {
 
     @Query(value = "SELECT * FROM restricting_user WHERE user_idx = :userIdx", nativeQuery = true)
-    List<RestrictingUser> findByUserIdx(@Param ("userIdx") Long userIdx);
+    List<RestrictingUser> findByUserIdx(@Param("userIdx") Long userIdx);
 
     List<RestrictingUser> findByRestrictingDateBefore(LocalDateTime localDateTime);
 
     @Modifying
     @Query(value = "DELETE FROM restricting_user WHERE user_idx = :userIdx", nativeQuery = true)
-    void deleteByUserIdx(@Param ("userIdx") Long userIdx);
+    void deleteByUserIdx(@Param("userIdx") Long userIdx);
 }

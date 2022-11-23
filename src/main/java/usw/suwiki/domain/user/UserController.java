@@ -1,33 +1,34 @@
 package usw.suwiki.domain.user;
 
 import lombok.RequiredArgsConstructor;
-
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import usw.suwiki.domain.blacklistDomain.BlackListService;
+import usw.suwiki.domain.email.EmailAuthService;
+import usw.suwiki.domain.favorite_major.FavoriteMajorService;
+import usw.suwiki.domain.favorite_major.FavoriteSaveDto;
+import usw.suwiki.domain.refreshToken.RefreshTokenRepository;
 import usw.suwiki.domain.user.quitRequestUser.QuitRequestUserService;
 import usw.suwiki.domain.user.restrictingUser.RestrictingUserService;
 import usw.suwiki.domain.user.sleepingUser.SleepingUserService;
 import usw.suwiki.domain.userIsolation.UserIsolationRepository;
-import usw.suwiki.global.ToJsonArray;
-import usw.suwiki.domain.favorite_major.FavoriteSaveDto;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
+import usw.suwiki.global.ToJsonArray;
 import usw.suwiki.global.jwt.JwtTokenProvider;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.jwt.JwtTokenValidator;
-import usw.suwiki.domain.refreshToken.RefreshTokenRepository;
-import usw.suwiki.domain.email.EmailAuthService;
-import usw.suwiki.domain.emailBuild.BuildEmailAuthSuccessFormService;
-import usw.suwiki.domain.favorite_major.FavoriteMajorService;
+import usw.suwiki.global.util.emailBuild.BuildEmailAuthSuccessFormService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 
 
 @RestController
@@ -95,7 +96,7 @@ public class UserController {
         // 이메일이 이미 존재하면
         if (userRepository.findByEmail(checkEmailForm.getEmail()).isPresent() ||
                 userIsolationRepository.findByEmail(checkEmailForm.getEmail()).isPresent()) {
-            
+
             overlapEmail.put("overlap", true);
             return overlapEmail;
         }
@@ -250,7 +251,7 @@ public class UserController {
 
             //아이디 비밀번호 검증
             if (userService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword())) {
-                
+
                 // 액세스 토큰 생성
                 String accessToken = jwtTokenProvider.createAccessToken(user);
 
@@ -364,7 +365,7 @@ public class UserController {
 
         // UserIndex 로 RefreshToken 토큰 재생성 판별
         String newRefreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(user);
-        
+
         // 리프레시 토큰 쿠키에 담기
         Cookie refreshCookie = new Cookie("refreshToken", "");
         refreshCookie.setValue(newRefreshToken);
@@ -395,7 +396,7 @@ public class UserController {
 
         //해당 RefreshToken 으로 UserIndex 를 추출하여 객체 반환
         User user = userService.loadUserFromUserIdx(userIdx);
-        
+
         // UserIndex 로 RefreshToken 토큰 재생성 판별
         String newRefreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(user);
 

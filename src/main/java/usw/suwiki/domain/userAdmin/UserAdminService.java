@@ -5,19 +5,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.blacklistDomain.BlacklistDomain;
+import usw.suwiki.domain.blacklistDomain.BlacklistRepository;
 import usw.suwiki.domain.evaluation.EvaluatePosts;
+import usw.suwiki.domain.evaluation.EvaluatePostsService;
 import usw.suwiki.domain.exam.ExamPosts;
+import usw.suwiki.domain.exam.ExamPostsService;
 import usw.suwiki.domain.reportTarget.EvaluatePostReport;
+import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
 import usw.suwiki.domain.reportTarget.ExamPostReport;
+import usw.suwiki.domain.reportTarget.ExamReportRepository;
 import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.UserService;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
-import usw.suwiki.domain.blacklistDomain.BlacklistRepository;
-import usw.suwiki.domain.reportTarget.EvaluateReportRepository;
-import usw.suwiki.domain.reportTarget.ExamReportRepository;
-import usw.suwiki.domain.evaluation.EvaluatePostsService;
-import usw.suwiki.domain.exam.ExamPostsService;
-import usw.suwiki.domain.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,7 +33,7 @@ public class UserAdminService {
     private final UserService userService;
     private final BlacklistRepository blacklistRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    
+
     // Post 관련 서비스
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
@@ -204,8 +204,8 @@ public class UserAdminService {
     @Transactional
     public List<EvaluatePostReport> getReportedEvaluateList() {
         return evaluateReportRepository.loadAllReportedPosts();
-    } 
-    
+    }
+
     //신고 받은 시험정보 모두 불러오기
     @Transactional
     public List<ExamPostReport> getReportedExamList() {

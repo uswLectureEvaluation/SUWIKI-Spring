@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
-import usw.suwiki.global.jwt.JwtTokenProvider;
-import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.jwt.JwtTokenValidator;
 
 import javax.servlet.http.Cookie;
@@ -15,13 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class CookieManager {
 
-    private final JwtTokenProvider jwtTokenProvider;
-    private final JwtTokenResolver jwtTokenResolver;
     private final JwtTokenValidator jwtTokenValidator;
 
 
     // 쿠키 조회
-    public String getCookie(HttpServletRequest req){
+    public String getCookie(HttpServletRequest req) {
 
         // 모든 쿠키 가져오기
         Cookie[] cookies = req.getCookies();

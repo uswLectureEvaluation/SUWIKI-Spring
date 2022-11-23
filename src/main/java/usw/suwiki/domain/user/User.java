@@ -6,8 +6,11 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder @Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -46,7 +49,7 @@ public class User {
 
     @Column
     private LocalDateTime lastLogin; //Last Login Time
-    
+
     @Column
     private LocalDateTime requestedQuitDate; //회원탈퇴 요청 일시
 

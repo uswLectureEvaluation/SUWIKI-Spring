@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.user.Role;
-import usw.suwiki.exception.AccountException;
-import usw.suwiki.exception.ErrorType;
 import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.UserService;
+import usw.suwiki.exception.AccountException;
+import usw.suwiki.exception.ErrorType;
 
 import java.time.LocalDateTime;
 
@@ -24,13 +24,14 @@ public class EmailAuthService {
     //이메일 인증 토큰 검증
     @Transactional
     public void confirmToken(String token) {
-        
+
         //토큰 받아오기
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
                 .orElseThrow(() -> new AccountException(ErrorType.EMAIL_VALIDATED_ERROR));
-        
+
         //이미 인증에 사용한 토큰이면 -> 에러
-        if (confirmationToken.getConfirmedAt() != null) throw new AccountException(ErrorType.EMAIL_AUTH_TOKEN_ALREADY_USED);
+        if (confirmationToken.getConfirmedAt() != null)
+            throw new AccountException(ErrorType.EMAIL_AUTH_TOKEN_ALREADY_USED);
 
         //토큰이 만료 됐으면
         if (userService.isEmailAuthTokenExpired(confirmationToken)) {

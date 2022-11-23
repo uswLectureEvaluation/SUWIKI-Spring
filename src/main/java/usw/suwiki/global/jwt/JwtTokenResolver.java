@@ -11,7 +11,6 @@ import usw.suwiki.domain.refreshToken.RefreshToken;
 import usw.suwiki.domain.refreshToken.RefreshTokenRepository;
 import usw.suwiki.domain.user.User;
 
-
 import static io.jsonwebtoken.Jwts.parser;
 
 @Component

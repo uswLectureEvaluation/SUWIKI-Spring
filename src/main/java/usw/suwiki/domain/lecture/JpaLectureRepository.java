@@ -66,7 +66,7 @@ public class JpaLectureRepository implements LectureRepository {
 
         List<Lecture> lectureList = em.createQuery(query, Lecture.class)
                 .setParameter("value", searchValue)
-                .setFirstResult((pageNumber.get()-1)*10)
+                .setFirstResult((pageNumber.get() - 1) * 10)
                 .setMaxResults(10)
                 .getResultList();
 
@@ -105,7 +105,7 @@ public class JpaLectureRepository implements LectureRepository {
         query += String.format("ORDER BY l.%s DESC", orderOption.get());
 
         List<Lecture> lectureList = em.createQuery(query, Lecture.class)
-                .setFirstResult((pageNumber.get()-1)*10)
+                .setFirstResult((pageNumber.get() - 1) * 10)
                 .setMaxResults(10)
                 .getResultList();
 
@@ -145,7 +145,7 @@ public class JpaLectureRepository implements LectureRepository {
         List<Lecture> lectureList = em.createQuery(query, Lecture.class)
                 .setParameter("major", majorType)
                 .setParameter("value", searchValue)
-                .setFirstResult((pageNumber.get()-1)*10)
+                .setFirstResult((pageNumber.get() - 1) * 10)
                 .setMaxResults(10)
                 .getResultList();
 
@@ -187,13 +187,13 @@ public class JpaLectureRepository implements LectureRepository {
         query += String.format("WHERE l.majorType = :major ORDER BY l.%s DESC", orderOption.get());
 
         List<Lecture> lectureList = em.createQuery(query, Lecture.class)
-                .setParameter("major",majorType)
-                .setFirstResult((pageNumber.get()-1)*10)
+                .setParameter("major", majorType)
+                .setFirstResult((pageNumber.get() - 1) * 10)
                 .setMaxResults(10)
                 .getResultList();
 
         List countList = em.createQuery("SELECT COUNT(l) FROM Lecture l WHERE l.majorType = :major")
-                .setParameter("major",majorType)
+                .setParameter("major", majorType)
                 .getResultList();
         Long count = (Long) countList.get(0);
 

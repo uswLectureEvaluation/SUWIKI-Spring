@@ -3,11 +3,10 @@ package usw.suwiki.domain.exam;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.global.PageOption;
-import usw.suwiki.domain.exam.ExamPosts;
 
 import java.util.List;
 
-public interface ExamPostsRepository{
+public interface ExamPostsRepository {
     void save(ExamPosts examPosts);
 
     ExamPosts findById(Long id);

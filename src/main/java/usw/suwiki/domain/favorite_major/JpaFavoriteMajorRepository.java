@@ -6,7 +6,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @Repository
-public class JpaFavoriteMajorRepository implements FavoriteMajorRepository{
+public class JpaFavoriteMajorRepository implements FavoriteMajorRepository {
 
     private final EntityManager em;
 

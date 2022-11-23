@@ -1,15 +1,15 @@
 package usw.suwiki.domain.reportTarget;
 
 import lombok.*;
-import usw.suwiki.domain.evaluation.EvaluatePosts;
-import usw.suwiki.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 
 @Entity
-@Builder @Getter @Setter
+@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class EvaluatePostReport {

@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.email.EmailSender;
 import usw.suwiki.exception.AccountException;
 import usw.suwiki.exception.ErrorType;
-import usw.suwiki.domain.emailBuild.BuildAutoDeletedWarningUserFormService;
+import usw.suwiki.global.util.emailBuild.BuildAutoDeletedWarningUserFormService;
 
 
 @Service

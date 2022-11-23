@@ -44,9 +44,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void resetPassword(@Param("resetPassword") String resetPassword, @Param("loginId") String loginId, @Param("email") String email);
 
     /**
-
-     휴면계정 테이블의 userIdx, loginId, password, Email 불러오기
-
+     * 휴면계정 테이블의 userIdx, loginId, password, Email 불러오기
      */
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE user SET " +

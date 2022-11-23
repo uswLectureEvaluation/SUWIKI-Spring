@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 @Getter
 public class UserResponseDto {
 
-    @Data @Builder
+    @Data
+    @Builder
     public static class MyPageResponse {
         private String loginId; // 유저 로그인 아이디
         private String email;

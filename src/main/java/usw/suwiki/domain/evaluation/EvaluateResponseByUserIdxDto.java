@@ -1,7 +1,6 @@
 package usw.suwiki.domain.evaluation;
 
 import lombok.Getter;
-import usw.suwiki.domain.evaluation.EvaluatePosts;
 
 @Getter
 public class EvaluateResponseByUserIdxDto {

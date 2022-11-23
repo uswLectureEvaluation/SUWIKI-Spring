@@ -1,7 +1,6 @@
 package usw.suwiki.domain.exam;
 
 import lombok.Getter;
-import usw.suwiki.domain.exam.ExamPosts;
 
 @Getter
 public class ExamResponseByUserIdxDto {
@@ -13,7 +12,7 @@ public class ExamResponseByUserIdxDto {
     private String selectedSemester;
     private String semesterList;
     private String examType;
-    private String examInfo;    
+    private String examInfo;
     private String examDifficulty;    //난이도
 
     private String content;    //주관적인 강의평가 입력내용
