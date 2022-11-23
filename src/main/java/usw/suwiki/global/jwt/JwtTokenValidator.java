@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
-import usw.suwiki.exception.AccountException;
+import usw.suwiki.exception.errortype.AccountException;
 import usw.suwiki.exception.ErrorType;
 
 import java.time.LocalDateTime;

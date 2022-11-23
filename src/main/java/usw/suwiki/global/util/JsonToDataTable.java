@@ -1,15 +1,14 @@
 package usw.suwiki.global.util;
 
-import usw.suwiki.domain.lecture.JsonToLectureDto;
-import usw.suwiki.domain.lecture.Lecture;
-import usw.suwiki.domain.lecture.JpaLectureRepository;
+import usw.suwiki.domain.lecture.dto.JsonToLectureDto;
+import usw.suwiki.domain.lecture.entity.Lecture;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
-import usw.suwiki.domain.lecture.LectureRepository;
+import usw.suwiki.domain.lecture.repository.LectureRepository;
 
 import javax.transaction.Transactional;
 import java.io.FileReader;

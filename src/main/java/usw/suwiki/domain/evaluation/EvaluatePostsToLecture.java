@@ -2,6 +2,7 @@ package usw.suwiki.domain.evaluation;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 
 @Getter
 @NoArgsConstructor

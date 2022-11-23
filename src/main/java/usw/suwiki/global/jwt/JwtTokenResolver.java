@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.refreshToken.RefreshToken;
-import usw.suwiki.domain.refreshToken.RefreshTokenRepository;
-import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.refreshToken.entity.RefreshToken;
+import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
+import usw.suwiki.domain.user.entity.User;
 
 import static io.jsonwebtoken.Jwts.parser;
 

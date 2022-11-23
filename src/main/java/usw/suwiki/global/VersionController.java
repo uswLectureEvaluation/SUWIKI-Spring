@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.SuwikiVersion;
-import usw.suwiki.domain.lecture.LectureService;
+import usw.suwiki.domain.lecture.service.LectureService;
 
 import java.util.List;
 

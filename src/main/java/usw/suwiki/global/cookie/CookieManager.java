@@ -2,7 +2,7 @@ package usw.suwiki.global.cookie;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import usw.suwiki.exception.AccountException;
+import usw.suwiki.exception.errortype.AccountException;
 import usw.suwiki.exception.ErrorType;
 import usw.suwiki.global.jwt.JwtTokenValidator;
 

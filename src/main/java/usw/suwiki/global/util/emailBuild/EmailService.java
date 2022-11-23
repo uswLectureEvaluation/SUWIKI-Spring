@@ -8,9 +8,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import usw.suwiki.domain.email.EmailSender;
+import usw.suwiki.domain.email.service.EmailSender;
 import usw.suwiki.exception.ErrorType;
-import usw.suwiki.exception.MailException;
+import usw.suwiki.exception.errortype.MailException;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
