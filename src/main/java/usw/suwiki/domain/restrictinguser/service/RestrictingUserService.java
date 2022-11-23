@@ -1,4 +1,4 @@
-package usw.suwiki.domain.restrictinguser;
+package usw.suwiki.domain.restrictinguser.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.exam.entity.ExamPosts;
+import usw.suwiki.domain.restrictinguser.repository.RestrictingUser;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.dto.UserResponseDto;
+import usw.suwiki.domain.user.repository.restrictinguser.RestrictingUserRepository;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto;
 import usw.suwiki.domain.admin.service.UserAdminService;

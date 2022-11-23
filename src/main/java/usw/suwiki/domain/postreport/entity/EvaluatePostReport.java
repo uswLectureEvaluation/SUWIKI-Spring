@@ -1,4 +1,4 @@
-package usw.suwiki.domain.reportTarget.entity;
+package usw.suwiki.domain.postreport.entity;
 
 import lombok.*;
 
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExamPostReport {
+public class EvaluatePostReport {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,14 +20,12 @@ public class ExamPostReport {
 
     // 신고당한 게시글 id
     @Column
-    private Long examIdx;
+    private Long evaluateIdx;
 
     // 신고당한 유저 Id
-    @Column
     private Long reportedUserIdx;
 
     // 신고한 유저 Id
-    @Column
     private Long reportingUserIdx;
 
     // 교수이름

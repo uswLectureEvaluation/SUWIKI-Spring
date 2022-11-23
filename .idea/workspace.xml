@@ -261,7 +261,7 @@
       <recent name="usw.suwiki.testPackage" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.EvaluatePostsTest">
+  <component name="RunManager" selected="Spring Boot.SuwikiApplication">
     <configuration name="SuwikiApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="usw.suwiki.SuwikiApplication" />
       <module name="suwiki.main" />

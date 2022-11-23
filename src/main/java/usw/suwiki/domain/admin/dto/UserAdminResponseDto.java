@@ -3,8 +3,8 @@ package usw.suwiki.domain.admin.dto;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.reportTarget.entity.EvaluatePostReport;
-import usw.suwiki.domain.reportTarget.entity.ExamPostReport;
+import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
+import usw.suwiki.domain.postreport.entity.ExamPostReport;
 
 import java.util.List;
 

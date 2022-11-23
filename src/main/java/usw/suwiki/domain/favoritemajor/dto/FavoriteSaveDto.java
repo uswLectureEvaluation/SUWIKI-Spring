@@ -1,4 +1,4 @@
-package usw.suwiki.domain.favorite_major.dto;
+package usw.suwiki.domain.favoritemajor.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

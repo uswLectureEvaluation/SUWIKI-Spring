@@ -1,7 +1,7 @@
-package usw.suwiki.domain.favorite_major.repository;
+package usw.suwiki.domain.favoritemajor.repository;
 
 import org.springframework.stereotype.Repository;
-import usw.suwiki.domain.favorite_major.entity.FavoriteMajor;
+import usw.suwiki.domain.favoritemajor.entity.FavoriteMajor;
 
 import javax.persistence.EntityManager;
 import java.util.List;

@@ -1,4 +1,4 @@
-package usw.suwiki.domain.restrictinguser;
+package usw.suwiki.domain.restrictinguser.repository;
 
 
 import lombok.AllArgsConstructor;

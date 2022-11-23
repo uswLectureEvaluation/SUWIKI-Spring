@@ -1,6 +1,6 @@
-package usw.suwiki.domain.favorite_major.repository;
+package usw.suwiki.domain.favoritemajor.repository;
 
-import usw.suwiki.domain.favorite_major.entity.FavoriteMajor;
+import usw.suwiki.domain.favoritemajor.entity.FavoriteMajor;
 
 import java.util.List;
 

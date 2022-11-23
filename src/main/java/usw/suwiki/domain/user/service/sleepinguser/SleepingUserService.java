@@ -1,4 +1,4 @@
-package usw.suwiki.domain.sleepinguser;
+package usw.suwiki.domain.user.service.sleepinguser;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -9,15 +9,15 @@ import usw.suwiki.domain.email.repository.ConfirmationTokenRepository;
 import usw.suwiki.domain.email.service.EmailSender;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.service.ExamPostsService;
-import usw.suwiki.domain.favorite_major.service.FavoriteMajorService;
+import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
-import usw.suwiki.domain.reportTarget.repository.EvaluateReportRepository;
-import usw.suwiki.domain.reportTarget.repository.ExamReportRepository;
+import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
+import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.dto.UserDto;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.service.UserService;
-import usw.suwiki.domain.restrictinguser.RestrictingUserRepository;
+import usw.suwiki.domain.user.repository.restrictinguser.RestrictingUserRepository;
 import usw.suwiki.domain.userIsolation.entity.UserIsolation;
 import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.userIsolation.service.UserIsolationService;
