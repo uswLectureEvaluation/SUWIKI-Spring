@@ -15,6 +15,7 @@ import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.user.dto.UserDto.LoginForm;
 import usw.suwiki.domain.user.entity.User;
+import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenProvider;
@@ -42,6 +43,8 @@ public class UserAdminController {
 
     // 유저 관련 비즈니스 로직
     private final UserService userService;
+
+    private final UserRepository userRepository;
 
     // 관리자 계정 관련 비즈니스 로직
     private final UserAdminService userAdminService;
@@ -100,10 +103,13 @@ public class UserAdminController {
         Long targetUserIdx = userAdminService.banishEvaluatePost(evaluatePostRestrictForm.getEvaluateIdx());
 
         // 유저 restricted True, 정지 카운트 증가
-        userAdminService.plusRestrictCount(targetUserIdx);
+        User targetUser = userAdminService.plusRestrictCount(targetUserIdx);
 
         // 신고한 유저 포인트 증가
-        userAdminService.plusReportingUserPoint(reportingUserIdx);
+        User reportingUser = userAdminService.plusReportingUserPoint(reportingUserIdx);
+
+        // userRepository.save(targetUser);
+        // userRepository.save(reportingUser);
 
         result.put("Success", true);
         return result;
@@ -116,28 +122,18 @@ public class UserAdminController {
             @Valid @RequestBody ExamPostRestrictForm examPostRestrictForm) {
 
         Map<String, Boolean> result = new HashMap<>();
-
-        //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
 
         //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(USER_RESTRICTED);
 
-        // 유저 정지테이블에 값 추가
         restrictingUserService.addRestrictingTableByExamPost(examPostRestrictForm);
-
-        // 신고한 유저 인덱스 가져오기
         Long reportingUserIdx = userService.whoIsExamReporting(examPostRestrictForm.getExamIdx());
-
-        // 게시글 삭제 후 해당 게시글 작성자 인덱스 받아오기
         Long targetUserIdx = userAdminService.blacklistOrRestrictAndDeleteExamPost(examPostRestrictForm.getExamIdx());
 
-        // 유저 restricted True, 정지 카운트 증가
-        userAdminService.plusRestrictCount(targetUserIdx);
-
-        // 신고한 유저 포인트 증가
-        userAdminService.plusReportingUserPoint(reportingUserIdx);
+        User targetUser = userAdminService.plusRestrictCount(targetUserIdx);
+        User reportingUser = userAdminService.plusReportingUserPoint(reportingUserIdx);
 
         result.put("Success", true);
         return result;
@@ -179,7 +175,6 @@ public class UserAdminController {
                 evaluatePostBlacklistForm.getJudgement());
 
         userAdminService.plusRestrictCount(userIdx);
-
 
         result.put("Success", true);
         return result;

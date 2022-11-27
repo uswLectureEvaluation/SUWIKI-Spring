@@ -8,9 +8,9 @@ import usw.suwiki.domain.email.repository.ConfirmationTokenRepository;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.service.ExamPostsService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
-import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
+import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.repository.restrictinguser.RestrictingUserRepository;
@@ -70,6 +70,9 @@ public class QuitRequestUserService {
     @Transactional
     public void waitQuit(Long userIdx) {
 
+        // 즐겨찾는 과목 제거
+        favoriteMajorService.deleteAllByUser(userIdx);
+
         //구매한 시험 정보 삭제
         viewExamService.deleteByUserIdx(userIdx);
 
@@ -95,39 +98,39 @@ public class QuitRequestUserService {
         List<UserIsolation> targetUserIsolation = userIsolationRepository.findByRequestedQuitDateBefore(targetTime);
 
         if (targetUser.size() > 0) {
-            for (int i = 0; i < targetUser.toArray().length; i++) {
+            for (int numberOfTargetUser = 0; numberOfTargetUser < targetUser.toArray().length; numberOfTargetUser++) {
 
                 // 삭제 예정 유저의 구매한 시험 정보 삭제
-                viewExamService.deleteByUserIdx(targetUser.get(i).getId());
+                viewExamService.deleteByUserIdx(targetUser.get(numberOfTargetUser).getId());
 
                 // 리프레시 토큰 삭제
-                refreshTokenRepository.deleteByUserIdx(targetUserIsolation.get(i).getId());
+                refreshTokenRepository.deleteByUserIdx(targetUserIsolation.get(numberOfTargetUser).getId());
 
                 // 신고된 시험정보 삭제
-                examReportRepository.deleteByReportedUserIdx(targetUser.get(i).getId());
-                examReportRepository.deleteByReportingUserIdx(targetUser.get(i).getId());
+                examReportRepository.deleteByReportedUserIdx(targetUser.get(numberOfTargetUser).getId());
+                examReportRepository.deleteByReportingUserIdx(targetUser.get(numberOfTargetUser).getId());
 
                 // 신고된 강의평가 삭제
-                evaluateReportRepository.deleteByReportingUserIdx(targetUser.get(i).getId());
-                evaluateReportRepository.deleteByReportedUserIdx(targetUser.get(i).getId());
+                evaluateReportRepository.deleteByReportingUserIdx(targetUser.get(numberOfTargetUser).getId());
+                evaluateReportRepository.deleteByReportedUserIdx(targetUser.get(numberOfTargetUser).getId());
 
                 // 삭제 예정 유저의 강의평가 삭제
-                evaluatePostsService.deleteByUser(targetUser.get(i).getId());
+                evaluatePostsService.deleteByUser(targetUser.get(numberOfTargetUser).getId());
 
                 // 삭제 예정 유저의 시험정보 삭제
-                examPostsService.deleteByUser(targetUser.get(i).getId());
+                examPostsService.deleteByUser(targetUser.get(numberOfTargetUser).getId());
 
                 // 즐겨찾기 게시글 삭제
-                favoriteMajorService.deleteAllByUser(targetUser.get(i).getId());
+                favoriteMajorService.deleteAllByUser(targetUser.get(numberOfTargetUser).getId());
 
                 // 제한 테이블에서 삭제
-                restrictingUserRepository.deleteByUserIdx(targetUser.get(i).getId());
+                restrictingUserRepository.deleteByUserIdx(targetUser.get(numberOfTargetUser).getId());
 
                 // 이메일 인증 토큰 삭제
-                confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getId());
+                confirmationTokenRepository.deleteByUserIdx(targetUser.get(numberOfTargetUser).getId());
 
                 // 본 테이블에서 유저 삭제
-                userRepository.deleteById(targetUser.get(i).getId());
+                userRepository.deleteById(targetUser.get(numberOfTargetUser).getId());
             }
         } else if (targetUser.size() == 0) {
             for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
