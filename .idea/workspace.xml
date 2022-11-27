@@ -4,103 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8b60d8-83aa-4517-8f76-72f1a7b48cad" name="변경" comment="# &lt;타입&gt;: &lt;제목&gt;&#10;style : 패키지 정리 (각 도메인 별, controller, service, dto, repository, entity 패키지 추가)&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
+    <list default="true" id="fd8b60d8-83aa-4517-8f76-72f1a7b48cad" name="변경" comment="# &lt;타입&gt;: &lt;제목&gt;&#10;&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/deploy.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/deploy.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/gradle.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/gradle.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/config/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/config/AppConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/blacklistDomain/BlackListService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/blacklistdomain/BlackListService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/blacklistDomain/BlacklistDomain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/blacklistdomain/BlacklistDomain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/blacklistDomain/BlacklistRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/blacklistdomain/BlacklistRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/email/ConfirmationToken.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/email/entity/ConfirmationToken.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/email/ConfirmationTokenRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/email/repository/ConfirmationTokenRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/email/ConfirmationTokenService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/email/service/ConfirmationTokenService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/email/EmailAuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/email/service/EmailAuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/email/EmailSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/email/service/EmailSender.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/EvaluateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/controller/EvaluateController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/EvaluatePosts.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/entity/EvaluatePosts.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/EvaluatePostsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/repository/EvaluatePostsRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/EvaluatePostsSaveDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/dto/EvaluatePostsSaveDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/EvaluatePostsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/service/EvaluatePostsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/EvaluatePostsToLecture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/EvaluatePostsToLecture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/EvaluatePostsUpdateDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/dto/EvaluatePostsUpdateDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/EvaluateResponseByLectureIdDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/dto/EvaluateResponseByLectureIdDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/EvaluateResponseByUserIdxDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/dto/EvaluateResponseByUserIdxDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/JpaEvaluatePostsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/JpaEvaluatePostsRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/ExamPosts.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/entity/ExamPosts.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/ExamPostsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/controller/ExamPostsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/ExamPostsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/repository/ExamPostsRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/ExamPostsSaveDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/dto/ExamPostsSaveDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/ExamPostsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/service/ExamPostsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/ExamPostsUpdateDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/dto/ExamPostsUpdateDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/ExamResponseByLectureIdDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/dto/ExamResponseByLectureIdDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/ExamResponseByUserIdxDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/dto/ExamResponseByUserIdxDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/JpaExamPostsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/repository/JpaExamPostsRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/JpaViewExamRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/repository/JpaViewExamRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/ViewExamRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/repository/ViewExamRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/favorite_major/FavoriteMajor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/favorite_major/entity/FavoriteMajor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/favorite_major/FavoriteMajorRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/favorite_major/repository/FavoriteMajorRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/favorite_major/FavoriteMajorService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/favorite_major/service/FavoriteMajorService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/favorite_major/FavoriteSaveDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/favorite_major/dto/FavoriteSaveDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/favorite_major/JpaFavoriteMajorRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/favorite_major/repository/JpaFavoriteMajorRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/JpaLectureRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/repository/JpaLectureRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/JsonToLectureDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/dto/JsonToLectureDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/Lecture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/entity/Lecture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/LectureController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/controller/LectureController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/LectureDetailResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/dto/LectureDetailResponseDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/LectureListAndCountDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/dto/LectureListAndCountDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/LectureRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/repository/LectureRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/LectureResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/dto/LectureResponseDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/LectureService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/service/LectureService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/JpaNoticeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/repository/JpaNoticeRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/Notice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/entity/Notice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/NoticeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/controller/NoticeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/NoticeDetailResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/dto/NoticeDetailResponseDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/NoticeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/repository/NoticeRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/NoticeResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/dto/NoticeResponseDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/NoticeSaveOrUpdateDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/dto/NoticeSaveOrUpdateDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/NoticeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/notice/service/NoticeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/refreshToken/RefreshToken.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/refreshToken/entity/RefreshToken.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/refreshToken/RefreshTokenRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/refreshToken/repository/RefreshTokenRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/reportTarget/EvaluatePostReport.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/reportTarget/entity/EvaluatePostReport.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/reportTarget/EvaluateReportRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/reportTarget/repository/EvaluateReportRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/reportTarget/ExamPostReport.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/reportTarget/entity/ExamPostReport.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/reportTarget/ExamReportRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/reportTarget/repository/ExamReportRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/Role.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/entity/Role.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/entity/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/UserDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/dto/UserDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/repository/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/UserResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/dto/UserResponseDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/quitRequestUser/QuitRequestUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/service/QuitRequestUserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/restrictingUser/RestrictingUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/restrictinguser/RestrictingUser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/restrictingUser/RestrictingUserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/restrictinguser/RestrictingUserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/restrictingUser/RestrictingUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/restrictinguser/RestrictingUserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/sleepingUser/SleepingUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/sleepinguser/SleepingUserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userAdmin/UserAdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/admin/controller/UserAdminController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userAdmin/UserAdminEvaluateRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/admin/repository/UserAdminEvaluateRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userAdmin/UserAdminExamRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/admin/repository/UserAdminExamRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userAdmin/UserAdminRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/admin/dto/UserAdminRequestDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userAdmin/UserAdminResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/admin/dto/UserAdminResponseDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userAdmin/UserAdminService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/admin/service/UserAdminService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userIsolation/UserIsolation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userIsolation/entity/UserIsolation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userIsolation/UserIsolationRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userIsolation/repository/UserIsolationRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userIsolation/UserIsolationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userIsolation/service/UserIsolationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/viewExam/PurchaseHistoryDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/viewExam/dto/PurchaseHistoryDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/viewExam/ViewExam.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/viewExam/entity/ViewExam.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/viewExam/ViewExamService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/viewExam/service/ViewExamService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/exception/AccountException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/exception/errortype/AccountException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/exception/BaseException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/exception/errortype/BaseException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/exception/ControllerExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/exception/ControllerExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/exception/MailException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/exception/errortype/MailException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/exception/TokenException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/exception/errortype/TokenException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/VersionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/VersionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/cookie/CookieManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/cookie/CookieManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/jwt/JwtAuthenticationProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/jwt/JwtAuthenticationProvider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/jwt/JwtTokenProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/jwt/JwtTokenProvider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/jwt/JwtTokenResolver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/jwt/JwtTokenResolver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/jwt/JwtTokenValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/jwt/JwtTokenValidator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/util/JsonToDataTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/util/JsonToDataTable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/util/emailBuild/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/util/emailBuild/EmailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/admin/controller/UserAdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/admin/controller/UserAdminController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,6 +39,12 @@
                 <item name="suwiki" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
               </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="suwiki" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="other" type="c8890929:TasksNode$1" />
+              </path>
             </expand>
             <select />
           </tree_state>
@@ -143,6 +58,7 @@
         <option value="Interface" />
         <option value="JUnit5 Test Class" />
         <option value="Class" />
+        <option value="package-info" />
       </list>
     </option>
   </component>
@@ -172,12 +88,16 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
-                    <option name="branchName" value="KDH_Test" />
-                    <option name="lastUsedInstant" value="1656495667" />
+                    <option name="branchName" value="Develop_kdh_001" />
+                    <option name="lastUsedInstant" value="1669213443" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="main" />
-                    <option name="lastUsedInstant" value="1656142985" />
+                    <option name="lastUsedInstant" value="1669213418" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="KDH_Test" />
+                    <option name="lastUsedInstant" value="1656495667" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="Feature_kdh_004" />
@@ -199,8 +119,6 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-web/5.3.15/dc77bfb04059f61b04184ec434fe3494c5079286/spring-web-5.3.15-sources.jar!/org/springframework/http/HttpStatus.java" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/dto/ExamPostsSaveDto.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/favorite_major/dto/FavoriteSaveDto.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/reportTarget/repository/EvaluateReportRepository.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/controller/UserController.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/service/UserService.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/userIsolation/repository/UserIsolationRepository.java" root0="FORCE_HIGHLIGHTING" />
@@ -231,22 +149,22 @@
     <option name="showLibraryContents" value="true" />
     <option name="sortByType" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelOrder2": "2",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RequestMappingsPanelWidth2": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "E:/Priority/Project/SUWIKI-REMASTER/src/main/java/usw/suwiki/domain/user",
-    "nodejs_package_manager_path": "npm",
-    "spring.configuration.checksum": "1e934fca0325313c5fddbb07460f1f9d"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelOrder2&quot;: &quot;2&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth2&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Priority/Project/SUWIKI-REMASTER/src/main/java/usw/suwiki/domain/user&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;1e934fca0325313c5fddbb07460f1f9d&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\Priority\Project\SUWIKI-REMASTER\src\main\java\usw\suwiki\domain\user" />
@@ -261,7 +179,7 @@
       <recent name="usw.suwiki.testPackage" />
     </key>
   </component>
-  <component name="RunManager" selected="Spring Boot.SuwikiApplication">
+  <component name="RunManager" selected="Gradle.SUWIKI-REMASTER [compileQuerydsl]">
     <configuration name="SuwikiApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="usw.suwiki.SuwikiApplication" />
       <module name="suwiki.main" />
@@ -275,20 +193,26 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="EvaluatePostsTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="suwiki.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="Suwikibackend.Suwiki.repository.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="Suwikibackend.Suwiki.repository" />
-      <option name="MAIN_CLASS_NAME" value="Suwikibackend.Suwiki.repository.EvaluatePostsTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
+    <configuration name="SUWIKI-REMASTER [compileQuerydsl]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="compileQuerydsl" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
     </configuration>
     <configuration name="UserTest.checkLoginIdTest (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="suwiki.test" />
@@ -346,7 +270,7 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="JUnit.EvaluatePostsTest" />
+      <item itemvalue="Gradle.SUWIKI-REMASTER [compileQuerydsl]" />
       <item itemvalue="JUnit.UserTest.test" />
       <item itemvalue="JUnit.UserTest.userCountTest" />
       <item itemvalue="JUnit.UserTest.checkLoginIdTest (1)" />
@@ -355,11 +279,11 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.EvaluatePostsTest" />
+        <item itemvalue="Gradle.SUWIKI-REMASTER [compileQuerydsl]" />
         <item itemvalue="애플리케이션.SuwikiApplication" />
+        <item itemvalue="JUnit.UserTest.checkLoginIdTest (1)" />
         <item itemvalue="JUnit.UserTest.userCountTest" />
         <item itemvalue="JUnit.UserTest.test" />
-        <item itemvalue="JUnit.UserTest.checkLoginIdTest (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -385,21 +309,9 @@
       <workItem from="1667371325485" duration="196000" />
       <workItem from="1667640159255" duration="651000" />
       <workItem from="1669181650804" duration="197000" />
-      <workItem from="1669210604385" duration="2415000" />
-    </task>
-    <task id="LOCAL-00068" summary="# &lt;타입&gt;: &lt;제목&gt;&#10;Fix : RefreshToken Query&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
-      <created>1658315937053</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1658315937053</updated>
-    </task>
-    <task id="LOCAL-00069" summary="# &lt;타입&gt;: &lt;제목&gt;&#10;RefreshToken Query&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
-      <created>1658316295536</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
-      <option name="project" value="LOCAL" />
-      <updated>1658316295536</updated>
+      <workItem from="1669210604385" duration="2906000" />
+      <workItem from="1669268079113" duration="16000" />
+      <workItem from="1669537484196" duration="568000" />
     </task>
     <task id="LOCAL-00070" summary="# &lt;타입&gt;: &lt;제목&gt;&#10;Local Test Enviroment&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
       <created>1658318343976</created>
@@ -730,7 +642,21 @@
       <option name="project" value="LOCAL" />
       <updated>1669211377337</updated>
     </task>
-    <option name="localTasksCounter" value="117" />
+    <task id="LOCAL-00117" summary="# &lt;타입&gt;: &lt;제목&gt;&#10;style : 패키지 정리 (각 도메인 별, controller, service, dto, repository, entity 패키지 추가)&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
+      <created>1669213030829</created>
+      <option name="number" value="00117" />
+      <option name="presentableId" value="LOCAL-00117" />
+      <option name="project" value="LOCAL" />
+      <updated>1669213030829</updated>
+    </task>
+    <task id="LOCAL-00118" summary="# &lt;타입&gt;: &lt;제목&gt;&#10;style : 패키지 재 정리&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
+      <created>1669213399920</created>
+      <option name="number" value="00118" />
+      <option name="presentableId" value="LOCAL-00118" />
+      <option name="project" value="LOCAL" />
+      <updated>1669213399921</updated>
+    </task>
+    <option name="localTasksCounter" value="119" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -767,6 +693,7 @@
     <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;style : 사용하지 않는 import 제거 및 코드 정렬&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
     <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;merge&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
     <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;style : 패키지 정리 (각 도메인 별, controller, service, dto, repository, entity 패키지 추가)&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
-    <option name="LAST_COMMIT_MESSAGE" value="# &lt;타입&gt;: &lt;제목&gt;&#10;style : 패키지 정리 (각 도메인 별, controller, service, dto, repository, entity 패키지 추가)&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
+    <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;style : 패키지 재 정리&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
+    <option name="LAST_COMMIT_MESSAGE" value="# &lt;타입&gt;: &lt;제목&gt;&#10;style : 패키지 재 정리&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
   </component>
 </project>
