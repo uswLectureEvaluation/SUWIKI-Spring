@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.blacklistdomain.entity.BlacklistDomain;
 
 import java.time.LocalDateTime;
 import java.util.List;

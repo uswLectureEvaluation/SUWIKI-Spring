@@ -1,4 +1,4 @@
-package usw.suwiki.domain.blacklistdomain;
+package usw.suwiki.domain.blacklistdomain.entity;
 
 import lombok.*;
 
@@ -15,7 +15,7 @@ public class BlacklistDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //Auto Increment
+    private Long id;
 
     @Column
     private Long userIdx;

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.blacklistdomain.BlacklistDomain;
+import usw.suwiki.domain.blacklistdomain.entity.BlacklistDomain;
 import usw.suwiki.domain.blacklistdomain.BlacklistRepository;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;

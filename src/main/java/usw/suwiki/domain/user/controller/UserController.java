@@ -18,7 +18,7 @@ import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.service.quitrequestuser.QuitRequestUserService;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
-import usw.suwiki.domain.user.service.sleepinguser.SleepingUserService;
+import usw.suwiki.domain.userIsolation.service.UserIsolationService;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.exception.errortype.AccountException;
@@ -49,7 +49,7 @@ public class UserController {
     private final RestrictingUserService restrictingUserService;
 
     // 휴면 계정 관련 서비스
-    private final SleepingUserService sleepingUserService;
+    private final UserIsolationService userIsolationService;
 
     // 회원탈퇴 요청 계정 관련 서비스
     private final QuitRequestUserService quitRequestUserService;
@@ -224,7 +224,7 @@ public class UserController {
             throw new AccountException(ErrorType.PASSWORD_ERROR);
         }
 
-        User user = sleepingUserService.sleepingUserLogin(loginForm);
+        User user = userIsolationService.sleepingUserLogin(loginForm);
 
         //액세스 토큰 생성
         String accessToken = jwtTokenProvider.createAccessToken(user);
@@ -283,7 +283,7 @@ public class UserController {
 
         // 휴면계정일 경우의 로그인 로직
         else if (userIsolationRepository.findByLoginId(loginForm.getLoginId()).isPresent()) {
-            User user = sleepingUserService.sleepingUserLogin(loginForm);
+            User user = userIsolationService.sleepingUserLogin(loginForm);
 
             // 액세스 토큰 생성
             String accessToken = jwtTokenProvider.createAccessToken(user);
