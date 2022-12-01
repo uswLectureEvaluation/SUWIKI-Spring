@@ -1,5 +1,8 @@
 package usw.suwiki.global.util.emailBuild;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class BuildEmailAuthForm {
     public String buildEmail(String link) {
         return "<center>\n" +

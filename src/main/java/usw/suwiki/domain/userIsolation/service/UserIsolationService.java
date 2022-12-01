@@ -22,8 +22,8 @@ import usw.suwiki.domain.userIsolation.entity.UserIsolation;
 import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
 import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.global.util.emailBuild.BuildSoonDormantTargetForm;
 import usw.suwiki.global.util.emailBuild.UserAutoDeletedWarningForm;
-import usw.suwiki.global.util.emailBuild.BuildSoonDormantTargetFormService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,7 +42,7 @@ public class UserIsolationService {
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final UserIsolationRepository userIsolationRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final BuildSoonDormantTargetFormService buildSoonDormantTargetFormService;
+    private final BuildSoonDormantTargetForm buildSoonDormantTargetForm;
     private final UserAutoDeletedWarningForm userAutoDeletedWarningForm;
     private final EmailSender emailSender;
     private final RestrictingUserRepository restrictingUserRepository;
@@ -84,7 +84,7 @@ public class UserIsolationService {
         List<User> user = userRepository.findByLastLoginBefore(targetTime);
         for (int i = 0; i < user.toArray().length; i++) {
             if (user.get(i).getEmail() != null) {
-                emailSender.send(user.get(i).getEmail(), buildSoonDormantTargetFormService.buildEmail());
+                emailSender.send(user.get(i).getEmail(), buildSoonDormantTargetForm.buildEmail());
             }
         }
     }

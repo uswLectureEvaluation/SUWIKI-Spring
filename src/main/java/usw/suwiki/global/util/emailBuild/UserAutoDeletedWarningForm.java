@@ -1,8 +1,9 @@
 package usw.suwiki.global.util.emailBuild;
 
-import org.springframework.stereotype.Service;
 
-@Service
+import org.springframework.stereotype.Component;
+
+@Component
 public class UserAutoDeletedWarningForm {
 
     public String buildEmail() {

@@ -1,5 +1,8 @@
 package usw.suwiki.global.util.emailBuild;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class BuildFindLoginIdForm {
     public String buildEmail(String loginId) {
         return "<center>\n" +
