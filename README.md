@@ -3,7 +3,7 @@
   <summary> <h2> 담당기능(눌러서 확인하기) </summary>
   <div markdown="Jiwon-jeong">
     
-# 담당 로직 (API 주소는 보안상 삭제)
+# 담당 로직
 
 ## Evaluation API
 - 추가 예정
@@ -30,7 +30,7 @@
   <summary> <h2> 담당기능(눌러서 확인하기) </summary>
   <div markdown="diger">
 
-# 담당 로직 (API 주소는 보안상 삭제)
+# 담당 로직
 
 ## User API
 
@@ -76,7 +76,7 @@
 
 <br>
 
-# 🐱 Framwork + Tool
+# 🐱 Framework
 ![Java_11](https://img.shields.io/badge/java11-red?style=flat-square&logo=java&logoColor=white)
 ![Spring_Boot](https://img.shields.io/badge/Spring_Boot-6DB33F.svg?style=flat-square&logo=spring&logoColor=white)
 ![Spring_Data_JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F.svg?style=flat-square&logo=spring&logoColor=white)
@@ -86,7 +86,7 @@
 # 🐱 Database
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1.svg?style=flat-square&logo=Mysql&logoColor=white)
 
-# 🐿️ DevOps
+# 🐿️ Deploy Environment
 ![AWS](https://img.shields.io/badge/AWS-232F3E.svg?style=flat-square&logo=Amazon-AWS&logoColor=white)
 ![RDS](https://img.shields.io/badge/RDS-232F3E.svg?style=flat-square&logo=mysql&logoColor=#232F3E)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-FCC624.svg?style=flat-square&logo=Ubuntu&logoColor=#E95420)
