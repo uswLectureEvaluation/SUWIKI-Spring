@@ -24,8 +24,8 @@ import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.domain.user.service.quitrequestuser.QuitRequestUserService;
 import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.userIsolation.service.UserIsolationService;
-import usw.suwiki.exception.ErrorType;
-import usw.suwiki.exception.errortype.AccountException;
+import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.ToJsonArray;
 import usw.suwiki.global.jwt.JwtTokenProvider;
 import usw.suwiki.global.jwt.JwtTokenResolver;
@@ -39,8 +39,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static usw.suwiki.exception.ErrorType.USER_NOT_EXISTS;
-import static usw.suwiki.exception.ErrorType.USER_RESTRICTED;
+import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
+import static usw.suwiki.global.exception.ErrorType.USER_RESTRICTED;
 
 
 @RestController

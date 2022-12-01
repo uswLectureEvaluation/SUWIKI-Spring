@@ -1,4 +1,4 @@
-package usw.suwiki.exception;
+package usw.suwiki.global.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,10 +10,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpServerErrorException;
-import usw.suwiki.exception.errortype.BaseException;
+import usw.suwiki.global.exception.errortype.BaseException;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static usw.suwiki.exception.ErrorType.*;
+import static usw.suwiki.global.exception.ErrorType.*;
 
 @Slf4j
 @ControllerAdvice

@@ -21,8 +21,8 @@ import usw.suwiki.domain.user.dto.UserDto.EditMyPasswordForm;
 import usw.suwiki.domain.user.dto.UserDto.FindPasswordForm;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
-import usw.suwiki.exception.ErrorType;
-import usw.suwiki.exception.errortype.AccountException;
+import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthFormService;
 import usw.suwiki.global.util.emailBuild.BuildFindLoginIdFormService;
@@ -34,11 +34,12 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-import static usw.suwiki.exception.ErrorType.*;
+import static usw.suwiki.global.exception.ErrorType.*;
 
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -55,7 +56,6 @@ public class UserService {
     private final BuildFindPasswordFormService BuildFindPasswordFormService;
     private final JwtTokenResolver jwtTokenResolver;
 
-    @Transactional
     public User makeUser(UserDto.JoinForm joinForm) {
         User user = User.builder()
                 .loginId((joinForm.getLoginId()))
@@ -72,7 +72,6 @@ public class UserService {
         return user;
     }
 
-    @Transactional
     public void join(UserDto.JoinForm joinForm) {
         if (userRepository.findByLoginId(joinForm.getLoginId()).isPresent() ||
                 userRepository.findByEmail(joinForm.getEmail()).isPresent())
@@ -94,22 +93,18 @@ public class UserService {
         emailSender.send(joinForm.getEmail(), buildEmailAuthFormService.buildEmail(link));
     }
 
-    @Transactional
     public boolean isEmailAuthTokenExpired(ConfirmationToken confirmationToken) {
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
         return expiredAt.isBefore(LocalDateTime.now());
     }
 
     // 이메일 인증을 받은 사용자인지 유저 테이블에서 검사
-    @Transactional
     public void isUserEmailAuth(Long userIdx) {
         User targetUser = loadUserFromUserIdx(userIdx);
         confirmationTokenRepository.verifyUserEmailAuth(targetUser.getId())
                 .orElseThrow(() -> new AccountException(USER_NOT_EMAIL_AUTHED));
     }
 
-    //아이디 찾기 메일 발송
-    @Transactional
     public boolean sendEmailFindId(UserDto.FindIdForm findIdForm) {
         Optional<User> inquiryId = userRepository.findByEmail(findIdForm.getEmail());
 
@@ -120,7 +115,6 @@ public class UserService {
         throw new AccountException(USER_NOT_FOUND);
     }
 
-    @Transactional
     public String randomizePassword() {
         SecureRandom secureRandom = new SecureRandom();
         secureRandom.setSeed(new Date().getTime());
@@ -173,7 +167,6 @@ public class UserService {
         user.setUpdatedAt(LocalDateTime.now());
     }
 
-    @Transactional
     public void validatePasswordAtEditPassword(String loginId, String prePassword) {
         if (userRepository.findByLoginId(loginId).isEmpty()) throw new AccountException(USER_NOT_EXISTS);
 
@@ -185,7 +178,6 @@ public class UserService {
         throw new AccountException(PASSWORD_ERROR);
     }
 
-    @Transactional
     public void compareNewPasswordVersusPrePassword(String loginId, String newPassword) {
 
         if (bCryptPasswordEncoder.matches(newPassword, userRepository.findByLoginId(loginId).get().getPassword())) {
@@ -193,43 +185,35 @@ public class UserService {
         }
     }
 
-    @Transactional
     public boolean validatePasswordAtUserTable(String loginId, String password) {
         return bCryptPasswordEncoder.matches(password, userRepository.findByLoginId(loginId).get().getPassword());
     }
 
-    @Transactional
     public void setLastLogin(User user) {
         userRepository.lastLoginStamp(LocalDateTime.now(), user.getId());
     }
 
-    @Transactional
     public User convertOptionalUserToDomainUser(Optional<User> optionalUser) {
         if (optionalUser.isPresent()) return optionalUser.get();
         throw new AccountException(USER_NOT_EXISTS);
     }
 
-    @Transactional
     public User loadUserFromUserIdx(Long userIdx) {
         return convertOptionalUserToDomainUser(userRepository.findById(userIdx));
     }
 
-    @Transactional
     public User loadUserFromLoginId(String loginId) {
         return convertOptionalUserToDomainUser(userRepository.findByLoginId(loginId));
     }
 
-    @Transactional
     public EvaluatePosts loadEvaluatePostsByIndex(Long EvaluatePostsIdx) {
         return evaluatePostsRepository.findById(EvaluatePostsIdx);
     }
 
-    @Transactional
     public ExamPosts loadExamPostsByIndex(Long ExamPostsIdx) {
         return examPostsRepository.findById(ExamPostsIdx);
     }
 
-    @Transactional
     public void reportExamPost(UserDto.ExamReportForm userReportForm, Long reportingUserIdx) {
         Long reportTargetUser = loadExamPostsByIndex(userReportForm.getExamIdx()).getUser().getId();
         ExamPosts reportedTargetPost = loadExamPostsByIndex(userReportForm.getExamIdx());
@@ -245,7 +229,6 @@ public class UserService {
         examReportRepository.save(target);
     }
 
-    @Transactional
     public void reportEvaluatePost(UserDto.EvaluateReportForm userReportForm, Long reportingUserIdx) {
         Long reportTargetUser = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getUser().getId();
         EvaluatePosts reportTargetPost = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx());
@@ -261,12 +244,10 @@ public class UserService {
         evaluateReportRepository.save(target);
     }
 
-    @Transactional
     public Long whoIsEvaluateReporting(Long evaluateIdx) {
         return evaluateReportRepository.findByEvaluateIdx(evaluateIdx).get().getReportingUserIdx();
     }
 
-    @Transactional
     public Long whoIsExamReporting(Long examIdx) {
         return examReportRepository.findByExamIdx(examIdx).get().getReportingUserIdx();
     }

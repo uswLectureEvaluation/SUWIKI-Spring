@@ -4,8 +4,8 @@ import org.springframework.stereotype.Repository;
 import usw.suwiki.domain.lecture.entity.Lecture;
 import usw.suwiki.domain.lecture.LectureFindOption;
 import usw.suwiki.domain.lecture.dto.LectureListAndCountDto;
-import usw.suwiki.exception.errortype.AccountException;
-import usw.suwiki.exception.ErrorType;
+import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.global.exception.ErrorType;
 
 import javax.persistence.EntityManager;
 import java.util.Arrays;

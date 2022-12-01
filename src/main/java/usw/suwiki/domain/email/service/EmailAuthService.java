@@ -8,8 +8,8 @@ import usw.suwiki.domain.email.repository.ConfirmationTokenRepository;
 import usw.suwiki.domain.user.entity.Role;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.service.UserService;
-import usw.suwiki.exception.errortype.AccountException;
-import usw.suwiki.exception.ErrorType;
+import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.global.exception.ErrorType;
 
 import java.time.LocalDateTime;
 

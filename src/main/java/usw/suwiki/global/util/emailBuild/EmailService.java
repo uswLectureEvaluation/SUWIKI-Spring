@@ -7,12 +7,12 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import usw.suwiki.domain.email.service.EmailSender;
-import usw.suwiki.exception.errortype.MailException;
+import usw.suwiki.global.exception.errortype.MailException;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import static usw.suwiki.exception.ErrorType.SEND_MAIL_FAILED;
+import static usw.suwiki.global.exception.ErrorType.SEND_MAIL_FAILED;
 
 @Service
 @AllArgsConstructor

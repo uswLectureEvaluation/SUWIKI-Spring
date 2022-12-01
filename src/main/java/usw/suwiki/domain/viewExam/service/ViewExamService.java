@@ -10,8 +10,8 @@ import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.viewExam.dto.PurchaseHistoryDto;
 import usw.suwiki.domain.viewExam.entity.ViewExam;
-import usw.suwiki.exception.errortype.AccountException;
-import usw.suwiki.exception.ErrorType;
+import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.global.exception.ErrorType;
 
 import java.util.ArrayList;
 import java.util.List;

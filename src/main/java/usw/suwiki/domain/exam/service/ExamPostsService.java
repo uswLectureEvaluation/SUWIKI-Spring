@@ -12,8 +12,8 @@ import usw.suwiki.domain.lecture.entity.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
-import usw.suwiki.exception.errortype.AccountException;
-import usw.suwiki.exception.ErrorType;
+import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.PageOption;
 
 import javax.transaction.Transactional;

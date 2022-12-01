@@ -1,13 +1,13 @@
 package usw.suwiki.global.util;
 
-import usw.suwiki.domain.lecture.dto.JsonToLectureDto;
-import usw.suwiki.domain.lecture.entity.Lecture;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
+import usw.suwiki.domain.lecture.dto.JsonToLectureDto;
+import usw.suwiki.domain.lecture.entity.Lecture;
 import usw.suwiki.domain.lecture.repository.LectureRepository;
 
 import javax.transaction.Transactional;
@@ -67,8 +67,8 @@ public class JsonToDataTable {
 
         JSONArray jsonArray = (JSONArray) obj;
 
-        if(jsonArray.size() > 0 ){
-            for(int i=0; i< jsonArray.size(); i++) {
+        if (jsonArray.size() > 0) {
+            for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
                 JsonToLectureDto dto = JsonToLectureDto.builder()
@@ -87,7 +87,7 @@ public class JsonToDataTable {
                         .build();
 
                 //professor 없으면 "-" 로 채움 (null 값 들어가지 않게)
-                if(dto.getProfessor().isEmpty() || dto.getProfessor() == null){
+                if (dto.getProfessor().isEmpty() || dto.getProfessor() == null) {
                     dto.setProfessor("-");
                 }
 
@@ -95,7 +95,7 @@ public class JsonToDataTable {
                 dto = handleLectureNameException(dto);
 
                 //"·" to replace "-"
-                if(dto.getMajorType().contains("·")){
+                if (dto.getMajorType().contains("·")) {
                     String majorType = dto.getMajorType();
                     majorType = majorType.replace("·", "-");
                     dto.setMajorType(majorType);
@@ -109,8 +109,7 @@ public class JsonToDataTable {
                         lecture.setSemester(updateString);  //refactoring 필요
                         lectureRepository.save(lecture);
                     }
-                }
-                else if (lecture == null){
+                } else if (lecture == null) {
                     Lecture savedLecture = Lecture.builder().build();
                     savedLecture.toEntity(dto);
                     Thread.sleep(1);

@@ -21,15 +21,15 @@ import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.domain.userIsolation.entity.UserIsolation;
 import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
-import usw.suwiki.exception.errortype.AccountException;
+import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.util.emailBuild.BuildAutoDeletedWarningUserFormService;
 import usw.suwiki.global.util.emailBuild.BuildSoonDormantTargetFormService;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static usw.suwiki.exception.ErrorType.PASSWORD_ERROR;
-import static usw.suwiki.exception.ErrorType.USER_NOT_EXISTS;
+import static usw.suwiki.global.exception.ErrorType.PASSWORD_ERROR;
+import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
 
 @Service
 @RequiredArgsConstructor

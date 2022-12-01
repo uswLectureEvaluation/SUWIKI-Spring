@@ -16,13 +16,13 @@ import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.service.UserService;
-import usw.suwiki.exception.errortype.AccountException;
+import usw.suwiki.global.exception.errortype.AccountException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static usw.suwiki.exception.ErrorType.SERVER_ERROR;
-import static usw.suwiki.exception.ErrorType.USER_ALREADY_BLACKLISTED;
+import static usw.suwiki.global.exception.ErrorType.SERVER_ERROR;
+import static usw.suwiki.global.exception.ErrorType.USER_ALREADY_BLACKLISTED;
 
 @Service
 @Transactional

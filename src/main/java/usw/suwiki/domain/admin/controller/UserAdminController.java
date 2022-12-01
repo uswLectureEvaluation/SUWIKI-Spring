@@ -16,7 +16,7 @@ import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.user.dto.UserDto.LoginForm;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.service.UserService;
-import usw.suwiki.exception.errortype.AccountException;
+import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenProvider;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.jwt.JwtTokenValidator;
@@ -25,8 +25,8 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
-import static usw.suwiki.exception.ErrorType.SERVER_ERROR;
-import static usw.suwiki.exception.ErrorType.USER_RESTRICTED;
+import static usw.suwiki.global.exception.ErrorType.SERVER_ERROR;
+import static usw.suwiki.global.exception.ErrorType.USER_RESTRICTED;
 
 
 @RestController

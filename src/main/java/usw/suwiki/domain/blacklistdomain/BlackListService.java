@@ -8,14 +8,13 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.blacklistdomain.entity.BlacklistDomain;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.dto.UserResponseDto;
-import usw.suwiki.exception.errortype.AccountException;
-import usw.suwiki.exception.ErrorType;
+import usw.suwiki.global.exception.errortype.AccountException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static usw.suwiki.exception.ErrorType.YOU_ARE_IN_BLACKLIST;
+import static usw.suwiki.global.exception.ErrorType.YOU_ARE_IN_BLACKLIST;
 
 
 @Service

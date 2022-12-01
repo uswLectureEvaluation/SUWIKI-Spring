@@ -1,4 +1,4 @@
-package usw.suwiki.exception;
+package usw.suwiki.global.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
