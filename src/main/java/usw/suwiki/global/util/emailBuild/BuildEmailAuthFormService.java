@@ -12,7 +12,7 @@ public class BuildEmailAuthFormService {
                 "\t\t<p>\n" +
                 "                <b>재학생 인증 메일 전송해드립니다. </b>\n" +
                 "\t\t<br>\n" +
-                "\t\t" + link + "\n" +
+                "\t\t" + "<a href=" + link + ">클릭하여 이메일 인증하기</a>" + "\n" +
                 "                <p>\n" +
                 "<br>" +
                 "                위 링크를 클릭하시면 정상적으로 서비스 이용이 가능합니다." + "\n" +
