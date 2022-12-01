@@ -1,4 +1,4 @@
-package usw.suwiki.config;
+package usw.suwiki.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

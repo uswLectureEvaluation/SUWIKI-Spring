@@ -1,4 +1,4 @@
-package usw.suwiki.config;
+package usw.suwiki.global.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
