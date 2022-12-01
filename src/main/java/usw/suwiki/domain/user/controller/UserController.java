@@ -30,7 +30,7 @@ import usw.suwiki.global.ToJsonArray;
 import usw.suwiki.global.jwt.JwtTokenProvider;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.jwt.JwtTokenValidator;
-import usw.suwiki.global.util.emailBuild.BuildEmailAuthSuccessFormService;
+import usw.suwiki.global.util.emailBuild.BuildEmailAuthSuccessForm;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -50,7 +50,7 @@ import static usw.suwiki.global.exception.ErrorType.USER_RESTRICTED;
 public class UserController {
     private final UserService userService;
     private final EmailAuthService emailAuthService;
-    private final BuildEmailAuthSuccessFormService buildEmailAuthSuccessFormService;
+    private final BuildEmailAuthSuccessForm buildEmailAuthSuccessForm;
     private final RestrictingUserService restrictingUserService;
     private final UserIsolationService userIsolationService;
     private final QuitRequestUserService quitRequestUserService;
@@ -106,7 +106,7 @@ public class UserController {
 
     @GetMapping("verify-email")
     public String ConfirmEmail(@RequestParam("token") String token) {
-        String result = buildEmailAuthSuccessFormService.buildEmail();
+        String result = buildEmailAuthSuccessForm.buildEmail();
         emailAuthService.confirmToken(token);
         emailAuthService.mailAuthSuccess(token);
         return result;

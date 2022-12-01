@@ -24,9 +24,9 @@ import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenResolver;
-import usw.suwiki.global.util.emailBuild.BuildEmailAuthFormService;
-import usw.suwiki.global.util.emailBuild.BuildFindLoginIdFormService;
-import usw.suwiki.global.util.emailBuild.BuildFindPasswordFormService;
+import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
+import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
+import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -51,9 +51,9 @@ public class UserService {
     private final ExamReportRepository examReportRepository;
     private final EmailSender emailSender;
     private final ConfirmationTokenService confirmationTokenService;
-    private final BuildEmailAuthFormService buildEmailAuthFormService;
-    private final BuildFindLoginIdFormService BuildFindLoginIdFormService;
-    private final BuildFindPasswordFormService BuildFindPasswordFormService;
+    private final BuildEmailAuthForm buildEmailAuthForm;
+    private final BuildFindLoginIdForm BuildFindLoginIdForm;
+    private final BuildFindPasswordForm BuildFindPasswordForm;
     private final JwtTokenResolver jwtTokenResolver;
 
     public User makeUser(UserDto.JoinForm joinForm) {
@@ -90,7 +90,7 @@ public class UserService {
         confirmationTokenService.saveConfirmationToken(confirmationToken);
         String link = "https://api.suwiki.kr/user/verify-email/?token=" + token;
 //        String link = "http://localhost:8080/user/verify-email/?token=" + token;
-        emailSender.send(joinForm.getEmail(), buildEmailAuthFormService.buildEmail(link));
+        emailSender.send(joinForm.getEmail(), buildEmailAuthForm.buildEmail(link));
     }
 
     public boolean isEmailAuthTokenExpired(ConfirmationToken confirmationToken) {
@@ -109,7 +109,7 @@ public class UserService {
         Optional<User> inquiryId = userRepository.findByEmail(findIdForm.getEmail());
 
         if (inquiryId.isPresent()) {
-            emailSender.send(findIdForm.getEmail(), BuildFindLoginIdFormService.buildEmail(inquiryId.get().getLoginId()));
+            emailSender.send(findIdForm.getEmail(), BuildFindLoginIdForm.buildEmail(inquiryId.get().getLoginId()));
             return true;
         }
         throw new AccountException(USER_NOT_FOUND);
@@ -154,7 +154,7 @@ public class UserService {
             String resetPassword = randomizePassword();
             String EncodedResetPassword = bCryptPasswordEncoder.encode(resetPassword);
             userRepository.resetPassword(EncodedResetPassword, findPasswordForm.getLoginId(), findPasswordForm.getEmail());
-            emailSender.send(findPasswordForm.getEmail(), BuildFindPasswordFormService.buildEmail(resetPassword));
+            emailSender.send(findPasswordForm.getEmail(), BuildFindPasswordForm.buildEmail(resetPassword));
             return true;
         }
         throw new AccountException(USER_NOT_FOUND);

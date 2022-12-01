@@ -1,9 +1,6 @@
 package usw.suwiki.global.util.emailBuild;
 
-import org.springframework.stereotype.Service;
-
-@Service
-public class BuildEmailAuthSuccessFormService {
+public class BuildEmailAuthSuccessForm {
 
     public String buildEmail() {
         return "<center>\n" +

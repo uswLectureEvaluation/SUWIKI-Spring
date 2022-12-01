@@ -1,4 +1,4 @@
-package usw.suwiki.global.util.emailBuild;
+package usw.suwiki.domain.email.service;
 
 
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public class EmailService implements EmailSender {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setText(email, true);
             helper.setTo(to);
-            helper.setSubject("수원대학교 강의평가 사이트 SUWIKI 입니다.");
+            helper.setSubject("수원대학교 강의평가 플랫폼 SUWIKI 입니다.");
             helper.setFrom("uswsuwiki.gmail.com");
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
