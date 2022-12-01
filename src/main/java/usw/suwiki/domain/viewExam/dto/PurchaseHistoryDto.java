@@ -15,7 +15,6 @@ public class PurchaseHistoryDto {
     private String majorType;
     private LocalDateTime createDate;
 
-
     @Builder
     public PurchaseHistoryDto(Long id, String professor, String lectureName, String majorType, LocalDateTime createDate) {
         this.id = id;

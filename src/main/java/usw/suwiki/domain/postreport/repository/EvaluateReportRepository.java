@@ -18,14 +18,14 @@ public interface EvaluateReportRepository extends JpaRepository<EvaluatePostRepo
     @Query(value = "SELECT * FROM evaluate_post_report", nativeQuery = true)
     List<EvaluatePostReport> loadAllReportedPosts();
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     void deleteByEvaluateIdx(Long evaluateIdx);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query(value = "DELETE FROM evaluate_post_report where reporting_user_idx =:userIdx", nativeQuery = true)
     void deleteByReportingUserIdx(@Param ("userIdx") Long userIdx);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query(value = "DELETE FROM evaluate_post_report where reported_user_idx =:userIdx", nativeQuery = true)
     void deleteByReportedUserIdx(@Param ("userIdx") Long userIdx);
 

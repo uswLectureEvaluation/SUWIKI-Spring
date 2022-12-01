@@ -15,7 +15,6 @@ import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.user.dto.UserDto.LoginForm;
 import usw.suwiki.domain.user.entity.User;
-import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenProvider;
@@ -36,43 +35,24 @@ import static usw.suwiki.exception.ErrorType.USER_RESTRICTED;
 @CrossOrigin(origins = "https://suwikiman.netlify.app/", allowedHeaders = "*")
 public class UserAdminController {
 
-    // JWT 관련 의존성
     private final JwtTokenResolver jwtTokenResolver;
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenProvider jwtTokenProvider;
-
-    // 유저 관련 비즈니스 로직
     private final UserService userService;
-
-    private final UserRepository userRepository;
-
-    // 관리자 계정 관련 비즈니스 로직
     private final UserAdminService userAdminService;
     private final RestrictingUserService restrictingUserService;
-
-    // 신고당한 게시글 관련 레포지토리 접근
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;
-
-    // 블랙리스트 테이블 레포지토리 접근
     private final BlacklistRepository blacklistRepository;
 
     // 관리자 전용 로그인 API
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> administratorLogin(@Valid @RequestBody LoginForm loginForm) {
-
         Map<String, String> token = new HashMap<>();
-
-        //아이디 비밀번호 검증
         userService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword());
-
-        //유저 객체 생성
         User user = userService.loadUserFromLoginId(loginForm.getLoginId());
-
-        //액세스 토큰 생성
         String accessToken = jwtTokenProvider.createAccessToken(user);
         token.put("AccessToken", accessToken);
-
         return ResponseEntity
                 .ok()
                 .body(token);
@@ -84,33 +64,17 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody EvaluatePostRestrictForm evaluatePostRestrictForm) {
 
-        // 토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
-
-        // 토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(USER_RESTRICTED);
 
-        Map<String, Boolean> result = new HashMap<>();
-
-        // 유저 정지 테이블에 값 추가
         restrictingUserService.addRestrictingTableByEvaluatePost(evaluatePostRestrictForm);
-
-        // 신고한 유저 인덱스 가져오기
         Long reportingUserIdx = userService.whoIsEvaluateReporting(evaluatePostRestrictForm.getEvaluateIdx());
-
-        // 게시글 삭제 후 해당 게시글 작성자 인덱스 받아오기
         Long targetUserIdx = userAdminService.banishEvaluatePost(evaluatePostRestrictForm.getEvaluateIdx());
-
-        // 유저 restricted True, 정지 카운트 증가
         User targetUser = userAdminService.plusRestrictCount(targetUserIdx);
-
-        // 신고한 유저 포인트 증가
         User reportingUser = userAdminService.plusReportingUserPoint(reportingUserIdx);
 
-        // userRepository.save(targetUser);
-        // userRepository.save(reportingUser);
-
+        Map<String, Boolean> result = new HashMap<>();
         result.put("Success", true);
         return result;
     }
@@ -121,20 +85,17 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody ExamPostRestrictForm examPostRestrictForm) {
 
-        Map<String, Boolean> result = new HashMap<>();
         jwtTokenValidator.validateAccessToken(Authorization);
-
-        //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(USER_RESTRICTED);
 
         restrictingUserService.addRestrictingTableByExamPost(examPostRestrictForm);
         Long reportingUserIdx = userService.whoIsExamReporting(examPostRestrictForm.getExamIdx());
         Long targetUserIdx = userAdminService.blacklistOrRestrictAndDeleteExamPost(examPostRestrictForm.getExamIdx());
-
         User targetUser = userAdminService.plusRestrictCount(targetUserIdx);
         User reportingUser = userAdminService.plusReportingUserPoint(reportingUserIdx);
 
+        Map<String, Boolean> result = new HashMap<>();
         result.put("Success", true);
         return result;
     }
@@ -146,34 +107,24 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody EvaluatePostBlacklistForm evaluatePostBlacklistForm) {
 
-        // 토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
-
-        // 토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(USER_RESTRICTED);
 
+        Long userIdx = userService.loadEvaluatePostsByIndex(evaluatePostBlacklistForm.getEvaluateIdx()).getUser().getId();
+        userAdminService.banishEvaluatePost(evaluatePostBlacklistForm.getEvaluateIdx());
         Map<String, Boolean> result = new HashMap<>();
 
-        // 게시글 작성자 인덱스
-        Long userIdx = userService.loadEvaluatePostsByIndex(evaluatePostBlacklistForm.getEvaluateIdx()).getUser().getId();
-
-        // 게시글 제거
-        userAdminService.banishEvaluatePost(evaluatePostBlacklistForm.getEvaluateIdx());
-
-        // 이미 블랙리스트 사용자 일 경우
         if (blacklistRepository.findByUserId(userIdx).isPresent()) {
             result.put("이미 블랙리스트에 지정된 사용자 입니다.", false);
             return result;
         }
 
-        // 유저 블랙리스트 테이블로
         userAdminService.banUserByEvaluate(
                 userIdx,
                 365L,
                 evaluatePostBlacklistForm.getBannedReason(),
                 evaluatePostBlacklistForm.getJudgement());
-
         userAdminService.plusRestrictCount(userIdx);
 
         result.put("Success", true);
@@ -186,32 +137,25 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody ExamPostBlacklistForm examPostBlacklistForm) {
 
-        //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
 
-        //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(USER_RESTRICTED);
 
-        Map<String, Boolean> result = new HashMap<>();
-
-        // 게시글 작성자 인덱스
         Long userIdx = userService.loadExamPostsByIndex(examPostBlacklistForm.getExamIdx()).getUser().getId();
         userAdminService.blacklistOrRestrictAndDeleteExamPost(examPostBlacklistForm.getExamIdx());
+        Map<String, Boolean> result = new HashMap<>();
 
-        // 이미 블랙리스트 사용자 일 경우
         if (blacklistRepository.findByUserId(userIdx).isPresent()) {
             result.put("이미 블랙리스트에 지정된 사용자 입니다.", false);
             return result;
         }
 
-        // 유저 블랙리스트 테이블로
         userAdminService.banUserByExam(
                 userIdx,
                 365L,
                 examPostBlacklistForm.getBannedReason(),
                 examPostBlacklistForm.getJudgement());
-
         userAdminService.plusRestrictCount(userIdx);
 
         result.put("Success", true);
@@ -224,17 +168,13 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody EvaluatePostNoProblemForm evaluatePostNoProblemForm) {
 
-        Map<String, Boolean> result = new HashMap<>();
-
-        //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
 
-        //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(USER_RESTRICTED);
 
         evaluateReportRepository.deleteByEvaluateIdx(evaluatePostNoProblemForm.getEvaluateIdx());
-
+        Map<String, Boolean> result = new HashMap<>();
         result.put("Success", true);
         return result;
     }
@@ -245,17 +185,13 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody ExamPostNoProblemForm examPostNoProblemForm) {
 
-        Map<String, Boolean> result = new HashMap<>();
-
-        //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
 
-        //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(USER_RESTRICTED);
 
         examReportRepository.deleteByExamIdx(examPostNoProblemForm.getExamIdx());
-
+        Map<String, Boolean> result = new HashMap<>();
         result.put("Success", true);
         return result;
     }
@@ -265,18 +201,14 @@ public class UserAdminController {
     public ResponseEntity<ViewAllReportedPost> loadReportedPost(
             @Valid @RequestHeader String Authorization) {
 
-        ViewAllReportedPost result = new ViewAllReportedPost();
-
-        //토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
 
-        //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(USER_RESTRICTED);
 
+        ViewAllReportedPost result = new ViewAllReportedPost();
         result.setEvaluatePostReports(userAdminService.getReportedEvaluateList());
         result.setExamPostReports(userAdminService.getReportedExamList());
-
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
@@ -287,16 +219,13 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestParam Long target) {
 
-        // 토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
 
-        //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(USER_RESTRICTED);
 
         EvaluatePostReport evaluatePostReport = evaluateReportRepository.findById(target)
                 .orElseThrow(() -> new AccountException(SERVER_ERROR));
-
         return ResponseEntity.status(HttpStatus.OK).body(evaluatePostReport);
     }
 
@@ -306,10 +235,8 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestParam Long target) {
 
-        // 토큰 검증
         jwtTokenValidator.validateAccessToken(Authorization);
 
-        //토큰으로 유저 권한 확인 -> ADMIN 이 아니면 에러
         if (!jwtTokenResolver.getUserRole(Authorization).equals("ADMIN"))
             throw new AccountException(USER_RESTRICTED);
 

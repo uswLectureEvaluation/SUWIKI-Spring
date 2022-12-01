@@ -12,50 +12,35 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //Auto Increment
-
+    private Long id;
     @Column
-    private String loginId; //Login Id
-
+    private String loginId;
     @Column
-    private String password; //Login Password
-
+    private String password;
     @Column
-    private String email; //Email
-
+    private String email;
     @Column
-    private boolean restricted; //이메일 인증 유무 + 제재유저 대상
-
+    private boolean restricted;
     @Column
-    private Integer restrictedCount; //정지횟수
-
+    private Integer restrictedCount;
     @Enumerated(EnumType.STRING)
-    private Role role; //User Auth
-
+    private Role role;
     @Column
     private Integer writtenEvaluation;
-
     @Column
     private Integer writtenExam;
-
     @Column
     private Integer viewExamCount;
-
     @Column
     private Integer point;
-
     @Column
-    private LocalDateTime lastLogin; //Last Login Time
-
+    private LocalDateTime lastLogin;
     @Column
-    private LocalDateTime requestedQuitDate; //회원탈퇴 요청 일시
-
+    private LocalDateTime requestedQuitDate;
     @Column
-    private LocalDateTime createdAt; //Join Time
-
+    private LocalDateTime createdAt;
     @Column
     private LocalDateTime updatedAt;
 }

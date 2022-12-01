@@ -1,10 +1,12 @@
 package usw.suwiki.global.jwt;
 
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.refreshToken.entity.RefreshToken;
@@ -54,19 +56,6 @@ public class JwtTokenResolver {
     public boolean getUserIsRestricted(String token) {
         return (boolean) parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody().get("restricted");
     }
-
-    @Transactional
-    public String OldRefreshTokenToRefresh(String refreshToken, Long userIdx) {
-        try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(refreshToken);
-        } catch (SignatureException | MalformedJwtException | IllegalArgumentException ex) {
-            throw new BadCredentialsException("INVALID", ex);
-        } catch (ExpiredJwtException exception) {
-            return jwtTokenProvider.updateRefreshToken(userIdx);
-        }
-        return null;
-    }
-
 
     @Transactional
     public String refreshTokenUpdateOrCreate(User user) {

@@ -6,6 +6,5 @@ import usw.suwiki.domain.exam.entity.ExamPosts;
 
 @Repository
 public interface UserAdminExamRepository extends JpaRepository<ExamPosts, Long> {
-
     void deleteById(Long Id);
 }

@@ -12,13 +12,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpServerErrorException;
 import usw.suwiki.exception.errortype.BaseException;
 
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static usw.suwiki.exception.ErrorType.*;
+
 @Slf4j
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        HttpStatus status = INTERNAL_SERVER_ERROR;
         String code = "NO_CATCH_ERROR";
         String className = e.getClass().getName();
         String message = e.getMessage();
@@ -53,7 +56,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = {MethodArgumentNotValidException.class, BindException.class})
     public ResponseEntity<ErrorResponse> handleBindValidationException(Exception e) {
         String className = e.getClass().getName();
-        ErrorType errorType = ErrorType.PARAM_VALID_ERROR;
+        ErrorType errorType = PARAM_VALID_ERROR;
         String message = "";
 
         if (e instanceof MethodArgumentNotValidException) {
@@ -76,7 +79,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = {HttpRequestMethodNotSupportedException.class})
     public ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         String className = e.getClass().getName();
-        ErrorType errorType = ErrorType.METHOD_NOT_ALLOWED;
+        ErrorType errorType = METHOD_NOT_ALLOWED;
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .exception(className.substring(className.lastIndexOf(".") + 1))
@@ -93,7 +96,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
     public ResponseEntity<ErrorResponse> HttpMessageNotReadableException(HttpMessageNotReadableException e) {
         String className = e.getClass().getName();
-        ErrorType errorType = ErrorType.BAD_REQUEST;
+        ErrorType errorType = BAD_REQUEST;
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .exception(className.substring(className.lastIndexOf(".") + 1))
@@ -109,7 +112,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = {HttpServerErrorException.InternalServerError.class})
     public ResponseEntity<ErrorResponse> InternalServerError(HttpServerErrorException.InternalServerError e) {
         String className = e.getClass().getName();
-        ErrorType errorType = ErrorType.SERVER_ERROR;
+        ErrorType errorType = SERVER_ERROR;
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .exception(className.substring(className.lastIndexOf(".") + 1))
@@ -125,7 +128,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = {IllegalArgumentException.class})
     public ResponseEntity<ErrorResponse> IllegalArgumentException(IllegalArgumentException e) {
         String className = e.getClass().getName();
-        ErrorType errorType = ErrorType.BAD_REQUEST;
+        ErrorType errorType = BAD_REQUEST;
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .exception(className.substring(className.lastIndexOf(".") + 1))

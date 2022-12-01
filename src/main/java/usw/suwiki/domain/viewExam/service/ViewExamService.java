@@ -45,7 +45,6 @@ public class ViewExamService {
             viewExamRepository.save(viewExam);
         }
     }
-
     public boolean verifyAuth(Long lectureId, Long userIdx) {
         List<ViewExam> list = viewExamRepository.findByUserId(userIdx);
 

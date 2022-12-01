@@ -6,6 +6,5 @@ import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 
 @Repository
 public interface UserAdminEvaluateRepository extends JpaRepository<EvaluatePosts, Long> {
-
     void deleteById(Long id);
 }

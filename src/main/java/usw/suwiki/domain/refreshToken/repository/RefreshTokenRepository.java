@@ -17,7 +17,6 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
     @Query(value = "SELECT payload FROM refresh_token WHERE user_idx = :id", nativeQuery = true)
     Optional<String> findPayLoadByUserIdx(@Param("id") Long id);
 
-    //페이로드 업데이트
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE RefreshToken Set payload = :newRefreshToken WHERE user_idx = :id")
     void updatePayload(@Param("newRefreshToken") String newRefreshToken, @Param("id") Long id);
