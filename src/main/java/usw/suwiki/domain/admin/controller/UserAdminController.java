@@ -15,6 +15,7 @@ import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.user.dto.UserDto.LoginForm;
 import usw.suwiki.domain.user.entity.User;
+import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenProvider;
@@ -23,6 +24,7 @@ import usw.suwiki.global.jwt.JwtTokenValidator;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static usw.suwiki.global.exception.ErrorType.SERVER_ERROR;
@@ -39,23 +41,29 @@ public class UserAdminController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
+    private final UserRepository userRepository;
     private final UserAdminService userAdminService;
     private final RestrictingUserService restrictingUserService;
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;
     private final BlacklistRepository blacklistRepository;
 
+    @GetMapping
+
     // 관리자 전용 로그인 API
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> administratorLogin(@Valid @RequestBody LoginForm loginForm) {
-        Map<String, String> token = new HashMap<>();
+        Map<String, String> result = new HashMap<>();
         userService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword());
         User user = userService.loadUserFromLoginId(loginForm.getLoginId());
         String accessToken = jwtTokenProvider.createAccessToken(user);
-        token.put("AccessToken", accessToken);
+        result.put("AccessToken", accessToken);
+        int userCount = userRepository.findAll().size();
+        result.put("UserCount", String.valueOf(userCount));
+
         return ResponseEntity
                 .ok()
-                .body(token);
+                .body(result);
     }
 
     // 강의평가 게시물 정지 먹이기
