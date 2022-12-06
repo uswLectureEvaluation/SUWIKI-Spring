@@ -24,7 +24,6 @@ import usw.suwiki.global.jwt.JwtTokenValidator;
 
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static usw.suwiki.global.exception.ErrorType.SERVER_ERROR;
@@ -47,8 +46,6 @@ public class UserAdminController {
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;
     private final BlacklistRepository blacklistRepository;
-
-    @GetMapping
 
     // 관리자 전용 로그인 API
     @PostMapping("/login")
