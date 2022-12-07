@@ -78,6 +78,7 @@ public class UserAdminController {
         Long targetUserIdx = userAdminService.banishEvaluatePost(evaluatePostRestrictForm.getEvaluateIdx());
         User targetUser = userAdminService.plusRestrictCount(targetUserIdx);
         User reportingUser = userAdminService.plusReportingUserPoint(reportingUserIdx);
+        evaluateReportRepository.deleteByEvaluateIdx(evaluatePostRestrictForm.getEvaluateIdx());
 
         Map<String, Boolean> result = new HashMap<>();
         result.put("Success", true);
@@ -99,6 +100,7 @@ public class UserAdminController {
         Long targetUserIdx = userAdminService.blacklistOrRestrictAndDeleteExamPost(examPostRestrictForm.getExamIdx());
         User targetUser = userAdminService.plusRestrictCount(targetUserIdx);
         User reportingUser = userAdminService.plusReportingUserPoint(reportingUserIdx);
+        examReportRepository.deleteByExamIdx(examPostRestrictForm.getExamIdx());
 
         Map<String, Boolean> result = new HashMap<>();
         result.put("Success", true);
