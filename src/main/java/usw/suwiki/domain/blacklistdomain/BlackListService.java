@@ -44,19 +44,16 @@ public class BlackListService {
             blacklistRepository.deleteByUserIdx(userIdx);
         }
     }
-    @Transactional
-    public void isBlackList(String email) {
+    public void joinRequestUserIsBlackList(String email) {
         List<BlacklistDomain> blacklist = blacklistRepository.findAllBlacklist();
-
-        for (BlacklistDomain bUser : blacklist) {
-            if (bCryptPasswordEncoder.matches(email, bUser.getHashedEmail())) {
+        for (BlacklistDomain blackListUser : blacklist) {
+            if (bCryptPasswordEncoder.matches(email, blackListUser.getHashedEmail())) {
                 throw new AccountException(YOU_ARE_IN_BLACKLIST);
             }
         }
     }
 
     // 블랙리스트 내역 모두보기 DTO 로 Typing
-    @Transactional
     public List<UserResponseDto.ViewMyBlackListReasonForm> getBlacklistLog(Long userIdx) {
         List<BlacklistDomain> loadedDomain = blacklistRepository.findByUserIdx(userIdx);
         List<UserResponseDto.ViewMyBlackListReasonForm> finalResultForm = new ArrayList<>();

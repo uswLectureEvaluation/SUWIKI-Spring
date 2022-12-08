@@ -52,7 +52,7 @@ public class UserRequestDto {
 
     @Getter
     @NoArgsConstructor
-    public static class CheckIdForm {
+    public static class CheckLoginIdForm {
         private String loginId;
     }
 
