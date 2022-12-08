@@ -44,24 +44,30 @@ public class QuitRequestUserService {
     private final EvaluateReportRepository evaluateReportRepository;
 
     //회원탈퇴 요청 유저 일부 데이터 초기화
+    // [다시 봐야하는 로직]
     @Transactional
     public void disableUser(User user) {
-        user.setRestricted(true);
-        user.setRestrictedCount(null);
-        user.setRole(null);
-        user.setWrittenEvaluation(null);
-        user.setWrittenExam(null);
-        user.setViewExamCount(null);
-        user.setPoint(null);
-        user.setLastLogin(null);
-        user.setCreatedAt(null);
-        user.setUpdatedAt(null);
+        User disableTargetUser = User.builder()
+                .restricted(true)
+                .restrictedCount(null)
+                .role(null)
+                .writtenEvaluation(null)
+                .writtenExam(null)
+                .viewExamCount(null)
+                .point(null)
+                .lastLogin(null)
+                .createdAt(null)
+                .updatedAt(null)
+                .build();
     }
 
     // 회원탈퇴 요청 시각 스탬프
     @Transactional
     public void requestQuitDateStamp(User user) {
-        user.setRequestedQuitDate(LocalDateTime.now());
+        User disableTargetUser = User.builder()
+                .requestedQuitDate(LocalDateTime.now())
+                .build();
+        userRepository.save(disableTargetUser);
     }
 
     //회원탈퇴 대기

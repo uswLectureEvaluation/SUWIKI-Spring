@@ -3,20 +3,20 @@ package usw.suwiki.domain.evaluation.service;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import org.springframework.stereotype.Service;
-import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
 import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
-import usw.suwiki.domain.evaluation.dto.EvaluatePostsUpdateDto;
 import usw.suwiki.domain.evaluation.dto.EvaluatePostsSaveDto;
+import usw.suwiki.domain.evaluation.dto.EvaluatePostsUpdateDto;
 import usw.suwiki.domain.evaluation.dto.EvaluateResponseByLectureIdDto;
 import usw.suwiki.domain.evaluation.dto.EvaluateResponseByUserIdxDto;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
+import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
 import usw.suwiki.domain.lecture.entity.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
-import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.PageOption;
+import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.errortype.AccountException;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -44,8 +44,10 @@ public class EvaluatePostsService {
             posts.setUser(user.get());  // user 도 넣어줘야 함
             Integer point = posts.getUser().getPoint();
             Integer num = posts.getUser().getWrittenEvaluation();
-            posts.getUser().setPoint(point + 10);
-            posts.getUser().setWrittenEvaluation(num + 1);
+            userRepository.addPoint(userIdx, 10);
+            userRepository.addWrittenEvaluate(userIdx);
+            // posts.getUser().setPoint(point + 10);
+            // posts.getUser().setWrittenEvaluation(num + 1);
             EvaluatePostsToLecture newDto = new EvaluatePostsToLecture(posts);
             lectureService.addLectureValue(newDto);
             lectureService.calcLectureAvg(newDto);
@@ -96,7 +98,8 @@ public class EvaluatePostsService {
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         Integer point = posts.getUser().getPoint();
         if (point >= 30) {
-            posts.getUser().setPoint(point - 30);
+            userRepository.subtractPoint(userIdx, 30);
+            // posts.getUser().setPoint(point - 30);
             return true;
         }
         return false;
@@ -126,7 +129,8 @@ public class EvaluatePostsService {
         lectureService.cancelLectureValue(dto);
         lectureService.calcLectureAvg(dto);
         Integer postsCount = user.get().getWrittenEvaluation();
-        user.get().setWrittenEvaluation(postsCount - 1);
+        userRepository.subtractWrittenEvaluate(userIdx);
+        // user.get().setWrittenEvaluation(postsCount - 1);
         evaluatePostsRepository.delete(posts);
     }
 }

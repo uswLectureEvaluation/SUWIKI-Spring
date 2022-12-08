@@ -4,13 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.email.entity.ConfirmationToken;
-import usw.suwiki.domain.user.entity.Role;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.exception.errortype.AccountException;
-
-import java.time.LocalDateTime;
 
 import static usw.suwiki.global.exception.ErrorType.EMAIL_AUTH_TOKEN_ALREADY_USED;
 
@@ -42,13 +39,6 @@ public class EmailAuthService {
                 .orElseThrow(() -> new AccountException(ErrorType.EMAIL_VALIDATED_ERROR));
 
         Long userIdx = confirmationToken.getUserIdx();
-        userService.loadUserFromUserIdx(userIdx)
-                .setRestricted(false);
-        userService.loadUserFromUserIdx(userIdx)
-                .setCreatedAt(LocalDateTime.now());
-        userService.loadUserFromUserIdx(userIdx)
-                .setUpdatedAt(LocalDateTime.now());
-        userService.loadUserFromUserIdx(userIdx)
-                .setRole(Role.USER);
+        userRepository.emailAuthedUser(userIdx);
     }
 }

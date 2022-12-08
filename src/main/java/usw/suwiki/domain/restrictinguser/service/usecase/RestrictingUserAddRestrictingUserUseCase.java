@@ -36,7 +36,7 @@ public class RestrictingUserAddRestrictingUserUseCase {
                         targetUser.getId(), 90L,
                         "신고 누적으로 인한 블랙리스트", "신고누적 블랙리스트 1년");
             } else if (targetUser.getRestrictedCount() < 3) {
-                targetUser.setRestricted(true);
+                targetUser.editRestricted(true);
                 RestrictingUser restrictingUser = RestrictingUser.builder()
                         .userIdx(targetUser.getId())
                         .restrictingDate(LocalDateTime.now().plusDays(evaluatePostRestrictForm.getRestrictingDate()))
@@ -59,7 +59,7 @@ public class RestrictingUserAddRestrictingUserUseCase {
                     user.getId(), 90L,
                     "신고 누적으로 인한 블랙리스트", "신고누적 블랙리스트 1년");
         } else if (user.getRestrictedCount() < 3) {
-            user.setRestricted(true);
+            user.editRestricted(true);
             RestrictingUser restrictingUser = RestrictingUser.builder()
                     .userIdx(user.getId())
                     .restrictingDate(LocalDateTime.now().plusDays(examPostRestrictForm.getRestrictingDate()))

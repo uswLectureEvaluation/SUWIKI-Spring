@@ -15,6 +15,7 @@ import usw.suwiki.domain.postreport.entity.ExamPostReport;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.user.entity.User;
+import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.global.exception.errortype.AccountException;
 
@@ -35,11 +36,12 @@ public class UserAdminService {
     private final ExamPostsService examPostsService;
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;
+    private final UserRepository userRepository;
 
     // 강의평가 블랙리스트
     public void executeBlacklistByEvaluatePost(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
         User user = userService.loadUserFromUserIdx(userIdx);
-        user.setRestricted(true);
+        userRepository.modifyRestricted(userIdx, true);
 
         String hashTargetEmail = bCryptPasswordEncoder.encode(user.getEmail());
         if (blacklistRepository.findByUserId(user.getId()).isPresent()) {
@@ -66,7 +68,7 @@ public class UserAdminService {
     // 시험정보 블랙리스트
     public void executeBlacklistByExamPost(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
         User user = userService.loadUserFromUserIdx(userIdx);
-        user.setRestricted(true);
+        userRepository.modifyRestricted(userIdx, true);
 
         String hashTargetEmail = bCryptPasswordEncoder.encode(user.getEmail());
 
@@ -119,12 +121,12 @@ public class UserAdminService {
 
     public void plusRestrictCount(Long userIdx) {
         User user = userService.loadUserFromUserIdx(userIdx);
-        user.setRestrictedCount(user.getRestrictedCount() + 1);
+        userRepository.addRestrictedCount(user.getId());
     }
 
     public void plusReportingUserPoint(Long reportingUserIdx) {
         User user = userService.loadUserFromUserIdx(reportingUserIdx);
-        user.setPoint(user.getPoint() + 1);
+        userRepository.addPoint(user.getId(), 1);
     }
 
     public List<EvaluatePostReport> loadReportedEvaluateList() {
