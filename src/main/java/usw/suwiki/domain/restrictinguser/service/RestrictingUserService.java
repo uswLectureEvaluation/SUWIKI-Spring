@@ -48,11 +48,9 @@ public class RestrictingUserService {
     // 이용정지를 풀기 위한 메서드 --> 정지 테이블에서 유저 삭제
     @Transactional
     // 초 분 시 일 월 주 년
-    @Scheduled(cron = "10 * * * * *")
+    @Scheduled(cron = "10 0 0 * * *")
     public void isUnrestrictedTarget() {
-        // 현재시각으로부터 - 30일
-        LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
-        List<RestrictingUser> targetUser = restrictingUserRepository.findByRestrictingDateBefore(targetTime);
+        List<RestrictingUser> targetUser = restrictingUserRepository.findByRestrictingDateBefore(LocalDateTime.now());
         for (RestrictingUser target : targetUser) {
             Long userIdx = target.getUserIdx();
             restrictingUserRepository.deleteByUserIdx(userIdx);
