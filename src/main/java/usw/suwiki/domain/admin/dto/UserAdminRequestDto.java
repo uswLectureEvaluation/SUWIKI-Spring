@@ -1,6 +1,5 @@
 package usw.suwiki.domain.admin.dto;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

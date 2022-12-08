@@ -11,9 +11,7 @@ public class UserRequestDto {
     @NoArgsConstructor
     public static class JoinForm {
         private String loginId;
-
         private String password;
-
         private String email;
     }
 
@@ -22,7 +20,6 @@ public class UserRequestDto {
     public static class LoginForm {
         @NotEmpty
         private String loginId;
-
         @NotEmpty
         private String password;
     }

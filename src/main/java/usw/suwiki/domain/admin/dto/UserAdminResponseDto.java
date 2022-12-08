@@ -8,18 +8,11 @@ import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
 import usw.suwiki.domain.postreport.entity.ExamPostReport;
 
 import java.util.List;
-import java.util.Map;
 
 public class UserAdminResponseDto {
 
-    public static class SuccessFlagForm {
-        private Map<String, Boolean> flag;
-    }
-
-
     @Getter
     @AllArgsConstructor
-    @NoArgsConstructor
     @Builder
     public static class LoadAllReportedPostForm {
         private List<ExamPostReport> examPostReports;

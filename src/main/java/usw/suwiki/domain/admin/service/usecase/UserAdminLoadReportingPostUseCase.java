@@ -21,7 +21,8 @@ public class UserAdminLoadReportingPostUseCase {
         List<EvaluatePostReport> evaluatePostReports = userAdminService.loadReportedEvaluateList();
         List<ExamPostReport> examPostReports = userAdminService.loadReportedExamList();
 
-        return LoadAllReportedPostForm.builder()
+        return LoadAllReportedPostForm
+                .builder()
                 .evaluatePostReports(evaluatePostReports)
                 .examPostReports(examPostReports)
                 .build();

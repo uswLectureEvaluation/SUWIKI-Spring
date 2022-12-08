@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.blacklistdomain.BlackListService;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
-import usw.suwiki.domain.user.dto.UserResponseDto.ViewMyBlackListReasonForm;
-import usw.suwiki.domain.user.dto.UserResponseDto.ViewMyRestrictedReasonForm;
+import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonForm;
+import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonForm;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.global.jwt.JwtTokenResolver;
@@ -25,13 +25,13 @@ public class UserLoadRestrictAndBlackListReasonUseCase {
     private final BlackListService blackListService;
     private final RestrictingUserService restrictingUserService;
 
-    public List<ViewMyBlackListReasonForm> executeForBlackListReason(String Authorization) {
+    public List<LoadMyBlackListReasonForm> executeForBlackListReason(String Authorization) {
         jwtTokenValidator.validateAccessToken(Authorization);
         User requestUser = userService.loadUserFromUserIdx(jwtTokenResolver.getId(Authorization));
         return blackListService.getBlacklistLog(requestUser.getId());
     }
 
-    public List<ViewMyRestrictedReasonForm> executeForRestrictedReason(String Authorization) {
+    public List<LoadMyRestrictedReasonForm> executeForRestrictedReason(String Authorization) {
         jwtTokenValidator.validateAccessToken(Authorization);
         User requestUser = userService.loadUserFromUserIdx(jwtTokenResolver.getId(Authorization));
         return restrictingUserService.loadRestrictedLog(requestUser.getId());

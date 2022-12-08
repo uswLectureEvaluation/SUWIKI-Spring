@@ -5,7 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.restrictinguser.repository.RestrictingUser;
-import usw.suwiki.domain.user.dto.UserResponseDto.ViewMyRestrictedReasonForm;
+import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonForm;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.repository.restrictinguser.RestrictingUserRepository;
 
@@ -22,23 +22,23 @@ public class RestrictingUserService {
 
     // 정지내역 내역 모두보기
     @Transactional
-    public List<ViewMyRestrictedReasonForm> loadRestrictedLog(Long userIdx) {
+    public List<LoadMyRestrictedReasonForm> loadRestrictedLog(Long userIdx) {
 
         List<RestrictingUser> loadedDomain = restrictingUserRepository.findByUserIdx(userIdx);
-        List<ViewMyRestrictedReasonForm> finalResultForm = new ArrayList<>();
+        List<LoadMyRestrictedReasonForm> finalResultForm = new ArrayList<>();
 
         if (loadedDomain.toArray().length > 0) {
             for (RestrictingUser target : loadedDomain) {
-                ViewMyRestrictedReasonForm resultForm = new ViewMyRestrictedReasonForm();
-                String extractedBannedReason = target.getRestrictingReason();
+                String extractedRestrictedReason = target.getRestrictingReason();
                 String extractedJudgement = target.getJudgement();
                 LocalDateTime extractedCreatedAt = target.getCreatedAt();
-                LocalDateTime restrictingDate = target.getRestrictingDate();
-
-                resultForm.setRestrictedReason(extractedBannedReason);
-                resultForm.setJudgement(extractedJudgement);
-                resultForm.setCreatedAt(extractedCreatedAt);
-                resultForm.setRestrictingDate(restrictingDate);
+                LocalDateTime extractedRestrictingDate = target.getRestrictingDate();
+                LoadMyRestrictedReasonForm resultForm = LoadMyRestrictedReasonForm.builder()
+                        .restrictedReason(extractedRestrictedReason)
+                        .judgement(extractedJudgement)
+                        .createdAt(extractedCreatedAt)
+                        .restrictingDate(extractedRestrictingDate)
+                        .build();
                 finalResultForm.add(resultForm);
             }
         }

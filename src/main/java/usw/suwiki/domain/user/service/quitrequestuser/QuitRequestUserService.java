@@ -33,10 +33,8 @@ public class QuitRequestUserService {
     private final FavoriteMajorService favoriteMajorService;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-
     // 휴면 계정
     private final UserIsolationRepository userIsolationRepository;
-
     // 회원탈퇴 요청 계정
     private final ViewExamService viewExamService;
     private final EvaluatePostsService evaluatePostsService;
@@ -69,101 +67,73 @@ public class QuitRequestUserService {
     //회원탈퇴 대기
     @Transactional
     public void waitQuit(Long userIdx) {
-
         // 즐겨찾는 과목 제거
         favoriteMajorService.deleteAllByUser(userIdx);
-
-        //구매한 시험 정보 삭제
+        // 구매한 시험 정보 삭제
         viewExamService.deleteByUserIdx(userIdx);
-
-        //회원탈퇴 요청한 유저의 강의평가 삭제
+        // 회원탈퇴 요청한 유저의 강의평가 삭제
         evaluatePostsService.deleteByUser(userIdx);
-
-        //회원탈퇴 요청한 유저의 시험정보 삭제
+        // 회원탈퇴 요청한 유저의 시험정보 삭제
         examPostsService.deleteByUser(userIdx);
-
-        //유저 이용불가 처리
+        // 유저 이용불가 처리
         disableUser(userService.loadUserFromUserIdx(userIdx));
     }
 
     // 회원탈퇴 요청 후 30일 뒤 테이블에서 제거
     @Transactional
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void deleteRequestQuitUserAfter30Days() {
 
         LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
-
         List<User> targetUser = userRepository.findByRequestedQuitDateBefore(targetTime);
-
         List<UserIsolation> targetUserIsolation = userIsolationRepository.findByRequestedQuitDateBefore(targetTime);
-
         if (targetUser.size() > 0) {
             for (int numberOfTargetUser = 0; numberOfTargetUser < targetUser.toArray().length; numberOfTargetUser++) {
-
                 // 삭제 예정 유저의 구매한 시험 정보 삭제
                 viewExamService.deleteByUserIdx(targetUser.get(numberOfTargetUser).getId());
-
                 // 리프레시 토큰 삭제
                 refreshTokenRepository.deleteByUserIdx(targetUserIsolation.get(numberOfTargetUser).getId());
-
                 // 신고된 시험정보 삭제
                 examReportRepository.deleteByReportedUserIdx(targetUser.get(numberOfTargetUser).getId());
                 examReportRepository.deleteByReportingUserIdx(targetUser.get(numberOfTargetUser).getId());
-
                 // 신고된 강의평가 삭제
                 evaluateReportRepository.deleteByReportingUserIdx(targetUser.get(numberOfTargetUser).getId());
                 evaluateReportRepository.deleteByReportedUserIdx(targetUser.get(numberOfTargetUser).getId());
-
                 // 삭제 예정 유저의 강의평가 삭제
                 evaluatePostsService.deleteByUser(targetUser.get(numberOfTargetUser).getId());
-
                 // 삭제 예정 유저의 시험정보 삭제
                 examPostsService.deleteByUser(targetUser.get(numberOfTargetUser).getId());
-
                 // 즐겨찾기 게시글 삭제
                 favoriteMajorService.deleteAllByUser(targetUser.get(numberOfTargetUser).getId());
-
                 // 제한 테이블에서 삭제
                 restrictingUserRepository.deleteByUserIdx(targetUser.get(numberOfTargetUser).getId());
-
                 // 이메일 인증 토큰 삭제
                 confirmationTokenRepository.deleteByUserIdx(targetUser.get(numberOfTargetUser).getId());
-
                 // 본 테이블에서 유저 삭제
                 userRepository.deleteById(targetUser.get(numberOfTargetUser).getId());
             }
         } else if (targetUser.size() == 0) {
             for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
-
                 // 삭제 예정 유저의 구매한 시험 정보 삭제
                 viewExamService.deleteByUserIdx(targetUserIsolation.get(i).getUserIdx());
-
                 // 리프레시 토큰 삭제
                 refreshTokenRepository.deleteByUserIdx(targetUserIsolation.get(i).getUserIdx());
-
                 // 신고된 시험정보 삭제
                 examReportRepository.deleteByReportedUserIdx(targetUserIsolation.get(i).getUserIdx());
                 examReportRepository.deleteByReportingUserIdx(targetUserIsolation.get(i).getUserIdx());
-
                 // 신고된 강의평가 삭제
                 evaluateReportRepository.deleteByReportingUserIdx(targetUserIsolation.get(i).getUserIdx());
                 evaluateReportRepository.deleteByReportedUserIdx(targetUserIsolation.get(i).getUserIdx());
-
                 // 삭제 예정 유저의 강의평가 삭제
                 evaluatePostsService.deleteByUser(targetUserIsolation.get(i).getUserIdx());
-
                 // 삭제 예정 유저의 시험정보 삭제
                 examPostsService.deleteByUser(targetUserIsolation.get(i).getUserIdx());
-
                 // 즐겨찾기 게시글 삭제
                 favoriteMajorService.deleteAllByUser(targetUserIsolation.get(i).getUserIdx());
-
                 // 제한 테이블에서 삭제
                 restrictingUserRepository.deleteByUserIdx(targetUserIsolation.get(i).getUserIdx());
-
                 // 이메일 인증 토큰 삭제
                 confirmationTokenRepository.deleteByUserIdx(targetUserIsolation.get(i).getUserIdx());
-
                 // 휴면계정에서 유저 삭제
                 userIsolationRepository.deleteByLoginId(targetUserIsolation.get(i).getLoginId());
             }

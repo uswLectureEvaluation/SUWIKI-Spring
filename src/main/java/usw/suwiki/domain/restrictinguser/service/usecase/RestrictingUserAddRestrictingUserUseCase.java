@@ -9,14 +9,11 @@ import usw.suwiki.domain.admin.service.UserAdminService;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.exam.entity.ExamPosts;
 import usw.suwiki.domain.restrictinguser.repository.RestrictingUser;
-import usw.suwiki.domain.user.dto.UserResponseDto.ViewMyRestrictedReasonForm;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.restrictinguser.RestrictingUserRepository;
 import usw.suwiki.domain.user.service.UserService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

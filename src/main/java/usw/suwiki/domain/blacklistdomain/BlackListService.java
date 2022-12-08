@@ -6,8 +6,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.blacklistdomain.entity.BlacklistDomain;
+import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonForm;
 import usw.suwiki.domain.user.repository.UserRepository;
-import usw.suwiki.domain.user.dto.UserResponseDto;
 import usw.suwiki.global.exception.errortype.AccountException;
 
 import java.time.LocalDateTime;
@@ -44,6 +44,7 @@ public class BlackListService {
             blacklistRepository.deleteByUserIdx(userIdx);
         }
     }
+
     public void joinRequestUserIsBlackList(String email) {
         List<BlacklistDomain> blacklist = blacklistRepository.findAllBlacklist();
         for (BlacklistDomain blackListUser : blacklist) {
@@ -54,22 +55,23 @@ public class BlackListService {
     }
 
     // 블랙리스트 내역 모두보기 DTO 로 Typing
-    public List<UserResponseDto.ViewMyBlackListReasonForm> getBlacklistLog(Long userIdx) {
+    public List<LoadMyBlackListReasonForm> getBlacklistLog(Long userIdx) {
         List<BlacklistDomain> loadedDomain = blacklistRepository.findByUserIdx(userIdx);
-        List<UserResponseDto.ViewMyBlackListReasonForm> finalResultForm = new ArrayList<>();
+        List<LoadMyBlackListReasonForm> finalResultForm = new ArrayList<>();
 
         if (loadedDomain.toArray().length > 0) {
             for (BlacklistDomain target : loadedDomain) {
-                UserResponseDto.ViewMyBlackListReasonForm resultForm = new UserResponseDto.ViewMyBlackListReasonForm();
-                String extractedBannedReason = target.getBannedReason();
+                String extractedBlacklistedReason = target.getBannedReason();
                 String extractedJudgement = target.getJudgement();
                 LocalDateTime extractedCreatedAt = target.getCreatedAt();
                 LocalDateTime extractedExpiredAt = target.getExpiredAt();
-                resultForm.setBlackListReason(extractedBannedReason);
-                resultForm.setJudgement(extractedJudgement);
-                resultForm.setCreatedAt(extractedCreatedAt);
-                resultForm.setExpiredAt(extractedExpiredAt);
-                finalResultForm.add(resultForm);
+                LoadMyBlackListReasonForm loadMyBlackListReasonForm = LoadMyBlackListReasonForm.builder()
+                        .blackListReason(extractedBlacklistedReason)
+                        .judgement(extractedJudgement)
+                        .createdAt(extractedCreatedAt)
+                        .expiredAt(extractedExpiredAt)
+                        .build();
+                finalResultForm.add(loadMyBlackListReasonForm);
             }
         }
         return finalResultForm;

@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.dto.UserRequestDto.*;
-import usw.suwiki.domain.user.dto.UserResponseDto.MyPageResponse;
-import usw.suwiki.domain.user.dto.UserResponseDto.ViewMyBlackListReasonForm;
-import usw.suwiki.domain.user.dto.UserResponseDto.ViewMyRestrictedReasonForm;
+import usw.suwiki.domain.user.dto.UserResponseDto.MyPageForm;
+import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonForm;
+import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonForm;
 import usw.suwiki.domain.user.service.usecase.*;
 import usw.suwiki.global.ToJsonArray;
 
@@ -136,7 +136,7 @@ public class UserController {
     }
 
     @GetMapping("/my-page")
-    public ResponseEntity<MyPageResponse> myPage(@Valid @RequestHeader String Authorization) {
+    public ResponseEntity<MyPageForm> myPage(@Valid @RequestHeader String Authorization) {
         return ResponseEntity
                 .ok()
                 .body(userMyPageUseCase.execute(Authorization));
@@ -235,7 +235,7 @@ public class UserController {
 
     // 정지 사유 불러오기
     @GetMapping("/restricted-reason")
-    public ResponseEntity<List<ViewMyRestrictedReasonForm>> restrictedReason(@Valid @RequestHeader String Authorization) {
+    public ResponseEntity<List<LoadMyRestrictedReasonForm>> restrictedReason(@Valid @RequestHeader String Authorization) {
         return ResponseEntity
                 .ok()
                 .body(userLoadRestrictAndBlackListReasonUseCase.executeForRestrictedReason(Authorization));
@@ -243,7 +243,7 @@ public class UserController {
 
     // 블랙리스트 사유 불러오기
     @GetMapping("/blacklist-reason")
-    public ResponseEntity<List<ViewMyBlackListReasonForm>> banReason(@Valid @RequestHeader String Authorization) {
+    public ResponseEntity<List<LoadMyBlackListReasonForm>> banReason(@Valid @RequestHeader String Authorization) {
         return ResponseEntity
                 .ok()
                 .body(userLoadRestrictAndBlackListReasonUseCase.executeForBlackListReason(Authorization));

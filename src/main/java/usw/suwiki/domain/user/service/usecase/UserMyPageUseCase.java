@@ -3,7 +3,7 @@ package usw.suwiki.domain.user.service.usecase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.user.dto.UserResponseDto.MyPageResponse;
+import usw.suwiki.domain.user.dto.UserResponseDto.MyPageForm;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.global.jwt.JwtTokenResolver;
@@ -18,11 +18,11 @@ public class UserMyPageUseCase {
     private final JwtTokenResolver jwtTokenResolver;
     private final UserService userService;
 
-    public MyPageResponse execute(String Authorization) {
+    public MyPageForm execute(String Authorization) {
         jwtTokenValidator.validateAccessToken(Authorization);
         Long userIdx = jwtTokenResolver.getId(Authorization);
         User user = userService.loadUserFromUserIdx(userIdx);
-        return MyPageResponse.builder()
+        return MyPageForm.builder()
                 .loginId(user.getLoginId())
                 .email(user.getEmail())
                 .point(user.getPoint())
