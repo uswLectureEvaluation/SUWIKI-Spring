@@ -4,18 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.blacklistdomain.BlackListService;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
-import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.user.dto.UserRequestDto.*;
 import usw.suwiki.domain.user.dto.UserResponseDto.MyPageResponse;
 import usw.suwiki.domain.user.dto.UserResponseDto.ViewMyBlackListReasonForm;
 import usw.suwiki.domain.user.dto.UserResponseDto.ViewMyRestrictedReasonForm;
-import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.domain.user.service.usecase.*;
 import usw.suwiki.global.ToJsonArray;
-import usw.suwiki.global.jwt.JwtTokenResolver;
-import usw.suwiki.global.jwt.JwtTokenValidator;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
