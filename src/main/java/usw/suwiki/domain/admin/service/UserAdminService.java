@@ -114,23 +114,25 @@ public class UserAdminService {
         throw new AccountException(SERVER_ERROR);
     }
 
-    public User plusRestrictCount(Long userIdx) {
+    public void plusRestrictCount(Long userIdx) {
         User user = userService.loadUserFromUserIdx(userIdx);
         user.setRestrictedCount(user.getRestrictedCount() + 1);
-        return user;
     }
 
-    public User plusReportingUserPoint(Long reportingUserIdx) {
+    public void plusReportingUserPoint(Long reportingUserIdx) {
         User user = userService.loadUserFromUserIdx(reportingUserIdx);
         user.setPoint(user.getPoint() + 1);
-        return user;
     }
 
-    public List<EvaluatePostReport> getReportedEvaluateList() {
+    public List<EvaluatePostReport> loadReportedEvaluateList() {
         return evaluateReportRepository.loadAllReportedPosts();
     }
 
-    public List<ExamPostReport> getReportedExamList() {
+    public List<ExamPostReport> loadReportedExamList() {
         return examReportRepository.loadAllReportedPosts();
+    }
+
+    public boolean isAlreadyBlackList(long userIdx) {
+        return blacklistRepository.findByUserId(userIdx).isPresent();
     }
 }

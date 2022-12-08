@@ -13,7 +13,7 @@ import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
-import usw.suwiki.domain.user.dto.UserDto;
+import usw.suwiki.domain.user.dto.UserRequestDto;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.repository.restrictinguser.RestrictingUserRepository;
@@ -67,7 +67,7 @@ public class UserIsolationService {
         return bCryptPasswordEncoder.matches(password, userIsolationRepository.findByLoginId(loginId).get().getPassword());
     }
 
-    public User sleepingUserLogin(UserDto.LoginForm loginForm) {
+    public User sleepingUserLogin(UserRequestDto.LoginForm loginForm) {
         UserIsolation userIsolation = loadUserFromLoginId(loginForm.getLoginId());
         if (validatePasswordAtIsolationTable(loginForm.getLoginId(), loginForm.getPassword())) {
             userRepository.convertToWakeUp(userIsolation.getUserIdx());

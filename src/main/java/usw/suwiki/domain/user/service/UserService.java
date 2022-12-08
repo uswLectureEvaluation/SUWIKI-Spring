@@ -16,9 +16,9 @@ import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
 import usw.suwiki.domain.postreport.entity.ExamPostReport;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
-import usw.suwiki.domain.user.dto.UserDto;
-import usw.suwiki.domain.user.dto.UserDto.EditMyPasswordForm;
-import usw.suwiki.domain.user.dto.UserDto.FindPasswordForm;
+import usw.suwiki.domain.user.dto.UserRequestDto;
+import usw.suwiki.domain.user.dto.UserRequestDto.EditMyPasswordForm;
+import usw.suwiki.domain.user.dto.UserRequestDto.FindPasswordForm;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.global.exception.ErrorType;
@@ -56,7 +56,7 @@ public class UserService {
     private final BuildFindPasswordForm BuildFindPasswordForm;
     private final JwtTokenResolver jwtTokenResolver;
 
-    public User makeUser(UserDto.JoinForm joinForm) {
+    public User makeUser(UserRequestDto.JoinForm joinForm) {
         User user = User.builder()
                 .loginId((joinForm.getLoginId()))
                 .password(bCryptPasswordEncoder.encode(joinForm.getPassword()))
@@ -72,7 +72,7 @@ public class UserService {
         return user;
     }
 
-    public void join(UserDto.JoinForm joinForm) {
+    public void join(UserRequestDto.JoinForm joinForm) {
         if (userRepository.findByLoginId(joinForm.getLoginId()).isPresent() ||
                 userRepository.findByEmail(joinForm.getEmail()).isPresent())
             throw new AccountException(ErrorType.USER_AND_EMAIL_OVERLAP);
@@ -105,7 +105,7 @@ public class UserService {
                 .orElseThrow(() -> new AccountException(USER_NOT_EMAIL_AUTHED));
     }
 
-    public boolean sendEmailFindId(UserDto.FindIdForm findIdForm) {
+    public boolean sendEmailFindId(UserRequestDto.FindIdForm findIdForm) {
         Optional<User> inquiryId = userRepository.findByEmail(findIdForm.getEmail());
 
         if (inquiryId.isPresent()) {
@@ -214,7 +214,7 @@ public class UserService {
         return examPostsRepository.findById(ExamPostsIdx);
     }
 
-    public void reportExamPost(UserDto.ExamReportForm userReportForm, Long reportingUserIdx) {
+    public void reportExamPost(UserRequestDto.ExamReportForm userReportForm, Long reportingUserIdx) {
         Long reportTargetUser = loadExamPostsByIndex(userReportForm.getExamIdx()).getUser().getId();
         ExamPosts reportedTargetPost = loadExamPostsByIndex(userReportForm.getExamIdx());
         ExamPostReport target = ExamPostReport.builder()
@@ -229,7 +229,7 @@ public class UserService {
         examReportRepository.save(target);
     }
 
-    public void reportEvaluatePost(UserDto.EvaluateReportForm userReportForm, Long reportingUserIdx) {
+    public void reportEvaluatePost(UserRequestDto.EvaluateReportForm userReportForm, Long reportingUserIdx) {
         Long reportTargetUser = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getUser().getId();
         EvaluatePosts reportTargetPost = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx());
         EvaluatePostReport target = EvaluatePostReport.builder()

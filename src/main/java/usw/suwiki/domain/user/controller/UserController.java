@@ -13,8 +13,8 @@ import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
-import usw.suwiki.domain.user.dto.UserDto;
-import usw.suwiki.domain.user.dto.UserDto.*;
+import usw.suwiki.domain.user.dto.UserRequestDto;
+import usw.suwiki.domain.user.dto.UserRequestDto.*;
 import usw.suwiki.domain.user.dto.UserResponseDto;
 import usw.suwiki.domain.user.dto.UserResponseDto.ViewMyBlackListReasonForm;
 import usw.suwiki.domain.user.dto.UserResponseDto.ViewMyRestrictedReasonForm;
@@ -148,7 +148,7 @@ public class UserController {
 
     // 안드, IOS 로그인 요청 시
     @PostMapping("login")
-    public Map<String, String> mobileLogin(@Valid @RequestBody UserDto.LoginForm loginForm) {
+    public Map<String, String> mobileLogin(@Valid @RequestBody UserRequestDto.LoginForm loginForm) {
         Map<String, String> token = new HashMap<>();
         if (userIsolationRepository.findByLoginId(loginForm.getLoginId()).isEmpty()) {
             User user = userService.loadUserFromLoginId(loginForm.getLoginId());
@@ -174,7 +174,7 @@ public class UserController {
 
     // 프론트 로그인 요청 시 --> RefreshToken, AccessToken 쿠키로 셋팅
     @PostMapping("client-login")
-    public ResponseEntity<Map<String, String>> clientLogin(@Valid @RequestBody UserDto.LoginForm loginForm, HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> clientLogin(@Valid @RequestBody UserRequestDto.LoginForm loginForm, HttpServletResponse response) {
         Map<String, String> responseWrapper = new HashMap<>();
         if (userIsolationRepository.findByLoginId(loginForm.getLoginId()).isEmpty()) {
             User user = userService.loadUserFromLoginId(loginForm.getLoginId());
