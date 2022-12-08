@@ -7,6 +7,7 @@ import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.ExamPostRestrictForm;
 import usw.suwiki.domain.admin.service.UserAdminService;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
+import usw.suwiki.domain.restrictinguser.service.usecase.RestrictingUserAddRestrictingUserUseCase;
 import usw.suwiki.domain.user.service.UserService;
 
 import java.util.HashMap;
@@ -16,13 +17,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Transactional
 public class UserAdminRestrictPostUseCase {
-
-    private final RestrictingUserService restrictingUserService;
     private final UserService userService;
     private final UserAdminService userAdminService;
+    private final RestrictingUserAddRestrictingUserUseCase restrictingUserAddRestrictingUserUseCase;
 
     public Map<String, Boolean> restrictEvaluatePost(EvaluatePostRestrictForm evaluatePostRestrictForm) {
-        restrictingUserService.addRestrictingTableByEvaluatePost(evaluatePostRestrictForm);
+        restrictingUserAddRestrictingUserUseCase.executeEvaluatePost(evaluatePostRestrictForm);
         Long reportingUserIdx = userService.whoIsEvaluateReporting(evaluatePostRestrictForm.getEvaluateIdx());
         Long targetUserIdx = userAdminService.banishEvaluatePost(evaluatePostRestrictForm.getEvaluateIdx());
         userAdminService.plusRestrictCount(targetUserIdx);
@@ -34,7 +34,7 @@ public class UserAdminRestrictPostUseCase {
     }
 
     public Map<String, Boolean> restrictExamPost(ExamPostRestrictForm examPostRestrictForm) {
-        restrictingUserService.addRestrictingTableByExamPost(examPostRestrictForm);
+        restrictingUserAddRestrictingUserUseCase.executeExamPost(examPostRestrictForm);
         Long reportingUserIdx = userService.whoIsExamReporting(examPostRestrictForm.getExamIdx());
         Long targetUserIdx = userAdminService.blacklistOrRestrictAndDeleteExamPost(examPostRestrictForm.getExamIdx());
         userAdminService.plusRestrictCount(targetUserIdx);

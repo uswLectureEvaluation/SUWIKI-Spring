@@ -378,7 +378,7 @@ public class UserController {
         User requestUser = userService.loadUserFromUserIdx(jwtTokenResolver.getId(Authorization));
         return ResponseEntity.
                 status(HttpStatus.OK)
-                .body(restrictingUserService.getRestrictedLog(requestUser.getId()));
+                .body(restrictingUserService.loadRestrictedLog(requestUser.getId()));
     }
 }
 

@@ -28,9 +28,7 @@ public class UserAdminBlackListPostUseCase {
             }};
         }
 
-        userAdminService.banUserByExam(
-                userIdx,
-                365L,
+        userAdminService.executeBlacklistByEvaluatePost(userIdx, 365L,
                 evaluatePostBlacklistForm.getBannedReason(),
                 evaluatePostBlacklistForm.getJudgement());
         userAdminService.plusRestrictCount(userIdx);
@@ -50,14 +48,7 @@ public class UserAdminBlackListPostUseCase {
             }};
         }
 
-        userAdminService.banUserByEvaluate(userIdx, 365L,
-                examPostBlacklistForm.getBannedReason(),
-                examPostBlacklistForm.getJudgement());
-        userAdminService.plusRestrictCount(userIdx);
-
-        userAdminService.banUserByExam(
-                userIdx,
-                365L,
+        userAdminService.executeBlacklistByExamPost(userIdx, 365L,
                 examPostBlacklistForm.getBannedReason(),
                 examPostBlacklistForm.getJudgement());
         userAdminService.plusRestrictCount(userIdx);

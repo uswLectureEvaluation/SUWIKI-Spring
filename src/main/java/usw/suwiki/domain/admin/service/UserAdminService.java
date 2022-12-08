@@ -36,7 +36,8 @@ public class UserAdminService {
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;
 
-    public void banUserByEvaluate(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
+    // 강의평가 블랙리스트
+    public void executeBlacklistByEvaluatePost(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
         User user = userService.loadUserFromUserIdx(userIdx);
         user.setRestricted(true);
 
@@ -63,7 +64,7 @@ public class UserAdminService {
     }
 
     // 시험정보 블랙리스트
-    public void banUserByExam(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
+    public void executeBlacklistByExamPost(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
         User user = userService.loadUserFromUserIdx(userIdx);
         user.setRestricted(true);
 
@@ -90,6 +91,7 @@ public class UserAdminService {
         blacklistRepository.save(blacklistDomain);
     }
 
+    // 강의평가 게시글 제거 및 제거로 인한 게시물 상태 반영
     public Long banishEvaluatePost(Long evaluateIdx) {
         if (userService.loadEvaluatePostsByIndex(evaluateIdx) != null) {
             EvaluatePosts targetedEvaluatePost = userService.loadEvaluatePostsByIndex(evaluateIdx);
@@ -102,6 +104,7 @@ public class UserAdminService {
         throw new AccountException(SERVER_ERROR);
     }
 
+    // 시험정보 제거 및 제거로 인한 게시물 상태 반영
     public Long blacklistOrRestrictAndDeleteExamPost(Long examIdx) {
         if (userService.loadExamPostsByIndex(examIdx) != null) {
             ExamPosts targetedExamPost = userService.loadExamPostsByIndex(examIdx);

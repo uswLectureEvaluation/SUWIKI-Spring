@@ -12,6 +12,8 @@ import usw.suwiki.global.exception.errortype.AccountException;
 
 import java.time.LocalDateTime;
 
+import static usw.suwiki.global.exception.ErrorType.EMAIL_AUTH_TOKEN_ALREADY_USED;
+
 @Service
 @RequiredArgsConstructor
 public class EmailAuthService {
@@ -26,8 +28,8 @@ public class EmailAuthService {
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
                 .orElseThrow(() -> new AccountException(ErrorType.EMAIL_VALIDATED_ERROR));
         if (confirmationToken.getConfirmedAt() != null)
-            throw new AccountException(ErrorType.EMAIL_AUTH_TOKEN_ALREADY_USED);
-        if (userService.isEmailAuthTokenExpired(confirmationToken)) {
+            throw new AccountException(EMAIL_AUTH_TOKEN_ALREADY_USED);
+        else if (userService.isEmailAuthTokenExpired(confirmationToken)) {
             userRepository.deleteById(confirmationToken.getUserIdx());
             confirmationTokenService.deleteAllByToken(token);
         }
@@ -40,9 +42,13 @@ public class EmailAuthService {
                 .orElseThrow(() -> new AccountException(ErrorType.EMAIL_VALIDATED_ERROR));
 
         Long userIdx = confirmationToken.getUserIdx();
-        userService.loadUserFromUserIdx(userIdx).setRestricted(false);
-        userService.loadUserFromUserIdx(userIdx).setCreatedAt(LocalDateTime.now());
-        userService.loadUserFromUserIdx(userIdx).setUpdatedAt(LocalDateTime.now());
-        userService.loadUserFromUserIdx(userIdx).setRole(Role.USER);
+        userService.loadUserFromUserIdx(userIdx)
+                .setRestricted(false);
+        userService.loadUserFromUserIdx(userIdx)
+                .setCreatedAt(LocalDateTime.now());
+        userService.loadUserFromUserIdx(userIdx)
+                .setUpdatedAt(LocalDateTime.now());
+        userService.loadUserFromUserIdx(userIdx)
+                .setRole(Role.USER);
     }
 }
