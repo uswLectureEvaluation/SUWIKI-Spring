@@ -2,7 +2,6 @@ package usw.suwiki.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.blacklistdomain.BlackListService;
@@ -12,7 +11,6 @@ import usw.suwiki.domain.user.dto.UserRequestDto.*;
 import usw.suwiki.domain.user.dto.UserResponseDto.MyPageResponse;
 import usw.suwiki.domain.user.dto.UserResponseDto.ViewMyBlackListReasonForm;
 import usw.suwiki.domain.user.dto.UserResponseDto.ViewMyRestrictedReasonForm;
-import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.domain.user.service.usecase.*;
 import usw.suwiki.global.ToJsonArray;
@@ -31,12 +29,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
-
-    private final UserService userService;
-    private final RestrictingUserService restrictingUserService;
-    private final BlackListService blackListService;
-    private final JwtTokenValidator jwtTokenValidator;
-    private final JwtTokenResolver jwtTokenResolver;
     private final UserCheckIdUseCase userCheckIdUseCase;
     private final UserCheckEmailUseCase userCheckEmailUseCase;
     private final UserJoinUseCase userJoinUseCase;
@@ -50,6 +42,7 @@ public class UserController {
     private final UserQuitUseCase userQuitUseCase;
     private final UserReportUseCase userReportUseCase;
     private final UserFavoriteMajorUseCase userFavoriteMajorUseCase;
+    private final UserLoadRestrictAndBlackListReasonUseCase userLoadRestrictAndBlackListReasonUseCase;
 
     //아이디 중복확인
     @PostMapping("check-id")
@@ -75,6 +68,7 @@ public class UserController {
                 .body(userJoinUseCase.execute(joinForm));
     }
 
+    // 이메일 인증 링크를 눌렀을 때
     @GetMapping("verify-email")
     public ResponseEntity<String> confirmEmail(@RequestParam("token") String token) {
         return ResponseEntity
@@ -205,6 +199,7 @@ public class UserController {
                 .body(userReportUseCase.executeForExamPost(examReportForm, Authorization));
     }
 
+    // 전공 즐겨찾기 등록하기
     @PostMapping("/favorite-major")
     public ResponseEntity<String> saveFavoriteMajor(
             @RequestHeader String Authorization, @RequestBody FavoriteSaveDto favoriteSaveDto) {
@@ -214,6 +209,7 @@ public class UserController {
                 .body("success");
     }
 
+    // 전공 즐겨찾기 삭제하기
     @DeleteMapping("/favorite-major")
     public ResponseEntity<String> deleteFavoriteMajor(
             @RequestHeader String Authorization, @RequestParam String majorType) {
@@ -223,6 +219,7 @@ public class UserController {
                 .body("success");
     }
 
+    // 전공 즐겨찾기 불러오기
     @GetMapping("/favorite-major")
     public ResponseEntity<ToJsonArray> findByLecture(@RequestHeader String Authorization) {
         return ResponseEntity
@@ -230,6 +227,7 @@ public class UserController {
                 .body(userFavoriteMajorUseCase.executeLoad(Authorization));
     }
 
+    // 땡큐 영수형
     @GetMapping("/suki")
     public String thanksToSuki() {
         return "<center>\uD83D\uDE00 Thank You Suki! \uD83D\uDE00 <br><br> You gave to me a lot of knowledge <br><br>" +
@@ -240,23 +238,20 @@ public class UserController {
                 "</center>";
     }
 
-    @GetMapping("/blacklist-reason")
-    public ResponseEntity<List<ViewMyBlackListReasonForm>> banReason(@Valid @RequestHeader String Authorization) {
-        jwtTokenValidator.validateAccessToken(Authorization);
-        User requestUser = userService.loadUserFromUserIdx(jwtTokenResolver.getId(Authorization));
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(blackListService.getBlacklistLog(requestUser.getId()));
-    }
-
     // 정지 사유 불러오기
     @GetMapping("/restricted-reason")
     public ResponseEntity<List<ViewMyRestrictedReasonForm>> restrictedReason(@Valid @RequestHeader String Authorization) {
-        jwtTokenValidator.validateAccessToken(Authorization);
-        User requestUser = userService.loadUserFromUserIdx(jwtTokenResolver.getId(Authorization));
-        return ResponseEntity.
-                status(HttpStatus.OK)
-                .body(restrictingUserService.loadRestrictedLog(requestUser.getId()));
+        return ResponseEntity
+                .ok()
+                .body(userLoadRestrictAndBlackListReasonUseCase.executeForRestrictedReason(Authorization));
+    }
+
+    // 블랙리스트 사유 불러오기
+    @GetMapping("/blacklist-reason")
+    public ResponseEntity<List<ViewMyBlackListReasonForm>> banReason(@Valid @RequestHeader String Authorization) {
+        return ResponseEntity
+                .ok()
+                .body(userLoadRestrictAndBlackListReasonUseCase.executeForBlackListReason(Authorization));
     }
 }
 
