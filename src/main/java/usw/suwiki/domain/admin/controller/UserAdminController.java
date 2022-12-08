@@ -97,7 +97,7 @@ public class UserAdminController {
 
         restrictingUserService.addRestrictingTableByExamPost(examPostRestrictForm);
         Long reportingUserIdx = userService.whoIsExamReporting(examPostRestrictForm.getExamIdx());
-        Long targetUserIdx = userAdminService.blacklistOrRestrictAndDeleteExamPost(examPostRestrictForm.getExamIdx());
+        Long targetUserIdx = userAdminService.banishExamPost(examPostRestrictForm.getExamIdx());
         User targetUser = userAdminService.plusRestrictCount(targetUserIdx);
         User reportingUser = userAdminService.plusReportingUserPoint(reportingUserIdx);
         examReportRepository.deleteByExamIdx(examPostRestrictForm.getExamIdx());
@@ -150,7 +150,7 @@ public class UserAdminController {
             throw new AccountException(USER_RESTRICTED);
 
         Long userIdx = userService.loadExamPostsByIndex(examPostBlacklistForm.getExamIdx()).getUser().getId();
-        userAdminService.blacklistOrRestrictAndDeleteExamPost(examPostBlacklistForm.getExamIdx());
+        userAdminService.banishExamPost(examPostBlacklistForm.getExamIdx());
         Map<String, Boolean> result = new HashMap<>();
 
         if (blacklistRepository.findByUserId(userIdx).isPresent()) {

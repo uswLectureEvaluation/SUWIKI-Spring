@@ -40,7 +40,7 @@ public class RestrictingUserService {
 
 
         if (user.getRestrictedCount() >= 2) {
-            userAdminService.blacklistOrRestrictAndDeleteExamPost(evaluatePosts.getId());
+            userAdminService.banishEvaluatePost(evaluatePosts.getId());
             userAdminService.banUserByExam(user.getId(), 90L, "신고 누적으로 인한 블랙리스트", "신고누적 블랙리스트 1년");
         } else if (user.getRestrictedCount() < 3) {
             // 유저 Restricted True
@@ -66,7 +66,7 @@ public class RestrictingUserService {
         User user = userService.loadUserFromUserIdx(examPosts.getUser().getId());
 
         if (user.getRestrictedCount() >= 2) {
-            userAdminService.blacklistOrRestrictAndDeleteExamPost(examPosts.getId());
+            userAdminService.banishExamPost(examPosts.getId());
             userAdminService.banUserByExam(user.getId(), 90L, "신고 누적으로 인한 블랙리스트", "신고누적 블랙리스트 1년");
         } else if (user.getRestrictedCount() < 3) {
             // 유저 Restricted True

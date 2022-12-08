@@ -102,7 +102,7 @@ public class UserAdminService {
         throw new AccountException(SERVER_ERROR);
     }
 
-    public Long blacklistOrRestrictAndDeleteExamPost(Long examIdx) {
+    public Long banishExamPost(Long examIdx) {
         if (userService.loadExamPostsByIndex(examIdx) != null) {
             ExamPosts targetedExamPost = userService.loadExamPostsByIndex(examIdx);
             Long targetedExamPostIdx = targetedExamPost.getId();
