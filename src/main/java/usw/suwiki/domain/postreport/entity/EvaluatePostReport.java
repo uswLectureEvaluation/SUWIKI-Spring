@@ -7,9 +7,8 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Builder
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class EvaluatePostReport {

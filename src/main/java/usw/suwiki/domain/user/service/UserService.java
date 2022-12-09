@@ -16,9 +16,10 @@ import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
 import usw.suwiki.domain.postreport.entity.ExamPostReport;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
-import usw.suwiki.domain.user.dto.UserDto;
-import usw.suwiki.domain.user.dto.UserDto.EditMyPasswordForm;
-import usw.suwiki.domain.user.dto.UserDto.FindPasswordForm;
+import usw.suwiki.domain.user.dto.UserRequestDto;
+import usw.suwiki.domain.user.dto.UserRequestDto.EditMyPasswordForm;
+import usw.suwiki.domain.user.dto.UserRequestDto.FindIdForm;
+import usw.suwiki.domain.user.dto.UserRequestDto.FindPasswordForm;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.global.exception.ErrorType;
@@ -56,7 +57,7 @@ public class UserService {
     private final BuildFindPasswordForm BuildFindPasswordForm;
     private final JwtTokenResolver jwtTokenResolver;
 
-    public User makeUser(UserDto.JoinForm joinForm) {
+    public User makeUser(UserRequestDto.JoinForm joinForm) {
         User user = User.builder()
                 .loginId((joinForm.getLoginId()))
                 .password(bCryptPasswordEncoder.encode(joinForm.getPassword()))
@@ -72,7 +73,7 @@ public class UserService {
         return user;
     }
 
-    public void join(UserDto.JoinForm joinForm) {
+    public void join(UserRequestDto.JoinForm joinForm) {
         if (userRepository.findByLoginId(joinForm.getLoginId()).isPresent() ||
                 userRepository.findByEmail(joinForm.getEmail()).isPresent())
             throw new AccountException(ErrorType.USER_AND_EMAIL_OVERLAP);
@@ -105,11 +106,11 @@ public class UserService {
                 .orElseThrow(() -> new AccountException(USER_NOT_EMAIL_AUTHED));
     }
 
-    public boolean sendEmailFindId(UserDto.FindIdForm findIdForm) {
-        Optional<User> inquiryId = userRepository.findByEmail(findIdForm.getEmail());
+    public boolean sendEmailFindId(FindIdForm findIdForm) {
+        Optional<User> requestUser = userRepository.findByEmail(findIdForm.getEmail());
 
-        if (inquiryId.isPresent()) {
-            emailSender.send(findIdForm.getEmail(), BuildFindLoginIdForm.buildEmail(inquiryId.get().getLoginId()));
+        if (requestUser.isPresent()) {
+            emailSender.send(findIdForm.getEmail(), BuildFindLoginIdForm.buildEmail(requestUser.get().getLoginId()));
             return true;
         }
         throw new AccountException(USER_NOT_FOUND);
@@ -121,8 +122,10 @@ public class UserService {
 
         char[] charAllSet = new char[]{
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
+                'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+                't', 'u', 'v', 'w', 'x', 'y', 'z',
                 '!', '@', '#', '$', '%', '^'};
         char[] charNumberSet = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
         char[] charSpecialSet = new char[]{'!', '@', '#', '$', '%', '^'};
@@ -164,22 +167,19 @@ public class UserService {
         String userLoginId = jwtTokenResolver.getLoginId(AccessToken);
         userRepository.editPassword(bCryptPasswordEncoder.encode(editMyPasswordForm.getNewPassword()), userLoginId);
         User user = loadUserFromLoginId(userLoginId);
-        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.modifyUpdatedAt(user.getId());
     }
 
     public void validatePasswordAtEditPassword(String loginId, String prePassword) {
         if (userRepository.findByLoginId(loginId).isEmpty()) throw new AccountException(USER_NOT_EXISTS);
-
         if (bCryptPasswordEncoder.matches(prePassword, userRepository.findByLoginId(loginId).get().getPassword())) {
             bCryptPasswordEncoder.matches(prePassword, userRepository.findByLoginId(loginId).get().getPassword());
             return;
         }
-
         throw new AccountException(PASSWORD_ERROR);
     }
 
     public void compareNewPasswordVersusPrePassword(String loginId, String newPassword) {
-
         if (bCryptPasswordEncoder.matches(newPassword, userRepository.findByLoginId(loginId).get().getPassword())) {
             throw new AccountException(PASSWORD_NOT_CHANGED);
         }
@@ -214,7 +214,7 @@ public class UserService {
         return examPostsRepository.findById(ExamPostsIdx);
     }
 
-    public void reportExamPost(UserDto.ExamReportForm userReportForm, Long reportingUserIdx) {
+    public void reportExamPost(UserRequestDto.ExamReportForm userReportForm, Long reportingUserIdx) {
         Long reportTargetUser = loadExamPostsByIndex(userReportForm.getExamIdx()).getUser().getId();
         ExamPosts reportedTargetPost = loadExamPostsByIndex(userReportForm.getExamIdx());
         ExamPostReport target = ExamPostReport.builder()
@@ -229,7 +229,7 @@ public class UserService {
         examReportRepository.save(target);
     }
 
-    public void reportEvaluatePost(UserDto.EvaluateReportForm userReportForm, Long reportingUserIdx) {
+    public void reportEvaluatePost(UserRequestDto.EvaluateReportForm userReportForm, Long reportingUserIdx) {
         Long reportTargetUser = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getUser().getId();
         EvaluatePosts reportTargetPost = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx());
         EvaluatePostReport target = EvaluatePostReport.builder()

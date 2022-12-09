@@ -26,8 +26,7 @@ public class ViewExamService {
     private final LectureService lectureService;
     private final UserRepository userRepository;
 
-    public void save(Long lectureId, Long userIdx) {     // 연관관계를 맺지 않고 Id 로만 저장 할까 고민중
-
+    public void save(Long lectureId, Long userIdx) {
         Optional<User> user = userRepository.findById(userIdx);
         int point = user.get().getPoint();
         if (point < 20) {
@@ -38,8 +37,13 @@ public class ViewExamService {
             ViewExam viewExam = new ViewExam();
             int count = user.get().getViewExamCount();
 
-            user.get().setViewExamCount(count + 1);
-            user.get().setPoint(point - 20);
+            // -- Diger가 추가한 부분
+            userRepository.modifyViewExamCount(user.get().getId());
+            userRepository.subtractPoint(user.get().getId(), 20);
+            // -- Diger가 추가한 부분
+
+            // user.get().setViewExamCount(count + 1);
+            // user.get().setPoint(point - 20);
             viewExam.setUserInViewExam(user.get());
             viewExam.setLectureInViewExam(lecture);
             viewExamRepository.save(viewExam);

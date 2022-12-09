@@ -33,7 +33,6 @@ public class EvaluateController {
     private final EvaluatePostsService evaluatePostsService;
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
-    private final BadWordFiltering badWordFiltering;
 
     @GetMapping
     public ResponseEntity<FindByLectureToJson> findByLecture(@RequestHeader String Authorization, @RequestParam Long lectureId,
@@ -73,10 +72,6 @@ public class EvaluateController {
                 throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
             if (evaluatePostsService.verifyWriteEvaluatePosts(userIdx, lectureId)) {
-//                if (badWordFiltering.filtering(dto.getContent()).isPresent()) {
-//                    String FilteredBadWord = badWordFiltering.filtering(dto.getContent()).get();
-//                    return new ResponseEntity<String>(FilteredBadWord, header, HttpStatus.valueOf(406));
-//                }
                 evaluatePostsService.save(dto, userIdx, lectureId);
                 return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
             } else {

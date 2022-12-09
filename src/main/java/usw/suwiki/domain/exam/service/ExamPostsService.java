@@ -12,9 +12,9 @@ import usw.suwiki.domain.lecture.entity.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
-import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.PageOption;
+import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.errortype.AccountException;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -41,8 +41,11 @@ public class ExamPostsService {
             posts.setUser(user.get());
             Integer point = posts.getUser().getPoint();
             Integer num = posts.getUser().getWrittenExam();
-            posts.getUser().setPoint(point + 20);
-            posts.getUser().setWrittenExam(num + 1);
+
+            userRepository.addPoint(userIdx, 20);
+            userRepository.addWrittenExam(userIdx);
+            // posts.getUser().setPoint(point + 20);
+            // posts.getUser().setWrittenExam(num + 1);
             examPostsRepository.save(posts);
         }
     }
@@ -98,7 +101,8 @@ public class ExamPostsService {
         ExamPosts posts = examPostsRepository.findById(examIdx);
         Integer point = posts.getUser().getPoint();
         if (point >= 30) {
-            posts.getUser().setPoint(point - 30);
+            userRepository.subtractPoint(userIdx, 30);
+            // posts.getUser().setPoint(point - 30);
             return true;
         }
         return false;
@@ -106,9 +110,9 @@ public class ExamPostsService {
 
     public void deleteById(Long examIdx, Long userIdx) {
         ExamPosts posts = examPostsRepository.findById(examIdx);
-        Optional<User> user = userRepository.findById(userIdx);
-        Integer postsCount = user.get().getWrittenExam();
-        user.get().setWrittenExam(postsCount - 1);
+        userRepository.findById(userIdx)
+                .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
+        userRepository.subtractWrittenExam(userIdx);
         examPostsRepository.delete(posts);
     }
 }
