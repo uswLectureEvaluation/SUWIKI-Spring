@@ -28,8 +28,6 @@ public class UserAdminController {
     private final UserAdminLoadReportingPostUseCase userAdminLoadReportingPostUseCase;
     private final UserAdminLoadDetailReportingPostUseCase userAdminLoadDetailReportingPostUseCase;
 
-    @GetMapping
-
     // 관리자 전용 로그인 API
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> administratorLogin(@Valid @RequestBody LoginForm loginForm) {
