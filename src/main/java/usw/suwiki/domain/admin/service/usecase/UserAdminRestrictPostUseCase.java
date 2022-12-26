@@ -24,8 +24,8 @@ public class UserAdminRestrictPostUseCase {
         restrictingUserAddRestrictingUserUseCase.executeEvaluatePost(evaluatePostRestrictForm);
         Long reportingUserIdx = userService.whoIsEvaluateReporting(evaluatePostRestrictForm.getEvaluateIdx());
         Long targetUserIdx = userAdminService.banishEvaluatePost(evaluatePostRestrictForm.getEvaluateIdx());
-        userAdminService.addRestrictCount(targetUserIdx);
-        userAdminService.addReportingUserPoint(reportingUserIdx);
+        userAdminService.plusRestrictCount(targetUserIdx);
+        userAdminService.plusReportingUserPoint(reportingUserIdx);
 
         return new HashMap<>() {{
             put("Success", true);
@@ -36,8 +36,8 @@ public class UserAdminRestrictPostUseCase {
         restrictingUserAddRestrictingUserUseCase.executeExamPost(examPostRestrictForm);
         Long reportingUserIdx = userService.whoIsExamReporting(examPostRestrictForm.getExamIdx());
         Long targetUserIdx = userAdminService.blacklistOrRestrictAndDeleteExamPost(examPostRestrictForm.getExamIdx());
-        userAdminService.addRestrictCount(targetUserIdx);
-        userAdminService.addReportingUserPoint(reportingUserIdx);
+        userAdminService.plusRestrictCount(targetUserIdx);
+        userAdminService.plusReportingUserPoint(reportingUserIdx);
 
         return new HashMap<>() {{
             put("Success", true);

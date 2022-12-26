@@ -28,7 +28,7 @@ public class User {
     private String email;
 
     @Column
-    private boolean restricted;
+    private Boolean restricted;
 
     @Column
     private Integer restrictedCount;

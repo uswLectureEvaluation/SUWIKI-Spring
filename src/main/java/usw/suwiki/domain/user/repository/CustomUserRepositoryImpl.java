@@ -2,6 +2,7 @@ package usw.suwiki.domain.user.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.user.entity.Role;
@@ -13,7 +14,6 @@ import static usw.suwiki.domain.user.entity.QUser.user;
 
 @Repository
 @RequiredArgsConstructor
-@Transactional
 public class CustomUserRepositoryImpl implements CustomUserRepository {
 
     private final JPAQueryFactory queryFactory;
@@ -37,10 +37,10 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
     }
 
     @Override
-    public void updatePoint(long targetUserIdx, int newAddedPoint) {
+    public void updatePoint(long targetUserIdx, int newPoint) {
         queryFactory
                 .update(user)
-                .set(user.point, newAddedPoint)
+                .set(user.point, newPoint)
                 .where(user.id.eq(targetUserIdx))
                 .execute();
     }

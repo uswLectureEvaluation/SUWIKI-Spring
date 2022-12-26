@@ -69,9 +69,7 @@ public class UserAdminService {
     public void executeBlacklistByExamPost(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
         User user = userService.loadUserFromUserIdx(userIdx);
         userRepository.updateRestricted(userIdx, true);
-
         String hashTargetEmail = bCryptPasswordEncoder.encode(user.getEmail());
-
         if (blacklistRepository.findByUserId(user.getId()).isPresent()) {
             throw new AccountException(USER_ALREADY_BLACKLISTED);
         }
@@ -119,12 +117,12 @@ public class UserAdminService {
         throw new AccountException(SERVER_ERROR);
     }
 
-    public void addRestrictCount(Long userIdx) {
+    public void plusRestrictCount(Long userIdx) {
         User user = userService.loadUserFromUserIdx(userIdx);
         userRepository.updateRestrictedCount(user.getId(), (user.getRestrictedCount() + 1));
     }
 
-    public void addReportingUserPoint(Long reportingUserIdx) {
+    public void plusReportingUserPoint(Long reportingUserIdx) {
         User user = userService.loadUserFromUserIdx(reportingUserIdx);
         userRepository.updatePoint(user.getId(), (user.getPoint() + 1));
     }

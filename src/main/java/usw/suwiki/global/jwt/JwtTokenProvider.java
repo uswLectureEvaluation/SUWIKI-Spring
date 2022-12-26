@@ -40,7 +40,7 @@ public class JwtTokenProvider {
         claims.put("id", user.getId());
         claims.put("loginId", user.getLoginId());
         claims.put("role", user.getRole());
-        claims.put("restricted", user.isRestricted());
+        claims.put("restricted", user.getRestricted());
         return Jwts.builder()
                 .setHeaderParam("type", "JWT")
                 .setClaims(claims)

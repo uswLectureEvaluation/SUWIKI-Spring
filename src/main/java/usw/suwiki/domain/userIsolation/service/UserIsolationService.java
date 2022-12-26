@@ -16,7 +16,7 @@ import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.user.dto.UserRequestDto;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
-import usw.suwiki.domain.user.repository.restrictinguser.RestrictingUserRepository;
+import usw.suwiki.domain.user.repository.RestrictingUserRepository;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.domain.userIsolation.entity.UserIsolation;
 import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;

@@ -31,7 +31,7 @@ public class UserAdminBlackListPostUseCase {
         userAdminService.executeBlacklistByEvaluatePost(userIdx, 365L,
                 evaluatePostBlacklistForm.getBannedReason(),
                 evaluatePostBlacklistForm.getJudgement());
-        userAdminService.addRestrictCount(userIdx);
+        userAdminService.plusRestrictCount(userIdx);
 
         return new HashMap<>() {{
             put("Success", true);
@@ -51,7 +51,7 @@ public class UserAdminBlackListPostUseCase {
         userAdminService.executeBlacklistByExamPost(userIdx, 365L,
                 examPostBlacklistForm.getBannedReason(),
                 examPostBlacklistForm.getJudgement());
-        userAdminService.addRestrictCount(userIdx);
+        userAdminService.plusRestrictCount(userIdx);
 
         return new HashMap<>() {{
             put("Success", true);

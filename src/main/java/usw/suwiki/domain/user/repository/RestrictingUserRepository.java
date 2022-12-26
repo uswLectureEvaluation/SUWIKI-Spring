@@ -1,4 +1,4 @@
-package usw.suwiki.domain.user.repository.restrictinguser;
+package usw.suwiki.domain.user.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

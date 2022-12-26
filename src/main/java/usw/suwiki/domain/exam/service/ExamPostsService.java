@@ -39,10 +39,7 @@ public class ExamPostsService {
         } else {
             posts.setLecture(lecture);
             posts.setUser(user.get());
-            Integer point = posts.getUser().getPoint();
-            Integer num = posts.getUser().getWrittenExam();
-
-            userRepository.updatePoint(userIdx, 20);
+            userRepository.updatePoint(userIdx, (user.get().getPoint() + 20));
             userRepository.updateWrittenExamCount(userIdx, user.get().getWrittenExam() + 1);
             examPostsRepository.save(posts);
         }

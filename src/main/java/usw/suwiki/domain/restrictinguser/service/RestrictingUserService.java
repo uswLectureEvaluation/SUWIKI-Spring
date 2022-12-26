@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.restrictinguser.repository.RestrictingUser;
 import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonForm;
 import usw.suwiki.domain.user.repository.UserRepository;
-import usw.suwiki.domain.user.repository.restrictinguser.RestrictingUserRepository;
+import usw.suwiki.domain.user.repository.RestrictingUserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

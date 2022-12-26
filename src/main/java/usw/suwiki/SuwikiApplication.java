@@ -13,7 +13,5 @@ public class SuwikiApplication {
     public static void main(String[] args) {
         SpringApplication.run(SuwikiApplication.class, args);
     }
-
-
 }
 

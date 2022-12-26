@@ -40,7 +40,7 @@ public class EvaluatePostsService {
         }
         posts.setLecture(lecture);
         posts.setUser(user);
-        userRepository.updatePoint(userIdx, 10);
+        userRepository.updatePoint(userIdx, (user.getPoint() + 10));
         userRepository.updateWrittenEvaluateCount(userIdx, user.getWrittenEvaluation() + 1);
         EvaluatePostsToLecture newDto = new EvaluatePostsToLecture(posts);
         lectureService.addLectureValue(newDto);
@@ -93,7 +93,7 @@ public class EvaluatePostsService {
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         Integer point = posts.getUser().getPoint();
         if (point >= 30) {
-            userRepository.updatePoint(userIdx, posts.getUser().getPoint() - 30);
+            userRepository.updatePoint(userIdx, (posts.getUser().getPoint() - 30));
             return true;
         }
         return false;
