@@ -40,7 +40,7 @@ public class BlackListService {
 
         for (int i = 0; i < whiteListTarget.toArray().length; i++) {
             Long userIdx = whiteListTarget.get(i).getId();
-            userRepository.unRestricted(userIdx);
+            userRepository.updateRestricted(userIdx, false);
             blacklistRepository.deleteByUserIdx(userIdx);
         }
     }

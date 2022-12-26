@@ -54,7 +54,7 @@ public class RestrictingUserService {
         for (RestrictingUser target : targetUser) {
             Long userIdx = target.getUserIdx();
             restrictingUserRepository.deleteByUserIdx(userIdx);
-            userRepository.unRestricted(userIdx);
+            userRepository.updateRestricted(userIdx, false);
         }
     }
 }

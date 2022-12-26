@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.user.entity.Role;
+import usw.suwiki.domain.userIsolation.entity.UserIsolation;
 
 import java.time.LocalDateTime;
 
@@ -89,6 +90,52 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
                 .set(user.updatedAt, LocalDateTime.now())
                 .set(user.role, Role.USER)
                 .where(user.id.eq(targetUserIdx))
+                .execute();
+    }
+
+    @Override
+    public void updateLastLogin(LocalDateTime now, Long userIdx) {
+        queryFactory
+                .update(user)
+                .set(user.lastLogin, now)
+                .where(user.id.eq(userIdx))
+                .execute();
+    }
+
+    @Override
+    public void updatePassword(String newPassword, String loginId) {
+        queryFactory
+                .update(user)
+                .set(user.password, newPassword)
+                .where(user.loginId.eq(loginId))
+                .execute();
+    }
+
+    @Override
+    public void applyUserSoftDelete(Long userIdx) {
+        queryFactory
+                .update(user)
+                .set(user.id, (Long) null)
+                .set(user.loginId, (String) null)
+                .set(user.password, (String) null)
+                .set(user.email, (String) null)
+                .set(user.lastLogin, (LocalDateTime) null)
+                .set(user.requestedQuitDate, (LocalDateTime) null)
+                .where(user.id.eq(userIdx))
+                .execute();
+    }
+
+    @Override
+    public void unapplyUserSoftDelete(Long userIdx, UserIsolation userIsolation) {
+        queryFactory
+                .update(user)
+                .set(user.id, userIsolation.getUserIdx())
+                .set(user.loginId, userIsolation.getLoginId())
+                .set(user.password, userIsolation.getPassword())
+                .set(user.email, userIsolation.getEmail())
+                .set(user.lastLogin, userIsolation.getLastLogin())
+                .set(user.requestedQuitDate, userIsolation.getRequestedQuitDate())
+                .where(user.id.eq(userIdx))
                 .execute();
     }
 }

@@ -153,10 +153,10 @@ public class UserService {
     }
 
     public boolean sendEmailFindPassword(FindPasswordForm findPasswordForm) {
-        if (userRepository.findPwLogicByLoginIdAndEmail(findPasswordForm.getLoginId(), findPasswordForm.getEmail()) != null) {
+        if (userRepository.findByLoginId(findPasswordForm.getLoginId()).isPresent()) {
             String resetPassword = randomizePassword();
             String EncodedResetPassword = bCryptPasswordEncoder.encode(resetPassword);
-            userRepository.resetPassword(EncodedResetPassword, findPasswordForm.getLoginId(), findPasswordForm.getEmail());
+            userRepository.updatePassword(EncodedResetPassword, findPasswordForm.getLoginId());
             emailSender.send(findPasswordForm.getEmail(), BuildFindPasswordForm.buildEmail(resetPassword));
             return true;
         }
@@ -165,7 +165,7 @@ public class UserService {
 
     public void editMyPassword(EditMyPasswordForm editMyPasswordForm, String AccessToken) {
         String userLoginId = jwtTokenResolver.getLoginId(AccessToken);
-        userRepository.editPassword(bCryptPasswordEncoder.encode(editMyPasswordForm.getNewPassword()), userLoginId);
+        userRepository.updatePassword(bCryptPasswordEncoder.encode(editMyPasswordForm.getNewPassword()), userLoginId);
         User user = loadUserFromLoginId(userLoginId);
         userRepository.updateUpdatedAt(user.getId());
     }
@@ -190,7 +190,7 @@ public class UserService {
     }
 
     public void setLastLogin(User user) {
-        userRepository.lastLoginStamp(LocalDateTime.now(), user.getId());
+        userRepository.updateLastLogin(LocalDateTime.now(), user.getId());
     }
 
     public User convertOptionalUserToDomainUser(Optional<User> optionalUser) {

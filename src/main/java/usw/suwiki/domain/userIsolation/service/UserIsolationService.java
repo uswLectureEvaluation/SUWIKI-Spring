@@ -58,9 +58,18 @@ public class UserIsolationService {
                 .orElseThrow(() -> new AccountException(USER_NOT_EXISTS));
     }
 
-    public void moveToIsolation(User user) {
-        userIsolationRepository.convertSleepingUser(user.getId());
-        userRepository.convertToSleeping(user.getId());
+    public void convertToIsolationUser(User user) {
+        UserIsolation userIsolation = UserIsolation.builder()
+                .userIdx(user.getId())
+                .loginId(user.getLoginId())
+                .password(user.getPassword())
+                .email(user.getEmail())
+                .lastLogin(user.getLastLogin())
+                .requestedQuitDate(user.getRequestedQuitDate())
+                .build();
+        userIsolationRepository.save(userIsolation);
+
+        userRepository.applyUserSoftDelete(user.getId());
     }
 
     public boolean validatePasswordAtIsolationTable(String loginId, String password) {
@@ -70,7 +79,7 @@ public class UserIsolationService {
     public User sleepingUserLogin(UserRequestDto.LoginForm loginForm) {
         UserIsolation userIsolation = loadUserFromLoginId(loginForm.getLoginId());
         if (validatePasswordAtIsolationTable(loginForm.getLoginId(), loginForm.getPassword())) {
-            userRepository.convertToWakeUp(userIsolation.getUserIdx());
+            userRepository.unapplyUserSoftDelete(userIsolation.getUserIdx(), userIsolation);
             userIsolationRepository.deleteByLoginId(loginForm.getLoginId());
         } else {
             throw new AccountException(PASSWORD_ERROR);
@@ -95,7 +104,7 @@ public class UserIsolationService {
         List<User> targetUser = userRepository.findByLastLoginBefore(targetTime);
         for (int i = 0; i < targetUser.toArray().length; i++) {
             if (userIsolationRepository.findByUserIdx(targetUser.get(i).getId()).isEmpty()) {
-                moveToIsolation(targetUser.get(i));
+                convertToIsolationUser(targetUser.get(i));
             }
         }
     }

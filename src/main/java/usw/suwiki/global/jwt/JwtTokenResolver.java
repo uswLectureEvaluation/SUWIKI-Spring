@@ -27,8 +27,6 @@ public class JwtTokenResolver {
     private String secretKey;
 
     public Long getId(String token) {
-        // Object Type 으로 받는다. (Long 으로 강제 형변환이 안되어서 한번 거쳤다가 Long 으로 )
-        // 기존에는 Integer 로 받았지만, Integer 범위를 넘어서는 값이 등장하면 런타임 에러가 발생한다.
         Object id = parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody().get("id");
         return Long.valueOf(String.valueOf(id));
     }
@@ -51,14 +49,14 @@ public class JwtTokenResolver {
 
     @Transactional
     public String refreshTokenUpdateOrCreate(User user) {
-        if (refreshTokenRepository.findPayLoadByUserIdx(user.getId()).isPresent()) {
+        if (refreshTokenRepository.loadPayloadByUserIdx(user.getId()) != null) {
             try {
                 Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(
-                        refreshTokenRepository.findPayLoadByUserIdx(user.getId()).get());
+                        refreshTokenRepository.loadPayloadByUserIdx(user.getId()));
             } catch (ExpiredJwtException exception) {
                 return jwtTokenProvider.updateRefreshToken(user.getId());
             }
-            String refreshToken = refreshTokenRepository.findPayLoadByUserIdx(user.getId()).get();
+            String refreshToken = refreshTokenRepository.loadPayloadByUserIdx(user.getId());
             if (jwtTokenValidator.isNeedToUpdateRefreshToken(refreshToken)) {
                 return jwtTokenProvider.updateRefreshToken(user.getId());
             } else return refreshToken;

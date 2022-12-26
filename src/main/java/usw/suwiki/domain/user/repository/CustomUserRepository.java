@@ -1,6 +1,9 @@
 package usw.suwiki.domain.user.repository;
 
 import org.springframework.stereotype.Repository;
+import usw.suwiki.domain.userIsolation.entity.UserIsolation;
+
+import java.time.LocalDateTime;
 
 @Repository
 public interface CustomUserRepository {
@@ -20,4 +23,12 @@ public interface CustomUserRepository {
     void updateViewExamCount(long targetUserIdx, int newViewExamCount);
 
     void updateUserEmailAuthStatus(long targetUserIdx);
+
+    void updateLastLogin(LocalDateTime now, Long userIdx);
+
+    void updatePassword(String resetPassword, String loginId);
+
+    void applyUserSoftDelete(Long id);
+
+    void unapplyUserSoftDelete(Long id, UserIsolation userIsolation);
 }
