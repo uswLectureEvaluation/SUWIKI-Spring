@@ -1,4 +1,4 @@
-package usw.suwiki.domain.user.service.quitrequestuser;
+package usw.suwiki.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,7 +14,7 @@ import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.repository.RestrictingUserRepository;
-import usw.suwiki.domain.user.service.UserService;
+import usw.suwiki.domain.user.service.UserCommonService;
 import usw.suwiki.domain.userIsolation.entity.UserIsolation;
 import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
@@ -28,7 +28,7 @@ import java.util.List;
 public class QuitRequestUserService {
 
     // User
-    private final UserService userService;
+    private final UserCommonService userCommonService;
     private final UserRepository userRepository;
     private final FavoriteMajorService favoriteMajorService;
     private final ConfirmationTokenRepository confirmationTokenRepository;
@@ -82,7 +82,7 @@ public class QuitRequestUserService {
         // 회원탈퇴 요청한 유저의 시험정보 삭제
         examPostsService.deleteByUser(userIdx);
         // 유저 이용불가 처리
-        disableUser(userService.loadUserFromUserIdx(userIdx));
+        disableUser(userCommonService.loadUserFromUserIdx(userIdx));
     }
 
     // 회원탈퇴 요청 후 30일 뒤 테이블에서 제거

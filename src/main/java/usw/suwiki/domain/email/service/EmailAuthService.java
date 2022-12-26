@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.email.entity.ConfirmationToken;
 import usw.suwiki.domain.user.repository.UserRepository;
-import usw.suwiki.domain.user.service.UserService;
+import usw.suwiki.domain.user.service.UserCommonService;
 import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.exception.errortype.AccountException;
 
@@ -15,7 +15,7 @@ import static usw.suwiki.global.exception.ErrorType.EMAIL_AUTH_TOKEN_ALREADY_USE
 @RequiredArgsConstructor
 public class EmailAuthService {
 
-    private final UserService userService;
+    private final UserCommonService userCommonService;
     private final ConfirmationTokenService confirmationTokenService;
     private final UserRepository userRepository;
 
@@ -26,7 +26,7 @@ public class EmailAuthService {
                 .orElseThrow(() -> new AccountException(ErrorType.EMAIL_VALIDATED_ERROR));
         if (confirmationToken.getConfirmedAt() != null)
             throw new AccountException(EMAIL_AUTH_TOKEN_ALREADY_USED);
-        else if (userService.isEmailAuthTokenExpired(confirmationToken)) {
+        else if (userCommonService.isEmailAuthTokenExpired(confirmationToken)) {
             userRepository.deleteById(confirmationToken.getUserIdx());
             confirmationTokenService.deleteAllByToken(token);
         }

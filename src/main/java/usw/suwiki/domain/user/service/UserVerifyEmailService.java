@@ -1,4 +1,4 @@
-package usw.suwiki.domain.user.service.usecase;
+package usw.suwiki.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import usw.suwiki.global.util.emailBuild.BuildEmailAuthSuccessForm;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserVerifyEmailUseCase {
+public class UserVerifyEmailService {
 
     private final BuildEmailAuthSuccessForm buildEmailAuthSuccessForm;
     private final EmailAuthService emailAuthService;

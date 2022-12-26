@@ -1,10 +1,10 @@
-package usw.suwiki.domain.admin.service.usecase;
+package usw.suwiki.domain.admin.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.dto.UserAdminResponseDto.LoadAllReportedPostForm;
-import usw.suwiki.domain.admin.service.UserAdminService;
+import usw.suwiki.domain.admin.service.UserAdminCommonService;
 import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
 import usw.suwiki.domain.postreport.entity.ExamPostReport;
 
@@ -13,13 +13,13 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserAdminLoadReportingPostUseCase {
+public class UserAdminLoadReportingPostService {
 
-    private final UserAdminService userAdminService;
+    private final UserAdminCommonService userAdminCommonService;
 
     public LoadAllReportedPostForm execute() {
-        List<EvaluatePostReport> evaluatePostReports = userAdminService.loadReportedEvaluateList();
-        List<ExamPostReport> examPostReports = userAdminService.loadReportedExamList();
+        List<EvaluatePostReport> evaluatePostReports = userAdminCommonService.loadReportedEvaluateList();
+        List<ExamPostReport> examPostReports = userAdminCommonService.loadReportedExamList();
 
         return LoadAllReportedPostForm
                 .builder()

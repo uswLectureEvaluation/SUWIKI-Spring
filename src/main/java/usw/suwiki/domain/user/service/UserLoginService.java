@@ -1,11 +1,10 @@
-package usw.suwiki.domain.user.service.usecase;
+package usw.suwiki.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.user.dto.UserRequestDto.LoginForm;
 import usw.suwiki.domain.user.entity.User;
-import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.userIsolation.service.UserIsolationService;
 import usw.suwiki.global.exception.errortype.AccountException;
@@ -20,25 +19,25 @@ import static usw.suwiki.global.exception.ErrorType.PASSWORD_ERROR;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserLoginUseCase {
+public class UserLoginService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenResolver jwtTokenResolver;
     private final UserIsolationRepository userIsolationRepository;
-    private final UserService userService;
+    private final UserCommonService userCommonService;
     private final UserIsolationService userIsolationService;
 
     public Map<String, String> execute(LoginForm loginForm) {
         Map<String, String> tokenPair = new HashMap<>();
         if (userIsolationRepository.findByLoginId(loginForm.getLoginId()).isEmpty()) {
-            User notSleepingUser = userService.loadUserFromLoginId(loginForm.getLoginId());
-            userService.isUserEmailAuth(notSleepingUser.getId());
-            if (userService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword())) {
+            User notSleepingUser = userCommonService.loadUserFromLoginId(loginForm.getLoginId());
+            userCommonService.isUserEmailAuth(notSleepingUser.getId());
+            if (userCommonService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword())) {
                 String accessToken = jwtTokenProvider.createAccessToken(notSleepingUser);
                 String refreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(notSleepingUser);
                 tokenPair.put("AccessToken", accessToken);
                 tokenPair.put("RefreshToken", refreshToken);
-                userService.setLastLogin(notSleepingUser);
+                userCommonService.setLastLogin(notSleepingUser);
                 return tokenPair;
             }
             throw new AccountException(PASSWORD_ERROR);
@@ -49,7 +48,7 @@ public class UserLoginUseCase {
             String refreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(sleepingUser);
             tokenPair.put("AccessToken", accessToken);
             tokenPair.put("RefreshToken", refreshToken);
-            userService.setLastLogin(sleepingUser);
+            userCommonService.setLastLogin(sleepingUser);
             return tokenPair;
         }
         throw new AccountException(PASSWORD_ERROR);

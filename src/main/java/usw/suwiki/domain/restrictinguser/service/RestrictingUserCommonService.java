@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class RestrictingUserService {
+public class RestrictingUserCommonService {
 
     private final RestrictingUserRepository restrictingUserRepository;
     private final UserRepository userRepository;

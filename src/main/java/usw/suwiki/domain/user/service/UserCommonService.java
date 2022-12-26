@@ -41,7 +41,7 @@ import static usw.suwiki.global.exception.ErrorType.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserService {
+public class UserCommonService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepository;

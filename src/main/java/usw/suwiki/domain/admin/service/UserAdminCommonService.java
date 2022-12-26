@@ -16,7 +16,7 @@ import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
-import usw.suwiki.domain.user.service.UserService;
+import usw.suwiki.domain.user.service.UserCommonService;
 import usw.suwiki.global.exception.errortype.AccountException;
 
 import java.time.LocalDateTime;
@@ -28,8 +28,8 @@ import static usw.suwiki.global.exception.ErrorType.USER_ALREADY_BLACKLISTED;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserAdminService {
-    private final UserService userService;
+public class UserAdminCommonService {
+    private final UserCommonService userCommonService;
     private final BlacklistRepository blacklistRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EvaluatePostsService evaluatePostsService;
@@ -40,7 +40,7 @@ public class UserAdminService {
 
     // 강의평가 블랙리스트
     public void executeBlacklistByEvaluatePost(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
-        User user = userService.loadUserFromUserIdx(userIdx);
+        User user = userCommonService.loadUserFromUserIdx(userIdx);
         userRepository.updateRestricted(userIdx, true);
 
         String hashTargetEmail = bCryptPasswordEncoder.encode(user.getEmail());
@@ -67,7 +67,7 @@ public class UserAdminService {
 
     // 시험정보 블랙리스트
     public void executeBlacklistByExamPost(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
-        User user = userService.loadUserFromUserIdx(userIdx);
+        User user = userCommonService.loadUserFromUserIdx(userIdx);
         userRepository.updateRestricted(userIdx, true);
         String hashTargetEmail = bCryptPasswordEncoder.encode(user.getEmail());
         if (blacklistRepository.findByUserId(user.getId()).isPresent()) {
@@ -93,8 +93,8 @@ public class UserAdminService {
 
     // 강의평가 게시글 제거 및 제거로 인한 게시물 상태 반영
     public Long banishEvaluatePost(Long evaluateIdx) {
-        if (userService.loadEvaluatePostsByIndex(evaluateIdx) != null) {
-            EvaluatePosts targetedEvaluatePost = userService.loadEvaluatePostsByIndex(evaluateIdx);
+        if (userCommonService.loadEvaluatePostsByIndex(evaluateIdx) != null) {
+            EvaluatePosts targetedEvaluatePost = userCommonService.loadEvaluatePostsByIndex(evaluateIdx);
             Long targetedEvaluatePostIdx = targetedEvaluatePost.getId();
             Long targetedUserIdx = targetedEvaluatePost.getUser().getId();
             evaluateReportRepository.deleteByEvaluateIdx(targetedEvaluatePostIdx);
@@ -106,8 +106,8 @@ public class UserAdminService {
 
     // 시험정보 제거 및 제거로 인한 게시물 상태 반영
     public Long blacklistOrRestrictAndDeleteExamPost(Long examIdx) {
-        if (userService.loadExamPostsByIndex(examIdx) != null) {
-            ExamPosts targetedExamPost = userService.loadExamPostsByIndex(examIdx);
+        if (userCommonService.loadExamPostsByIndex(examIdx) != null) {
+            ExamPosts targetedExamPost = userCommonService.loadExamPostsByIndex(examIdx);
             Long targetedExamPostIdx = targetedExamPost.getId();
             Long targetedUserIdx = targetedExamPost.getUser().getId();
             examReportRepository.deleteByExamIdx(targetedExamPostIdx);
@@ -118,12 +118,12 @@ public class UserAdminService {
     }
 
     public void plusRestrictCount(Long userIdx) {
-        User user = userService.loadUserFromUserIdx(userIdx);
+        User user = userCommonService.loadUserFromUserIdx(userIdx);
         userRepository.updateRestrictedCount(user.getId(), (user.getRestrictedCount() + 1));
     }
 
     public void plusReportingUserPoint(Long reportingUserIdx) {
-        User user = userService.loadUserFromUserIdx(reportingUserIdx);
+        User user = userCommonService.loadUserFromUserIdx(reportingUserIdx);
         userRepository.updatePoint(user.getId(), (user.getPoint() + 1));
     }
 

@@ -1,4 +1,4 @@
-package usw.suwiki.domain.admin.service.usecase;
+package usw.suwiki.domain.admin.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserAdminNoProblemPostUseCase {
+public class UserAdminNoProblemPostService {
 
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;

@@ -1,4 +1,4 @@
-package usw.suwiki.domain.admin.service.usecase;
+package usw.suwiki.domain.admin.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import static usw.suwiki.global.exception.ErrorType.USER_RESTRICTED;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserAdminJwtValidateUseCase {
+public class UserAdminJwtValidateService {
 
     private final JwtTokenResolver jwtTokenResolver;
     private final JwtTokenValidator jwtTokenValidator;

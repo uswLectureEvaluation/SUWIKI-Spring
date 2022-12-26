@@ -1,12 +1,12 @@
-package usw.suwiki.domain.admin.service.usecase;
+package usw.suwiki.domain.admin.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostBlacklistForm;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.ExamPostBlacklistForm;
-import usw.suwiki.domain.admin.service.UserAdminService;
-import usw.suwiki.domain.user.service.UserService;
+import usw.suwiki.domain.admin.service.UserAdminCommonService;
+import usw.suwiki.domain.user.service.UserCommonService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,24 +14,24 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserAdminBlackListPostUseCase {
+public class UserAdminBlackListPostService {
 
-    private final UserService userService;
-    private final UserAdminService userAdminService;
+    private final UserCommonService userCommonService;
+    private final UserAdminCommonService userAdminCommonService;
 
     public Map<String, Boolean> executeEvaluatePost(EvaluatePostBlacklistForm evaluatePostBlacklistForm) {
-        Long userIdx = userService.loadEvaluatePostsByIndex(evaluatePostBlacklistForm.getEvaluateIdx()).getUser().getId();
-        userAdminService.banishEvaluatePost(evaluatePostBlacklistForm.getEvaluateIdx());
-        if (userAdminService.isAlreadyBlackList(userIdx)) {
+        Long userIdx = userCommonService.loadEvaluatePostsByIndex(evaluatePostBlacklistForm.getEvaluateIdx()).getUser().getId();
+        userAdminCommonService.banishEvaluatePost(evaluatePostBlacklistForm.getEvaluateIdx());
+        if (userAdminCommonService.isAlreadyBlackList(userIdx)) {
             return new HashMap<>() {{
                 put("Success", false);
             }};
         }
 
-        userAdminService.executeBlacklistByEvaluatePost(userIdx, 365L,
+        userAdminCommonService.executeBlacklistByEvaluatePost(userIdx, 365L,
                 evaluatePostBlacklistForm.getBannedReason(),
                 evaluatePostBlacklistForm.getJudgement());
-        userAdminService.plusRestrictCount(userIdx);
+        userAdminCommonService.plusRestrictCount(userIdx);
 
         return new HashMap<>() {{
             put("Success", true);
@@ -39,19 +39,19 @@ public class UserAdminBlackListPostUseCase {
     }
 
     public Map<String, Boolean> executeExamPost(ExamPostBlacklistForm examPostBlacklistForm) {
-        Long userIdx = userService.loadExamPostsByIndex(examPostBlacklistForm.getExamIdx()).getUser().getId();
-        userAdminService.blacklistOrRestrictAndDeleteExamPost(examPostBlacklistForm.getExamIdx());
+        Long userIdx = userCommonService.loadExamPostsByIndex(examPostBlacklistForm.getExamIdx()).getUser().getId();
+        userAdminCommonService.blacklistOrRestrictAndDeleteExamPost(examPostBlacklistForm.getExamIdx());
 
-        if (userAdminService.isAlreadyBlackList(userIdx)) {
+        if (userAdminCommonService.isAlreadyBlackList(userIdx)) {
             return new HashMap<>() {{
                 put("Success", false);
             }};
         }
 
-        userAdminService.executeBlacklistByExamPost(userIdx, 365L,
+        userAdminCommonService.executeBlacklistByExamPost(userIdx, 365L,
                 examPostBlacklistForm.getBannedReason(),
                 examPostBlacklistForm.getJudgement());
-        userAdminService.plusRestrictCount(userIdx);
+        userAdminCommonService.plusRestrictCount(userIdx);
 
         return new HashMap<>() {{
             put("Success", true);

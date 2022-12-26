@@ -15,8 +15,6 @@ import usw.suwiki.testconfig.TestConfig;
 
 import javax.persistence.EntityManager;
 
-import java.time.LocalDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -114,15 +112,14 @@ class CustomUserRepositoryImplTest {
                 .isNotNull();
     }
 
-    @Test
-    void updatePassword() {
-    }
-
-    @Test
-    void applyUserSoftDelete() {
-    }
-
-    @Test
-    void unapplyUserSoftDelete() {
+    @DisplayName("유저 새 비밀번호 업데이트 DB 적용 테스트")
+    @ParameterizedTest
+    @ValueSource(strings = {"qwer1234!!!!!", "passw0rd", "-123zx"})
+    void updatePassword(String newPassword) {
+        User user = userRepository.findById(6L).get();
+        userRepository.updatePassword(user.getPassword(), user.getLoginId());
+        entityManager.clear();
+        assertThat(userRepository.findById(6L).get().getPassword())
+                .isEqualTo(newPassword);
     }
 }

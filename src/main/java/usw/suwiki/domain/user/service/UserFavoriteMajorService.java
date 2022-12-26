@@ -1,4 +1,4 @@
-package usw.suwiki.domain.user.service.usecase;
+package usw.suwiki.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import static usw.suwiki.global.exception.ErrorType.USER_RESTRICTED;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserFavoriteMajorUseCase {
+public class UserFavoriteMajorService {
 
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;

@@ -1,10 +1,9 @@
-package usw.suwiki.domain.user.service.usecase;
+package usw.suwiki.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.user.dto.UserRequestDto.FindPasswordForm;
-import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.global.exception.errortype.AccountException;
 
 import java.util.HashMap;
@@ -15,12 +14,12 @@ import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserFindPasswordUseCase {
+public class UserFindPasswordService {
 
-    private final UserService userService;
+    private final UserCommonService userCommonService;
 
     public Map<String, Boolean> execute(FindPasswordForm findPasswordForm) {
-        if (!userService.sendEmailFindPassword(findPasswordForm)) throw new AccountException(USER_NOT_EXISTS);
+        if (!userCommonService.sendEmailFindPassword(findPasswordForm)) throw new AccountException(USER_NOT_EXISTS);
         return new HashMap<>() {{
             put("success", true);
         }};
