@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.ExamPostRestrictForm;
 import usw.suwiki.domain.admin.service.UserAdminService;
-import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.restrictinguser.service.usecase.RestrictingUserAddRestrictingUserUseCase;
 import usw.suwiki.domain.user.service.UserService;
 
@@ -25,8 +24,8 @@ public class UserAdminRestrictPostUseCase {
         restrictingUserAddRestrictingUserUseCase.executeEvaluatePost(evaluatePostRestrictForm);
         Long reportingUserIdx = userService.whoIsEvaluateReporting(evaluatePostRestrictForm.getEvaluateIdx());
         Long targetUserIdx = userAdminService.banishEvaluatePost(evaluatePostRestrictForm.getEvaluateIdx());
-        userAdminService.plusRestrictCount(targetUserIdx);
-        userAdminService.plusReportingUserPoint(reportingUserIdx);
+        userAdminService.addRestrictCount(targetUserIdx);
+        userAdminService.addReportingUserPoint(reportingUserIdx);
 
         return new HashMap<>() {{
             put("Success", true);
@@ -37,8 +36,8 @@ public class UserAdminRestrictPostUseCase {
         restrictingUserAddRestrictingUserUseCase.executeExamPost(examPostRestrictForm);
         Long reportingUserIdx = userService.whoIsExamReporting(examPostRestrictForm.getExamIdx());
         Long targetUserIdx = userAdminService.blacklistOrRestrictAndDeleteExamPost(examPostRestrictForm.getExamIdx());
-        userAdminService.plusRestrictCount(targetUserIdx);
-        userAdminService.plusReportingUserPoint(reportingUserIdx);
+        userAdminService.addRestrictCount(targetUserIdx);
+        userAdminService.addReportingUserPoint(reportingUserIdx);
 
         return new HashMap<>() {{
             put("Success", true);

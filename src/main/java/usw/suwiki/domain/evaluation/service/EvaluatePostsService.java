@@ -21,7 +21,6 @@ import usw.suwiki.global.exception.errortype.AccountException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor
@@ -31,28 +30,22 @@ public class EvaluatePostsService {
     private final LectureService lectureService;
     private final UserRepository userRepository;
 
-    public void save(EvaluatePostsSaveDto dto, Long userIdx, Long lectureId) {
-        EvaluatePosts posts = new EvaluatePosts(dto);
-
+    public void save(EvaluatePostsSaveDto evaluatePostsSaveDto, Long userIdx, Long lectureId) {
+        EvaluatePosts posts = new EvaluatePosts(evaluatePostsSaveDto);
         Lecture lecture = lectureService.findById(lectureId);
-        Optional<User> user = userRepository.findById(userIdx);
-
+        User user = userRepository.findById(userIdx)
+                .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
         if (lecture == null) {
-            new AccountException(ErrorType.NOT_EXISTS_LECTURE);
-        } else {
-            posts.setLecture(lecture);
-            posts.setUser(user.get());  // user 도 넣어줘야 함
-            Integer point = posts.getUser().getPoint();
-            Integer num = posts.getUser().getWrittenEvaluation();
-            userRepository.addPoint(userIdx, 10);
-            userRepository.addWrittenEvaluate(userIdx);
-            // posts.getUser().setPoint(point + 10);
-            // posts.getUser().setWrittenEvaluation(num + 1);
-            EvaluatePostsToLecture newDto = new EvaluatePostsToLecture(posts);
-            lectureService.addLectureValue(newDto);
-            lectureService.calcLectureAvg(newDto);
-            evaluatePostsRepository.save(posts);
+            throw new AccountException(ErrorType.NOT_EXISTS_LECTURE);
         }
+        posts.setLecture(lecture);
+        posts.setUser(user);
+        userRepository.updatePoint(userIdx, 10);
+        userRepository.updateWrittenEvaluateCount(userIdx, user.getWrittenEvaluation() + 1);
+        EvaluatePostsToLecture newDto = new EvaluatePostsToLecture(posts);
+        lectureService.addLectureValue(newDto);
+        lectureService.calcLectureAvg(newDto);
+        evaluatePostsRepository.save(posts);
     }
 
     public EvaluatePosts findById(Long evaluateIdx) {
@@ -88,18 +81,19 @@ public class EvaluatePostsService {
         return dtoList;
     }
 
-    public boolean verifyWriteEvaluatePosts(Long userIdx, Long lectureId) {
+    public boolean verifyIsUserWriteEvaluatePost(Long userIdx, Long lectureId) {
         Lecture lecture = lectureService.findById(lectureId);
-        Optional<User> user = userRepository.findById(userIdx);
-        return evaluatePostsRepository.verifyPostsByIdx(user.get(), lecture);
+        User user = userRepository.findById(userIdx)
+                .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
+        ;
+        return evaluatePostsRepository.verifyPostsByIdx(user, lecture);
     }
 
-    public boolean verifyDeleteEvaluatePosts(Long userIdx, Long evaluateIdx) {
+    public boolean deleteEvaluatePost(Long userIdx, Long evaluateIdx) {
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         Integer point = posts.getUser().getPoint();
         if (point >= 30) {
-            userRepository.subtractPoint(userIdx, 30);
-            // posts.getUser().setPoint(point - 30);
+            userRepository.updatePoint(userIdx, posts.getUser().getPoint() - 30);
             return true;
         }
         return false;
@@ -107,10 +101,7 @@ public class EvaluatePostsService {
 
     public void deleteByUser(Long userIdx) {
         List<EvaluatePosts> list = evaluatePostsRepository.findAllByUserId(userIdx);
-
-        if (list.isEmpty()) {
-            return;
-        } else {
+        if (!list.isEmpty()) {
             for (EvaluatePosts evaluatePosts : list) {
                 EvaluatePostsToLecture dto = new EvaluatePostsToLecture(evaluatePosts);
                 lectureService.cancelLectureValue(dto);
@@ -123,14 +114,12 @@ public class EvaluatePostsService {
     @Synchronized
     public void deleteById(Long evaluateIdx, Long userIdx) {
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
-        Optional<User> user = userRepository.findById(userIdx);
-        EvaluatePostsToLecture dto = new EvaluatePostsToLecture(posts);
-
-        lectureService.cancelLectureValue(dto);
-        lectureService.calcLectureAvg(dto);
-        Integer postsCount = user.get().getWrittenEvaluation();
-        userRepository.subtractWrittenEvaluate(userIdx);
-        // user.get().setWrittenEvaluation(postsCount - 1);
+        User user = userRepository.findById(userIdx)
+                .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
+        EvaluatePostsToLecture evaluatePostsToLecture = new EvaluatePostsToLecture(posts);
+        lectureService.cancelLectureValue(evaluatePostsToLecture);
+        lectureService.calcLectureAvg(evaluatePostsToLecture);
+        userRepository.updateWrittenEvaluateCount(userIdx, user.getWrittenEvaluation() - 1);
         evaluatePostsRepository.delete(posts);
     }
 }

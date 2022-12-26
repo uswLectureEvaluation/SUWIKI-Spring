@@ -5,23 +5,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CustomUserRepository {
 
-    void modifyRestricted(long targetUserIdx, boolean flag);
+    void updateRestricted(long targetUserIdx, boolean flag);
 
-    void addRestrictedCount(long targetUserIdx);
+    void updateRestrictedCount(long targetUserIdx, int newRestrictedCount);
 
-    void addPoint(long targetUserIdx, int amount);
+    void updatePoint(long targetUserIdx, int newAddedPoint);
 
-    void addWrittenExam(long targetUserIdx);
-    void addWrittenEvaluate(long targetUserIdx);
+    void updateWrittenExamCount(long targetUserIdx, int newWrittenExam);
 
-    void subtractPoint(long targetUserIdx, int amount);
+    void updateWrittenEvaluateCount(long targetUserIdx, int newWrittenEvaluate);
 
-    void subtractWrittenExam(long targetUserIdx);
-    void subtractWrittenEvaluate(long targetUserIdx);
+    void updateUpdatedAt(long targetUserIdx);
 
-    void modifyUpdatedAt(long targetUserIdx);
+    void updateViewExamCount(long targetUserIdx, int newViewExamCount);
 
-    void modifyViewExamCount(long targetUserIdx);
-
-    void emailAuthedUser(long targetUserIdx);
+    void updateUserEmailAuthStatus(long targetUserIdx);
 }

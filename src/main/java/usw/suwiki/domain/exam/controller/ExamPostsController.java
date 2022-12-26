@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.exam.*;
+import usw.suwiki.domain.exam.FindByLectureToExam;
 import usw.suwiki.domain.exam.dto.ExamPostsSaveDto;
 import usw.suwiki.domain.exam.dto.ExamPostsUpdateDto;
 import usw.suwiki.domain.exam.dto.ExamResponseByLectureIdDto;
@@ -15,13 +15,12 @@ import usw.suwiki.domain.exam.dto.ExamResponseByUserIdxDto;
 import usw.suwiki.domain.exam.service.ExamPostsService;
 import usw.suwiki.domain.viewExam.dto.PurchaseHistoryDto;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
-import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.ToJsonArray;
+import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.jwt.JwtTokenValidator;
-import usw.suwiki.global.util.BadWordFiltering;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ public class ExamPostsController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
     private final ViewExamService viewExamService;
-    private final BadWordFiltering badWordFiltering;
 
     @GetMapping
     public ResponseEntity<FindByLectureToExam> findByLecture(@RequestParam Long lectureId, @RequestHeader String Authorization,

@@ -18,7 +18,7 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public void modifyRestricted(long targetUserIdx, boolean flag) {
+    public void updateRestricted(long targetUserIdx, boolean flag) {
         queryFactory
                 .update(user)
                 .set(user.restricted, flag)
@@ -27,70 +27,43 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
     }
 
     @Override
-    public void addRestrictedCount(long targetUserIdx) {
+    public void updateRestrictedCount(long targetUserIdx, int newRestrictedCount) {
         queryFactory
                 .update(user)
-                .set(user.restrictedCount, user.restrictedCount.add(1))
+                .set(user.restrictedCount, newRestrictedCount)
                 .where(user.id.eq(targetUserIdx))
                 .execute();
     }
 
     @Override
-    public void addPoint(long targetUserIdx, int amount) {
+    public void updatePoint(long targetUserIdx, int newAddedPoint) {
         queryFactory
                 .update(user)
-                .set(user.point, user.point.add(amount))
+                .set(user.point, newAddedPoint)
                 .where(user.id.eq(targetUserIdx))
                 .execute();
     }
 
     @Override
-    public void addWrittenExam(long targetUserIdx) {
+    public void updateWrittenExamCount(long targetUserIdx, int newWrittenExamCount) {
         queryFactory
                 .update(user)
-                .set(user.writtenExam, user.writtenExam.add(1))
+                .set(user.writtenExam, newWrittenExamCount)
                 .where(user.id.eq(targetUserIdx))
                 .execute();
     }
 
     @Override
-    public void addWrittenEvaluate(long targetUserIdx) {
+    public void updateWrittenEvaluateCount(long targetUserIdx, int newWrittenEvaluateCount) {
         queryFactory
                 .update(user)
-                .set(user.writtenEvaluation, user.writtenEvaluation.add(1))
+                .set(user.writtenEvaluation, newWrittenEvaluateCount)
                 .where(user.id.eq(targetUserIdx))
                 .execute();
     }
 
     @Override
-    public void subtractPoint(long targetUserIdx, int amount) {
-        queryFactory
-                .update(user)
-                .set(user.point, user.point.subtract(20))
-                .where(user.id.eq(targetUserIdx))
-                .execute();
-    }
-
-    @Override
-    public void subtractWrittenExam(long targetUserIdx) {
-        queryFactory
-                .update(user)
-                .set(user.writtenExam, user.writtenExam.subtract(1))
-                .where(user.id.eq(targetUserIdx))
-                .execute();
-    }
-
-    @Override
-    public void subtractWrittenEvaluate(long targetUserIdx) {
-        queryFactory
-                .update(user)
-                .set(user.writtenEvaluation, user.writtenEvaluation.subtract(1))
-                .where(user.id.eq(targetUserIdx))
-                .execute();
-    }
-
-    @Override
-    public void modifyUpdatedAt(long targetUserIdx) {
+    public void updateUpdatedAt(long targetUserIdx) {
         queryFactory
                 .update(user)
                 .set(user.updatedAt, LocalDateTime.now())
@@ -99,7 +72,7 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
     }
 
     @Override
-    public void modifyViewExamCount(long targetUserIdx) {
+    public void updateViewExamCount(long targetUserIdx, int newViewExamCount) {
         queryFactory
                 .update(user)
                 .set(user.viewExamCount, user.viewExamCount.add(1))
@@ -108,7 +81,7 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
     }
 
     @Override
-    public void emailAuthedUser(long targetUserIdx) {
+    public void updateUserEmailAuthStatus(long targetUserIdx) {
         queryFactory
                 .update(user)
                 .set(user.restricted, false)

@@ -10,12 +10,11 @@ import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.viewExam.dto.PurchaseHistoryDto;
 import usw.suwiki.domain.viewExam.entity.ViewExam;
-import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.errortype.AccountException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Transactional
 @Service
@@ -27,31 +26,22 @@ public class ViewExamService {
     private final UserRepository userRepository;
 
     public void save(Long lectureId, Long userIdx) {
-        Optional<User> user = userRepository.findById(userIdx);
-        int point = user.get().getPoint();
-        if (point < 20) {
+        User user = userRepository.findById(userIdx)
+                .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
+        if (user.getPoint() < 20) {
             throw new AccountException(ErrorType.USER_POINT_LACK);
-        } else {
-            Lecture lecture = lectureService.findById(lectureId);
-
-            ViewExam viewExam = new ViewExam();
-            int count = user.get().getViewExamCount();
-
-            // -- Diger가 추가한 부분
-            userRepository.modifyViewExamCount(user.get().getId());
-            userRepository.subtractPoint(user.get().getId(), 20);
-            // -- Diger가 추가한 부분
-
-            // user.get().setViewExamCount(count + 1);
-            // user.get().setPoint(point - 20);
-            viewExam.setUserInViewExam(user.get());
-            viewExam.setLectureInViewExam(lecture);
-            viewExamRepository.save(viewExam);
         }
+        Lecture lecture = lectureService.findById(lectureId);
+        userRepository.updateViewExamCount(user.getId(), user.getViewExamCount() + 1);
+        userRepository.updatePoint(user.getId(), (user.getPoint() + 20));
+        ViewExam viewExam = new ViewExam();
+        viewExam.setUserInViewExam(user);
+        viewExam.setLectureInViewExam(lecture);
+        viewExamRepository.save(viewExam);
     }
+
     public boolean verifyAuth(Long lectureId, Long userIdx) {
         List<ViewExam> list = viewExamRepository.findByUserId(userIdx);
-
         for (ViewExam viewExam : list) {
             if (viewExam.getLecture().getId().equals(lectureId)) {
                 return true;
@@ -61,7 +51,7 @@ public class ViewExamService {
     }
 
     public List<PurchaseHistoryDto> findByUserId(Long userIdx) {
-        List<PurchaseHistoryDto> dtoList = new ArrayList<PurchaseHistoryDto>();
+        List<PurchaseHistoryDto> dtoList = new ArrayList<>();
         List<ViewExam> list = viewExamRepository.findByUserId(userIdx);
         for (ViewExam viewExam : list) {
             PurchaseHistoryDto dto = PurchaseHistoryDto.builder()
@@ -74,7 +64,6 @@ public class ViewExamService {
 
             dtoList.add(dto);
         }
-
         return dtoList;
     }
 
@@ -84,5 +73,4 @@ public class ViewExamService {
             viewExamRepository.delete(viewExam);
         }
     }
-
 }

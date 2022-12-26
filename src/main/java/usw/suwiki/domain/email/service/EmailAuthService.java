@@ -39,6 +39,6 @@ public class EmailAuthService {
                 .orElseThrow(() -> new AccountException(ErrorType.EMAIL_VALIDATED_ERROR));
 
         Long userIdx = confirmationToken.getUserIdx();
-        userRepository.emailAuthedUser(userIdx);
+        userRepository.updateUserEmailAuthStatus(userIdx);
     }
 }

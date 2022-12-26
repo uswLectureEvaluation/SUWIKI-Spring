@@ -41,7 +41,7 @@ public class UserAdminService {
     // 강의평가 블랙리스트
     public void executeBlacklistByEvaluatePost(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
         User user = userService.loadUserFromUserIdx(userIdx);
-        userRepository.modifyRestricted(userIdx, true);
+        userRepository.updateRestricted(userIdx, true);
 
         String hashTargetEmail = bCryptPasswordEncoder.encode(user.getEmail());
         if (blacklistRepository.findByUserId(user.getId()).isPresent()) {
@@ -68,7 +68,7 @@ public class UserAdminService {
     // 시험정보 블랙리스트
     public void executeBlacklistByExamPost(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
         User user = userService.loadUserFromUserIdx(userIdx);
-        userRepository.modifyRestricted(userIdx, true);
+        userRepository.updateRestricted(userIdx, true);
 
         String hashTargetEmail = bCryptPasswordEncoder.encode(user.getEmail());
 
@@ -119,14 +119,14 @@ public class UserAdminService {
         throw new AccountException(SERVER_ERROR);
     }
 
-    public void plusRestrictCount(Long userIdx) {
+    public void addRestrictCount(Long userIdx) {
         User user = userService.loadUserFromUserIdx(userIdx);
-        userRepository.addRestrictedCount(user.getId());
+        userRepository.updateRestrictedCount(user.getId(), (user.getRestrictedCount() + 1));
     }
 
-    public void plusReportingUserPoint(Long reportingUserIdx) {
+    public void addReportingUserPoint(Long reportingUserIdx) {
         User user = userService.loadUserFromUserIdx(reportingUserIdx);
-        userRepository.addPoint(user.getId(), 1);
+        userRepository.updatePoint(user.getId(), (user.getPoint() + 1));
     }
 
     public List<EvaluatePostReport> loadReportedEvaluateList() {

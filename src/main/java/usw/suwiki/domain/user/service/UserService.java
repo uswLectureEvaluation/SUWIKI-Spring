@@ -167,7 +167,7 @@ public class UserService {
         String userLoginId = jwtTokenResolver.getLoginId(AccessToken);
         userRepository.editPassword(bCryptPasswordEncoder.encode(editMyPasswordForm.getNewPassword()), userLoginId);
         User user = loadUserFromLoginId(userLoginId);
-        userRepository.modifyUpdatedAt(user.getId());
+        userRepository.updateUpdatedAt(user.getId());
     }
 
     public void validatePasswordAtEditPassword(String loginId, String prePassword) {

@@ -1,5 +1,7 @@
 package usw.suwiki.domain.viewExam.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.lecture.entity.Lecture;
@@ -11,6 +13,8 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity
+@Builder
+@AllArgsConstructor
 public class ViewExam extends BaseTimeEntity {
 
     @Id

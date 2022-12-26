@@ -42,10 +42,8 @@ public class ExamPostsService {
             Integer point = posts.getUser().getPoint();
             Integer num = posts.getUser().getWrittenExam();
 
-            userRepository.addPoint(userIdx, 20);
-            userRepository.addWrittenExam(userIdx);
-            // posts.getUser().setPoint(point + 20);
-            // posts.getUser().setWrittenExam(num + 1);
+            userRepository.updatePoint(userIdx, 20);
+            userRepository.updateWrittenExamCount(userIdx, user.get().getWrittenExam() + 1);
             examPostsRepository.save(posts);
         }
     }
@@ -101,8 +99,7 @@ public class ExamPostsService {
         ExamPosts posts = examPostsRepository.findById(examIdx);
         Integer point = posts.getUser().getPoint();
         if (point >= 30) {
-            userRepository.subtractPoint(userIdx, 30);
-            // posts.getUser().setPoint(point - 30);
+            userRepository.updatePoint(userIdx, (posts.getUser().getPoint() - 30));
             return true;
         }
         return false;
@@ -112,7 +109,7 @@ public class ExamPostsService {
         ExamPosts posts = examPostsRepository.findById(examIdx);
         userRepository.findById(userIdx)
                 .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
-        userRepository.subtractWrittenExam(userIdx);
+        userRepository.updateWrittenExamCount(userIdx, posts.getUser().getPoint() - 30);
         examPostsRepository.delete(posts);
     }
 }

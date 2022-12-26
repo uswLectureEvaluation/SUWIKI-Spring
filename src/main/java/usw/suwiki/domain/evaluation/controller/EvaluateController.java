@@ -19,7 +19,6 @@ import usw.suwiki.global.PageOption;
 import usw.suwiki.global.ToJsonArray;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.jwt.JwtTokenValidator;
-import usw.suwiki.global.util.BadWordFiltering;
 
 import java.io.IOException;
 import java.util.List;
@@ -43,7 +42,7 @@ public class EvaluateController {
                 throw new AccountException(ErrorType.USER_RESTRICTED);
             List<EvaluateResponseByLectureIdDto> list = evaluatePostsService.findEvaluatePostsByLectureId(new PageOption(page), lectureId);
             FindByLectureToJson data = new FindByLectureToJson(list);
-            if (evaluatePostsService.verifyWriteEvaluatePosts(jwtTokenResolver.getId(Authorization), lectureId)) {
+            if (evaluatePostsService.verifyIsUserWriteEvaluatePost(jwtTokenResolver.getId(Authorization), lectureId)) {
                 data.setWritten(false);
             }
             return new ResponseEntity<FindByLectureToJson>(data, header, HttpStatus.valueOf(200));
@@ -71,7 +70,7 @@ public class EvaluateController {
             if (jwtTokenResolver.getUserIsRestricted(Authorization))
                 throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
-            if (evaluatePostsService.verifyWriteEvaluatePosts(userIdx, lectureId)) {
+            if (evaluatePostsService.verifyIsUserWriteEvaluatePost(userIdx, lectureId)) {
                 evaluatePostsService.save(dto, userIdx, lectureId);
                 return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
             } else {
@@ -104,7 +103,7 @@ public class EvaluateController {
             if (jwtTokenResolver.getUserIsRestricted(Authorization))
                 throw new AccountException(ErrorType.USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
-            if (evaluatePostsService.verifyDeleteEvaluatePosts(userIdx, evaluateIdx)) {
+            if (evaluatePostsService.deleteEvaluatePost(userIdx, evaluateIdx)) {
                 evaluatePostsService.deleteById(evaluateIdx, userIdx);
                 return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
             } else {

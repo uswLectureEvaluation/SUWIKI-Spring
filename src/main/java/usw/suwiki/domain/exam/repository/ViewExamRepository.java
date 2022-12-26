@@ -10,9 +10,9 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface ViewExamRepository {
 
-    public void save(ViewExam viewExam);
+    void save(ViewExam viewExam);
 
     List<ViewExam> findByUserId(Long userIdx);
 
-    public void delete(ViewExam viewExam);
+    void delete(ViewExam viewExam);
 }
