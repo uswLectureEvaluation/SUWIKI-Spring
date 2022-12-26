@@ -3,7 +3,7 @@ package usw.suwiki.domain.viewExam.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.exam.repository.ViewExamRepository;
+import usw.suwiki.domain.viewExam.repository.ViewExamRepository;
 import usw.suwiki.domain.lecture.entity.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.entity.User;

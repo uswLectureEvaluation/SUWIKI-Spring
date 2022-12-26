@@ -1,4 +1,4 @@
-package usw.suwiki.domain.exam.repository;
+package usw.suwiki.domain.viewExam.repository;
 
 import org.springframework.stereotype.Repository;
 import usw.suwiki.domain.viewExam.entity.ViewExam;
