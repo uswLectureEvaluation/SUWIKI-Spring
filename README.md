@@ -1,7 +1,4 @@
 # 🦁 JIWON-JEONG - [깃허브](https://github.com/JIWEON-JEONG)
-<details>
-  <summary> <h2> 담당기능(눌러서 확인하기) </summary>
-  <div markdown="Jiwon-jeong">
     
 # 담당 로직
 
@@ -14,7 +11,7 @@
 
 ## Lecture API
 - 강의 CRUD
-- 복잡한 조건 필터를  검색
+- 조건 필터를 통한 검색
 
 ## Notice API
 - 공지사항 CRUD
@@ -23,15 +20,7 @@
 - 인앱 제화 구현 (POINT)
 - XSS(크로스 사이트 스크립팅) 방지 필터 구현
 
-  </div>
-</details>
-
-
 # 🐯 diger-king [깃허브](https://github.com/diger-king)
-
-<details>
-  <summary> <h2> 담당기능(눌러서 확인하기) </summary>
-  <div markdown="diger">
 
 # 담당 로직
 
@@ -71,9 +60,6 @@
 -  시험정보 삭제 및 유저 블랙리스트 조치
 -  신고된 시험정보 이상 없음 조치
 -  신고된 강의평가 이상 없음 조치
-
-  </div>
-</details>
 
 ---
 
