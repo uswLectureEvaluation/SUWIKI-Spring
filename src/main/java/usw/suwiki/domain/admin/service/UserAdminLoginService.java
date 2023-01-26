@@ -7,6 +7,8 @@ import usw.suwiki.domain.user.dto.UserRequestDto;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.service.UserCommonService;
+import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenProvider;
 
 import java.util.HashMap;
@@ -22,14 +24,15 @@ public class UserAdminLoginService {
     private final UserRepository userRepository;
 
     public Map<String, String> adminLogin(UserRequestDto.LoginForm loginForm) {
-        Map<String, String> result = new HashMap<>();
-        userCommonService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword());
-        User user = userCommonService.loadUserFromLoginId(loginForm.getLoginId());
-        String accessToken = jwtTokenProvider.createAccessToken(user);
-        result.put("AccessToken", accessToken);
-        int userCount = userRepository.findAll().size();
-        result.put("UserCount", String.valueOf(userCount));
-
-        return result;
+        if (userCommonService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword())) {
+            User user = userCommonService.loadUserFromLoginId(loginForm.getLoginId());
+            String accessToken = jwtTokenProvider.createAccessToken(user);
+            Map<String, String> result = new HashMap<>();
+            result.put("AccessToken", accessToken);
+            int userCount = userRepository.findAll().size();
+            result.put("UserCount", String.valueOf(userCount));
+            return result;
+        }
+        throw new AccountException(ErrorType.PASSWORD_ERROR);
     }
 }
