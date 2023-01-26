@@ -1,34 +1,26 @@
 # 🦁 JIWON-JEONG - [깃허브](https://github.com/JIWEON-JEONG)
-<details>
-  <summary> <h2> 담당기능(눌러서 확인하기) </summary>
-  <div markdown="Jiwon-jeong">
     
 # 담당 로직
 
 ## Evaluation API
-- 추가 예정
+- 강의 CRUD
     
 ## Exam API
-- 추가 예정
+- 시험정보 CRUD
+- 시험정보 구매 내역 조회
 
 ## Lecture API
-- 추가 예정
+- 강의 CRUD
+- 조건 필터를 통한 검색
 
 ## Notice API
-- 추가 예정
+- 공지사항 CRUD
 
-## ViewExam API
-- 추가 예정
-
-  </div>
-</details>
-
+## 그외
+- 인앱 제화 구현 (POINT)
+- XSS(크로스 사이트 스크립팅) 방지 필터 구현
 
 # 🐯 diger-king [깃허브](https://github.com/diger-king)
-
-<details>
-  <summary> <h2> 담당기능(눌러서 확인하기) </summary>
-  <div markdown="diger">
 
 # 담당 로직
 
@@ -68,9 +60,6 @@
 -  시험정보 삭제 및 유저 블랙리스트 조치
 -  신고된 시험정보 이상 없음 조치
 -  신고된 강의평가 이상 없음 조치
-
-  </div>
-</details>
 
 ---
 
