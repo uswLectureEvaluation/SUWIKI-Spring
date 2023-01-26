@@ -8,6 +8,7 @@ build/
 !src/test/test/**/build/
 application.yml
 application.properties
+*.yml
 .idea/workspace.xml
 
 ### STS ###
