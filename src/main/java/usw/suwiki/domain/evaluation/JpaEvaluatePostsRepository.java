@@ -54,18 +54,20 @@ public class JpaEvaluatePostsRepository implements EvaluatePostsRepository {
             page = Optional.of(1);
         }
 
-        List resultList = em.createQuery("SELECT p from EvaluatePosts p join p.user u WHERE u.id = :id ORDER BY p.modifiedDate DESC")
-                .setParameter("id", userId)
-                .setFirstResult((page.get() - 1) * 10)
-                .setMaxResults(10)
-                .getResultList();
+        List resultList = em.createQuery(
+                "SELECT p from EvaluatePosts p join p.user u WHERE u.id = :id ORDER BY p.modifiedDate DESC")
+            .setParameter("id", userId)
+            .setFirstResult((page.get() - 1) * 10)
+            .setMaxResults(10)
+            .getResultList();
 
         return resultList;
     }
 
     @Override
     public boolean verifyPostsByIdx(User user, Lecture lecture) {
-        List resultList = em.createQuery("SELECT p from EvaluatePosts p WHERE p.user = :user AND p.lecture = :lecture")
+        List resultList = em.createQuery(
+            "SELECT p from EvaluatePosts p WHERE p.user = :user AND p.lecture = :lecture")
                 .setParameter("user", user)
                 .setParameter("lecture", lecture)
                 .getResultList();
@@ -82,7 +84,8 @@ public class JpaEvaluatePostsRepository implements EvaluatePostsRepository {
     @Override
     public List<EvaluatePosts> findAllByUserId(Long userId) {
 
-        List resultList = em.createQuery("SELECT p from EvaluatePosts p join p.user u WHERE u.id = :id ORDER BY p.modifiedDate DESC")
+        List resultList = em.createQuery(
+            "SELECT p from EvaluatePosts p join p.user u WHERE u.id = :id ORDER BY p.modifiedDate DESC")
                 .setParameter("id", userId)
                 .getResultList();
 

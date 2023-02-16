@@ -5,9 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd8b60d8-83aa-4517-8f76-72f1a7b48cad" name="변경" comment="# &lt;타입&gt;: &lt;제목&gt;&#10;style : 패키지 구조 변경&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/usw/suwiki/domain/lecture/repository/JpaLectureRepositoryTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/admin/service/UserAdminLoginService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/admin/service/UserAdminLoginService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/JpaEvaluatePostsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/JpaEvaluatePostsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/controller/EvaluateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/controller/EvaluateController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/controller/LectureController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/controller/LectureController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/repository/JpaLectureRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/repository/JpaLectureRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/repository/LectureRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/repository/LectureRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,27 +145,28 @@
     <option name="showLibraryContents" value="true" />
     <option name="sortByType" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelOrder2&quot;: &quot;2&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth2&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/Priority/Project/SUWIKI-REMASTER&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;1e934fca0325313c5fddbb07460f1f9d&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelOrder2": "2",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RequestMappingsPanelWidth2": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "last_opened_file_path": "/Users/BestFriend/Desktop/PROJECT/Backend-Remaster/src/test/java/usw/suwiki/domain/lecture",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "spring.configuration.checksum": "1e934fca0325313c5fddbb07460f1f9d"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/test/java/usw/suwiki/domain/lecture" />
       <recent name="E:\Priority\Project\SUWIKI-REMASTER\docs" />
       <recent name="E:\Priority\Project\SUWIKI-REMASTER\src\main\java\usw\suwiki\domain\user" />
     </key>
@@ -179,7 +184,53 @@
       <recent name="usw.suwiki.domain.user.service.usecase" />
     </key>
   </component>
-  <component name="RunManager" selected="Spring Boot.SuwikiApplication">
+  <component name="RunManager" selected="Gradle.JpaLectureRepositoryTest">
+    <configuration name="JpaLectureRepositoryTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;usw.suwiki.domain.lecture.repository.JpaLectureRepositoryTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="JpaLectureRepositoryTest.findLectureByFindOptionTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;usw.suwiki.domain.lecture.repository.JpaLectureRepositoryTest.findLectureByFindOptionTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
     <configuration name="SUWIKI-REMASTER [cleanQuerydslSourcesDir]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -238,38 +289,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CustomUserRepositoryImplTest.updateRestricted" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="suwiki.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="usw.suwiki.domain.user.repository.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="usw.suwiki.domain.user.repository" />
-      <option name="MAIN_CLASS_NAME" value="usw.suwiki.domain.user.repository.CustomUserRepositoryImplTest" />
-      <option name="METHOD_NAME" value="updateRestricted(java.lang.Boolean)" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="CustomUserRepositoryImplTest.updateUserEmailAuthStatus" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="suwiki.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="usw.suwiki.domain.user.repository.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="usw.suwiki.domain.user.repository" />
-      <option name="MAIN_CLASS_NAME" value="usw.suwiki.domain.user.repository.CustomUserRepositoryImplTest" />
-      <option name="METHOD_NAME" value="updateUserEmailAuthStatus(java.lang.Boolean)" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="SuwikiApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
       <module name="suwiki.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="usw.suwiki.SuwikiApplication" />
@@ -278,20 +297,20 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Gradle.JpaLectureRepositoryTest" />
+      <item itemvalue="Gradle.JpaLectureRepositoryTest.findLectureByFindOptionTest" />
       <item itemvalue="Gradle.SUWIKI-REMASTER [cleanQuerydslSourcesDir]" />
       <item itemvalue="Gradle.SUWIKI-REMASTER [compileQuerydsl]" />
       <item itemvalue="JUnit.CustomUserRepositoryImplTest.applyUserSoftDelete" />
-      <item itemvalue="JUnit.CustomUserRepositoryImplTest.updateRestricted" />
-      <item itemvalue="JUnit.CustomUserRepositoryImplTest.updateUserEmailAuthStatus" />
       <item itemvalue="Spring Boot.SuwikiApplication" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.JpaLectureRepositoryTest" />
+        <item itemvalue="Gradle.JpaLectureRepositoryTest.findLectureByFindOptionTest" />
         <item itemvalue="Gradle.SUWIKI-REMASTER [compileQuerydsl]" />
         <item itemvalue="Gradle.SUWIKI-REMASTER [cleanQuerydslSourcesDir]" />
         <item itemvalue="JUnit.CustomUserRepositoryImplTest.applyUserSoftDelete" />
-        <item itemvalue="JUnit.CustomUserRepositoryImplTest.updateUserEmailAuthStatus" />
-        <item itemvalue="JUnit.CustomUserRepositoryImplTest.updateRestricted" />
       </list>
     </recent_temporary>
   </component>
@@ -709,7 +728,19 @@
         </entry>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="fix/필터링페이징" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
