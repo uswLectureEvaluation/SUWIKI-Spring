@@ -64,8 +64,10 @@ public class JpaLectureRepository implements LectureRepository {
             throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
         }
 
-        String query = "SELECT l FROM Lecture l ";
-        query += String.format("WHERE l.lectureName LIKE CONCAT('%%',UPPER(:value),'%%') OR l.professor LIKE CONCAT('%%',UPPER(:value),'%%') ORDER BY l.%s DESC", orderOption.get());
+        String query = String.format("SELECT l FROM Lecture l "
+            + "WHERE l.lectureName LIKE CONCAT('%%',UPPER(:value),'%%') OR "
+            + "l.professor LIKE CONCAT('%%',UPPER(:value),'%%') "
+            + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption.get());
 
         List<Lecture> lectureList = em.createQuery(query, Lecture.class)
                 .setParameter("value", searchValue)
@@ -98,14 +100,12 @@ public class JpaLectureRepository implements LectureRepository {
                 "lectureLearningAvg",
                 "lectureTotalAvg"};
 
-//        String[] sortOptions = {"asc", "desc"};
-
         if (!Arrays.asList(orderOptions).contains(orderOption.get())) {
             throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
         }
 
-        String query = "SELECT l FROM Lecture l where l.postsCount > 0 ";
-        query += String.format("ORDER BY l.%s DESC", orderOption.get());
+        String query = String.format("SELECT l FROM Lecture l "
+            + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption.get());
 
         List<Lecture> lectureList = em.createQuery(query, Lecture.class)
                 .setFirstResult((pageNumber.get() - 1) * 10)
@@ -142,8 +142,11 @@ public class JpaLectureRepository implements LectureRepository {
 
         String majorType = lectureFindOption.getMajorType().get();
 
-        String query = "SELECT l FROM Lecture l ";
-        query += String.format("WHERE l.majorType = :major AND (l.lectureName LIKE CONCAT('%%',UPPER(:value),'%%') OR l.professor LIKE CONCAT('%%',UPPER(:value),'%%')) ORDER BY l.%s DESC", orderOption.get());
+        String query = String.format("SELECT l FROM Lecture l "
+            + "WHERE l.majorType = :major AND "
+            + "(l.lectureName LIKE CONCAT('%%',UPPER(:value),'%%') "
+            + "OR l.professor LIKE CONCAT('%%',UPPER(:value),'%%')) "
+            + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption.get());
 
         List<Lecture> lectureList = em.createQuery(query, Lecture.class)
                 .setParameter("major", majorType)
@@ -178,16 +181,15 @@ public class JpaLectureRepository implements LectureRepository {
                 "lectureLearningAvg",
                 "lectureTotalAvg"};
 
-//        String[] sortOptions = {"asc", "desc"};
-
         if (!Arrays.asList(orderOptions).contains(orderOption.get())) {
             throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
         }
 
         String majorType = lectureFindOption.getMajorType().get();
 
-        String query = "SELECT l FROM Lecture l ";
-        query += String.format("WHERE l.majorType = :major ORDER BY l.%s DESC", orderOption.get());
+        String query = String.format("SELECT l FROM Lecture l "
+            + "WHERE l.majorType = :major "
+            + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption.get());
 
         List<Lecture> lectureList = em.createQuery(query, Lecture.class)
                 .setParameter("major", majorType)

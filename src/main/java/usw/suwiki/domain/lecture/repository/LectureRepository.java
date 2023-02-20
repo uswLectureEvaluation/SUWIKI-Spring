@@ -6,6 +6,8 @@ import usw.suwiki.domain.lecture.dto.LectureListAndCountDto;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
+
 public interface LectureRepository {
     void save(Lecture lecture);
 

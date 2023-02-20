@@ -45,7 +45,7 @@ public class EvaluateController {
             if (evaluatePostsService.verifyIsUserWriteEvaluatePost(jwtTokenResolver.getId(Authorization), lectureId)) {
                 data.setWritten(false);
             }
-            return new ResponseEntity<FindByLectureToJson>(data, header, HttpStatus.valueOf(200));
+            return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
         } else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
 
