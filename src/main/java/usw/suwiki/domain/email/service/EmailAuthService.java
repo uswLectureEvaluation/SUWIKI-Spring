@@ -1,15 +1,16 @@
 package usw.suwiki.domain.email.service;
 
+import static usw.suwiki.global.exception.ErrorType.EMAIL_AUTH_TOKEN_ALREADY_USED;
+import static usw.suwiki.global.exception.ErrorType.EMAIL_VALIDATED_ERROR;
+
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.email.entity.ConfirmationToken;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.service.UserCommonService;
-import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.exception.errortype.AccountException;
-
-import static usw.suwiki.global.exception.ErrorType.EMAIL_AUTH_TOKEN_ALREADY_USED;
 
 @Service
 @RequiredArgsConstructor
@@ -22,21 +23,27 @@ public class EmailAuthService {
     //이메일 인증 토큰 검증
     @Transactional
     public void confirmToken(String token) {
-        ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
-                .orElseThrow(() -> new AccountException(ErrorType.EMAIL_VALIDATED_ERROR));
-        if (confirmationToken.getConfirmedAt() != null)
-            throw new AccountException(EMAIL_AUTH_TOKEN_ALREADY_USED);
-        else if (userCommonService.isEmailAuthTokenExpired(confirmationToken)) {
-            userRepository.deleteById(confirmationToken.getUserIdx());
-            confirmationTokenService.deleteAllByToken(token);
+        Optional<ConfirmationToken> confirmationToken = confirmationTokenService.getToken(token);
+        if (confirmationToken.isPresent()) {
+            if (confirmationToken.get().getConfirmedAt() != null) {
+                throw new AccountException(EMAIL_AUTH_TOKEN_ALREADY_USED);
+            } else if (userCommonService.isEmailAuthTokenExpired(confirmationToken.get())) {
+                confirmationTokenService.deleteAllByToken(token);
+                userRepository.deleteById(confirmationToken.get().getUserIdx());
+                throw new AccountException(EMAIL_VALIDATED_ERROR);
+            }
+            else {
+                confirmationTokenService.setConfirmedAt(token);
+                return;
+            }
         }
-        confirmationTokenService.setConfirmedAt(token);
+        throw new AccountException(EMAIL_VALIDATED_ERROR);
     }
 
     @Transactional
     public void mailAuthSuccess(String token) {
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
-                .orElseThrow(() -> new AccountException(ErrorType.EMAIL_VALIDATED_ERROR));
+            .orElseThrow(() -> new AccountException(EMAIL_VALIDATED_ERROR));
 
         Long userIdx = confirmationToken.getUserIdx();
         userRepository.updateUserEmailAuthStatus(userIdx);

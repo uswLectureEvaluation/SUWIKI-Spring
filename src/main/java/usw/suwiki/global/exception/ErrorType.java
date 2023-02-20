@@ -21,6 +21,7 @@ public enum ErrorType {
     USER_NOT_EXISTS("USER004", "사용자가 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
     PASSWORD_ERROR("USER005", "비밀번호를 확인해주세요.", HttpStatus.BAD_REQUEST),
     EMAIL_VALIDATED_ERROR("USER006", "이메일 인증에 실패했습니다.", HttpStatus.BAD_REQUEST),
+    EMAIL_VALIDATED_ERROR_RETRY("USER006", "이메일 인증에 실패했습니다. 회원가입을 다시 진행해주세요", HttpStatus.BAD_REQUEST),
     EMAIL_AUTH_TOKEN_ALREADY_USED("USER007", "이미 사용된 인증 토큰 입니다.", HttpStatus.BAD_REQUEST),
     IS_NOT_EMAIL_FORM("USER007", "올바른 이메일 형식이 아닙니다.", HttpStatus.BAD_REQUEST),
     USER_AND_EMAIL_NOT_EXISTS_AND_AUTH("USER0010", "아이디 혹은 이메일이 존재하지 않거나, 이메일 인증을 받지 않은 사용자 입니다.", HttpStatus.BAD_REQUEST),
