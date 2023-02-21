@@ -49,7 +49,7 @@ public class ConfirmationTokenService {
 
     // 이메일 인증 안한 유저는 매 분마다 검사하여 삭제
     @Transactional
-    @Scheduled(cron = "0 0 0 * * * ")
+    @Scheduled(cron = "0 0 * * * * ")
     public void isNotConfirmedEmail() {
         List<ConfirmationToken> targetUser = confirmationTokenRepository.isUserConfirmed(LocalDateTime.now());
         for (ConfirmationToken confirmationToken : targetUser) {
