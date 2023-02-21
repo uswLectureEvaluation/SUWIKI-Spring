@@ -2,6 +2,7 @@ package usw.suwiki.domain.email.service;
 
 import static usw.suwiki.global.exception.ErrorType.EMAIL_AUTH_TOKEN_ALREADY_USED;
 import static usw.suwiki.global.exception.ErrorType.EMAIL_VALIDATED_ERROR;
+import static usw.suwiki.global.exception.ErrorType.EMAIL_VALIDATED_ERROR_RETRY;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class EmailAuthService {
             } else if (userCommonService.isEmailAuthTokenExpired(confirmationToken.get())) {
                 confirmationTokenService.deleteAllByToken(token);
                 userRepository.deleteById(confirmationToken.get().getUserIdx());
-                throw new AccountException(EMAIL_VALIDATED_ERROR);
+                throw new AccountException(EMAIL_VALIDATED_ERROR_RETRY);
             }
             else {
                 confirmationTokenService.setConfirmedAt(token);
