@@ -7,6 +7,7 @@ import usw.suwiki.domain.user.dto.UserRequestDto.LoginForm;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.userIsolation.service.UserIsolationService;
+import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenProvider;
 import usw.suwiki.global.jwt.JwtTokenResolver;
