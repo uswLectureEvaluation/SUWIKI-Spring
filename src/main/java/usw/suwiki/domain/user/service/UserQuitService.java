@@ -28,7 +28,6 @@ public class UserQuitService {
             throw new AccountException(USER_NOT_EXISTS);
         User theUserRequestedQuit = userCommonService.loadUserFromLoginId(userQuitForm.getLoginId());
         quitRequestUserService.waitQuit(theUserRequestedQuit.getId());
-        quitRequestUserService.requestQuitDateStamp(theUserRequestedQuit);
         return new HashMap<>() {{
             put("success", true);
         }};

@@ -63,4 +63,20 @@ public class User {
     public void editRestricted(boolean restricted) {
         this.restricted = restricted;
     }
+
+    public void disable(User user) {
+        this.email = user.getEmail();
+        this.loginId = user.getLoginId();
+        this.restricted = true;
+        this.restrictedCount = null;
+        this.role = null;
+        this.writtenExam = null;
+        this.writtenEvaluation = null;
+        this.viewExamCount = null;
+        this.point = null;
+        this.lastLogin = null;
+        this.createdAt = null;
+        this.updatedAt = null;
+        this.requestedQuitDate = LocalDateTime.now();
+    }
 }
