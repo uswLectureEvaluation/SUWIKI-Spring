@@ -53,8 +53,8 @@ public class QuitRequestUserService {
         // 회원탈퇴 요청한 유저의 시험정보 삭제
         examPostsService.deleteByUser(userIdx);
         // 유저 이용불가 처리
-        User user = userCommonService.loadUserFromUserIdx(userIdx);
-        user.disable(user);
+        userCommonService.loadUserFromUserIdx(userIdx)
+            .disable();
     }
 
     // 회원탈퇴 요청 후 30일 뒤 테이블에서 제거

@@ -64,9 +64,7 @@ public class User {
         this.restricted = restricted;
     }
 
-    public void disable(User user) {
-        this.email = user.getEmail();
-        this.loginId = user.getLoginId();
+    public void disable() {
         this.restricted = true;
         this.restrictedCount = null;
         this.role = null;
