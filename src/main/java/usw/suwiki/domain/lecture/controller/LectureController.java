@@ -29,53 +29,34 @@ public class LectureController {
     private final JwtTokenResolver jwtTokenResolver;
 
     @GetMapping("/search")
-    public ResponseEntity<LectureToJsonArray> findByLectureSearchValue(
+    public ResponseEntity<LectureToJsonArray> searchLectureApi(
         @RequestParam String searchValue,
-        @RequestParam(required = false)
-        Optional<String> option, @RequestParam(required = false) Optional<Integer> page,
+        @RequestParam(required = false) Optional<String> option,
+        @RequestParam(required = false) Optional<Integer> page,
         @RequestParam(required = false) Optional<String> majorType) {
 
-        LectureFindOption findOption = LectureFindOption.builder()
-            .orderOption(option)
-            .pageNumber(page)
-            .majorType(majorType)
-            .build();
-        if (findOption.getMajorType().get().equals("")) {
-            LectureToJsonArray data = lectureService.findLectureByFindOption(searchValue, findOption);
-            return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
-        } else {
-            LectureToJsonArray data = lectureService.findLectureByMajorType(searchValue, findOption);
-            return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
-        }
+        LectureToJsonArray response = lectureService.searchLecture(searchValue, option, page, majorType);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<LectureToJsonArray>findAllList(
+    public ResponseEntity<LectureToJsonArray>findAllLectureApi(
         @RequestParam(required = false) Optional<String> option,
         @RequestParam(required = false) Optional<Integer> page,
         @RequestParam(required = false) Optional<String> majorType){
 
-        LectureFindOption findOption = LectureFindOption.builder().orderOption(option).pageNumber(page).majorType(majorType).build();
-        if(findOption.getMajorType().get().equals("")){
-            LectureToJsonArray  data = lectureService.findAllLectureByFindOption(findOption);
-            return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
-        }else {
-            LectureToJsonArray data = lectureService.findAllLectureByMajorType(findOption);
-            return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
-        }
+        LectureToJsonArray response = lectureService.findAllLecture(option, page, majorType);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
     public ResponseEntity<ToJsonArray>findLectureByLectureId(@RequestParam Long lectureId ,@RequestHeader String Authorization){
-        HttpHeaders header = new HttpHeaders();
-
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
             if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
             LectureDetailResponseDto lecture = lectureService.findByIdDetail(lectureId);
-            ToJsonArray data = new ToJsonArray(lecture);
-            return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
-        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
-
+            ToJsonArray response = new ToJsonArray(lecture);
+            return ResponseEntity.ok(response);
+        }
+        throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
     }
-
 }

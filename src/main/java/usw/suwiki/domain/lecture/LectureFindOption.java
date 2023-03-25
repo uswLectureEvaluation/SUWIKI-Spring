@@ -24,4 +24,7 @@ public class LectureFindOption {
         }
     }
 
+    public boolean checkMajorTypeEmpty() {
+        return this.majorType.get().equals("");
+    }
 }
