@@ -35,7 +35,6 @@ public class LectureController {
         Optional<String> option, @RequestParam(required = false) Optional<Integer> page,
         @RequestParam(required = false) Optional<String> majorType) {
 
-        HttpHeaders header = new HttpHeaders();
         LectureFindOption findOption = LectureFindOption.builder()
             .orderOption(option)
             .pageNumber(page)
@@ -51,17 +50,18 @@ public class LectureController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<LectureToJsonArray>findAllList(@RequestParam(required = false) Optional<String> option,
-                                                         @RequestParam(required = false) Optional<Integer> page,
-                                                         @RequestParam(required = false) Optional<String> majorType){
-        HttpHeaders header = new HttpHeaders();
+    public ResponseEntity<LectureToJsonArray>findAllList(
+        @RequestParam(required = false) Optional<String> option,
+        @RequestParam(required = false) Optional<Integer> page,
+        @RequestParam(required = false) Optional<String> majorType){
+
         LectureFindOption findOption = LectureFindOption.builder().orderOption(option).pageNumber(page).majorType(majorType).build();
         if(findOption.getMajorType().get().equals("")){
             LectureToJsonArray  data = lectureService.findAllLectureByFindOption(findOption);
-            return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
+            return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
         }else {
             LectureToJsonArray data = lectureService.findAllLectureByMajorType(findOption);
-            return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
+            return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
         }
     }
 

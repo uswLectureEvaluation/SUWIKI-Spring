@@ -34,7 +34,7 @@ public class LectureService {
 
     public void calcLectureAvg(EvaluatePostsToLecture dto) {
         Lecture lecture = lectureRepository.findById(dto.getLectureId());
-        lecture.calcLectureAvg();
+        lecture.getLectureAvg();
     }
 
     public LectureToJsonArray findAllLectureByFindOption(LectureFindOption lectureFindOption) {

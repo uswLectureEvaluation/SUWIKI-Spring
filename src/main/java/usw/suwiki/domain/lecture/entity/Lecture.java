@@ -8,6 +8,8 @@ import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
 import usw.suwiki.domain.lecture.dto.JsonToLectureDto;
 import usw.suwiki.global.BaseTimeEntity;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,114 +24,74 @@ public class Lecture extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String semesterList;
-    private String placeSchedule;  // 시간표 대로 나워야 하나?
+    @Column(name = "semester_list")
+    private String semester;
+
     private String professor;
-    private int grade;
-    private String lectureType;
-    private String lectureCode;
-    private String lectureName;
-    private String evaluateType;
-    private String diclNo;
+
+    @Column(name = "lecture_name")
+    private String name;
+
+    @Column(name = "major_type")
     private String majorType;
-    private double point;
-    private String capprType;
 
-    private float lectureTotalAvg = 0;
-    private float lectureSatisfactionAvg = 0;
-    private float lectureHoneyAvg = 0;
-    private float lectureLearningAvg = 0;
-    private float lectureTeamAvg = 0;
-    private float lectureDifficultyAvg = 0;
-    private float lectureHomeworkAvg = 0;
+    @Embedded
+    LectureAverage lectureAverage;
 
-    private float lectureSatisfactionValue = 0;
-    private float lectureHoneyValue = 0;
-    private float lectureLearningValue = 0;
-    private float lectureTeamValue = 0;
-    private float lectureDifficultyValue = 0;
-    private float lectureHomeworkValue = 0;
-    private int postsCount;
+    @Embedded
+    LectureDetail lectureDetail;
+
+    private int postsCount = 0;
 
     @LastModifiedDate // 조회한 Entity값을 변경할때 ,시간이 자동 저장된다.
     private LocalDateTime modifiedDate;
 
     public void setSemester(String semester) {
-        this.semesterList = semester;
-    }
-
-
-    @Builder
-    public Lecture(String semesterList, String placeSchedule, String professor, String lectureType, String lectureCode,
-                   String lectureName, String evaluateType, String diclNo, String majorType, double point, String capprType, int grade) {
-        this.semesterList = semesterList;
-        this.placeSchedule = placeSchedule;
-        this.professor = professor;
-        this.lectureType = lectureType;
-        this.lectureCode = lectureCode;
-        this.lectureName = lectureName;
-        this.evaluateType = evaluateType;
-        this.diclNo = diclNo;
-        this.majorType = majorType;
-        this.point = point;
-        this.capprType = capprType;
-        this.grade = grade;
-    }
-
-
-    public void addLectureValue(EvaluatePostsToLecture dto) {
-        this.lectureSatisfactionValue += dto.getLectureSatisfaction();
-        this.lectureHoneyValue += dto.getLectureHoney();
-        this.lectureLearningValue += dto.getLectureLearning();
-        this.lectureTeamValue += dto.getLectureTeam();
-        this.lectureDifficultyValue += dto.getLectureDifficulty();
-        this.lectureHomeworkValue += dto.getLectureHomework();
-        this.postsCount += 1;
-    }
-
-    public void cancelLectureValue(EvaluatePostsToLecture dto) {
-        this.lectureSatisfactionValue -= dto.getLectureSatisfaction();
-        this.lectureHoneyValue -= dto.getLectureHoney();
-        this.lectureLearningValue -= dto.getLectureLearning();
-        this.lectureTeamValue -= dto.getLectureTeam();
-        this.lectureDifficultyValue -= dto.getLectureDifficulty();
-        this.lectureHomeworkValue -= dto.getLectureHomework();
-        this.postsCount -= 1;
-    }
-
-    public void calcLectureAvg() {
-        if (postsCount < 1) {
-            this.lectureTotalAvg = 0;
-            this.lectureSatisfactionAvg = 0;
-            this.lectureHoneyAvg = 0;
-            this.lectureLearningAvg = 0;
-            this.lectureTeamAvg = 0;
-            this.lectureDifficultyAvg = 0;
-            this.lectureHomeworkAvg = 0;
-        } else {
-            this.lectureSatisfactionAvg = lectureSatisfactionValue / postsCount;
-            this.lectureHoneyAvg = lectureHoneyValue / postsCount;
-            this.lectureLearningAvg = lectureLearningValue / postsCount;
-            this.lectureTeamAvg = lectureTeamValue / postsCount;
-            this.lectureDifficultyAvg = lectureDifficultyValue / postsCount;
-            this.lectureHomeworkAvg = lectureHomeworkValue / postsCount;
-            this.lectureTotalAvg = (lectureSatisfactionAvg + lectureHoneyAvg + lectureLearningAvg) / 3;
-        }
+        this.semester = semester;
     }
 
 
     public void toEntity(JsonToLectureDto dto) {
-        this.semesterList = dto.getSelectedSemester();
-        this.placeSchedule = dto.getPlaceSchedule();
+        this.name = dto.getLectureName();
+        this.semester = dto.getSelectedSemester();
         this.professor = dto.getProfessor();
-        this.lectureType = dto.getLectureType();
-        this.lectureCode = dto.getLectureCode();
-        this.lectureName = dto.getLectureName();
-        this.evaluateType = dto.getEvaluateType();
-        this.diclNo = dto.getDiclNo();
         this.majorType = dto.getMajorType();
-        this.point = dto.getPoint();
-        this.capprType = dto.getCapprType();
+        createLectureDetail(dto);
+        createLectureAverage();
     }
 
+    public void addLectureValue(EvaluatePostsToLecture dto) {
+        this.lectureAverage.addLectureValue(dto);
+        this.postsCount += 1;
+    }
+
+    public void cancelLectureValue(EvaluatePostsToLecture dto) {
+        this.lectureAverage.cancelLectureValue(dto);
+        this.postsCount -= 1;
+    }
+
+    public void getLectureAvg() {
+        if (this.postsCount < 1) {
+            this.lectureAverage.calculateIfPostCountLessThanOne();
+            return;
+        }
+        this.lectureAverage.calculateLectureAverage(this.postsCount);
+    }
+
+    private void createLectureAverage() {
+        this.lectureAverage = new LectureAverage();
+    }
+
+    private void createLectureDetail(JsonToLectureDto dto) {
+        this.lectureDetail = LectureDetail.builder()
+            .code(dto.getLectureCode())
+            .grade(dto.getGrade())
+            .point(dto.getPoint())
+            .type(dto.getLectureType())
+            .diclNo(dto.getDiclNo())
+            .evaluateType(dto.getEvaluateType())
+            .placeSchedule(dto.getPlaceSchedule())
+            .capprType(dto.getCapprType())
+            .build();
+    }
 }
