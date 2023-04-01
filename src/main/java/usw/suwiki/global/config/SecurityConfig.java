@@ -16,22 +16,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
-                .httpBasic().disable()
-                .formLogin().disable()
-                .logout().disable()
-                .headers().frameOptions().disable()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .csrf().disable()
+            .httpBasic().disable()
+            .formLogin().disable()
+            .logout().disable()
+            .headers().frameOptions().disable()
+            .and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http
-                .authorizeRequests()
-                .antMatchers("/user/**").permitAll()
-                .antMatchers("/evaluate-posts/**").permitAll()
-                .antMatchers("/exam-posts/**").permitAll()
-                .antMatchers("/notice/**").permitAll()
-                .antMatchers("/lecture/**").permitAll()
-                .antMatchers("/notice/**").permitAll()
-                .antMatchers("/admin/**").permitAll();
+            .authorizeRequests()
+            .antMatchers("/user/**").permitAll()
+            .antMatchers("/evaluate-posts/**").permitAll()
+            .antMatchers("/exam-posts/**").permitAll()
+            .antMatchers("/notice/**").permitAll()
+            .antMatchers("/lecture/**").permitAll()
+            .antMatchers("/notice/**").permitAll()
+            .antMatchers("/admin/**").permitAll();
         return http.build();
     }
 

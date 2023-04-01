@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8b60d8-83aa-4517-8f76-72f1a7b48cad" name="변경" comment="# &lt;타입&gt;: &lt;제목&gt;&#10;&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
+    <list default="true" id="db0b6a8e-5ee2-4766-83ca-070d992366d0" name="변경" comment="# &lt;타입&gt;: &lt;제목&gt;&#10;refactor : 불필요한 print문 제거 및 import 경로 변경&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/exception/ControllerExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/exception/ExceptionHandler.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -28,6 +30,17 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="suwiki" type="f1a62948:ProjectNode" />
               </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="suwiki" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="suwiki" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="other" type="c8890929:TasksNode$1" />
+              </path>
             </expand>
             <select />
           </tree_state>
@@ -48,7 +61,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="refactor/lecture_entity" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -100,7 +113,6 @@
     </option>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-web/5.3.15/dc77bfb04059f61b04184ec434fe3494c5079286/spring-web-5.3.15-sources.jar!/org/springframework/http/HttpStatus.java" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/dto/ExamPostsSaveDto.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/controller/UserController.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/usw/suwiki/domain/user/service/UserCommonService.java" root0="FORCE_HIGHLIGHTING" />
@@ -128,32 +140,33 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="27WOzAspncOFgOidFe1zNLhibFE" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
     <option name="sortByType" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelOrder2&quot;: &quot;2&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth2&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/Priority/Project/SUWIKI-REMASTER&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;1e934fca0325313c5fddbb07460f1f9d&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelOrder2": "2",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RequestMappingsPanelWidth2": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "last_opened_file_path": "E:/Priority/Project/SUWIKI-REMASTER/src/main/java/usw/suwiki/global",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "spring.configuration.checksum": "1e934fca0325313c5fddbb07460f1f9d"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Priority\Project\SUWIKI-REMASTER\src\main\java\usw\suwiki\global" />
+      <recent name="E:\Priority\Project\SUWIKI-REMASTER\src\main\java\usw\suwiki\domain\apilogger" />
       <recent name="E:\Priority\Project\SUWIKI-REMASTER\docs" />
       <recent name="E:\Priority\Project\SUWIKI-REMASTER\src\main\java\usw\suwiki\domain\user" />
     </key>
@@ -290,7 +303,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="fd8b60d8-83aa-4517-8f76-72f1a7b48cad" name="변경" comment="# &lt;타입&gt;: &lt;제목&gt;&#10;&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
+      <changelist id="db0b6a8e-5ee2-4766-83ca-070d992366d0" name="변경" comment="# &lt;타입&gt;: &lt;제목&gt;&#10;&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
       <created>1649432640129</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -344,20 +357,8 @@
       <workItem from="1677043453730" duration="1966000" />
       <workItem from="1677047659515" duration="580000" />
       <workItem from="1677230478111" duration="195000" />
-    </task>
-    <task id="LOCAL-00105" summary="# &lt;타입&gt;: &lt;제목&gt;&#10;fix : delete modifying annotation&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
-      <created>1659691158730</created>
-      <option name="number" value="00105" />
-      <option name="presentableId" value="LOCAL-00105" />
-      <option name="project" value="LOCAL" />
-      <updated>1659691158730</updated>
-    </task>
-    <task id="LOCAL-00106" summary="# &lt;타입&gt;: &lt;제목&gt;&#10;test&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
-      <created>1659691870994</created>
-      <option name="number" value="00106" />
-      <option name="presentableId" value="LOCAL-00106" />
-      <option name="project" value="LOCAL" />
-      <updated>1659691870994</updated>
+      <workItem from="1680340590866" duration="180000" />
+      <workItem from="1680340799469" duration="663000" />
     </task>
     <task id="LOCAL-00107" summary="# &lt;타입&gt;: &lt;제목&gt;&#10;feat&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
       <created>1659692460106</created>
@@ -688,7 +689,21 @@
       <option name="project" value="LOCAL" />
       <updated>1677048053867</updated>
     </task>
-    <option name="localTasksCounter" value="154" />
+    <task id="LOCAL-00154" summary="# &lt;타입&gt;: &lt;제목&gt;&#10;feat/refactor : API Logger 추가 및 코드 재정렬&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
+      <created>1680341040248</created>
+      <option name="number" value="00154" />
+      <option name="presentableId" value="LOCAL-00154" />
+      <option name="project" value="LOCAL" />
+      <updated>1680341040248</updated>
+    </task>
+    <task id="LOCAL-00155" summary="# &lt;타입&gt;: &lt;제목&gt;&#10;refactor : 불필요한 print문 제거 및 import 경로 변경&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
+      <created>1680341203478</created>
+      <option name="number" value="00155" />
+      <option name="presentableId" value="LOCAL-00155" />
+      <option name="project" value="LOCAL" />
+      <updated>1680341203478</updated>
+    </task>
+    <option name="localTasksCounter" value="156" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -722,8 +737,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;fix : 관리자 로그인 URL 주소 버그 수정&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
-    <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;fix : 관리자 페이지 내, 강의평가, 시험정보 제재 처리 시 신고 테이블에서 삭제되지 않던 현상 해결&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
     <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;fix : 신고 게시글 삭제 버그 수정&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
     <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;refactor : UserAdminController Repository 의존성 제거 및 기존 컨트롤러 내 부가적인 비즈니스 로직을 UseCase로 캡슐화 &#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
     <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;refactor : UserAdminRestrict 비즈니스 로직 유스케이스로 캡슐화&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
@@ -747,6 +760,8 @@
     <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;refactor : 이메일 인증 실패 시 Exception Type 변경&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
     <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;feat : 이메일 인증 실패 시 해당 상황에 따른 View 추가&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
     <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;refactor : 회원탈퇴 시 유예기간 동안 아이디/이메일 중복확인에 걸릴 수 있도록 &#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
-    <option name="LAST_COMMIT_MESSAGE" value="# &lt;타입&gt;: &lt;제목&gt;&#10;refactor : 회원탈퇴 시 유예기간 동안 아이디/이메일 중복확인에 걸릴 수 있도록 &#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
+    <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;feat/refactor : API Logger 추가 및 코드 재정렬&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
+    <MESSAGE value="# &lt;타입&gt;: &lt;제목&gt;&#10;refactor : 불필요한 print문 제거 및 import 경로 변경&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
+    <option name="LAST_COMMIT_MESSAGE" value="# &lt;타입&gt;: &lt;제목&gt;&#10;refactor : 불필요한 print문 제거 및 import 경로 변경&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------" />
   </component>
 </project>

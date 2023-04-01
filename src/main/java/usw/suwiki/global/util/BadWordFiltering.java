@@ -1,12 +1,11 @@
 package usw.suwiki.global.util;
 
-import org.springframework.stereotype.Component;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
+import org.springframework.stereotype.Component;
 
 @Component
 public class BadWordFiltering {
@@ -14,7 +13,8 @@ public class BadWordFiltering {
     // 반환형태 --> String : String --> 실패사유 : ~~~ 욕설 사용
     public Optional<String> filtering(String text) throws IOException {
 
-        BufferedReader br = new BufferedReader(new FileReader("src/main/resources/BadWordList.txt"));
+        BufferedReader br = new BufferedReader(
+            new FileReader("src/main/resources/BadWordList.txt"));
 
         // 욕설 단어를 하나씩 담을 리스트
         ArrayList<String> badWordList = new ArrayList<>();
