@@ -1,12 +1,12 @@
 package usw.suwiki.domain.apilogger.service;
 
-import com.usw.sugo.domain.apilogger.ApiLogger;
-import com.usw.sugo.domain.apilogger.repository.ApiLoggerRepository;
 import java.time.LocalDate;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.apilogger.ApiLogger;
+import usw.suwiki.domain.apilogger.repository.ApiLoggerRepository;
 
 @Service
 @Transactional(readOnly = true)
@@ -20,7 +20,6 @@ public class ApiLoggerService {
         Optional<ApiLogger> apiLogger = apiLoggerRepository.findByCallDate(today);
 
         if (apiLogger.isEmpty()) {
-            System.out.println("비어있음");
             ApiLogger newTodayApiLogger = ApiLogger.builder()
                 .callTime(1L)
                 .callDate(today)
@@ -29,7 +28,6 @@ public class ApiLoggerService {
             apiLoggerRepository.save(newTodayApiLogger);
             return;
         }
-        System.out.println("안비어있음");
         apiLogger.get().calculateProcessAvg(currentProcessTime);
         apiLoggerRepository.save(apiLogger.get());
     }
