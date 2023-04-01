@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import usw.suwiki.global.exception.errortype.BaseException;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -14,9 +14,9 @@ import static usw.suwiki.global.exception.ErrorType.PARAM_VALID_ERROR;
 
 @Slf4j
 @ControllerAdvice
-public class ExceptionHandler {
+public class ControllerExceptionHandler {
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(value = {Exception.class})
+    @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         HttpStatus status = INTERNAL_SERVER_ERROR;
         String code = "NO_CATCH_ERROR";
@@ -31,12 +31,10 @@ public class ExceptionHandler {
                 .error(status.getReasonPhrase())
                 .build();
 
-        log.error("code : {}, message : {}", errorResponse.getCode(), errorResponse.getMessage());
-
         return new ResponseEntity<>(errorResponse, status);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(value = {BaseException.class})
+    @ExceptionHandler(value = {BaseException.class})
     public ResponseEntity<ErrorResponse> handleBaseException(BaseException e) {
         String className = e.getClass().getName();
         ErrorType errorType = e.getErrorType();
@@ -49,12 +47,10 @@ public class ExceptionHandler {
                 .error(errorType.getStatus().getReasonPhrase())
                 .build();
 
-        log.error("code : {}, message : {}", errorResponse.getCode(), errorResponse.getMessage());
-
         return new ResponseEntity<>(errorResponse, errorType.getStatus());
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(value = {MethodArgumentNotValidException.class, BindException.class})
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class, BindException.class})
     public ResponseEntity<ErrorResponse> handleBindValidationException(Exception e) {
         String className = e.getClass().getName();
         ErrorType errorType = PARAM_VALID_ERROR;
@@ -73,8 +69,6 @@ public class ExceptionHandler {
                 .status(errorType.getStatus().value())
                 .error(errorType.getStatus().getReasonPhrase())
                 .build();
-
-        log.error("code : {}, message : {}", errorResponse.getCode(), errorResponse.getMessage());
 
         return new ResponseEntity<>(errorResponse, errorType.getStatus());
     }

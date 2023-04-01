@@ -3,16 +3,15 @@ package usw.suwiki.global.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.util.Base64;
+import java.util.Date;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.user.entity.User;
-
-import javax.annotation.PostConstruct;
-import java.util.Base64;
-import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
@@ -42,11 +41,11 @@ public class JwtTokenProvider {
         claims.put("role", user.getRole());
         claims.put("restricted", user.getRestricted());
         return Jwts.builder()
-                .setHeaderParam("type", "JWT")
-                .setClaims(claims)
-                .setExpiration(accessTokenExpireIn)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
-                .compact();
+            .setHeaderParam("type", "JWT")
+            .setClaims(claims)
+            .setExpiration(accessTokenExpireIn)
+            .signWith(SignatureAlgorithm.HS512, secretKey)
+            .compact();
 
     }
 
@@ -55,10 +54,10 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date refreshTokenExpireIn = new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME);
         return Jwts.builder()
-                .setHeaderParam("type", "JWT")
-                .setExpiration(refreshTokenExpireIn)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
-                .compact();
+            .setHeaderParam("type", "JWT")
+            .setExpiration(refreshTokenExpireIn)
+            .signWith(SignatureAlgorithm.HS512, secretKey)
+            .compact();
     }
 
     @Transactional
@@ -66,10 +65,10 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date refreshTokenExpireIn = new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME);
         String newRefreshToken = Jwts.builder()
-                .setHeaderParam("type", "JWT")
-                .setExpiration(refreshTokenExpireIn)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
-                .compact();
+            .setHeaderParam("type", "JWT")
+            .setExpiration(refreshTokenExpireIn)
+            .signWith(SignatureAlgorithm.HS512, secretKey)
+            .compact();
         refreshTokenRepository.updatePayload(newRefreshToken, userIdx);
         return newRefreshToken;
     }
