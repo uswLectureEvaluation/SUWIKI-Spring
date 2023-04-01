@@ -76,48 +76,6 @@ public class Lecture extends BaseTimeEntity {
         this.grade = grade;
     }
 
-
-    public void addLectureValue(EvaluatePostsToLecture dto) {
-        this.lectureSatisfactionValue += dto.getLectureSatisfaction();
-        this.lectureHoneyValue += dto.getLectureHoney();
-        this.lectureLearningValue += dto.getLectureLearning();
-        this.lectureTeamValue += dto.getLectureTeam();
-        this.lectureDifficultyValue += dto.getLectureDifficulty();
-        this.lectureHomeworkValue += dto.getLectureHomework();
-        this.postsCount += 1;
-    }
-
-    public void cancelLectureValue(EvaluatePostsToLecture dto) {
-        this.lectureSatisfactionValue -= dto.getLectureSatisfaction();
-        this.lectureHoneyValue -= dto.getLectureHoney();
-        this.lectureLearningValue -= dto.getLectureLearning();
-        this.lectureTeamValue -= dto.getLectureTeam();
-        this.lectureDifficultyValue -= dto.getLectureDifficulty();
-        this.lectureHomeworkValue -= dto.getLectureHomework();
-        this.postsCount -= 1;
-    }
-
-    public void calcLectureAvg() {
-        if (postsCount < 1) {
-            this.lectureTotalAvg = 0;
-            this.lectureSatisfactionAvg = 0;
-            this.lectureHoneyAvg = 0;
-            this.lectureLearningAvg = 0;
-            this.lectureTeamAvg = 0;
-            this.lectureDifficultyAvg = 0;
-            this.lectureHomeworkAvg = 0;
-        } else {
-            this.lectureSatisfactionAvg = lectureSatisfactionValue / postsCount;
-            this.lectureHoneyAvg = lectureHoneyValue / postsCount;
-            this.lectureLearningAvg = lectureLearningValue / postsCount;
-            this.lectureTeamAvg = lectureTeamValue / postsCount;
-            this.lectureDifficultyAvg = lectureDifficultyValue / postsCount;
-            this.lectureHomeworkAvg = lectureHomeworkValue / postsCount;
-            this.lectureTotalAvg = (lectureSatisfactionAvg + lectureHoneyAvg + lectureLearningAvg) / 3;
-        }
-    }
-
-
     public void toEntity(JsonToLectureDto dto) {
         this.semesterList = dto.getSelectedSemester();
         this.placeSchedule = dto.getPlaceSchedule();
@@ -132,4 +90,60 @@ public class Lecture extends BaseTimeEntity {
         this.capprType = dto.getCapprType();
     }
 
+
+    public void handleLectureEvaluationIfNewPost(EvaluatePostsToLecture post) {
+        this.addLectureEvaluation(post);
+        this.calculateAverage();
+    }
+
+    public void handleLectureEvaluationIfUpdatePost(EvaluatePostsToLecture beforeUpdatePost, EvaluatePostsToLecture updatePost) {
+        this.cancelLectureEvaluation(beforeUpdatePost);
+        this.addLectureEvaluation(updatePost);
+        this.calculateAverage();
+    }
+
+    public void handleLectureEvaluationIfDeletePost(EvaluatePostsToLecture post) {
+        this.cancelLectureEvaluation(post);
+        this.calculateAverage();
+    }
+
+    private void addLectureEvaluation(EvaluatePostsToLecture dto) {
+        this.lectureSatisfactionValue += dto.getLectureSatisfaction();
+        this.lectureHoneyValue += dto.getLectureHoney();
+        this.lectureLearningValue += dto.getLectureLearning();
+        this.lectureTeamValue += dto.getLectureTeam();
+        this.lectureDifficultyValue += dto.getLectureDifficulty();
+        this.lectureHomeworkValue += dto.getLectureHomework();
+        this.postsCount += 1;
+    }
+
+    private void cancelLectureEvaluation(EvaluatePostsToLecture dto) {
+        this.lectureSatisfactionValue -= dto.getLectureSatisfaction();
+        this.lectureHoneyValue -= dto.getLectureHoney();
+        this.lectureLearningValue -= dto.getLectureLearning();
+        this.lectureTeamValue -= dto.getLectureTeam();
+        this.lectureDifficultyValue -= dto.getLectureDifficulty();
+        this.lectureHomeworkValue -= dto.getLectureHomework();
+        this.postsCount -= 1;
+    }
+
+    private void calculateAverage() {
+        if (postsCount < 1) {
+            this.lectureTotalAvg = 0;
+            this.lectureSatisfactionAvg = 0;
+            this.lectureHoneyAvg = 0;
+            this.lectureLearningAvg = 0;
+            this.lectureTeamAvg = 0;
+            this.lectureDifficultyAvg = 0;
+            this.lectureHomeworkAvg = 0;
+            return;
+        }
+        this.lectureSatisfactionAvg = lectureSatisfactionValue / postsCount;
+        this.lectureHoneyAvg = lectureHoneyValue / postsCount;
+        this.lectureLearningAvg = lectureLearningValue / postsCount;
+        this.lectureTeamAvg = lectureTeamValue / postsCount;
+        this.lectureDifficultyAvg = lectureDifficultyValue / postsCount;
+        this.lectureHomeworkAvg = lectureHomeworkValue / postsCount;
+        this.lectureTotalAvg = (lectureSatisfactionAvg + lectureHoneyAvg + lectureLearningAvg) / 3;
+    }
 }

@@ -22,19 +22,19 @@ public class LectureService {
 
     private final LectureRepository lectureRepository;
 
-    public void cancelLectureValue(EvaluatePostsToLecture dto) {
-        Lecture lecture = lectureRepository.findById(dto.getLectureId());
-        lecture.cancelLectureValue(dto);
+    public void updateLectureEvaluationIfCreateNewPost(EvaluatePostsToLecture post) {
+        Lecture lecture = lectureRepository.findByIdPessimisticLock(post.getLectureId());
+        lecture.handleLectureEvaluationIfNewPost(post);
     }
 
-    public void addLectureValue(EvaluatePostsToLecture dto) {
-        Lecture lecture = lectureRepository.findById(dto.getLectureId());
-        lecture.addLectureValue(dto);
+    public void updateLectureEvaluationIfUpdatePost(EvaluatePostsToLecture beforeUpdatePost, EvaluatePostsToLecture post) {
+        Lecture lecture = lectureRepository.findByIdPessimisticLock(post.getLectureId());
+        lecture.handleLectureEvaluationIfUpdatePost(beforeUpdatePost, post);
     }
 
-    public void calcLectureAvg(EvaluatePostsToLecture dto) {
-        Lecture lecture = lectureRepository.findById(dto.getLectureId());
-        lecture.calcLectureAvg();
+    public void updateLectureEvaluationIfDeletePost(EvaluatePostsToLecture post) {
+        Lecture lecture = lectureRepository.findByIdPessimisticLock(post.getLectureId());
+        lecture.handleLectureEvaluationIfDeletePost(post);
     }
 
     public LectureToJsonArray findAllLectureByFindOption(LectureFindOption lectureFindOption) {
