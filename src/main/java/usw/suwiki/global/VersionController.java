@@ -1,5 +1,6 @@
 package usw.suwiki.global;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -9,8 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.SuwikiVersion;
 import usw.suwiki.domain.lecture.service.LectureService;
-
-import java.util.List;
+import usw.suwiki.global.annotation.ApiLogger;
 
 @RequiredArgsConstructor
 @RequestMapping("/suwiki")
@@ -19,6 +19,7 @@ public class VersionController {
 
     private final LectureService lectureService;
 
+    @ApiLogger(option = "version")
     @GetMapping("/version")
     public ResponseEntity<VersionResponseDto> findVersionSuwiki() {
         HttpHeaders header = new HttpHeaders();
@@ -27,6 +28,7 @@ public class VersionController {
         return new ResponseEntity<VersionResponseDto>(dto, header, HttpStatus.valueOf(200));
     }
 
+    @ApiLogger(option = "version")
     @GetMapping("/majorType")
     public ResponseEntity<ToJsonArray> findAllMajorType() {
         HttpHeaders header = new HttpHeaders();

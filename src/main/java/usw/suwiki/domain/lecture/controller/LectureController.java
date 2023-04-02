@@ -1,22 +1,25 @@
 package usw.suwiki.domain.lecture.controller;
 
-import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.lecture.dto.LectureDetailResponseDto;
-import usw.suwiki.domain.lecture.LectureFindOption;
-import usw.suwiki.domain.lecture.service.LectureService;
-import usw.suwiki.domain.lecture.LectureToJsonArray;
-import usw.suwiki.global.ToJsonArray;
-import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.exception.ErrorType;
-import usw.suwiki.global.jwt.JwtTokenResolver;
-import usw.suwiki.global.jwt.JwtTokenValidator;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-
-import java.util.Optional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import usw.suwiki.domain.lecture.LectureFindOption;
+import usw.suwiki.domain.lecture.LectureToJsonArray;
+import usw.suwiki.domain.lecture.dto.LectureDetailResponseDto;
+import usw.suwiki.domain.lecture.service.LectureService;
+import usw.suwiki.global.ToJsonArray;
+import usw.suwiki.global.annotation.ApiLogger;
+import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.global.jwt.JwtTokenResolver;
+import usw.suwiki.global.jwt.JwtTokenValidator;
 
 
 @Controller
@@ -28,6 +31,7 @@ public class LectureController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
+    @ApiLogger(option = "lecture")
     @GetMapping("/search")
     public ResponseEntity<LectureToJsonArray> findByLectureSearchValue(
         @RequestParam String searchValue,
@@ -42,39 +46,50 @@ public class LectureController {
             .majorType(majorType)
             .build();
         if (findOption.getMajorType().get().equals("")) {
-            LectureToJsonArray data = lectureService.findLectureByFindOption(searchValue, findOption);
+            LectureToJsonArray data = lectureService.findLectureByFindOption(searchValue,
+                findOption);
             return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
         } else {
-            LectureToJsonArray data = lectureService.findLectureByMajorType(searchValue, findOption);
+            LectureToJsonArray data = lectureService.findLectureByMajorType(searchValue,
+                findOption);
             return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
         }
     }
 
+    @ApiLogger(option = "lecture")
     @GetMapping("/all")
-    public ResponseEntity<LectureToJsonArray>findAllList(@RequestParam(required = false) Optional<String> option,
-                                                         @RequestParam(required = false) Optional<Integer> page,
-                                                         @RequestParam(required = false) Optional<String> majorType){
+    public ResponseEntity<LectureToJsonArray> findAllList(
+        @RequestParam(required = false) Optional<String> option,
+        @RequestParam(required = false) Optional<Integer> page,
+        @RequestParam(required = false) Optional<String> majorType) {
         HttpHeaders header = new HttpHeaders();
-        LectureFindOption findOption = LectureFindOption.builder().orderOption(option).pageNumber(page).majorType(majorType).build();
-        if(findOption.getMajorType().get().equals("")){
-            LectureToJsonArray  data = lectureService.findAllLectureByFindOption(findOption);
+        LectureFindOption findOption = LectureFindOption.builder().orderOption(option)
+            .pageNumber(page).majorType(majorType).build();
+        if (findOption.getMajorType().get().equals("")) {
+            LectureToJsonArray data = lectureService.findAllLectureByFindOption(findOption);
             return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
-        }else {
+        } else {
             LectureToJsonArray data = lectureService.findAllLectureByMajorType(findOption);
             return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
         }
     }
 
+    @ApiLogger(option = "lecture")
     @GetMapping
-    public ResponseEntity<ToJsonArray>findLectureByLectureId(@RequestParam Long lectureId ,@RequestHeader String Authorization){
+    public ResponseEntity<ToJsonArray> findLectureByLectureId(@RequestParam Long lectureId,
+        @RequestHeader String Authorization) {
         HttpHeaders header = new HttpHeaders();
 
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
+            if (jwtTokenResolver.getUserIsRestricted(Authorization)) {
+                throw new AccountException(ErrorType.USER_RESTRICTED);
+            }
             LectureDetailResponseDto lecture = lectureService.findByIdDetail(lectureId);
             ToJsonArray data = new ToJsonArray(lecture);
             return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
-        }else throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+        } else {
+            throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+        }
 
     }
 
