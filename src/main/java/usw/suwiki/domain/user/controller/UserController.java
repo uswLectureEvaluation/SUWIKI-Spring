@@ -71,7 +71,7 @@ public class UserController {
     private final UserLoadRestrictAndBlackListReasonService userLoadRestrictAndBlackListReasonService;
 
     //아이디 중복확인
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("check-id")
     public ResponseEntity<Map<String, Boolean>> overlapId(
         @Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
@@ -81,7 +81,7 @@ public class UserController {
     }
 
     //이메일 중복 확인
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("check-email")
     public ResponseEntity<Map<String, Boolean>> overlapEmail(
         @Valid @RequestBody CheckEmailForm checkEmailForm) {
@@ -91,7 +91,7 @@ public class UserController {
     }
 
     //회원가입 버튼 클릭 시 -> 유저 저장, 인증 이메일 발송
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("join")
     public ResponseEntity<Map<String, Boolean>> join(@Valid @RequestBody JoinForm joinForm) {
         return ResponseEntity
@@ -100,7 +100,7 @@ public class UserController {
     }
 
     // 이메일 인증 링크를 눌렀을 때
-    @ApiLogger
+    @ApiLogger(option = "user")
     @GetMapping("verify-email")
     public ResponseEntity<String> confirmEmail(@RequestParam("token") String token) {
         return ResponseEntity
@@ -109,7 +109,7 @@ public class UserController {
     }
 
     //아이디 찾기 요청 시
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("find-id")
     public ResponseEntity<Map<String, Boolean>> findId(@Valid @RequestBody FindIdForm findIdForm) {
         return ResponseEntity
@@ -118,7 +118,7 @@ public class UserController {
     }
 
     //비밀번호 찾기 요청 시
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("find-pw")
     public ResponseEntity<Map<String, Boolean>> findPw(
         @Valid @RequestBody FindPasswordForm findPasswordForm) {
@@ -128,7 +128,7 @@ public class UserController {
     }
 
     //비밀번호 재설정 요청 시
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("reset-pw")
     public ResponseEntity<Map<String, Boolean>> resetPw(
         @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
@@ -139,7 +139,7 @@ public class UserController {
     }
 
     // 안드, IOS 로그인 요청 시
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("login")
     public ResponseEntity<Map<String, String>> mobileLogin(
         @Valid @RequestBody LoginForm loginForm) {
@@ -149,7 +149,7 @@ public class UserController {
     }
 
     // 프론트 로그인 요청 시 --> RefreshToken, AccessToken 쿠키로 셋팅
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("client-login")
     public ResponseEntity<Map<String, String>> clientLogin(
         @Valid @RequestBody LoginForm loginForm, HttpServletResponse response) {
@@ -167,7 +167,7 @@ public class UserController {
     }
 
     // 프론트 로그아웃
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("client-logout")
     public ResponseEntity<Map<String, Boolean>> clientLogout(HttpServletResponse response) {
         Cookie refreshCookie = new Cookie("refreshToken", "");
@@ -180,7 +180,7 @@ public class UserController {
             }});
     }
 
-    @ApiLogger
+    @ApiLogger(option = "user")
     @GetMapping("/my-page")
     public ResponseEntity<MyPageForm> myPage(@Valid @RequestHeader String Authorization) {
         return ResponseEntity
@@ -189,7 +189,7 @@ public class UserController {
     }
 
     // Web 토큰 갱신
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("/client-refresh")
     public ResponseEntity<Map<String, String>> clientTokenRefresh(
         @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
@@ -209,7 +209,7 @@ public class UserController {
     }
 
     // Mobile 토큰 갱신
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("/refresh")
     public ResponseEntity<Map<String, String>> tokenRefresh(
         @Valid @RequestHeader String Authorization) {
@@ -219,7 +219,7 @@ public class UserController {
     }
 
     // 회원 탈퇴
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("quit")
     public ResponseEntity<Map<String, Boolean>> userQuit(
         @Valid @RequestBody UserQuitForm userQuitForm, @Valid @RequestHeader String Authorization) {
@@ -229,7 +229,7 @@ public class UserController {
     }
 
     // 강의평가 신고
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("/report/evaluate")
     public ResponseEntity<Map<String, Boolean>> reportEvaluate(
         @Valid @RequestBody EvaluateReportForm evaluateReportForm,
@@ -240,7 +240,7 @@ public class UserController {
     }
 
     // 시험정보 신고
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("/report/exam")
     public ResponseEntity<Map<String, Boolean>> reportExam(
         @Valid @RequestBody ExamReportForm examReportForm,
@@ -251,7 +251,7 @@ public class UserController {
     }
 
     // 전공 즐겨찾기 등록하기
-    @ApiLogger
+    @ApiLogger(option = "user")
     @PostMapping("/favorite-major")
     public ResponseEntity<String> saveFavoriteMajor(
         @RequestHeader String Authorization, @RequestBody FavoriteSaveDto favoriteSaveDto) {
@@ -262,7 +262,7 @@ public class UserController {
     }
 
     // 전공 즐겨찾기 삭제하기
-    @ApiLogger
+    @ApiLogger(option = "user")
     @DeleteMapping("/favorite-major")
     public ResponseEntity<String> deleteFavoriteMajor(
         @RequestHeader String Authorization, @RequestParam String majorType) {
@@ -273,7 +273,7 @@ public class UserController {
     }
 
     // 전공 즐겨찾기 불러오기
-    @ApiLogger
+    @ApiLogger(option = "user")
     @GetMapping("/favorite-major")
     public ResponseEntity<ToJsonArray> findByLecture(@RequestHeader String Authorization) {
         return ResponseEntity
@@ -282,7 +282,7 @@ public class UserController {
     }
 
     // 땡큐 영수형
-    @ApiLogger
+    @ApiLogger(option = "user")
     @GetMapping("/suki")
     public String thanksToSuki() {
         return
@@ -296,7 +296,7 @@ public class UserController {
     }
 
     // 정지 사유 불러오기
-    @ApiLogger
+    @ApiLogger(option = "user")
     @GetMapping("/restricted-reason")
     public ResponseEntity<List<LoadMyRestrictedReasonForm>> restrictedReason(
         @Valid @RequestHeader String Authorization) {
@@ -307,7 +307,7 @@ public class UserController {
     }
 
     // 블랙리스트 사유 불러오기
-    @ApiLogger
+    @ApiLogger(option = "user")
     @GetMapping("/blacklist-reason")
     public ResponseEntity<List<LoadMyBlackListReasonForm>> banReason(
         @Valid @RequestHeader String Authorization) {

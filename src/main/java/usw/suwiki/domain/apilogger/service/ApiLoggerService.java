@@ -15,20 +15,54 @@ public class ApiLoggerService {
 
     private final ApiLoggerRepository apiLoggerRepository;
 
-    @Transactional
-    public void logApi(LocalDate today, Long currentProcessTime) {
-        Optional<ApiLogger> apiLogger = apiLoggerRepository.findByCallDate(today);
+    private final String lecturePostsOption = "lecture";
+    private final String evaluatePostsOption = "evaluatePosts";
+    private final String examPostsOption = "examPosts";
+    private final String userOption = "user";
+    private final String noticeOption = "notice";
 
+    @Transactional
+    public void logApi(LocalDate today, Long currentProcessTime, String option) {
+        Optional<ApiLogger> apiLogger = apiLoggerRepository.findByCallDate(today);
         if (apiLogger.isEmpty()) {
-            ApiLogger newTodayApiLogger = ApiLogger.builder()
-                .callTime(1L)
-                .callDate(today)
-                .processAvg(currentProcessTime)
-                .build();
-            apiLoggerRepository.save(newTodayApiLogger);
+            apiLoggerRepository.save(makeNewApiStatistics(today, currentProcessTime, option));
             return;
         }
-        apiLogger.get().calculateProcessAvg(currentProcessTime);
-        apiLoggerRepository.save(apiLogger.get());
+        apiLoggerRepository.save(makeOldApiStatistics(apiLogger.get(), currentProcessTime, option));
+    }
+
+    private ApiLogger makeNewApiStatistics(
+        LocalDate today, Long currentProcessTime, String option
+    ) {
+        ApiLogger newApiLogger = new ApiLogger();
+        if (option.equals(lecturePostsOption)) {
+            newApiLogger.saveNewLectureStatistics(today, currentProcessTime);
+        } else if (option.equals(evaluatePostsOption)) {
+            newApiLogger.saveNewEvaluatePostsStatistics(today, currentProcessTime);
+        } else if (option.equals(examPostsOption)) {
+            newApiLogger.saveNewExamPostsStatistics(today, currentProcessTime);
+        } else if (option.equals(userOption)) {
+            newApiLogger.saveNewUserStatistics(today, currentProcessTime);
+        } else if (option.equals(noticeOption)) {
+            newApiLogger.saveNewNoticeStatistics(today, currentProcessTime);
+        }
+        return newApiLogger;
+    }
+
+    private ApiLogger makeOldApiStatistics(
+        ApiLogger apiLogger, Long currentProcessTime, String option
+    ) {
+        if (option.equals(lecturePostsOption)) {
+            apiLogger.calculateLectureApiStatistics(currentProcessTime);
+        } else if (option.equals(evaluatePostsOption)) {
+            apiLogger.calculateEvaluatePostsApiStatistics(currentProcessTime);
+        } else if (option.equals(examPostsOption)) {
+            apiLogger.calculateExamPostsStatistics(currentProcessTime);
+        } else if (option.equals(userOption)) {
+            apiLogger.calculateUserApiStatistics(currentProcessTime);
+        } else if (option.equals(noticeOption)) {
+            apiLogger.calculateNoticeApiStatistics(currentProcessTime);
+        }
+        return apiLogger;
     }
 }

@@ -40,7 +40,7 @@ public class EvaluateController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
-    @ApiLogger
+    @ApiLogger(option = "evaluatePosts")
     @GetMapping
     public ResponseEntity<FindByLectureToJson> findByLecture(@RequestHeader String Authorization,
         @RequestParam Long lectureId,
@@ -63,7 +63,7 @@ public class EvaluateController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "evaluatePosts")
     @PutMapping
     public ResponseEntity<String> updateEvaluatePosts(@RequestParam Long evaluateIdx,
         @RequestHeader String Authorization, @RequestBody EvaluatePostsUpdateDto dto) {
@@ -80,7 +80,7 @@ public class EvaluateController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "evaluatePosts")
     @PostMapping
     public ResponseEntity<String> saveEvaluatePosts(@RequestParam Long lectureId,
         @RequestHeader String Authorization, @RequestBody EvaluatePostsSaveDto dto)
@@ -104,7 +104,7 @@ public class EvaluateController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "evaluatePosts")
     @GetMapping("/written") // 이름 수정 , 널값 처리 프론트
     public ResponseEntity<ToJsonArray> findByUser(@RequestHeader String Authorization,
         @RequestParam(required = false) Optional<Integer> page) {
@@ -125,7 +125,7 @@ public class EvaluateController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "evaluatePosts")
     @DeleteMapping
     public ResponseEntity<String> deleteEvaluatePosts(@RequestParam Long evaluateIdx,
         @RequestHeader String Authorization) {
