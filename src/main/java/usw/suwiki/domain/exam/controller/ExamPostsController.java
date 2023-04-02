@@ -44,7 +44,7 @@ public class ExamPostsController {
     private final JwtTokenResolver jwtTokenResolver;
     private final ViewExamService viewExamService;
 
-    @ApiLogger
+    @ApiLogger(option = "examPosts")
     @GetMapping
     public ResponseEntity<FindByLectureToExam> findByLecture(@RequestParam Long lectureId,
         @RequestHeader String Authorization,
@@ -80,7 +80,7 @@ public class ExamPostsController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "examPosts")
     @PostMapping("/purchase")
     public ResponseEntity<String> buyExamInfo(@RequestParam Long lectureId,
         @RequestHeader String Authorization) {
@@ -96,7 +96,7 @@ public class ExamPostsController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "examPosts")
     @PostMapping
     public ResponseEntity<String> saveExamPosts(@RequestParam Long lectureId,
         @RequestBody ExamPostsSaveDto dto, @RequestHeader String Authorization) throws IOException {
@@ -117,7 +117,7 @@ public class ExamPostsController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "examPosts")
     @PutMapping
     public ResponseEntity<String> updateExamPosts(@RequestParam Long examIdx,
         @RequestHeader String Authorization, @RequestBody ExamPostsUpdateDto dto) {
@@ -134,7 +134,7 @@ public class ExamPostsController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "examPosts")
     @GetMapping("/written") // 이름 수정 , 널값 처리 프론트
     public ResponseEntity<ToJsonArray> findByUser(@RequestHeader String Authorization,
         @RequestParam(required = false) Optional<Integer> page) {
@@ -155,7 +155,7 @@ public class ExamPostsController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "examPosts")
     @DeleteMapping
     public ResponseEntity<String> deleteExamPosts(@RequestParam Long examIdx,
         @RequestHeader String Authorization) {
@@ -177,7 +177,7 @@ public class ExamPostsController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "examPosts")
     @GetMapping("/purchase") // 이름 수정 , 널값 처리 프론트
     public ResponseEntity<ToJsonArray> showPurchaseHistory(@RequestHeader String Authorization) {
         HttpHeaders header = new HttpHeaders();

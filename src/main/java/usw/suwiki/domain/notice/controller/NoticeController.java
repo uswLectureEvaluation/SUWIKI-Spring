@@ -38,7 +38,7 @@ public class NoticeController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
-    @ApiLogger
+    @ApiLogger(option = "notice")
     @GetMapping("/all")
     public ResponseEntity<ToJsonArray> findNoticeList(
         @RequestParam(required = false) Optional<Integer> page) {
@@ -48,7 +48,7 @@ public class NoticeController {
         return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
     }
 
-    @ApiLogger
+    @ApiLogger(option = "notice")
     @GetMapping("/")
     public ResponseEntity<ToJsonArray> findNoticeByNoticeId(@RequestParam Long noticeId) {
         HttpHeaders header = new HttpHeaders();
@@ -57,7 +57,7 @@ public class NoticeController {
         return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
     }
 
-    @ApiLogger
+    @ApiLogger(option = "notice")
     @PostMapping("/")
     public ResponseEntity<String> saveNotice(@RequestBody NoticeSaveOrUpdateDto dto,
         @RequestHeader String Authorization) {
@@ -74,7 +74,7 @@ public class NoticeController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "notice")
     @PutMapping("/")
     public ResponseEntity<String> updateNotice(@RequestParam Long noticeId,
         @RequestBody NoticeSaveOrUpdateDto dto, @RequestHeader String Authorization) {
@@ -91,7 +91,7 @@ public class NoticeController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "notice")
     @DeleteMapping("/")
     public ResponseEntity<String> deleteNotice(@RequestParam Long noticeId,
         @RequestHeader String Authorization) {

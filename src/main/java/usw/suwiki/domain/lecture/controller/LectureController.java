@@ -31,7 +31,7 @@ public class LectureController {
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
-    @ApiLogger
+    @ApiLogger(option = "lecture")
     @GetMapping("/search")
     public ResponseEntity<LectureToJsonArray> findByLectureSearchValue(
         @RequestParam String searchValue,
@@ -56,7 +56,7 @@ public class LectureController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "lecture")
     @GetMapping("/all")
     public ResponseEntity<LectureToJsonArray> findAllList(
         @RequestParam(required = false) Optional<String> option,
@@ -74,7 +74,7 @@ public class LectureController {
         }
     }
 
-    @ApiLogger
+    @ApiLogger(option = "lecture")
     @GetMapping
     public ResponseEntity<ToJsonArray> findLectureByLectureId(@RequestParam Long lectureId,
         @RequestHeader String Authorization) {

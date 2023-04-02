@@ -19,7 +19,7 @@ public class VersionController {
 
     private final LectureService lectureService;
 
-    @ApiLogger
+    @ApiLogger(option = "version")
     @GetMapping("/version")
     public ResponseEntity<VersionResponseDto> findVersionSuwiki() {
         HttpHeaders header = new HttpHeaders();
@@ -28,7 +28,7 @@ public class VersionController {
         return new ResponseEntity<VersionResponseDto>(dto, header, HttpStatus.valueOf(200));
     }
 
-    @ApiLogger
+    @ApiLogger(option = "version")
     @GetMapping("/majorType")
     public ResponseEntity<ToJsonArray> findAllMajorType() {
         HttpHeaders header = new HttpHeaders();

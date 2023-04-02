@@ -47,7 +47,7 @@ public class UserAdminController {
     private final UserAdminLoadDetailReportingPostService userAdminLoadDetailReportingPostService;
 
     // 관리자 전용 로그인 API
-    @ApiLogger
+    @ApiLogger(option = "admin")
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> administratorLogin(
         @Valid @RequestBody LoginForm loginForm) {
@@ -57,7 +57,7 @@ public class UserAdminController {
     }
 
     // 강의평가 게시물 정지 먹이기
-    @ApiLogger
+    @ApiLogger(option = "admin")
     @PostMapping("/restrict/evaluate-post")
     public ResponseEntity<Map<String, Boolean>> restrictEvaluatePost(
         @Valid @RequestHeader String Authorization,
@@ -71,7 +71,7 @@ public class UserAdminController {
     }
 
     // 시험정보 게시물 정지 먹이기
-    @ApiLogger
+    @ApiLogger(option = "admin")
     @PostMapping("/restrict/exam-post")
     public ResponseEntity<Map<String, Boolean>> restrictExamPost(
         @Valid @RequestHeader String Authorization,
@@ -86,7 +86,7 @@ public class UserAdminController {
 
 
     // 강의평가 게시물 블랙리스트 먹이기
-    @ApiLogger
+    @ApiLogger(option = "admin")
     @PostMapping("/blacklist/evaluate-post")
     public ResponseEntity<Map<String, Boolean>> banEvaluatePost(
         @Valid @RequestHeader String Authorization,
@@ -100,7 +100,7 @@ public class UserAdminController {
     }
 
     // 시험정보 게시물 블랙리스트 먹이기
-    @ApiLogger
+    @ApiLogger(option = "admin")
     @PostMapping("/blacklist/exam-post")
     public ResponseEntity<Map<String, Boolean>> banExamPost(
         @Valid @RequestHeader String Authorization,
@@ -114,7 +114,7 @@ public class UserAdminController {
     }
 
     // 이상 없는 신고 강의평가 게시글이면 지워주기
-    @ApiLogger
+    @ApiLogger(option = "admin")
     @PostMapping("/no-problem/evaluate-post")
     public ResponseEntity<Map<String, Boolean>> noProblemEv(
         @Valid @RequestHeader String Authorization,
@@ -128,7 +128,7 @@ public class UserAdminController {
     }
 
     // 이상 없는 신고 시험정보 게시글이면 지워주기
-    @ApiLogger
+    @ApiLogger(option = "admin")
     @PostMapping("/no-problem/exam-post")
     public ResponseEntity<Map<String, Boolean>> noProblemEx(
         @Valid @RequestHeader String Authorization,
@@ -142,7 +142,7 @@ public class UserAdminController {
     }
 
     // 신고받은 게시글 리스트 불러오기
-    @ApiLogger
+    @ApiLogger(option = "admin")
     @GetMapping("/report/list")
     public ResponseEntity<LoadAllReportedPostForm> loadReportedPost(
         @Valid @RequestHeader String Authorization) {
@@ -156,7 +156,7 @@ public class UserAdminController {
 
 
     // 강의평가에 관련된 신고 게시글 자세히 보기
-    @ApiLogger
+    @ApiLogger(option = "admin")
     @GetMapping("/report/evaluate/")
     public ResponseEntity<EvaluatePostReport> loadDetailReportedEvaluatePost(
         @Valid @RequestHeader String Authorization,
@@ -169,7 +169,7 @@ public class UserAdminController {
     }
 
     // 시험정보에 관련된 신고 게시글 자세히 보기
-    @ApiLogger
+    @ApiLogger(option = "admin")
     @GetMapping("/report/exam/")
     public ResponseEntity<ExamPostReport> loadDetailReportedExamPost(
         @Valid @RequestHeader String Authorization,
