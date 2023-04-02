@@ -34,6 +34,6 @@ public class VersionController {
         HttpHeaders header = new HttpHeaders();
         List<String> list = lectureService.findAllMajorType();
         ToJsonArray data = new ToJsonArray(list);
-        return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
+        return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
     }
 }
