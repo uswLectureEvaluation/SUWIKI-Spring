@@ -24,12 +24,6 @@ public class ApiLogger {
     private Long id;
 
     @Column
-    private Long totalApiCallTime;
-
-    @Column
-    private Long totalApiProcessAvg;
-
-    @Column
     private Long lectureApiCallTime;
 
     @Column
@@ -100,13 +94,6 @@ public class ApiLogger {
             .callDate(today)
             .noticeApiProcessAvg(currentProcessTime)
             .build();
-    }
-
-    public void calculateTotalApiStatistics(Long currentProcessTime) {
-        this.totalApiProcessAvg =
-            (currentProcessTime + (totalApiProcessAvg * totalApiCallTime)) /
-                (this.totalApiCallTime + 1);
-        this.totalApiCallTime += 1;
     }
 
     public void calculateLectureApiStatistics(Long currentProcessTime) {

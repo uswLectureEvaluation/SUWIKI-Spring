@@ -19,8 +19,10 @@ public class ApiLogAspect {
     private final ApiLoggerService apiLoggerService;
 
     @Around("@annotation(ApiLogger)")
-    public Object logExecutionTime(ProceedingJoinPoint joinPoint, ApiLogger ApiLogger
-    ) throws Throwable {
+    public Object logExecutionTime(
+        ProceedingJoinPoint joinPoint, ApiLogger ApiLogger
+    ) throws Throwable
+    {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
