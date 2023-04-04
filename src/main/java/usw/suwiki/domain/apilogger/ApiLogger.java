@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @Getter
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @NoArgsConstructor
 public class ApiLogger {
 

@@ -36,15 +36,15 @@ public class ApiLoggerService {
     ) {
         ApiLogger newApiLogger = new ApiLogger();
         if (option.equals(lecturePostsOption)) {
-            newApiLogger.saveNewLectureStatistics(today, currentProcessTime);
+            newApiLogger = newApiLogger.saveNewLectureStatistics(today, currentProcessTime);
         } else if (option.equals(evaluatePostsOption)) {
-            newApiLogger.saveNewEvaluatePostsStatistics(today, currentProcessTime);
+            newApiLogger = newApiLogger.saveNewEvaluatePostsStatistics(today, currentProcessTime);
         } else if (option.equals(examPostsOption)) {
-            newApiLogger.saveNewExamPostsStatistics(today, currentProcessTime);
+            newApiLogger = newApiLogger.saveNewExamPostsStatistics(today, currentProcessTime);
         } else if (option.equals(userOption)) {
-            newApiLogger.saveNewUserStatistics(today, currentProcessTime);
+            newApiLogger = newApiLogger.saveNewUserStatistics(today, currentProcessTime);
         } else if (option.equals(noticeOption)) {
-            newApiLogger.saveNewNoticeStatistics(today, currentProcessTime);
+            newApiLogger = newApiLogger.saveNewNoticeStatistics(today, currentProcessTime);
         }
         return newApiLogger;
     }
