@@ -15,6 +15,8 @@ public interface LectureRepository {
 
     Lecture findById(Long id);
 
+    Lecture findByIdPessimisticLock(Long id);
+
     LectureListAndCountDto findLectureByFindOption(String searchValue, LectureFindOption lectureFindOption);
 
     LectureListAndCountDto findLectureByMajorType(String searchValue, LectureFindOption lectureFindOption);
