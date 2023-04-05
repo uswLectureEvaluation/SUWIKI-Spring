@@ -15,19 +15,13 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @Getter
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @NoArgsConstructor
 public class ApiLogger {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column
-    private Long totalApiCallTime;
-
-    @Column
-    private Long totalApiProcessAvg;
 
     @Column
     private Long lectureApiCallTime;
@@ -100,13 +94,6 @@ public class ApiLogger {
             .callDate(today)
             .noticeApiProcessAvg(currentProcessTime)
             .build();
-    }
-
-    public void calculateTotalApiStatistics(Long currentProcessTime) {
-        this.totalApiProcessAvg =
-            (currentProcessTime + (totalApiProcessAvg * totalApiCallTime)) /
-                (this.totalApiCallTime + 1);
-        this.totalApiCallTime += 1;
     }
 
     public void calculateLectureApiStatistics(Long currentProcessTime) {
