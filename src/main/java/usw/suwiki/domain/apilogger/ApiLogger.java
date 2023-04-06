@@ -23,7 +23,7 @@ public class ApiLogger {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column()
     private Long lectureApiCallTime;
 
     @Column
@@ -58,40 +58,80 @@ public class ApiLogger {
 
     public ApiLogger saveNewLectureStatistics(LocalDate today, Long currentProcessTime) {
         return ApiLogger.builder()
-            .lectureApiCallTime(1L)
             .callDate(today)
+            .lectureApiCallTime(1L)
             .lectureApiProcessAvg(currentProcessTime)
+            .evaluatePostsApiCallTime(0L)
+            .evaluatePostsApiProcessAvg(0L)
+            .examPostsApiCallTime(0L)
+            .examPostsApiProcessAvg(0L)
+            .userApiCallTime(0L)
+            .userApiProcessAvg(0L)
+            .noticeApiCallTime(0L)
+            .noticeApiProcessAvg(0L)
             .build();
     }
 
     public ApiLogger saveNewEvaluatePostsStatistics(LocalDate today, Long currentProcessTime) {
         return ApiLogger.builder()
-            .evaluatePostsApiCallTime(1L)
             .callDate(today)
+            .lectureApiCallTime(0L)
+            .lectureApiProcessAvg(0L)
+            .evaluatePostsApiCallTime(1L)
             .evaluatePostsApiProcessAvg(currentProcessTime)
+            .examPostsApiCallTime(0L)
+            .examPostsApiProcessAvg(0L)
+            .userApiCallTime(0L)
+            .userApiProcessAvg(0L)
+            .noticeApiCallTime(0L)
+            .noticeApiProcessAvg(0L)
             .build();
     }
 
     public ApiLogger saveNewExamPostsStatistics(LocalDate today, Long currentProcessTime) {
         return ApiLogger.builder()
-            .examPostsApiCallTime(1L)
             .callDate(today)
+            .lectureApiCallTime(0L)
+            .lectureApiProcessAvg(0L)
+            .evaluatePostsApiCallTime(0L)
+            .evaluatePostsApiProcessAvg(0L)
+            .examPostsApiCallTime(1L)
             .examPostsApiProcessAvg(currentProcessTime)
+            .userApiCallTime(0L)
+            .userApiProcessAvg(0L)
+            .noticeApiCallTime(0L)
+            .noticeApiProcessAvg(0L)
             .build();
     }
 
     public ApiLogger saveNewUserStatistics(LocalDate today, Long currentProcessTime) {
         return ApiLogger.builder()
-            .userApiCallTime(1L)
             .callDate(today)
+            .lectureApiCallTime(0L)
+            .lectureApiProcessAvg(0L)
+            .evaluatePostsApiCallTime(0L)
+            .evaluatePostsApiProcessAvg(0L)
+            .examPostsApiCallTime(0L)
+            .examPostsApiProcessAvg(0L)
+            .userApiCallTime(1L)
             .userApiProcessAvg(currentProcessTime)
+            .noticeApiCallTime(0L)
+            .noticeApiProcessAvg(0L)
             .build();
     }
 
     public ApiLogger saveNewNoticeStatistics(LocalDate today, Long currentProcessTime) {
         return ApiLogger.builder()
-            .noticeApiCallTime(1L)
             .callDate(today)
+            .lectureApiCallTime(0L)
+            .lectureApiProcessAvg(0L)
+            .evaluatePostsApiCallTime(0L)
+            .evaluatePostsApiProcessAvg(0L)
+            .examPostsApiCallTime(0L)
+            .examPostsApiProcessAvg(0L)
+            .userApiCallTime(1L)
+            .userApiProcessAvg(currentProcessTime)
+            .noticeApiCallTime(1L)
             .noticeApiProcessAvg(currentProcessTime)
             .build();
     }
