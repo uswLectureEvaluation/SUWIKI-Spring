@@ -8,6 +8,8 @@ import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.exception.ErrorType;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +25,12 @@ public class JpaLectureRepository implements LectureRepository {
     @Override
     public void save(Lecture lecture) {
         em.persist(lecture);
+    }
+
+    @Override
+    public Lecture findByIdPessimisticLock(Long id) {
+        Lecture lecture = em.find(Lecture.class, id, LockModeType.PESSIMISTIC_WRITE);
+        return lecture;
     }
 
     @Override

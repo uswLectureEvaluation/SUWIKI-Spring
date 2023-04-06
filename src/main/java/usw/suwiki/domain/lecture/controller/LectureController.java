@@ -67,10 +67,10 @@ public class LectureController {
             .pageNumber(page).majorType(majorType).build();
         if (findOption.getMajorType().get().equals("")) {
             LectureToJsonArray data = lectureService.findAllLectureByFindOption(findOption);
-            return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
+            return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
         } else {
             LectureToJsonArray data = lectureService.findAllLectureByMajorType(findOption);
-            return new ResponseEntity<LectureToJsonArray>(data, header, HttpStatus.valueOf(200));
+            return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
         }
     }
 
