@@ -42,9 +42,9 @@ public class EvaluatePostsService {
         posts.setUser(user);
         userRepository.updatePoint(userIdx, (user.getPoint() + 10));
         userRepository.updateWrittenEvaluateCount(userIdx, user.getWrittenEvaluation() + 1);
-        EvaluatePostsToLecture newDto = new EvaluatePostsToLecture(posts);
-        lectureService.addLectureValue(newDto);
-        lectureService.calcLectureAvg(newDto);
+        EvaluatePostsToLecture lectureEvaluation = new EvaluatePostsToLecture(posts);
+        lectureService.updateLectureEvaluationIfCreateNewPost(lectureEvaluation);
+
         evaluatePostsRepository.save(posts);
     }
 
@@ -53,12 +53,11 @@ public class EvaluatePostsService {
     }
 
     public void update(Long evaluateIdx, EvaluatePostsUpdateDto dto) {
-        EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
-        lectureService.cancelLectureValue(new EvaluatePostsToLecture(posts));
-        posts.update(dto);
-        EvaluatePostsToLecture newDto = new EvaluatePostsToLecture(posts);
-        lectureService.addLectureValue(newDto);
-        lectureService.calcLectureAvg(newDto);
+        EvaluatePosts post = evaluatePostsRepository.findById(evaluateIdx);
+        EvaluatePostsToLecture beforeUpdated = new EvaluatePostsToLecture(post);
+        post.update(dto);
+        EvaluatePostsToLecture updated = new EvaluatePostsToLecture(post);
+        lectureService.updateLectureEvaluationIfUpdatePost(beforeUpdated, updated);
     }
 
     public List<EvaluateResponseByLectureIdDto> findEvaluatePostsByLectureId(PageOption option, Long lectureId) {
@@ -103,9 +102,9 @@ public class EvaluatePostsService {
         List<EvaluatePosts> list = evaluatePostsRepository.findAllByUserId(userIdx);
         if (!list.isEmpty()) {
             for (EvaluatePosts evaluatePosts : list) {
-                EvaluatePostsToLecture dto = new EvaluatePostsToLecture(evaluatePosts);
-                lectureService.cancelLectureValue(dto);
-                lectureService.calcLectureAvg(dto);
+                EvaluatePostsToLecture lectureEvaluation = new EvaluatePostsToLecture(evaluatePosts);
+                lectureService.updateLectureEvaluationIfDeletePost(lectureEvaluation);
+
                 evaluatePostsRepository.delete(evaluatePosts);
             }
         }
@@ -116,9 +115,10 @@ public class EvaluatePostsService {
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         User user = userRepository.findById(userIdx)
                 .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
-        EvaluatePostsToLecture evaluatePostsToLecture = new EvaluatePostsToLecture(posts);
-        lectureService.cancelLectureValue(evaluatePostsToLecture);
-        lectureService.calcLectureAvg(evaluatePostsToLecture);
+
+        EvaluatePostsToLecture lectureEvaluation = new EvaluatePostsToLecture(posts);
+        lectureService.updateLectureEvaluationIfDeletePost(lectureEvaluation);
+
         userRepository.updateWrittenEvaluateCount(userIdx, user.getWrittenEvaluation() - 1);
         evaluatePostsRepository.delete(posts);
     }
