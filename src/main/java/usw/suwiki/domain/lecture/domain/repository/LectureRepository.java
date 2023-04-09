@@ -6,9 +6,7 @@ import usw.suwiki.domain.lecture.controller.dto.LecturesAndCountDto;
 
 import java.util.List;
 
-import org.springframework.stereotype.Repository;
 
-@Repository
 public interface LectureRepository {
     void save(Lecture lecture);
 

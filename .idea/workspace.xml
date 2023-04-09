@@ -6,15 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="db0b6a8e-5ee2-4766-83ca-070d992366d0" name="변경" comment="# &lt;타입&gt;: &lt;제목&gt;&#10;&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/EvaluatePostsToLecture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/EvaluatePostsToLecture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/service/EvaluatePostsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/evaluation/service/EvaluatePostsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/service/ExamPostsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/exam/service/ExamPostsService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/controller/dto/LectureDetailResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/controller/dto/LectureDetailResponseDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/controller/dto/LectureResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/controller/dto/LectureResponseDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/domain/Lecture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/domain/Lecture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/domain/LectureAverage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/domain/LectureEvaluationInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/domain/LectureDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/domain/LectureDetail.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/repository/JpaLectureRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/domain/repository/JpaLectureRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/repository/LectureRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/domain/repository/LectureRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/service/LectureService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/service/LectureService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/util/JsonToDataTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/global/util/JsonToDataTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/domain/repository/JpaLectureRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/domain/repository/JpaLectureRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/domain/repository/LectureRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/lecture/domain/repository/LectureRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/viewExam/service/ViewExamService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/usw/suwiki/domain/viewExam/service/ViewExamService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,8 +51,8 @@
       <list>
         <option value="package-info" />
         <option value="Interface" />
-        <option value="JUnit5 Test Class" />
         <option value="Class" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -177,6 +177,7 @@
       <recent name="" />
     </key>
     <key name="CreateTestDialog.RecentsKey">
+      <recent name="usw.suwiki.domain.lecture.domain" />
       <recent name="usw.suwiki.domain.user.repository" />
       <recent name="usw.suwiki.testPackage" />
     </key>
@@ -186,23 +187,25 @@
     </key>
   </component>
   <component name="RunManager" selected="Spring Boot.SuwikiApplication">
-    <configuration name="SUWIKI-REMASTER [cleanQuerydslSourcesDir]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="LectureTest.lectureEvaluationIfCreateNewPost" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
+        <option name="scriptParameters" value="" />
         <option name="taskDescriptions">
           <list />
         </option>
         <option name="taskNames">
           <list>
-            <option value="cleanQuerydslSourcesDir" />
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;usw.suwiki.domain.lecture.domain.LectureTest.lectureEvaluationIfCreateNewPost&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
       </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
@@ -283,7 +286,7 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Gradle.SUWIKI-REMASTER [cleanQuerydslSourcesDir]" />
+      <item itemvalue="Gradle.LectureTest.lectureEvaluationIfCreateNewPost" />
       <item itemvalue="Gradle.SUWIKI-REMASTER [compileQuerydsl]" />
       <item itemvalue="JUnit.CustomUserRepositoryImplTest" />
       <item itemvalue="JUnit.CustomUserRepositoryImplTest.applyUserSoftDelete" />
@@ -292,11 +295,11 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.LectureTest.lectureEvaluationIfCreateNewPost" />
         <item itemvalue="JUnit.CustomUserRepositoryImplTest.updateUserEmailAuthStatus" />
         <item itemvalue="JUnit.CustomUserRepositoryImplTest.applyUserSoftDelete" />
         <item itemvalue="JUnit.CustomUserRepositoryImplTest" />
         <item itemvalue="Gradle.SUWIKI-REMASTER [compileQuerydsl]" />
-        <item itemvalue="Gradle.SUWIKI-REMASTER [cleanQuerydslSourcesDir]" />
       </list>
     </recent_temporary>
   </component>
@@ -368,7 +371,7 @@
       <workItem from="1680809537213" duration="1921000" />
       <workItem from="1680855565314" duration="244000" />
       <workItem from="1681025531195" duration="134000" />
-      <workItem from="1681043379594" duration="1558000" />
+      <workItem from="1681043379594" duration="3044000" />
     </task>
     <task id="LOCAL-00111" summary="# &lt;타입&gt;: &lt;제목&gt;&#10;test&#10;##### 제목은 최대 50 글자까지만 입력 ############## -&gt; |&#10;&#10;&#10;# 본문은 위에 작성&#10;######## 본문은 한 줄에 최대 72 글자까지만 입력 ########################### -&gt; |&#10;&#10;# 꼬릿말은 아래에 작성: ex) #이슈 번호&#10;&#10;# --- COMMIT END ---&#10;# &lt;타입&gt; 리스트&#10;#   feat    : 기능 (새로운 기능)&#10;#   fix     : 버그 (버그 수정)&#10;#   refactor: 리팩토링&#10;#   style   : 스타일 (코드 형식, 세미콜론 추가: 비즈니스 로직에 변경 없음)&#10;#   docs    : 문서 (문서 추가, 수정, 삭제)&#10;#   test    : 테스트 (테스트 코드 추가, 수정, 삭제: 비즈니스 로직에 변경 없음)&#10;#   chore   : 기타 변경사항 (빌드 스크립트 수정 등)&#10;# ------------------&#10;#     제목 첫 글자를 대문자로&#10;#     제목은 명령문으로&#10;#     제목 끝에 마침표(.) 금지&#10;#     제목과 본문을 한 줄 띄워 분리하기&#10;#     본문은 &quot;어떻게&quot; 보다 &quot;무엇을&quot;, &quot;왜&quot;를 설명한다.&#10;#     본문에 여러줄의 메시지를 작성할 땐 &quot;-&quot;로 구분&#10;# ------------------">
       <created>1659694089744</created>

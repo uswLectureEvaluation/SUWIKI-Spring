@@ -68,7 +68,7 @@ public class ExamPostsService {
         List<ExamPosts> list = examPostsRepository.findByUserId(option, userId);
         for (ExamPosts post : list) {
             ExamResponseByUserIdxDto dto = new ExamResponseByUserIdxDto(post);
-            dto.setSemesterList(post.getLecture().getSemesterList());
+            dto.setSemesterList(post.getLecture().getSemester());
             dtoList.add(dto);
         }
         return dtoList;

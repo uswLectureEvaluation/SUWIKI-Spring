@@ -30,12 +30,12 @@ public class LectureDetailResponseDto {
         this.lectureType = entity.getType();
         this.lectureName = entity.getName();
         this.majorType = entity.getMajorType();
-        this.lectureTotalAvg = entity.getLectureAverage().getLectureTotalAvg();
-        this.lectureSatisfactionAvg = entity.getLectureAverage().getLectureSatisfactionAvg();
-        this.lectureHoneyAvg = entity.getLectureAverage().getLectureHoneyAvg();
-        this.lectureLearningAvg = entity.getLectureAverage().getLectureLearningAvg();
-        this.lectureTeamAvg = entity.getLectureAverage().getLectureTeamAvg();
-        this.lectureDifficultyAvg = entity.getLectureAverage().getLectureDifficultyAvg();
-        this.lectureHomeworkAvg = entity.getLectureAverage().getLectureHomeworkAvg();
+        this.lectureTotalAvg = entity.getLectureEvaluationInfo().getLectureTotalAvg();
+        this.lectureSatisfactionAvg = entity.getLectureEvaluationInfo().getLectureSatisfactionAvg();
+        this.lectureHoneyAvg = entity.getLectureEvaluationInfo().getLectureHoneyAvg();
+        this.lectureLearningAvg = entity.getLectureEvaluationInfo().getLectureLearningAvg();
+        this.lectureTeamAvg = entity.getLectureEvaluationInfo().getLectureTeamAvg();
+        this.lectureDifficultyAvg = entity.getLectureEvaluationInfo().getLectureDifficultyAvg();
+        this.lectureHomeworkAvg = entity.getLectureEvaluationInfo().getLectureHomeworkAvg();
     }
 }

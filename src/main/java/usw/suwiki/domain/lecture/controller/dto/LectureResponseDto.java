@@ -27,9 +27,9 @@ public class LectureResponseDto {
         this.lectureType = entity.getType();
         this.lectureName = entity.getName();
         this.majorType = entity.getMajorType();
-        this.lectureTotalAvg = entity.getLectureAverage().getLectureTotalAvg();
-        this.lectureSatisfactionAvg = entity.getLectureAverage().getLectureSatisfactionAvg();
-        this.lectureHoneyAvg = entity.getLectureAverage().getLectureHoneyAvg();
-        this.lectureLearningAvg = entity.getLectureAverage().getLectureLearningAvg();
+        this.lectureTotalAvg = entity.getLectureEvaluationInfo().getLectureTotalAvg();
+        this.lectureSatisfactionAvg = entity.getLectureEvaluationInfo().getLectureSatisfactionAvg();
+        this.lectureHoneyAvg = entity.getLectureEvaluationInfo().getLectureHoneyAvg();
+        this.lectureLearningAvg = entity.getLectureEvaluationInfo().getLectureLearningAvg();
     }
 }

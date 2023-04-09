@@ -38,9 +38,9 @@ public class Lecture extends BaseTimeEntity {
     private String type;
 
     @Embedded
-    private LectureEvaluationInfo lectureAverage;
+    private LectureEvaluationInfo lectureEvaluationInfo;
 
-    @Embedded()
+    @Embedded
     private LectureDetail lectureDetail;
 
     private int postsCount = 0;
@@ -60,11 +60,11 @@ public class Lecture extends BaseTimeEntity {
         this.majorType = dto.getMajorType();
         this.type = dto.getLectureType();
         createLectureDetail(dto);
-        createLectureAverage();
+        createLectureEvaluationInfo();
     }
 
-    private void createLectureAverage() {
-        this.lectureAverage = new LectureEvaluationInfo();
+    private void createLectureEvaluationInfo() {
+        this.lectureEvaluationInfo = new LectureEvaluationInfo();
     }
 
     private void createLectureDetail(JsonToLectureForm dto) {
@@ -96,21 +96,21 @@ public class Lecture extends BaseTimeEntity {
     }
 
     private void addLectureEvaluation(EvaluatePostsToLecture dto) {
-        this.lectureAverage.addLectureValue(dto);
+        this.lectureEvaluationInfo.addLectureValue(dto);
         increasePostCount();
     }
 
     private void cancelLectureEvaluation(EvaluatePostsToLecture dto) {
-        this.lectureAverage.cancelLectureValue(dto);
+        this.lectureEvaluationInfo.cancelLectureValue(dto);
         decreasePostCount();
     }
 
     private void calculateAverage() {
         if (postsCount < 1) {
-            this.lectureAverage.calculateIfPostCountLessThanOne();
+            this.lectureEvaluationInfo.calculateIfPostCountLessThanOne();
             return;
         }
-        this.lectureAverage.calculateLectureAverage(this.postsCount);
+        this.lectureEvaluationInfo.calculateLectureAverage(this.postsCount);
     }
 
     private void increasePostCount() {

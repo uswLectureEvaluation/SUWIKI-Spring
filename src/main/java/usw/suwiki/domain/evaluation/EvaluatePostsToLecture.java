@@ -1,11 +1,13 @@
 package usw.suwiki.domain.evaluation;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class EvaluatePostsToLecture {
 
     private Long lectureId;
