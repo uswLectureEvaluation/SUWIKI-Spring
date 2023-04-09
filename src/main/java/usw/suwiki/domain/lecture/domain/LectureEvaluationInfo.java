@@ -3,6 +3,7 @@ package usw.suwiki.domain.lecture.domain;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
+import javax.persistence.Transient;
 
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
@@ -10,7 +11,7 @@ import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
 @Embeddable
 @Access(AccessType.FIELD)
 @NoArgsConstructor
-public class LectureAverage {
+public class LectureEvaluationInfo {
 	private float lectureTotalAvg = 0;
 	private float lectureSatisfactionAvg = 0;
 	private float lectureHoneyAvg = 0;
@@ -19,11 +20,22 @@ public class LectureAverage {
 	private float lectureDifficultyAvg = 0;
 	private float lectureHomeworkAvg = 0;
 
+	@Transient
 	private float lectureSatisfactionValue = 0;
+
+	@Transient
 	private float lectureHoneyValue = 0;
+
+	@Transient
 	private float lectureLearningValue = 0;
+
+	@Transient
 	private float lectureTeamValue = 0;
+
+	@Transient
 	private float lectureDifficultyValue = 0;
+
+	@Transient
 	private float lectureHomeworkValue = 0;
 
 	public void calculateLectureAverage(int postsCount) {

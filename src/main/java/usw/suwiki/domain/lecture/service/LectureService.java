@@ -11,7 +11,7 @@ import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
 import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
-import usw.suwiki.domain.lecture.repository.LectureRepository;
+import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 
 import java.util.ArrayList;
 import java.util.List;

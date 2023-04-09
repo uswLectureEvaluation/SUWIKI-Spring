@@ -14,9 +14,6 @@ public class LectureDetail {
 	@Column(name = "place_schedule")
 	private String placeSchedule;
 
-	@Column(name = "lecture_type")
-	private String type;
-
 	@Column(name = "lecture_code")
 	private String code;
 
@@ -36,10 +33,9 @@ public class LectureDetail {
 	private String evaluateType;
 
 	@Builder
-	public LectureDetail(String placeSchedule, String type, String code, double point, String capprType, String diclNo,
+	public LectureDetail(String placeSchedule, String code, double point, String capprType, String diclNo,
 		int grade, String evaluateType) {
 		this.placeSchedule = placeSchedule;
-		this.type = type;
 		this.code = code;
 		this.point = point;
 		this.capprType = capprType;

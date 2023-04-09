@@ -24,7 +24,7 @@ public class LectureResponseDto {
         this.id = entity.getId();
         this.semesterList = entity.getSemester();
         this.professor = entity.getProfessor();
-        this.lectureType = entity.getLectureDetail().getType();
+        this.lectureType = entity.getType();
         this.lectureName = entity.getName();
         this.majorType = entity.getMajorType();
         this.lectureTotalAvg = entity.getLectureAverage().getLectureTotalAvg();

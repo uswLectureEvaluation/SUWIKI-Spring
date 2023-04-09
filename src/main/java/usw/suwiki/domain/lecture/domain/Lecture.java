@@ -34,11 +34,14 @@ public class Lecture extends BaseTimeEntity {
     @Column(name = "major_type")
     private String majorType;
 
-    @Embedded
-    LectureAverage lectureAverage;
+    @Column(name = "lecture_type")
+    private String type;
 
     @Embedded
-    LectureDetail lectureDetail;
+    private LectureEvaluationInfo lectureAverage;
+
+    @Embedded()
+    private LectureDetail lectureDetail;
 
     private int postsCount = 0;
 
@@ -55,12 +58,13 @@ public class Lecture extends BaseTimeEntity {
         this.semester = dto.getSelectedSemester();
         this.professor = dto.getProfessor();
         this.majorType = dto.getMajorType();
+        this.type = dto.getLectureType();
         createLectureDetail(dto);
         createLectureAverage();
     }
 
     private void createLectureAverage() {
-        this.lectureAverage = new LectureAverage();
+        this.lectureAverage = new LectureEvaluationInfo();
     }
 
     private void createLectureDetail(JsonToLectureForm dto) {
@@ -68,7 +72,6 @@ public class Lecture extends BaseTimeEntity {
             .code(dto.getLectureCode())
             .grade(dto.getGrade())
             .point(dto.getPoint())
-            .type(dto.getLectureType())
             .diclNo(dto.getDiclNo())
             .evaluateType(dto.getEvaluateType())
             .placeSchedule(dto.getPlaceSchedule())

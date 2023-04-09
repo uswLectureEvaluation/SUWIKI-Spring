@@ -1,4 +1,4 @@
-package usw.suwiki.domain.lecture.repository;
+package usw.suwiki.domain.lecture.domain.repository;
 
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
@@ -84,7 +84,9 @@ public class JpaLectureRepository implements LectureRepository {
             .getResultList();
         Long count = (Long) lectures.get(0);
 
-        return LecturesAndCountDto.builder().lectureList(results).count(count).build();
+        return LecturesAndCountDto.builder()
+            .lectureList(results).count(count)
+            .build();
     }
 
     @Override

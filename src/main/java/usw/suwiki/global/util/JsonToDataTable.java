@@ -12,7 +12,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 import usw.suwiki.domain.lecture.controller.dto.JsonToLectureForm;
 import usw.suwiki.domain.lecture.domain.Lecture;
-import usw.suwiki.domain.lecture.repository.LectureRepository;
+import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 
 @RequiredArgsConstructor
 @Transactional
