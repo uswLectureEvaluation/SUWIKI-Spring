@@ -35,7 +35,7 @@ import usw.suwiki.global.annotation.ApiLogger;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")
-@CrossOrigin(origins = "https://suwikiman.netlify.app/", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserAdminController {
 
     private final UserAdminJwtValidateService userAdminJwtValidateService;

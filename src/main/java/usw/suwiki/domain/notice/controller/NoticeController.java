@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.notice.dto.NoticeDetailResponseDto;
 import usw.suwiki.domain.notice.dto.NoticeResponseDto;
 import usw.suwiki.domain.notice.dto.NoticeSaveOrUpdateDto;
@@ -28,9 +28,9 @@ import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.jwt.JwtTokenValidator;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://suwikiman.netlify.app/", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(value = "/notice")
 public class NoticeController {
 

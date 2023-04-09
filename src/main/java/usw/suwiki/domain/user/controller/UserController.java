@@ -7,9 +7,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,7 +52,7 @@ import usw.suwiki.global.annotation.ApiLogger;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-@Slf4j
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserController {
 
     private final UserCheckIdService userCheckIdService;
