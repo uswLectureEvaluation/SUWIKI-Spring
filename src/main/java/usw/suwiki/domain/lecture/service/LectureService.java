@@ -5,12 +5,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
-import usw.suwiki.domain.lecture.LectureFindOption;
-import usw.suwiki.domain.lecture.LectureToJsonArray;
-import usw.suwiki.domain.lecture.dto.LectureDetailResponseDto;
-import usw.suwiki.domain.lecture.dto.LectureListAndCountDto;
-import usw.suwiki.domain.lecture.dto.LectureResponseDto;
-import usw.suwiki.domain.lecture.entity.Lecture;
+import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
+import usw.suwiki.domain.lecture.controller.dto.LecturesAndCountDto;
+import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
+import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
+import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.repository.LectureRepository;
 
 import java.util.ArrayList;
@@ -23,54 +23,26 @@ public class LectureService {
     private final LectureRepository lectureRepository;
 
     @Transactional(readOnly = true)
-    public LectureToJsonArray findAllLectureByFindOption(LectureFindOption lectureFindOption) {
-        List<LectureResponseDto> dtoList = new ArrayList<>();
-        LectureListAndCountDto dto = lectureRepository.findAllLectureByFindOption(lectureFindOption);
-        for (Lecture lecture : dto.getLectureList()) {
-            dtoList.add(new LectureResponseDto(lecture));
+    public LectureAndCountResponseForm findLectureByKeyword(String keyword, LectureFindOption option) {
+        if (option.majorTypeIsNull()) {
+            return findLectureByKeywordAndOption(keyword, option);
         }
-
-        return new LectureToJsonArray(dtoList, dto.getCount());
+        return findLectureByKeywordAndMajorType(keyword, option);
     }
 
     @Transactional(readOnly = true)
-    public LectureToJsonArray findAllLectureByMajorType(LectureFindOption lectureFindOption) {
-        List<LectureResponseDto> dtoList = new ArrayList<>();
-        LectureListAndCountDto dto = lectureRepository.findAllLectureByMajorType(lectureFindOption);
-        for (Lecture lecture : dto.getLectureList()) {
-            dtoList.add(new LectureResponseDto(lecture));
+    public LectureAndCountResponseForm findAllLecture(LectureFindOption option) {
+        if (option.majorTypeIsNull()) {
+            return findAllLectureByFindOption(option);
         }
-
-        return new LectureToJsonArray(dtoList, dto.getCount());
-    }
-
-    @Transactional(readOnly = true)
-    public LectureToJsonArray findLectureByFindOption(String searchValue, LectureFindOption lectureFindOption) {
-        List<LectureResponseDto> dtoList = new ArrayList<>();
-        LectureListAndCountDto dto = lectureRepository.findLectureByFindOption(searchValue, lectureFindOption);
-        for (Lecture lecture : dto.getLectureList()) {
-            dtoList.add(new LectureResponseDto(lecture));
-        }
-
-        return new LectureToJsonArray(dtoList, dto.getCount());
-    }
-
-    @Transactional(readOnly = true)
-    public LectureToJsonArray findLectureByMajorType(String searchValue, LectureFindOption lectureFindOption) {
-        List<LectureResponseDto> dtoList = new ArrayList<>();
-        LectureListAndCountDto dto = lectureRepository.findLectureByMajorType(searchValue, lectureFindOption);
-        for (Lecture lecture : dto.getLectureList()) {
-            dtoList.add(new LectureResponseDto(lecture));
-        }
-
-        return new LectureToJsonArray(dtoList, dto.getCount());
+        return findAllLectureByMajorType(option);
     }
 
     @Transactional(readOnly = true)
     public LectureDetailResponseDto findByIdDetail(Long id) {
         Lecture lecture = lectureRepository.findById(id);
-        LectureDetailResponseDto dto = new LectureDetailResponseDto(lecture);
-        return dto;
+        LectureDetailResponseDto response = new LectureDetailResponseDto(lecture);
+        return response;
     }
 
     @Transactional(readOnly = true)
@@ -96,5 +68,33 @@ public class LectureService {
 
     public Lecture findById(Long id) {
         return lectureRepository.findById(id);
+    }
+
+    private LectureAndCountResponseForm findLectureByKeywordAndOption(String keyword, LectureFindOption option) {
+        LecturesAndCountDto lectureInfo = lectureRepository.findLectureByFindOption(keyword, option);
+        return createLectureResponseForm(lectureInfo);
+    }
+
+    private LectureAndCountResponseForm findLectureByKeywordAndMajorType(String searchValue, LectureFindOption lectureFindOption) {
+        LecturesAndCountDto lectureInfo = lectureRepository.findLectureByMajorType(searchValue, lectureFindOption);
+        return createLectureResponseForm(lectureInfo);
+    }
+
+    private LectureAndCountResponseForm findAllLectureByFindOption(LectureFindOption lectureFindOption) {
+        LecturesAndCountDto lectureInfo = lectureRepository.findAllLectureByFindOption(lectureFindOption);
+        return createLectureResponseForm(lectureInfo);
+    }
+
+    private LectureAndCountResponseForm findAllLectureByMajorType(LectureFindOption lectureFindOption) {
+        LecturesAndCountDto lectureInfo = lectureRepository.findAllLectureByMajorType(lectureFindOption);
+        return createLectureResponseForm(lectureInfo);
+    }
+
+    private LectureAndCountResponseForm createLectureResponseForm(LecturesAndCountDto lectureInfo) {
+        List<LectureResponseDto> dtoList = new ArrayList<>();
+        for (Lecture lecture : lectureInfo.getLectureList()) {
+            dtoList.add(new LectureResponseDto(lecture));
+        }
+        return new LectureAndCountResponseForm(dtoList, lectureInfo.getCount());
     }
 }

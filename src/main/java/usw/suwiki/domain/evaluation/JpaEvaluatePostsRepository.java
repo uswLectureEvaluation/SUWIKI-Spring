@@ -3,7 +3,7 @@ package usw.suwiki.domain.evaluation;
 import org.springframework.stereotype.Repository;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
-import usw.suwiki.domain.lecture.entity.Lecture;
+import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.global.PageOption;
 

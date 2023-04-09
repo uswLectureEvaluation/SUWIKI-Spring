@@ -1,13 +1,14 @@
 package usw.suwiki.domain.lecture.repository;
 
-import usw.suwiki.domain.lecture.entity.Lecture;
-import usw.suwiki.domain.lecture.LectureFindOption;
-import usw.suwiki.domain.lecture.dto.LectureListAndCountDto;
+import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
+import usw.suwiki.domain.lecture.controller.dto.LecturesAndCountDto;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface LectureRepository {
     void save(Lecture lecture);
 
@@ -17,13 +18,13 @@ public interface LectureRepository {
 
     Lecture findByIdPessimisticLock(Long id);
 
-    LectureListAndCountDto findLectureByFindOption(String searchValue, LectureFindOption lectureFindOption);
+    LecturesAndCountDto findLectureByFindOption(String searchValue, LectureFindOption lectureFindOption);
 
-    LectureListAndCountDto findLectureByMajorType(String searchValue, LectureFindOption lectureFindOption);
+    LecturesAndCountDto findLectureByMajorType(String searchValue, LectureFindOption lectureFindOption);
 
-    LectureListAndCountDto findAllLectureByFindOption(LectureFindOption lectureFindOption);
+    LecturesAndCountDto findAllLectureByFindOption(LectureFindOption lectureFindOption);
 
-    LectureListAndCountDto findAllLectureByMajorType(LectureFindOption lectureFindOption);
+    LecturesAndCountDto findAllLectureByMajorType(LectureFindOption lectureFindOption);
 
     List<String> findAllMajorType();
 

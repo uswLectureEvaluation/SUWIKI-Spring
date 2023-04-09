@@ -1,11 +1,14 @@
-package usw.suwiki.domain.lecture.entity;
+package usw.suwiki.domain.lecture.domain;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
 
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
 
 @Embeddable
+@Access(AccessType.FIELD)
 @NoArgsConstructor
 public class LectureAverage {
 	private float lectureTotalAvg = 0;
@@ -24,13 +27,14 @@ public class LectureAverage {
 	private float lectureHomeworkValue = 0;
 
 	public void calculateLectureAverage(int postsCount) {
+		final int EVALUATION_TYPE_COUNT = 3;
 		this.lectureSatisfactionAvg = calculateAvg(this.lectureSatisfactionValue, postsCount);
 		this.lectureHoneyAvg = calculateAvg(this.lectureHoneyValue, postsCount);
 		this.lectureLearningAvg = calculateAvg(this.lectureLearningValue, postsCount);
 		this.lectureTeamAvg = calculateAvg(this.lectureTeamValue, postsCount);
 		this.lectureDifficultyAvg = calculateAvg(this.lectureDifficultyValue, postsCount);
 		this.lectureHomeworkAvg = calculateAvg(this.lectureHomeworkValue, postsCount);
-		this.lectureTotalAvg = (lectureSatisfactionAvg + lectureHoneyAvg + lectureLearningAvg) / 3;
+		this.lectureTotalAvg = (lectureSatisfactionAvg + lectureHoneyAvg + lectureLearningAvg) / EVALUATION_TYPE_COUNT;
 	}
 
 	public void calculateIfPostCountLessThanOne() {
@@ -59,6 +63,34 @@ public class LectureAverage {
 		this.lectureTeamValue -= dto.getLectureTeam();
 		this.lectureDifficultyValue -= dto.getLectureDifficulty();
 		this.lectureHomeworkValue -= dto.getLectureHomework();
+	}
+
+	public float getLectureTotalAvg() {
+		return this.lectureTotalAvg;
+	}
+
+	public float getLectureSatisfactionAvg() {
+		return this.lectureSatisfactionAvg;
+	}
+
+	public float getLectureHoneyAvg() {
+		return this.lectureHoneyAvg;
+	}
+
+	public float getLectureLearningAvg() {
+		return this.lectureLearningAvg;
+	}
+
+	public float getLectureTeamAvg() {
+		return this.lectureTeamAvg;
+	}
+
+	public float getLectureDifficultyAvg() {
+		return this.lectureDifficultyAvg;
+	}
+
+	public float getLectureHomeworkAvg() {
+		return this.lectureHomeworkAvg;
 	}
 
 	public float calculateAvg(float amountValue, int count) {

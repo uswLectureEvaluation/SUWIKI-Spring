@@ -1,9 +1,7 @@
 package usw.suwiki.domain.lecture.controller;
 
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,11 +9,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.domain.lecture.LectureFindOption;
-import usw.suwiki.domain.lecture.LectureToJsonArray;
-import usw.suwiki.domain.lecture.dto.LectureDetailResponseDto;
+
+import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
+import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
+import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.service.LectureService;
-import usw.suwiki.global.ToJsonArray;
+import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.exception.errortype.AccountException;
@@ -35,34 +34,41 @@ public class LectureController {
 
     @ApiLogger(option = "lecture")
     @GetMapping("/search")
-    public ResponseEntity<LectureToJsonArray> searchLectureApi(
+    public ResponseEntity<LectureAndCountResponseForm> searchLectureApi(
         @RequestParam String searchValue,
-        @RequestParam(required = false) Optional<String> option,
-        @RequestParam(required = false) Optional<Integer> page,
-        @RequestParam(required = false) Optional<String> majorType) {
+        @RequestParam(required = false) String option,
+        @RequestParam(required = false) Integer page,
+        @RequestParam(required = false) String majorType) {
 
-        LectureToJsonArray response = lectureService.searchLecture(searchValue, option, page, majorType);
+        LectureFindOption findOption = new LectureFindOption(option, page, majorType);
+        LectureAndCountResponseForm response = lectureService.findLectureByKeyword(searchValue, findOption);
+
         return ResponseEntity.ok(response);
     }
 
     @ApiLogger(option = "lecture")
     @GetMapping("/all")
-    public ResponseEntity<LectureToJsonArray>findAllLectureApi(
-        @RequestParam(required = false) Optional<String> option,
-        @RequestParam(required = false) Optional<Integer> page,
-        @RequestParam(required = false) Optional<String> majorType){
+    public ResponseEntity<LectureAndCountResponseForm>findAllLectureApi(
+        @RequestParam(required = false) String option,
+        @RequestParam(required = false) Integer page,
+        @RequestParam(required = false) String majorType){
 
-        LectureToJsonArray response = lectureService.findAllLecture(option, page, majorType);
+        LectureFindOption findOption = new LectureFindOption(option, page, majorType);
+        LectureAndCountResponseForm response = lectureService.findAllLecture(findOption);
         return ResponseEntity.ok(response);
     }
 
     @ApiLogger(option = "lecture")
     @GetMapping
-    public ResponseEntity<ToJsonArray>findLectureByLectureId(@RequestParam Long lectureId ,@RequestHeader String Authorization){
+    public ResponseEntity<ResponseForm> findLectureByLectureId(
+        @RequestParam Long lectureId,
+        @RequestHeader String Authorization) {
+
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(ErrorType.USER_RESTRICTED);
+            if (jwtTokenResolver.getUserIsRestricted(Authorization))
+                throw new AccountException(ErrorType.USER_RESTRICTED);
             LectureDetailResponseDto lecture = lectureService.findByIdDetail(lectureId);
-            ToJsonArray response = new ToJsonArray(lecture);
+            ResponseForm response = new ResponseForm(lecture);
             return ResponseEntity.ok(response);
         }
         throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);

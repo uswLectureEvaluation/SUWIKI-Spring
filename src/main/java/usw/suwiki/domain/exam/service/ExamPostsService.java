@@ -8,7 +8,7 @@ import usw.suwiki.domain.exam.dto.ExamResponseByLectureIdDto;
 import usw.suwiki.domain.exam.dto.ExamResponseByUserIdxDto;
 import usw.suwiki.domain.exam.entity.ExamPosts;
 import usw.suwiki.domain.exam.repository.ExamPostsRepository;
-import usw.suwiki.domain.lecture.entity.Lecture;
+import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;

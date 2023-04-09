@@ -1,11 +1,10 @@
-package usw.suwiki.domain.lecture.entity;
+package usw.suwiki.domain.lecture.domain;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
 import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
-import usw.suwiki.domain.lecture.dto.JsonToLectureDto;
+import usw.suwiki.domain.lecture.controller.dto.JsonToLectureForm;
 import usw.suwiki.global.BaseTimeEntity;
 
 import javax.persistence.Column;
@@ -17,8 +16,8 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
 @Entity
+@NoArgsConstructor
 public class Lecture extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +50,7 @@ public class Lecture extends BaseTimeEntity {
     }
 
 
-    public void toEntity(JsonToLectureDto dto) {
+    public void toEntity(JsonToLectureForm dto) {
         this.name = dto.getLectureName();
         this.semester = dto.getSelectedSemester();
         this.professor = dto.getProfessor();
@@ -60,29 +59,11 @@ public class Lecture extends BaseTimeEntity {
         createLectureAverage();
     }
 
-    public void addLectureValue(EvaluatePostsToLecture dto) {
-        this.lectureAverage.addLectureValue(dto);
-        this.postsCount += 1;
-    }
-
-    public void cancelLectureValue(EvaluatePostsToLecture dto) {
-        this.lectureAverage.cancelLectureValue(dto);
-        this.postsCount -= 1;
-    }
-
-    public void getLectureAvg() {
-        if (this.postsCount < 1) {
-            this.lectureAverage.calculateIfPostCountLessThanOne();
-            return;
-        }
-        this.lectureAverage.calculateLectureAverage(this.postsCount);
-    }
-
     private void createLectureAverage() {
         this.lectureAverage = new LectureAverage();
     }
 
-    private void createLectureDetail(JsonToLectureDto dto) {
+    private void createLectureDetail(JsonToLectureForm dto) {
         this.lectureDetail = LectureDetail.builder()
             .code(dto.getLectureCode())
             .grade(dto.getGrade())
@@ -93,5 +74,47 @@ public class Lecture extends BaseTimeEntity {
             .placeSchedule(dto.getPlaceSchedule())
             .capprType(dto.getCapprType())
             .build();
+    }
+
+    public void handleLectureEvaluationIfNewPost(EvaluatePostsToLecture post) {
+        this.addLectureEvaluation(post);
+        this.calculateAverage();
+    }
+
+    public void handleLectureEvaluationIfUpdatePost(EvaluatePostsToLecture beforeUpdatePost, EvaluatePostsToLecture updatePost) {
+        this.cancelLectureEvaluation(beforeUpdatePost);
+        this.addLectureEvaluation(updatePost);
+        this.calculateAverage();
+    }
+
+    public void handleLectureEvaluationIfDeletePost(EvaluatePostsToLecture post) {
+        this.cancelLectureEvaluation(post);
+        this.calculateAverage();
+    }
+
+    private void addLectureEvaluation(EvaluatePostsToLecture dto) {
+        this.lectureAverage.addLectureValue(dto);
+        increasePostCount();
+    }
+
+    private void cancelLectureEvaluation(EvaluatePostsToLecture dto) {
+        this.lectureAverage.cancelLectureValue(dto);
+        decreasePostCount();
+    }
+
+    private void calculateAverage() {
+        if (postsCount < 1) {
+            this.lectureAverage.calculateIfPostCountLessThanOne();
+            return;
+        }
+        this.lectureAverage.calculateLectureAverage(this.postsCount);
+    }
+
+    private void increasePostCount() {
+        this.postsCount += 1;
+    }
+
+    private void decreasePostCount() {
+        this.postsCount -= 1;
     }
 }

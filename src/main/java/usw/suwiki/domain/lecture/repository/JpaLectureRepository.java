@@ -1,9 +1,8 @@
 package usw.suwiki.domain.lecture.repository;
 
-import org.springframework.stereotype.Repository;
-import usw.suwiki.domain.lecture.entity.Lecture;
-import usw.suwiki.domain.lecture.LectureFindOption;
-import usw.suwiki.domain.lecture.dto.LectureListAndCountDto;
+import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
+import usw.suwiki.domain.lecture.controller.dto.LecturesAndCountDto;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.exception.ErrorType;
 
@@ -12,11 +11,17 @@ import javax.persistence.LockModeType;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-@Repository
 public class JpaLectureRepository implements LectureRepository {
     private final EntityManager em;
+    private final String DEFAULT_ORDER = "modifiedDate";
+    private final Integer DEFAULT_PAGE = 1;
+
+    private final String[] orderOptions = {"modifiedDate",
+        "lectureSatisfactionAvg",
+        "lectureHoneyAvg",
+        "lectureLearningAvg",
+        "lectureTotalAvg"};
 
     public JpaLectureRepository(EntityManager em) {
         this.em = em;
@@ -41,176 +46,132 @@ public class JpaLectureRepository implements LectureRepository {
 
     @Override
     public Lecture verifyJsonLecture(String lectureName, String professorName, String majorType) {
-        List<Lecture> resultList = em.createQuery("SELECT l FROM Lecture l WHERE(l.lectureName =:lectureName AND l.professor =:professor AND l.majorType = :majorType)")
-                .setParameter("lectureName", lectureName)
-                .setParameter("professor", professorName)
-                .setParameter("majorType", majorType)
-                .getResultList();     //refactoring 해야한다
-        if (resultList.isEmpty()) {
+        List<Lecture> results = em.createQuery(
+                "SELECT l FROM Lecture l WHERE(l.name =:lectureName AND l.professor =:professor AND l.majorType = :majorType)")
+            .setParameter("lectureName", lectureName)
+            .setParameter("professor", professorName)
+            .setParameter("majorType", majorType)
+            .getResultList();     //refactoring 해야한다
+        if (results.isEmpty()) {
             return null;
-        } else return resultList.get(0);
+        } else return results.get(0);
     }
 
     @Override
-    public LectureListAndCountDto findLectureByFindOption(String searchValue, LectureFindOption lectureFindOption) {
-        Optional<String> orderOption = lectureFindOption.getOrderOption();
-        Optional<Integer> pageNumber = lectureFindOption.getPageNumber();
-        if (pageNumber.isEmpty()) {
-            pageNumber = Optional.of(1);
-        }
-        if (orderOption.isEmpty()) {
-            orderOption = Optional.of("modifiedDate");
-        }
+    public LecturesAndCountDto findLectureByFindOption(String searchValue, LectureFindOption option) {
+        String orderOption = initializeOrderOption(option.getOrderOption());
+        Integer page = initializePageNumber(option.getPageNumber());
 
-        String[] orderOptions = {"modifiedDate",
-                "lectureSatisfactionAvg",
-                "lectureHoneyAvg",
-                "lectureLearningAvg",
-                "lectureTotalAvg"};
-
-        if (!Arrays.asList(orderOptions).contains(orderOption.get())) {
+        if (!Arrays.asList(orderOptions).contains(orderOption)) {
             throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
         }
 
         String query = String.format("SELECT l FROM Lecture l "
             + "WHERE l.lectureName LIKE CONCAT('%%',UPPER(:value),'%%') OR "
             + "l.professor LIKE CONCAT('%%',UPPER(:value),'%%') "
-            + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption.get());
+            + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption);
 
-        List<Lecture> lectureList = em.createQuery(query, Lecture.class)
-                .setParameter("value", searchValue)
-                .setFirstResult((pageNumber.get() - 1) * 10)
-                .setMaxResults(10)
-                .getResultList();
+        List<Lecture> results = em.createQuery(query, Lecture.class)
+            .setParameter("value", searchValue)
+            .setFirstResult((page - 1) * 10)
+            .setMaxResults(10)
+            .getResultList();
 
-        List countList = em.createQuery("SELECT COUNT(l) FROM Lecture l WHERE l.lectureName LIKE CONCAT('%%',UPPER(:value),'%%') OR l.professor LIKE CONCAT('%%',UPPER(:value),'%%')")
-                .setParameter("value", searchValue)
-                .getResultList();
-        Long count = (Long) countList.get(0);
+        List lectures = em.createQuery(
+                "SELECT COUNT(l) FROM Lecture l WHERE l.name LIKE CONCAT('%%',UPPER(:value),'%%') OR "
+                    + "l.professor LIKE CONCAT('%%',UPPER(:value),'%%')")
+            .setParameter("value", searchValue)
+            .getResultList();
+        Long count = (Long) lectures.get(0);
 
-        return LectureListAndCountDto.builder().lectureList(lectureList).count(count).build();
+        return LecturesAndCountDto.builder().lectureList(results).count(count).build();
     }
 
     @Override
-    public LectureListAndCountDto findAllLectureByFindOption(LectureFindOption lectureFindOption) {
-        Optional<String> orderOption = lectureFindOption.getOrderOption();
-        Optional<Integer> pageNumber = lectureFindOption.getPageNumber();
-        if (pageNumber.isEmpty()) {
-            pageNumber = Optional.of(1);
-        }
-        if (orderOption.isEmpty()) {
-            orderOption = Optional.of("modifiedDate");
-        }
+    public LecturesAndCountDto findAllLectureByFindOption(LectureFindOption option) {
+        String orderOption = initializeOrderOption(option.getOrderOption());
+        Integer page = initializePageNumber(option.getPageNumber());
 
-        String[] orderOptions = {"modifiedDate",
-                "lectureSatisfactionAvg",
-                "lectureHoneyAvg",
-                "lectureLearningAvg",
-                "lectureTotalAvg"};
-
-        if (!Arrays.asList(orderOptions).contains(orderOption.get())) {
+        if (!Arrays.asList(orderOptions).contains(orderOption)) {
             throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
         }
 
         String query = String.format("SELECT l FROM Lecture l "
-            + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption.get());
+            + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption);
 
-        List<Lecture> lectureList = em.createQuery(query, Lecture.class)
-                .setFirstResult((pageNumber.get() - 1) * 10)
-                .setMaxResults(10)
+        List<Lecture> results = em.createQuery(query, Lecture.class)
+            .setFirstResult((page - 1) * 10)
+            .setMaxResults(10)
+            .getResultList();
+
+        List lectures = em.createQuery("SELECT COUNT(l) FROM Lecture l")
                 .getResultList();
+        Long count = (Long) lectures.get(0);
 
-        List countList = em.createQuery("SELECT COUNT(l) FROM Lecture l")
-                .getResultList();
-        Long count = (Long) countList.get(0);
-
-        return LectureListAndCountDto.builder().lectureList(lectureList).count(count).build();
+        return LecturesAndCountDto.builder().lectureList(results).count(count).build();
     }
 
     @Override
-    public LectureListAndCountDto findLectureByMajorType(String searchValue, LectureFindOption lectureFindOption) {
-        Optional<String> orderOption = lectureFindOption.getOrderOption();
-        Optional<Integer> pageNumber = lectureFindOption.getPageNumber();
-        if (pageNumber.isEmpty()) {
-            pageNumber = Optional.of(1);
-        }
-        if (orderOption.isEmpty()) {
-            orderOption = Optional.of("modifiedDate");
-        }
+    public LecturesAndCountDto findLectureByMajorType(String searchValue, LectureFindOption option) {
+        String orderOption = initializeOrderOption(option.getOrderOption());
+        Integer page = initializePageNumber(option.getPageNumber());
 
-        String[] orderOptions = {"modifiedDate",
-                "lectureSatisfactionAvg",
-                "lectureHoneyAvg",
-                "lectureLearningAvg",
-                "lectureTotalAvg"};
-
-        if (!Arrays.asList(orderOptions).contains(orderOption.get())) {
+        if (!Arrays.asList(orderOptions).contains(orderOption)) {
             throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
         }
 
-        String majorType = lectureFindOption.getMajorType().get();
+        String majorType = option.getMajorType();
 
         String query = String.format("SELECT l FROM Lecture l "
             + "WHERE l.majorType = :major AND "
             + "(l.lectureName LIKE CONCAT('%%',UPPER(:value),'%%') "
             + "OR l.professor LIKE CONCAT('%%',UPPER(:value),'%%')) "
-            + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption.get());
+            + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption);
 
-        List<Lecture> lectureList = em.createQuery(query, Lecture.class)
-                .setParameter("major", majorType)
-                .setParameter("value", searchValue)
-                .setFirstResult((pageNumber.get() - 1) * 10)
-                .setMaxResults(10)
-                .getResultList();
+        List<Lecture> results = em.createQuery(query, Lecture.class)
+            .setParameter("major", majorType)
+            .setParameter("value", searchValue)
+            .setFirstResult((page - 1) * 10)
+            .setMaxResults(10)
+            .getResultList();
 
-        List countList = em.createQuery("SELECT COUNT(l) FROM Lecture l WHERE l.majorType = :major AND (l.lectureName LIKE CONCAT('%%',UPPER(:value),'%%') OR l.professor LIKE CONCAT('%%',UPPER(:value),'%%'))")
-                .setParameter("major", majorType)
-                .setParameter("value", searchValue)
-                .getResultList();
-        Long count = (Long) countList.get(0);
+        List lectures = em.createQuery("SELECT COUNT(l) FROM Lecture l WHERE l.majorType = :major AND "
+                + "(l.name LIKE CONCAT('%%',UPPER(:value),'%%') OR l.professor LIKE CONCAT('%%',UPPER(:value),'%%'))")
+            .setParameter("major", majorType)
+            .setParameter("value", searchValue)
+            .getResultList();
+        Long count = (Long) lectures.get(0);
 
-        return LectureListAndCountDto.builder().lectureList(lectureList).count(count).build();
+        return LecturesAndCountDto.builder().lectureList(results).count(count).build();
     }
 
     @Override
-    public LectureListAndCountDto findAllLectureByMajorType(LectureFindOption lectureFindOption) {
-        Optional<String> orderOption = lectureFindOption.getOrderOption();
-        Optional<Integer> pageNumber = lectureFindOption.getPageNumber();
-        if (pageNumber.isEmpty()) {
-            pageNumber = Optional.of(1);
-        }
-        if (orderOption.isEmpty()) {
-            orderOption = Optional.of("modifiedDate");
-        }
+    public LecturesAndCountDto findAllLectureByMajorType(LectureFindOption option) {
+        String orderOption = initializeOrderOption(option.getOrderOption());
+        Integer page = initializePageNumber(option.getPageNumber());
 
-        String[] orderOptions = {"modifiedDate",
-                "lectureSatisfactionAvg",
-                "lectureHoneyAvg",
-                "lectureLearningAvg",
-                "lectureTotalAvg"};
-
-        if (!Arrays.asList(orderOptions).contains(orderOption.get())) {
+        if (!Arrays.asList(orderOptions).contains(orderOption)) {
             throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
         }
 
-        String majorType = lectureFindOption.getMajorType().get();
+        String majorType = option.getMajorType();
 
         String query = String.format("SELECT l FROM Lecture l "
             + "WHERE l.majorType = :major "
-            + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption.get());
+            + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption);
 
-        List<Lecture> lectureList = em.createQuery(query, Lecture.class)
+        List<Lecture> results = em.createQuery(query, Lecture.class)
+            .setParameter("major", majorType)
+            .setFirstResult((page - 1) * 10)
+            .setMaxResults(10)
+            .getResultList();
+
+        List lectures = em.createQuery("SELECT COUNT(l) FROM Lecture l WHERE l.majorType = :major")
                 .setParameter("major", majorType)
-                .setFirstResult((pageNumber.get() - 1) * 10)
-                .setMaxResults(10)
                 .getResultList();
+        Long count = (Long) lectures.get(0);
 
-        List countList = em.createQuery("SELECT COUNT(l) FROM Lecture l WHERE l.majorType = :major")
-                .setParameter("major", majorType)
-                .getResultList();
-        Long count = (Long) countList.get(0);
-
-        return LectureListAndCountDto.builder().lectureList(lectureList).count(count).build();
+        return LecturesAndCountDto.builder().lectureList(results).count(count).build();
     }
 
     @Override
@@ -219,5 +180,19 @@ public class JpaLectureRepository implements LectureRepository {
                 .getResultList();
 
         return resultList;
+    }
+
+    private String initializeOrderOption(String option) {
+        if (option == null) {
+            option = DEFAULT_ORDER;
+        }
+        return option;
+    }
+
+    private Integer initializePageNumber(Integer page) {
+        if (page == null) {
+            page = DEFAULT_PAGE;
+        }
+        return page;
     }
 }

@@ -1,11 +1,13 @@
-package usw.suwiki.domain.lecture.entity;
+package usw.suwiki.domain.lecture.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Embeddable
 @NoArgsConstructor
 public class LectureDetail {
