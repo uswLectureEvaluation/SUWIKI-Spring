@@ -10,9 +10,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
-import usw.suwiki.domain.lecture.dto.JsonToLectureDto;
-import usw.suwiki.domain.lecture.entity.Lecture;
-import usw.suwiki.domain.lecture.repository.LectureRepository;
+import usw.suwiki.domain.lecture.controller.dto.JsonToLectureForm;
+import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 
 @RequiredArgsConstructor
 @Transactional
@@ -22,7 +22,7 @@ public class JsonToDataTable {
     private final LectureRepository lectureRepository;
 
     //이상한 강의명 예외 처리 로직.
-    private JsonToLectureDto handleLectureNameException(JsonToLectureDto dto) {
+    private JsonToLectureForm handleLectureNameException(JsonToLectureForm dto) {
 
         if (dto.getLectureName().contains("재수강-")) {
             int index = dto.getLectureName().indexOf("(");
@@ -70,7 +70,7 @@ public class JsonToDataTable {
             for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
-                JsonToLectureDto dto = JsonToLectureDto.builder()
+                JsonToLectureForm dto = JsonToLectureForm.builder()
                     .capprType((String) jsonObject.get("capprTypeNm"))
                     .evaluateType((String) jsonObject.get("cretEvalNm"))
                     .lectureCode((String) jsonObject.get("subjtCd"))
@@ -105,14 +105,14 @@ public class JsonToDataTable {
                     dto.getProfessor(), dto.getMajorType());
 
                 if (lecture != null) {
-                    if (!lecture.getSemesterList().contains(dto.getSelectedSemester())) {
+                    if (!lecture.getSemester().contains(dto.getSelectedSemester())) {
                         String updateString =
-                            lecture.getSemesterList() + ", " + dto.getSelectedSemester();
+                            lecture.getSemester() + ", " + dto.getSelectedSemester();
                         lecture.setSemester(updateString);  //refactoring 필요
                         lectureRepository.save(lecture);
                     }
                 } else if (lecture == null) {
-                    Lecture savedLecture = Lecture.builder().build();
+                    Lecture savedLecture = new Lecture();
                     savedLecture.toEntity(dto);
                     Thread.sleep(1);
                     lectureRepository.save(savedLecture);

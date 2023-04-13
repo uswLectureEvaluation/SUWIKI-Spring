@@ -1,4 +1,4 @@
-package usw.suwiki.domain.lecture.dto;
+package usw.suwiki.domain.lecture.controller.dto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class JsonToLectureDto {
+public class JsonToLectureForm {
     private String selectedSemester;
     private String placeSchedule;  // 시간표 대로 나워야 하나?
     private String professor;
@@ -33,7 +33,7 @@ public class JsonToLectureDto {
     }
 
     @Builder
-    public JsonToLectureDto(String selectedSemester, String placeSchedule, String professor, String lectureType, String lectureCode,
+    public JsonToLectureForm(String selectedSemester, String placeSchedule, String professor, String lectureType, String lectureCode,
                             String lectureName, String evaluateType, String diclNo, String majorType, double point,
                             String capprType, int grade) {
         this.selectedSemester = selectedSemester;

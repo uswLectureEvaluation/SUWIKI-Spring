@@ -1,7 +1,7 @@
 package usw.suwiki.domain.exam.repository;
 
 import usw.suwiki.domain.exam.entity.ExamPosts;
-import usw.suwiki.domain.lecture.entity.Lecture;
+import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.global.PageOption;
 

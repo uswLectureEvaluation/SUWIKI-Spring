@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
-import usw.suwiki.global.ToJsonArray;
+import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.jwt.JwtTokenValidator;
@@ -42,13 +42,13 @@ public class UserFavoriteMajorService {
         }
     }
 
-    public ToJsonArray executeLoad(String Authorization) {
+    public ResponseForm executeLoad(String Authorization) {
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
             if (jwtTokenResolver.getUserIsRestricted(Authorization))
                 throw new AccountException(USER_RESTRICTED);
             Long userIdx = jwtTokenResolver.getId(Authorization);
             List<String> list = favoriteMajorService.findMajorTypeByUser(userIdx);
-            return new ToJsonArray(list);
+            return new ResponseForm(list);
         }
         throw new AccountException(BAD_REQUEST);
     }

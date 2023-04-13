@@ -1,19 +1,19 @@
-package usw.suwiki.domain.lecture.dto;
+package usw.suwiki.domain.lecture.controller.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import usw.suwiki.domain.lecture.entity.Lecture;
+import usw.suwiki.domain.lecture.domain.Lecture;
 
 import java.util.List;
 
 @Getter
-public class LectureListAndCountDto {
+public class LecturesAndCountDto {
 
     List<Lecture> lectureList;
     Long count;
 
     @Builder
-    public LectureListAndCountDto(List<Lecture> lectureList, Long count) {
+    public LecturesAndCountDto(List<Lecture> lectureList, Long count) {
         this.lectureList = lectureList;
         this.count = count;
     }

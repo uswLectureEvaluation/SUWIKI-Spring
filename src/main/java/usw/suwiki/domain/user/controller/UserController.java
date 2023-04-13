@@ -46,7 +46,7 @@ import usw.suwiki.domain.user.service.UserReportService;
 import usw.suwiki.domain.user.service.UserResetPasswordService;
 import usw.suwiki.domain.user.service.UserTokenRefreshService;
 import usw.suwiki.domain.user.service.UserVerifyEmailService;
-import usw.suwiki.global.ToJsonArray;
+import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 
 @RestController
@@ -275,7 +275,7 @@ public class UserController {
     // 전공 즐겨찾기 불러오기
     @ApiLogger(option = "user")
     @GetMapping("/favorite-major")
-    public ResponseEntity<ToJsonArray> findByLecture(@RequestHeader String Authorization) {
+    public ResponseEntity<ResponseForm> findByLecture(@RequestHeader String Authorization) {
         return ResponseEntity
             .ok()
             .body(userFavoriteMajorService.executeLoad(Authorization));

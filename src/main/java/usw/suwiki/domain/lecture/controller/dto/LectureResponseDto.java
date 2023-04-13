@@ -1,8 +1,8 @@
-package usw.suwiki.domain.lecture.dto;
+package usw.suwiki.domain.lecture.controller.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.lecture.entity.Lecture;
+import usw.suwiki.domain.lecture.domain.Lecture;
 
 @Getter
 @NoArgsConstructor
@@ -22,14 +22,14 @@ public class LectureResponseDto {
 
     public LectureResponseDto(Lecture entity) {
         this.id = entity.getId();
-        this.semesterList = entity.getSemesterList();
+        this.semesterList = entity.getSemester();
         this.professor = entity.getProfessor();
-        this.lectureType = entity.getLectureType();
-        this.lectureName = entity.getLectureName();
+        this.lectureType = entity.getType();
+        this.lectureName = entity.getName();
         this.majorType = entity.getMajorType();
-        this.lectureTotalAvg = entity.getLectureTotalAvg();
-        this.lectureSatisfactionAvg = entity.getLectureSatisfactionAvg();
-        this.lectureHoneyAvg = entity.getLectureHoneyAvg();
-        this.lectureLearningAvg = entity.getLectureLearningAvg();
+        this.lectureTotalAvg = entity.getLectureEvaluationInfo().getLectureTotalAvg();
+        this.lectureSatisfactionAvg = entity.getLectureEvaluationInfo().getLectureSatisfactionAvg();
+        this.lectureHoneyAvg = entity.getLectureEvaluationInfo().getLectureHoneyAvg();
+        this.lectureLearningAvg = entity.getLectureEvaluationInfo().getLectureLearningAvg();
     }
 }

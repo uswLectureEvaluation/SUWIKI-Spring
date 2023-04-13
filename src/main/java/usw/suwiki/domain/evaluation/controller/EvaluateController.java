@@ -25,7 +25,7 @@ import usw.suwiki.domain.evaluation.dto.EvaluateResponseByLectureIdDto;
 import usw.suwiki.domain.evaluation.dto.EvaluateResponseByUserIdxDto;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.global.PageOption;
-import usw.suwiki.global.ToJsonArray;
+import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.exception.errortype.AccountException;
@@ -108,7 +108,7 @@ public class EvaluateController {
 
     @ApiLogger(option = "evaluatePosts")
     @GetMapping("/written") // 이름 수정 , 널값 처리 프론트
-    public ResponseEntity<ToJsonArray> findByUser(@RequestHeader String Authorization,
+    public ResponseEntity<ResponseForm> findByUser(@RequestHeader String Authorization,
         @RequestParam(required = false) Optional<Integer> page) {
         HttpHeaders header = new HttpHeaders();
         if (jwtTokenValidator.validateAccessToken(Authorization)) {
@@ -119,8 +119,8 @@ public class EvaluateController {
                 new PageOption(page),
                 jwtTokenResolver.getId(Authorization));
 
-            ToJsonArray data = new ToJsonArray(list);
-            return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
+            ResponseForm data = new ResponseForm(list);
+            return new ResponseEntity<ResponseForm>(data, header, HttpStatus.valueOf(200));
 
         } else {
             throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);

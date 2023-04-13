@@ -10,7 +10,7 @@ import usw.suwiki.domain.evaluation.dto.EvaluateResponseByLectureIdDto;
 import usw.suwiki.domain.evaluation.dto.EvaluateResponseByUserIdxDto;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
-import usw.suwiki.domain.lecture.entity.Lecture;
+import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
@@ -74,7 +74,7 @@ public class EvaluatePostsService {
         List<EvaluatePosts> list = evaluatePostsRepository.findByUserId(option, userId);
         for (EvaluatePosts post : list) {
             EvaluateResponseByUserIdxDto dto = new EvaluateResponseByUserIdxDto(post);
-            dto.setSemesterList(post.getLecture().getSemesterList());
+            dto.setSemesterList(post.getLecture().getSemester());
             dtoList.add(dto);
         }
         return dtoList;
