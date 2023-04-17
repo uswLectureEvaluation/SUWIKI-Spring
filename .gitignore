@@ -11,6 +11,8 @@ application.properties
 *.yml
 .idea/workspace.xml
 
+.idea
+
 ### STS ###
 .apt_generated
 .classpath
