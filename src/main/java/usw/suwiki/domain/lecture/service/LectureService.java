@@ -27,18 +27,18 @@ public class LectureService {
         if (keyword == null) {
             return findAllLecture(option);
         }
-        if (option.majorTypeIsNullOrAll()) {
-            return findLectureByKeywordAndOption(keyword, option);
+        if (option.majorTypeFiltering()) {
+            return findLectureByKeywordAndMajorType(keyword, option);
         }
-        return findLectureByKeywordAndMajorType(keyword, option);
+        return findLectureByKeywordAndOption(keyword, option);
     }
 
     @Transactional(readOnly = true)
     public LectureAndCountResponseForm findAllLecture(LectureFindOption option) {
-        if (option.majorTypeIsNullOrAll()) {
-            return findAllLectureByFindOption(option);
+        if (option.majorTypeFiltering()) {
+            return findAllLectureByMajorType(option);
         }
-        return findAllLectureByMajorType(option);
+        return findAllLectureByFindOption(option);
     }
 
     @Transactional(readOnly = true)
