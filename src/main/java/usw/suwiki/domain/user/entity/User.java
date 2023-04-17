@@ -1,12 +1,20 @@
 package usw.suwiki.domain.user.entity;
 
+import static usw.suwiki.global.exception.ErrorType.USER_POINT_LACK;
+
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import usw.suwiki.global.exception.errortype.AccountException;
 
 @Entity
 @Getter
@@ -14,6 +22,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -76,5 +85,29 @@ public class User {
         this.createdAt = null;
         this.updatedAt = null;
         this.requestedQuitDate = LocalDateTime.now();
+    }
+
+    public void increasePointByWritingEvaluatePost() {
+        this.point += 10;
+    }
+
+    public void increasePointByWritingExamPost() {
+        this.point += 20;
+    }
+
+    public void decreasePointByPurchaseExamPost() {
+        final int examPostRequiringPoint = 20;
+        if (this.point < examPostRequiringPoint) {
+            throw new AccountException(USER_POINT_LACK);
+        }
+        this.point -= examPostRequiringPoint;
+    }
+
+    public void decreasePointByDeletePosts() {
+        final int deletePostRequiringPoint = 30;
+        if (this.point < deletePostRequiringPoint) {
+            throw new AccountException(USER_POINT_LACK);
+        }
+        this.point -= deletePostRequiringPoint;
     }
 }
