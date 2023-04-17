@@ -35,7 +35,7 @@ public class LectureController {
     @ApiLogger(option = "lecture")
     @GetMapping("/search")
     public ResponseEntity<LectureAndCountResponseForm> searchLectureApi(
-        @RequestParam String searchValue,
+        @RequestParam(required = false) String searchValue,
         @RequestParam(required = false) String option,
         @RequestParam(required = false) Integer page,
         @RequestParam(required = false) String majorType) {

@@ -24,7 +24,10 @@ public class LectureService {
 
     @Transactional(readOnly = true)
     public LectureAndCountResponseForm findLectureByKeyword(String keyword, LectureFindOption option) {
-        if (option.majorTypeIsNull()) {
+        if (keyword == null) {
+            return findAllLecture(option);
+        }
+        if (option.majorTypeIsNullOrAll()) {
             return findLectureByKeywordAndOption(keyword, option);
         }
         return findLectureByKeywordAndMajorType(keyword, option);
@@ -32,7 +35,7 @@ public class LectureService {
 
     @Transactional(readOnly = true)
     public LectureAndCountResponseForm findAllLecture(LectureFindOption option) {
-        if (option.majorTypeIsNull()) {
+        if (option.majorTypeIsNullOrAll()) {
             return findAllLectureByFindOption(option);
         }
         return findAllLectureByMajorType(option);

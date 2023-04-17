@@ -17,7 +17,7 @@ public class LectureFindOption {
         this.majorType = majorType;
     }
 
-    public boolean majorTypeIsNull() {
-        return majorType == null;
+    public boolean majorTypeIsNullOrAll() {
+        return majorType == null || majorType.equals("전체");
     }
 }
