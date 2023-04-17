@@ -21,10 +21,10 @@ public class JpaLectureRepository implements LectureRepository {
     private final Integer DEFAULT_PAGE = 1;
 
     private final String[] orderOptions = {"modifiedDate",
-        "lectureSatisfactionAvg",
-        "lectureHoneyAvg",
-        "lectureLearningAvg",
-        "lectureTotalAvg"};
+        "lectureEvaluationInfo.lectureSatisfactionAvg",
+        "lectureEvaluationInfo.lectureHoneyAvg",
+        "lectureEvaluationInfo.lectureLearningAvg",
+        "lectureEvaluationInfo.lectureTotalAvg"};
 
     public JpaLectureRepository(EntityManager em) {
         this.em = em;
