@@ -70,7 +70,7 @@ public class JpaLectureRepository implements LectureRepository {
         }
 
         String query = String.format("SELECT l FROM Lecture l "
-            + "WHERE l.lectureName LIKE CONCAT('%%',UPPER(:value),'%%') OR "
+            + "WHERE l.name LIKE CONCAT('%%',UPPER(:value),'%%') OR "
             + "l.professor LIKE CONCAT('%%',UPPER(:value),'%%') "
             + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption);
 
@@ -129,7 +129,7 @@ public class JpaLectureRepository implements LectureRepository {
 
         String query = String.format("SELECT l FROM Lecture l "
             + "WHERE l.majorType = :major AND "
-            + "(l.lectureName LIKE CONCAT('%%',UPPER(:value),'%%') "
+            + "(l.name LIKE CONCAT('%%',UPPER(:value),'%%') "
             + "OR l.professor LIKE CONCAT('%%',UPPER(:value),'%%')) "
             + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption);
 
