@@ -1,8 +1,11 @@
 package usw.suwiki.domain.apilogger.service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.apilogger.ApiLogger;
@@ -11,6 +14,7 @@ import usw.suwiki.domain.apilogger.repository.ApiLoggerRepository;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class ApiLoggerService {
 
     private final ApiLoggerRepository apiLoggerRepository;
@@ -25,7 +29,12 @@ public class ApiLoggerService {
     public void logApi(LocalDate today, Long currentProcessTime, String option) {
         Optional<ApiLogger> apiLogger = apiLoggerRepository.findByCallDate(today);
         if (apiLogger.isEmpty()) {
-            apiLoggerRepository.save(makeNewApiStatistics(today, currentProcessTime, option));
+            try {
+                apiLoggerRepository.save(makeNewApiStatistics(today, currentProcessTime, option));
+            } catch (DataIntegrityViolationException exception) {
+                log.error("Try to Create Duplicated Unique Key Exception message : {}", exception.getMessage());
+                logApi(today, currentProcessTime, option);
+            }
             return;
         }
         apiLoggerRepository.save(makeOldApiStatistics(apiLogger.get(), currentProcessTime, option));
