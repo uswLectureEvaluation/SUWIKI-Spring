@@ -65,9 +65,9 @@ public class JpaLectureRepository implements LectureRepository {
         String orderOption = initializeOrderOption(option.getOrderOption());
         Integer page = initializePageNumber(option.getPageNumber());
 
-        if (!Arrays.asList(orderOptions).contains(orderOption)) {
-            throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
-        }
+        // if (!Arrays.asList(orderOptions).contains(orderOption)) {
+        //     throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
+        // }
 
         String query = String.format("SELECT l FROM Lecture l "
             + "WHERE l.name LIKE CONCAT('%%',UPPER(:value),'%%') OR "
@@ -97,9 +97,9 @@ public class JpaLectureRepository implements LectureRepository {
         String orderOption = initializeOrderOption(option.getOrderOption());
         Integer page = initializePageNumber(option.getPageNumber());
 
-        if (!Arrays.asList(orderOptions).contains(orderOption)) {
-            throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
-        }
+        // if (!Arrays.asList(orderOptions).contains(orderOption)) {
+        //     throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
+        // }
 
         String query = String.format("SELECT l FROM Lecture l "
             + "ORDER BY CASE WHEN (l.postsCount > 0) THEN 1 ELSE 2 END, l.%s DESC", orderOption);
@@ -121,9 +121,9 @@ public class JpaLectureRepository implements LectureRepository {
         String orderOption = initializeOrderOption(option.getOrderOption());
         Integer page = initializePageNumber(option.getPageNumber());
 
-        if (!Arrays.asList(orderOptions).contains(orderOption)) {
-            throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
-        }
+        // if (!Arrays.asList(orderOptions).contains(orderOption)) {
+        //     throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
+        // }
 
         String majorType = option.getMajorType();
 
@@ -155,9 +155,9 @@ public class JpaLectureRepository implements LectureRepository {
         String orderOption = initializeOrderOption(option.getOrderOption());
         Integer page = initializePageNumber(option.getPageNumber());
 
-        if (!Arrays.asList(orderOptions).contains(orderOption)) {
-            throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
-        }
+        // if (!Arrays.asList(orderOptions).contains(orderOption)) {
+        //     throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
+        // }
 
         String majorType = option.getMajorType();
 
