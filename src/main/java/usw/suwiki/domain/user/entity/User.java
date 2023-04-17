@@ -69,6 +69,20 @@ public class User {
     @Column
     private LocalDateTime updatedAt;
 
+    public static User makeUser(String loginId, String password, String email) {
+        return User.builder()
+            .loginId(loginId)
+            .password(password)
+            .email(email)
+            .restricted(true)
+            .restrictedCount(0)
+            .writtenEvaluation(0)
+            .writtenExam(0)
+            .point(0)
+            .viewExamCount(0)
+            .build();
+    }
+
     public void editRestricted(boolean restricted) {
         this.restricted = restricted;
     }

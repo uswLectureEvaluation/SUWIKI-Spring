@@ -1,5 +1,17 @@
 package usw.suwiki.domain.user.service;
 
+import static usw.suwiki.global.exception.ErrorType.IS_NOT_EMAIL_FORM;
+import static usw.suwiki.global.exception.ErrorType.PASSWORD_ERROR;
+import static usw.suwiki.global.exception.ErrorType.PASSWORD_NOT_CHANGED;
+import static usw.suwiki.global.exception.ErrorType.USER_AND_EMAIL_OVERLAP;
+import static usw.suwiki.global.exception.ErrorType.USER_NOT_EMAIL_AUTHED;
+import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
+import static usw.suwiki.global.exception.ErrorType.USER_NOT_FOUND;
+
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,22 +32,14 @@ import usw.suwiki.domain.user.dto.UserRequestDto;
 import usw.suwiki.domain.user.dto.UserRequestDto.EditMyPasswordForm;
 import usw.suwiki.domain.user.dto.UserRequestDto.FindIdForm;
 import usw.suwiki.domain.user.dto.UserRequestDto.FindPasswordForm;
+import usw.suwiki.domain.user.dto.UserRequestDto.JoinForm;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
-import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
 import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
 import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
-
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
-
-import static usw.suwiki.global.exception.ErrorType.*;
 
 
 @Service
@@ -43,6 +47,7 @@ import static usw.suwiki.global.exception.ErrorType.*;
 @Transactional
 public class UserCommonService {
 
+    private final String BASE_LINK = "https://api.suwiki.kr/user/verify-email/?token=";
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
@@ -57,41 +62,30 @@ public class UserCommonService {
     private final BuildFindPasswordForm BuildFindPasswordForm;
     private final JwtTokenResolver jwtTokenResolver;
 
-    public User makeUser(UserRequestDto.JoinForm joinForm) {
-        User user = User.builder()
-                .loginId((joinForm.getLoginId()))
-                .password(bCryptPasswordEncoder.encode(joinForm.getPassword()))
-                .email(joinForm.getEmail())
-                .restricted(true)
-                .restrictedCount(0)
-                .writtenEvaluation(0)
-                .writtenExam(0)
-                .point(0)
-                .viewExamCount(0)
-                .build();
-        userRepository.save(user);
-        return user;
-    }
-
-    public void join(UserRequestDto.JoinForm joinForm) {
+    public void join(JoinForm joinForm) {
         if (userRepository.findByLoginId(joinForm.getLoginId()).isPresent() ||
-                userRepository.findByEmail(joinForm.getEmail()).isPresent())
-            throw new AccountException(ErrorType.USER_AND_EMAIL_OVERLAP);
+            userRepository.findByEmail(joinForm.getEmail()).isPresent()) {
+            throw new AccountException(USER_AND_EMAIL_OVERLAP);
+        }
 
-        if (!joinForm.getEmail().contains("@suwon.ac.kr")) throw new AccountException(ErrorType.IS_NOT_EMAIL_FORM);
+        if (!joinForm.getEmail().contains("@suwon.ac.kr")) {
+            throw new AccountException(IS_NOT_EMAIL_FORM);
+        }
 
-        User user = makeUser(joinForm);
-        String token = UUID.randomUUID().toString();
-        ConfirmationToken confirmationToken = ConfirmationToken.builder()
-                .token(token)
-                .createdAt(LocalDateTime.now())
-                .expiresAt(LocalDateTime.now().plusMinutes(15))
-                .userIdx(user.getId())
-                .build();
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
-        String link = "https://api.suwiki.kr/user/verify-email/?token=" + token;
-//        String link = "http://localhost:8080/user/verify-email/?token=" + token;
-        emailSender.send(joinForm.getEmail(), buildEmailAuthForm.buildEmail(link));
+        User user = User.makeUser(
+            joinForm.getLoginId(),
+            bCryptPasswordEncoder.encode(joinForm.getPassword()),
+            joinForm.getEmail()
+        );
+
+        ConfirmationToken confirmationToken = ConfirmationToken.makeToken(user);
+
+        confirmationTokenService.saveConfirmationToken(ConfirmationToken.makeToken(user));
+        emailSender.send(
+            joinForm.getEmail(),
+            buildEmailAuthForm
+                .buildEmail(BASE_LINK + confirmationToken.getToken())
+        );
     }
 
     public boolean isEmailAuthTokenExpired(ConfirmationToken confirmationToken) {
@@ -103,14 +97,15 @@ public class UserCommonService {
     public void isUserEmailAuth(Long userIdx) {
         User targetUser = loadUserFromUserIdx(userIdx);
         confirmationTokenRepository.verifyUserEmailAuth(targetUser.getId())
-                .orElseThrow(() -> new AccountException(USER_NOT_EMAIL_AUTHED));
+            .orElseThrow(() -> new AccountException(USER_NOT_EMAIL_AUTHED));
     }
 
     public boolean sendEmailFindId(FindIdForm findIdForm) {
         Optional<User> requestUser = userRepository.findByEmail(findIdForm.getEmail());
 
         if (requestUser.isPresent()) {
-            emailSender.send(findIdForm.getEmail(), BuildFindLoginIdForm.buildEmail(requestUser.get().getLoginId()));
+            emailSender.send(findIdForm.getEmail(),
+                BuildFindLoginIdForm.buildEmail(requestUser.get().getLoginId()));
             return true;
         }
         throw new AccountException(USER_NOT_FOUND);
@@ -121,12 +116,14 @@ public class UserCommonService {
         secureRandom.setSeed(new Date().getTime());
 
         char[] charAllSet = new char[]{
-                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-                'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
-                't', 'u', 'v', 'w', 'x', 'y', 'z',
-                '!', '@', '#', '$', '%', '^'};
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
+            'R', 'S',
+            'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
+            'r', 's',
+            't', 'u', 'v', 'w', 'x', 'y', 'z',
+            '!', '@', '#', '$', '%', '^'};
         char[] charNumberSet = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
         char[] charSpecialSet = new char[]{'!', '@', '#', '$', '%', '^'};
         int idx = 0;
@@ -157,7 +154,8 @@ public class UserCommonService {
             String resetPassword = randomizePassword();
             String EncodedResetPassword = bCryptPasswordEncoder.encode(resetPassword);
             userRepository.updatePassword(EncodedResetPassword, findPasswordForm.getLoginId());
-            emailSender.send(findPasswordForm.getEmail(), BuildFindPasswordForm.buildEmail(resetPassword));
+            emailSender.send(findPasswordForm.getEmail(),
+                BuildFindPasswordForm.buildEmail(resetPassword));
             return true;
         }
         throw new AccountException(USER_NOT_FOUND);
@@ -165,28 +163,35 @@ public class UserCommonService {
 
     public void editMyPassword(EditMyPasswordForm editMyPasswordForm, String AccessToken) {
         String userLoginId = jwtTokenResolver.getLoginId(AccessToken);
-        userRepository.updatePassword(bCryptPasswordEncoder.encode(editMyPasswordForm.getNewPassword()), userLoginId);
+        userRepository.updatePassword(
+            bCryptPasswordEncoder.encode(editMyPasswordForm.getNewPassword()), userLoginId);
         User user = loadUserFromLoginId(userLoginId);
         userRepository.updateUpdatedAt(user.getId());
     }
 
     public void validatePasswordAtEditPassword(String loginId, String prePassword) {
-        if (userRepository.findByLoginId(loginId).isEmpty()) throw new AccountException(USER_NOT_EXISTS);
-        if (bCryptPasswordEncoder.matches(prePassword, userRepository.findByLoginId(loginId).get().getPassword())) {
-            bCryptPasswordEncoder.matches(prePassword, userRepository.findByLoginId(loginId).get().getPassword());
+        if (userRepository.findByLoginId(loginId).isEmpty()) {
+            throw new AccountException(USER_NOT_EXISTS);
+        }
+        if (bCryptPasswordEncoder.matches(prePassword,
+            userRepository.findByLoginId(loginId).get().getPassword())) {
+            bCryptPasswordEncoder.matches(prePassword,
+                userRepository.findByLoginId(loginId).get().getPassword());
             return;
         }
         throw new AccountException(PASSWORD_ERROR);
     }
 
     public void compareNewPasswordVersusPrePassword(String loginId, String newPassword) {
-        if (bCryptPasswordEncoder.matches(newPassword, userRepository.findByLoginId(loginId).get().getPassword())) {
+        if (bCryptPasswordEncoder.matches(newPassword,
+            userRepository.findByLoginId(loginId).get().getPassword())) {
             throw new AccountException(PASSWORD_NOT_CHANGED);
         }
     }
 
     public boolean validatePasswordAtUserTable(String loginId, String password) {
-        return bCryptPasswordEncoder.matches(password, userRepository.findByLoginId(loginId).get().getPassword());
+        return bCryptPasswordEncoder.matches(password,
+            userRepository.findByLoginId(loginId).get().getPassword());
     }
 
     public void setLastLogin(User user) {
@@ -194,7 +199,9 @@ public class UserCommonService {
     }
 
     public User convertOptionalUserToDomainUser(Optional<User> optionalUser) {
-        if (optionalUser.isPresent()) return optionalUser.get();
+        if (optionalUser.isPresent()) {
+            return optionalUser.get();
+        }
         throw new AccountException(USER_NOT_EXISTS);
     }
 
@@ -214,33 +221,36 @@ public class UserCommonService {
         return examPostsRepository.findById(ExamPostsIdx);
     }
 
-    public void reportExamPost(UserRequestDto.ExamReportForm userReportForm, Long reportingUserIdx) {
+    public void reportExamPost(UserRequestDto.ExamReportForm userReportForm,
+        Long reportingUserIdx) {
         Long reportTargetUser = loadExamPostsByIndex(userReportForm.getExamIdx()).getUser().getId();
         ExamPosts reportedTargetPost = loadExamPostsByIndex(userReportForm.getExamIdx());
         ExamPostReport target = ExamPostReport.builder()
-                .examIdx(userReportForm.getExamIdx())
-                .lectureName(reportedTargetPost.getLectureName())
-                .professor(reportedTargetPost.getProfessor())
-                .content(reportedTargetPost.getContent())
-                .reportedUserIdx(reportTargetUser)
-                .reportingUserIdx(reportingUserIdx)
-                .reportedDate(LocalDateTime.now())
-                .build();
+            .examIdx(userReportForm.getExamIdx())
+            .lectureName(reportedTargetPost.getLectureName())
+            .professor(reportedTargetPost.getProfessor())
+            .content(reportedTargetPost.getContent())
+            .reportedUserIdx(reportTargetUser)
+            .reportingUserIdx(reportingUserIdx)
+            .reportedDate(LocalDateTime.now())
+            .build();
         examReportRepository.save(target);
     }
 
-    public void reportEvaluatePost(UserRequestDto.EvaluateReportForm userReportForm, Long reportingUserIdx) {
-        Long reportTargetUser = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getUser().getId();
+    public void reportEvaluatePost(UserRequestDto.EvaluateReportForm userReportForm,
+        Long reportingUserIdx) {
+        Long reportTargetUser = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getUser()
+            .getId();
         EvaluatePosts reportTargetPost = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx());
         EvaluatePostReport target = EvaluatePostReport.builder()
-                .evaluateIdx(userReportForm.getEvaluateIdx())
-                .lectureName(reportTargetPost.getLectureName())
-                .professor(reportTargetPost.getProfessor())
-                .content(reportTargetPost.getContent())
-                .reportedUserIdx(reportTargetUser)
-                .reportingUserIdx(reportingUserIdx)
-                .reportedDate(LocalDateTime.now())
-                .build();
+            .evaluateIdx(userReportForm.getEvaluateIdx())
+            .lectureName(reportTargetPost.getLectureName())
+            .professor(reportTargetPost.getProfessor())
+            .content(reportTargetPost.getContent())
+            .reportedUserIdx(reportTargetUser)
+            .reportingUserIdx(reportingUserIdx)
+            .reportedDate(LocalDateTime.now())
+            .build();
         evaluateReportRepository.save(target);
     }
 
