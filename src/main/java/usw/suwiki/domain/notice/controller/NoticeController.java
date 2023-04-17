@@ -21,7 +21,7 @@ import usw.suwiki.domain.notice.dto.NoticeResponseDto;
 import usw.suwiki.domain.notice.dto.NoticeSaveOrUpdateDto;
 import usw.suwiki.domain.notice.service.NoticeService;
 import usw.suwiki.global.PageOption;
-import usw.suwiki.global.ToJsonArray;
+import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.exception.errortype.AccountException;
@@ -40,21 +40,21 @@ public class NoticeController {
 
     @ApiLogger(option = "notice")
     @GetMapping("/all")
-    public ResponseEntity<ToJsonArray> findNoticeList(
+    public ResponseEntity<ResponseForm> findNoticeList(
         @RequestParam(required = false) Optional<Integer> page) {
         HttpHeaders header = new HttpHeaders();
         List<NoticeResponseDto> list = noticeService.findNoticeList(new PageOption(page));
-        ToJsonArray data = new ToJsonArray(list);
-        return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
+        ResponseForm data = new ResponseForm(list);
+        return new ResponseEntity<ResponseForm>(data, header, HttpStatus.valueOf(200));
     }
 
     @ApiLogger(option = "notice")
     @GetMapping("/")
-    public ResponseEntity<ToJsonArray> findNoticeByNoticeId(@RequestParam Long noticeId) {
+    public ResponseEntity<ResponseForm> findNoticeByNoticeId(@RequestParam Long noticeId) {
         HttpHeaders header = new HttpHeaders();
         NoticeDetailResponseDto dto = noticeService.findNoticeDetail(noticeId);
-        ToJsonArray data = new ToJsonArray(dto);
-        return new ResponseEntity<ToJsonArray>(data, header, HttpStatus.valueOf(200));
+        ResponseForm data = new ResponseForm(dto);
+        return new ResponseEntity<ResponseForm>(data, header, HttpStatus.valueOf(200));
     }
 
     @ApiLogger(option = "notice")

@@ -3,11 +3,11 @@ package usw.suwiki.global;
 import lombok.Getter;
 
 @Getter
-public class ToJsonArray {
+public class ResponseForm {
 
     Object data;
 
-    public ToJsonArray(Object data) {
+    public ResponseForm(Object data) {
         this.data = data;
     }
 }

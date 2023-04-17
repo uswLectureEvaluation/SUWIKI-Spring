@@ -30,10 +30,10 @@ public class VersionController {
 
     @ApiLogger(option = "version")
     @GetMapping("/majorType")
-    public ResponseEntity<ToJsonArray> findAllMajorType() {
+    public ResponseEntity<ResponseForm> findAllMajorType() {
         HttpHeaders header = new HttpHeaders();
         List<String> list = lectureService.findAllMajorType();
-        ToJsonArray data = new ToJsonArray(list);
+        ResponseForm data = new ResponseForm(list);
         return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
     }
 }
