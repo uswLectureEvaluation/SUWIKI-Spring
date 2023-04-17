@@ -12,7 +12,6 @@ import usw.suwiki.domain.apilogger.service.ApiLoggerService;
 
 @Component
 @Aspect
-@Log4j2
 @RequiredArgsConstructor
 public class ApiLogAspect {
 
