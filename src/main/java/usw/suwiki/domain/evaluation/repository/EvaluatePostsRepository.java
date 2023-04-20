@@ -2,7 +2,7 @@ package usw.suwiki.domain.evaluation.repository;
 
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.lecture.domain.Lecture;
-import usw.suwiki.domain.user.entity.User;
+import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.global.PageOption;
 
 import java.util.List;

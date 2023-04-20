@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.ExamPostRestrictForm;
-import usw.suwiki.domain.restrictinguser.service.RestrictingUserAddRestrictingService;
-import usw.suwiki.domain.user.service.UserService;
+import usw.suwiki.domain.user.restrictinguser.service.RestrictingUserAddRestrictingService;
+import usw.suwiki.domain.user.user.service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;

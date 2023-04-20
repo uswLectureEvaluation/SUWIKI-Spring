@@ -28,7 +28,7 @@ import usw.suwiki.domain.admin.service.UserAdminNoProblemPostService;
 import usw.suwiki.domain.admin.service.UserAdminRestrictPostService;
 import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
 import usw.suwiki.domain.postreport.entity.ExamPostReport;
-import usw.suwiki.domain.user.dto.UserRequestDto.LoginForm;
+import usw.suwiki.domain.user.user.dto.UserRequestDto.LoginForm;
 import usw.suwiki.global.annotation.ApiLogger;
 
 

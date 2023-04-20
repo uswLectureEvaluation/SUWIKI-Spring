@@ -14,9 +14,9 @@ import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
 import usw.suwiki.domain.postreport.entity.ExamPostReport;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
-import usw.suwiki.domain.user.entity.User;
-import usw.suwiki.domain.user.repository.UserRepository;
-import usw.suwiki.domain.user.service.UserService;
+import usw.suwiki.domain.user.user.entity.User;
+import usw.suwiki.domain.user.user.repository.UserRepository;
+import usw.suwiki.domain.user.user.service.UserService;
 import usw.suwiki.global.exception.errortype.AccountException;
 
 import java.time.LocalDateTime;

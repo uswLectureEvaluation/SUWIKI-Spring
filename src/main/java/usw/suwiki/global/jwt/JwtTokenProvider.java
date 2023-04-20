@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
-import usw.suwiki.domain.user.entity.User;
+import usw.suwiki.domain.user.user.entity.User;
 
 @Component
 @RequiredArgsConstructor
