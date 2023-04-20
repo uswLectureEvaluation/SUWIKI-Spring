@@ -4,15 +4,16 @@ import static usw.suwiki.global.exception.ErrorType.IS_NOT_EMAIL_FORM;
 import static usw.suwiki.global.exception.ErrorType.PASSWORD_ERROR;
 import static usw.suwiki.global.exception.ErrorType.PASSWORD_NOT_CHANGED;
 import static usw.suwiki.global.exception.ErrorType.USER_AND_EMAIL_OVERLAP;
-import static usw.suwiki.global.exception.ErrorType.USER_NOT_EMAIL_AUTHED;
 import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
 import static usw.suwiki.global.exception.ErrorType.USER_NOT_FOUND;
+import static usw.suwiki.global.exception.ErrorType.USER_RESTRICTED;
 import static usw.suwiki.global.util.ApiResponseFactory.successFlag;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import javax.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,9 @@ import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
 import usw.suwiki.domain.postreport.entity.ExamPostReport;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
+import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.user.dto.UserRequestDto;
+import usw.suwiki.domain.user.dto.UserResponseDto.MyPageForm;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;
@@ -68,6 +71,7 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenResolver jwtTokenResolver;
     private final UserIsolationService userIsolationService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public Map<String, Boolean> executeCheckId(String loginId) {
         if (userRepository.findByLoginId(loginId).isPresent() ||
@@ -184,6 +188,44 @@ public class UserService {
         }
         user.updatePassword(bCryptPasswordEncoder, newPassword);
         return successFlag();
+    }
+
+    public MyPageForm executeLoadMyPage(String Authorization) {
+        Long userIdx = jwtTokenResolver.getId(Authorization);
+        User user = loadUserFromUserIdx(userIdx);
+        return MyPageForm.builder()
+            .loginId(user.getLoginId())
+            .email(user.getEmail())
+            .point(user.getPoint())
+            .writtenEvaluation(user.getWrittenEvaluation())
+            .writtenExam(user.getWrittenExam())
+            .viewExam(user.getViewExamCount())
+            .build();
+    }
+
+    public Map<String, String> executeJWTRefreshForWebClient(Cookie requestRefreshCookie) {
+        String refreshToken = requestRefreshCookie.getValue();
+        if (refreshTokenRepository.findByPayload(refreshToken).isEmpty()) {
+            throw new AccountException(USER_RESTRICTED);
+        }
+        Long userIdx = refreshTokenRepository.findByPayload(refreshToken).get().getUserIdx();
+        User user = loadUserFromUserIdx(userIdx);
+        return new HashMap<>() {{
+            put("AccessToken", jwtTokenProvider.createAccessToken(user));
+            put("RefreshToken", jwtTokenResolver.refreshTokenUpdateOrCreate(user));
+        }};
+    }
+
+    public Map<String, String> executeJWTRefreshForMobileClient(String Authorization) {
+        if (refreshTokenRepository.findByPayload(Authorization).isEmpty()) {
+            throw new AccountException(USER_RESTRICTED);
+        }
+        Long userIdx = refreshTokenRepository.findByPayload(Authorization).get().getUserIdx();
+        User user = loadUserFromUserIdx(userIdx);
+        return new HashMap<>() {{
+            put("AccessToken", jwtTokenProvider.createAccessToken(user));
+            put("RefreshToken", jwtTokenResolver.refreshTokenUpdateOrCreate(user));
+        }};
     }
 
     public boolean validatePasswordAtUserTable(String loginId, String password) {

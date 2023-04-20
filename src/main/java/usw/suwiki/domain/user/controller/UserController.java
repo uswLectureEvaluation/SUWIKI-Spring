@@ -37,11 +37,9 @@ import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonForm;
 import usw.suwiki.domain.user.dto.UserResponseDto.MyPageForm;
 import usw.suwiki.domain.user.service.UserFavoriteMajorService;
 import usw.suwiki.domain.user.service.UserLoadRestrictAndBlackListReasonService;
-import usw.suwiki.domain.user.service.UserMyPageService;
 import usw.suwiki.domain.user.service.UserQuitService;
 import usw.suwiki.domain.user.service.UserReportService;
 import usw.suwiki.domain.user.service.UserService;
-import usw.suwiki.domain.user.service.UserTokenRefreshService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.jwt.JwtTokenResolver;
@@ -53,8 +51,6 @@ import usw.suwiki.global.jwt.JwtTokenResolver;
 public class UserController {
 
     private final UserService userService;
-    private final UserMyPageService userMyPageService;
-    private final UserTokenRefreshService userTokenRefreshService;
     private final UserQuitService userQuitService;
     private final UserReportService userReportService;
     private final UserFavoriteMajorService userFavoriteMajorService;
@@ -181,42 +177,40 @@ public class UserController {
             }});
     }
 
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("/my-page")
-    public ResponseEntity<MyPageForm> myPage(@Valid @RequestHeader String Authorization) {
-        return ResponseEntity
-            .ok()
-            .body(userMyPageService.execute(Authorization));
+    public MyPageForm myPage(@Valid @RequestHeader String Authorization) {
+        return userService.executeLoadMyPage(Authorization);
     }
 
     // Web 토큰 갱신
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/client-refresh")
-    public ResponseEntity<Map<String, String>> clientTokenRefresh(
+    public Map<String, String> clientTokenRefresh(
         @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
         HttpServletResponse response) {
-        Map<String, String> tokenPair = userTokenRefreshService.executeForWebClient(
-            requestRefreshCookie);
+        Map<String, String> tokenPair = userService.executeJWTRefreshForWebClient(
+            requestRefreshCookie
+        );
         Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
         refreshCookie.setMaxAge(14 * 24 * 60 * 60); // expires in 7 days
         refreshCookie.setSecure(true);
         refreshCookie.setHttpOnly(true);
         response.addCookie(refreshCookie);
-        return ResponseEntity
-            .ok()
-            .body(new HashMap<>() {{
-                put("AccessToken", tokenPair.get("AccessToken"));
-            }});
+        return new HashMap<>() {{
+            put("AccessToken", tokenPair.get("AccessToken"));
+        }};
     }
 
     // Mobile 토큰 갱신
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/refresh")
-    public ResponseEntity<Map<String, String>> tokenRefresh(
+    public Map<String, String> tokenRefresh(
         @Valid @RequestHeader String Authorization) {
-        return ResponseEntity
-            .ok()
-            .body(userTokenRefreshService.executeForMobileClient(Authorization));
+        return userService.executeJWTRefreshForMobileClient(Authorization);
     }
 
     // 회원 탈퇴
