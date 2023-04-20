@@ -47,4 +47,8 @@ public class ConfirmationToken {
             .build();
     }
 
+    public boolean isExpiredAt() {
+        LocalDateTime expiredAt = this.getExpiresAt();
+        return expiredAt.isBefore(LocalDateTime.now());
+    }
 }

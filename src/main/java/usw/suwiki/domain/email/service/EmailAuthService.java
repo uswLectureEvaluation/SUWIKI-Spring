@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.email.entity.ConfirmationToken;
 import usw.suwiki.domain.user.repository.UserRepository;
-import usw.suwiki.domain.user.service.UserCommonService;
+import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthFailedForm;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthSuccessForm;
 
@@ -14,7 +14,7 @@ import usw.suwiki.global.util.emailBuild.BuildEmailAuthSuccessForm;
 @RequiredArgsConstructor
 public class EmailAuthService {
 
-    private final UserCommonService userCommonService;
+    private final UserService userService;
     private final ConfirmationTokenService confirmationTokenService;
     private final UserRepository userRepository;
     private final BuildEmailAuthFailedForm buildEmailAuthFailedForm;
@@ -28,12 +28,10 @@ public class EmailAuthService {
         if (confirmationToken.isPresent()) {
             if (confirmationToken.get().getConfirmedAt() != null) {
                 return buildEmailAuthFailedForm.tokenIsAlreadyUsed();
-                // throw new AccountException(EMAIL_AUTH_TOKEN_ALREADY_USED);
-            } else if (userCommonService.isEmailAuthTokenExpired(confirmationToken.get())) {
+            } else if (confirmationToken.get().isExpiredAt()) {
                 confirmationTokenService.deleteAllByToken(token);
                 userRepository.deleteById(confirmationToken.get().getUserIdx());
                 return buildEmailAuthFailedForm.tokenIsExpired();
-                // throw new AccountException(EMAIL_VALIDATED_ERROR_RETRY);
             } else {
                 confirmationTokenService.setConfirmedAt(token);
                 Long userIdx = confirmationToken.get().getUserIdx();
@@ -42,6 +40,5 @@ public class EmailAuthService {
             }
         }
         return buildEmailAuthFailedForm.internalError();
-        // throw new AccountException(EMAIL_VALIDATED_ERROR);
     }
 }
