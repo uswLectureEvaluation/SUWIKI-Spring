@@ -7,7 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import usw.suwiki.domain.exam.dto.ExamPostsSaveDto;
 import usw.suwiki.domain.exam.dto.ExamPostsUpdateDto;
 import usw.suwiki.domain.lecture.domain.Lecture;
-import usw.suwiki.domain.user.entity.User;
+import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.global.BaseTimeEntity;
 
 import javax.persistence.*;

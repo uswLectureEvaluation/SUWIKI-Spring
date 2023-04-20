@@ -3,10 +3,10 @@ package usw.suwiki.domain.admin.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.user.dto.UserRequestDto;
-import usw.suwiki.domain.user.entity.User;
-import usw.suwiki.domain.user.repository.UserRepository;
-import usw.suwiki.domain.user.service.UserCommonService;
+import usw.suwiki.domain.user.user.dto.UserRequestDto;
+import usw.suwiki.domain.user.user.entity.User;
+import usw.suwiki.domain.user.user.repository.UserRepository;
+import usw.suwiki.domain.user.user.service.UserService;
 import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenProvider;
@@ -20,12 +20,12 @@ import java.util.Map;
 public class UserAdminLoginService {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserCommonService userCommonService;
+    private final UserService userService;
     private final UserRepository userRepository;
 
     public Map<String, String> adminLogin(UserRequestDto.LoginForm loginForm) {
-        if (userCommonService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword())) {
-            User user = userCommonService.loadUserFromLoginId(loginForm.getLoginId());
+        if (userService.validatePasswordAtUserTable(loginForm.getLoginId(), loginForm.getPassword())) {
+            User user = userService.loadUserFromLoginId(loginForm.getLoginId());
             String accessToken = jwtTokenProvider.createAccessToken(user);
             Map<String, String> result = new HashMap<>();
             result.put("AccessToken", accessToken);
