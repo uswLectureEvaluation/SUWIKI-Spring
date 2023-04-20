@@ -20,22 +20,11 @@ public class LectureEvaluationInfo {
 	private float lectureDifficultyAvg = 0;
 	private float lectureHomeworkAvg = 0;
 
-	@Transient
 	private float lectureSatisfactionValue = 0;
-
-	@Transient
 	private float lectureHoneyValue = 0;
-
-	@Transient
 	private float lectureLearningValue = 0;
-
-	@Transient
 	private float lectureTeamValue = 0;
-
-	@Transient
 	private float lectureDifficultyValue = 0;
-
-	@Transient
 	private float lectureHomeworkValue = 0;
 
 	public void calculateLectureAverage(int postsCount) {
