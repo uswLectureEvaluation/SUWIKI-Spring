@@ -37,11 +37,11 @@ import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.postreport.service.PostReportService;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
+import usw.suwiki.domain.user.user.dto.UserRequestDto.EvaluateReportForm;
+import usw.suwiki.domain.user.user.dto.UserRequestDto.ExamReportForm;
 import usw.suwiki.domain.user.user.dto.UserResponseDto.MyPageForm;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
-import usw.suwiki.domain.user.user.dto.UserRequestDto.EvaluateReportForm;
-import usw.suwiki.domain.user.user.dto.UserRequestDto.ExamReportForm;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.user.userIsolation.service.UserIsolationService;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
@@ -167,7 +167,7 @@ public class UserService {
             notSleepingUser.isUserEmailAuthed(
                 confirmationTokenRepository.findByUserIdx(notSleepingUser.getId())
             );
-            if (notSleepingUser.validatePassword(password)) {
+            if (validatePasswordAtUserTable(loginId, password)) {
                 tokenPair.put(
                     "AccessToken", jwtTokenProvider.createAccessToken(notSleepingUser)
                 );
@@ -177,7 +177,6 @@ public class UserService {
                 notSleepingUser.updateLastLoginDate();
                 return tokenPair;
             }
-            throw new AccountException(PASSWORD_ERROR);
         } else if (userIsolationRepository.findByLoginId(loginId).isPresent()) {
             User sleepingUser = userIsolationService.sleepingUserLogin(loginId, password);
             tokenPair.put(
@@ -244,7 +243,7 @@ public class UserService {
     public Map<String, Boolean> executeQuit(String Authorization, String inputPassword) {
         jwtTokenValidator.validateAccessToken(Authorization);
         User user = loadUserFromUserIdx(jwtTokenResolver.getId(Authorization));
-        if (user.validatePassword(inputPassword)) {
+        if (user.validatePassword(bCryptPasswordEncoder, inputPassword)) {
             throw new AccountException(USER_NOT_EXISTS);
         }
         postReportService.deleteByUserIdx(user.getId());

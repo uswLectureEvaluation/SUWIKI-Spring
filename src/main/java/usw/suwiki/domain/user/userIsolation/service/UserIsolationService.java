@@ -69,13 +69,18 @@ public class UserIsolationService {
 
     public User sleepingUserLogin(String loginId, String password) {
         UserIsolation userIsolation = loadUserFromLoginId(loginId);
-        if (userIsolation.validatePassword(bCryptPasswordEncoder, password)) {
+        if (validatePasswordAtUserIsolationTable(loginId, password)) {
             userRepository.unapplyUserSoftDelete(userIsolation.getUserIdx(), userIsolation);
             userIsolationRepository.deleteByLoginId(loginId);
         } else {
             throw new AccountException(PASSWORD_ERROR);
         }
         return userRepository.findByLoginId(loginId).get();
+    }
+
+    public boolean validatePasswordAtUserIsolationTable(String loginId, String password) {
+        return bCryptPasswordEncoder.matches(password,
+            userRepository.findByLoginId(loginId).get().getPassword());
     }
 
     @Scheduled(cron = "2 0 0 * * *")

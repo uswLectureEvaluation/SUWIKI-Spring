@@ -139,8 +139,10 @@ public class User {
         return this.password;
     }
 
-    public boolean validatePassword(String inputPassword) {
-        return this.password.equals(inputPassword);
+    public boolean validatePassword(
+        BCryptPasswordEncoder bCryptPasswordEncoder, String inputPassword
+    ) {
+        return bCryptPasswordEncoder.encode(inputPassword).matches(password);
     }
 
     public void activateUser() {
