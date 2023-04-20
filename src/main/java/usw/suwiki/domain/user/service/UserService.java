@@ -8,9 +8,7 @@ import static usw.suwiki.global.exception.ErrorType.USER_NOT_EMAIL_AUTHED;
 import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
 import static usw.suwiki.global.exception.ErrorType.USER_NOT_FOUND;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -45,7 +43,7 @@ import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserCommonService {
+public class UserService {
 
     private final String BASE_LINK = "https://api.suwiki.kr/user/verify-email/?token=";
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -111,62 +109,21 @@ public class UserCommonService {
         throw new AccountException(USER_NOT_FOUND);
     }
 
-    public String randomizePassword() {
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.setSeed(new Date().getTime());
-
-        char[] charAllSet = new char[]{
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
-            'R', 'S',
-            'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
-            'r', 's',
-            't', 'u', 'v', 'w', 'x', 'y', 'z',
-            '!', '@', '#', '$', '%', '^'};
-        char[] charNumberSet = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-        char[] charSpecialSet = new char[]{'!', '@', '#', '$', '%', '^'};
-        int idx = 0;
-        int allLen = charAllSet.length;
-        int numberLen = charNumberSet.length;
-        int specialLen = charSpecialSet.length;
-
-        StringBuilder newPassword = new StringBuilder();
-        for (int i = 0; i < 1; i++) {
-            idx = secureRandom.nextInt(numberLen);
-            newPassword.append(charNumberSet[idx]);
-        }
-
-        for (int i = 0; i < 1; i++) {
-            idx = secureRandom.nextInt(specialLen);
-            newPassword.append(charSpecialSet[idx]);
-        }
-
-        for (int i = 0; i < 6; i++) {
-            idx = secureRandom.nextInt(allLen);
-            newPassword.append(charAllSet[idx]);
-        }
-        return newPassword.toString();
-    }
-
     public boolean sendEmailFindPassword(FindPasswordForm findPasswordForm) {
-        if (userRepository.findByLoginId(findPasswordForm.getLoginId()).isPresent()) {
-            String resetPassword = randomizePassword();
-            String EncodedResetPassword = bCryptPasswordEncoder.encode(resetPassword);
-            userRepository.updatePassword(EncodedResetPassword, findPasswordForm.getLoginId());
-            emailSender.send(findPasswordForm.getEmail(),
-                BuildFindPasswordForm.buildEmail(resetPassword));
+        Optional<User> user = userRepository.findByLoginId(findPasswordForm.getLoginId());
+        if (user.isPresent()) {
+            emailSender.send(findPasswordForm.getEmail(), BuildFindPasswordForm.buildEmail(
+                user.get().updateRandomPassword(
+                    bCryptPasswordEncoder)
+            ));
             return true;
         }
         throw new AccountException(USER_NOT_FOUND);
     }
 
-    public void editMyPassword(EditMyPasswordForm editMyPasswordForm, String AccessToken) {
-        String userLoginId = jwtTokenResolver.getLoginId(AccessToken);
-        userRepository.updatePassword(
-            bCryptPasswordEncoder.encode(editMyPasswordForm.getNewPassword()), userLoginId);
-        User user = loadUserFromLoginId(userLoginId);
-        userRepository.updateUpdatedAt(user.getId());
+    public void editMyPassword(EditMyPasswordForm editMyPasswordForm, String accessToken) {
+        User user = loadUserFromLoginId(jwtTokenResolver.getLoginId(accessToken));
+        user.updatePassword(bCryptPasswordEncoder, editMyPasswordForm.getNewPassword());
     }
 
     public void validatePasswordAtEditPassword(String loginId, String prePassword) {

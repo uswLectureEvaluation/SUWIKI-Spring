@@ -1,6 +1,7 @@
 package usw.suwiki.domain.user.entity;
 
 import static usw.suwiki.global.exception.ErrorType.USER_POINT_LACK;
+import static usw.suwiki.global.util.passwordfactory.PasswordRandomizer.randomizePassword;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import usw.suwiki.global.exception.errortype.AccountException;
 
 @Entity
@@ -123,5 +125,14 @@ public class User {
             throw new AccountException(USER_POINT_LACK);
         }
         this.point -= deletePostRequiringPoint;
+    }
+
+    public void updatePassword(BCryptPasswordEncoder bCryptPasswordEncoder, String newPassword) {
+        this.password = bCryptPasswordEncoder.encode(newPassword);
+    }
+
+    public String updateRandomPassword(BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.password = bCryptPasswordEncoder.encode(randomizePassword());
+        return this.password;
     }
 }
