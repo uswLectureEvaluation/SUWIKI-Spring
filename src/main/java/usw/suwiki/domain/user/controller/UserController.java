@@ -36,7 +36,6 @@ import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonForm;
 import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonForm;
 import usw.suwiki.domain.user.dto.UserResponseDto.MyPageForm;
 import usw.suwiki.domain.user.service.UserFavoriteMajorService;
-import usw.suwiki.domain.user.service.UserFindIdService;
 import usw.suwiki.domain.user.service.UserFindPasswordService;
 import usw.suwiki.domain.user.service.UserLoadRestrictAndBlackListReasonService;
 import usw.suwiki.domain.user.service.UserLoginService;
@@ -56,7 +55,6 @@ import usw.suwiki.global.jwt.JwtTokenResolver;
 public class UserController {
 
     private final UserService userService;
-    private final UserFindIdService userFindIdService;
     private final UserFindPasswordService userFindPasswordService;
     private final UserLoginService userLoginService;
     private final UserMyPageService userMyPageService;
@@ -106,12 +104,11 @@ public class UserController {
     }
 
     //아이디 찾기 요청 시
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("find-id")
-    public ResponseEntity<Map<String, Boolean>> findId(@Valid @RequestBody FindIdForm findIdForm) {
-        return ResponseEntity
-            .ok()
-            .body(userFindIdService.execute(findIdForm));
+    public Map<String, Boolean> findId(@Valid @RequestBody FindIdForm findIdForm) {
+        return userService.executeFindId(findIdForm.getEmail());
     }
 
     //비밀번호 찾기 요청 시

@@ -116,6 +116,15 @@ public class UserService {
         return emailAuthService.confirmToken(token);
     }
 
+    public Map<String, Boolean> executeFindId(String email) {
+        Optional<User> requestUser = userRepository.findByEmail(email);
+        if (requestUser.isPresent()) {
+            emailSender.send(email, BuildFindLoginIdForm.buildEmail(requestUser.get().getLoginId()));
+            return successFlag();
+        }
+        throw new AccountException(USER_NOT_EXISTS);
+    }
+
     // 이메일 인증을 받은 사용자인지 유저 테이블에서 검사
     public void isUserEmailAuth(Long userIdx) {
         Optional<ConfirmationToken> confirmationToken =
@@ -125,17 +134,6 @@ public class UserService {
             return;
         }
         throw new AccountException(USER_NOT_EMAIL_AUTHED);
-    }
-
-    public boolean sendEmailFindId(FindIdForm findIdForm) {
-        Optional<User> requestUser = userRepository.findByEmail(findIdForm.getEmail());
-
-        if (requestUser.isPresent()) {
-            emailSender.send(findIdForm.getEmail(),
-                BuildFindLoginIdForm.buildEmail(requestUser.get().getLoginId()));
-            return true;
-        }
-        throw new AccountException(USER_NOT_FOUND);
     }
 
     public boolean sendEmailFindPassword(FindPasswordForm findPasswordForm) {
