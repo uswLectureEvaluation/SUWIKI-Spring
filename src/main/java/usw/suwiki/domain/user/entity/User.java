@@ -135,4 +135,8 @@ public class User {
         this.password = bCryptPasswordEncoder.encode(randomizePassword());
         return this.password;
     }
+
+    public boolean validatePassword(String inputPassword) {
+        return this.password.equals(inputPassword);
+    }
 }

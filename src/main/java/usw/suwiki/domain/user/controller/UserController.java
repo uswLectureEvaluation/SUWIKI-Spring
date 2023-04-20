@@ -7,6 +7,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.dto.UserRequestDto.CheckEmailForm;
@@ -43,11 +45,13 @@ import usw.suwiki.domain.user.service.UserLoginService;
 import usw.suwiki.domain.user.service.UserMyPageService;
 import usw.suwiki.domain.user.service.UserQuitService;
 import usw.suwiki.domain.user.service.UserReportService;
-import usw.suwiki.domain.user.service.UserResetPasswordService;
+import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.domain.user.service.UserTokenRefreshService;
 import usw.suwiki.domain.user.service.UserVerifyEmailService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
+import usw.suwiki.global.jwt.JwtTokenResolver;
+import usw.suwiki.global.jwt.JwtTokenValidator;
 
 @RestController
 @RequestMapping("/user")
@@ -55,13 +59,13 @@ import usw.suwiki.global.annotation.ApiLogger;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserController {
 
+    private final UserService userService;
     private final UserCheckIdService userCheckIdService;
     private final UserCheckEmailService userCheckEmailService;
     private final UserJoinService userJoinService;
     private final UserVerifyEmailService userVerifyEmailService;
     private final UserFindIdService userFindIdService;
     private final UserFindPasswordService userFindPasswordService;
-    private final UserResetPasswordService userResetPasswordService;
     private final UserLoginService userLoginService;
     private final UserMyPageService userMyPageService;
     private final UserTokenRefreshService userTokenRefreshService;
@@ -69,6 +73,9 @@ public class UserController {
     private final UserReportService userReportService;
     private final UserFavoriteMajorService userFavoriteMajorService;
     private final UserLoadRestrictAndBlackListReasonService userLoadRestrictAndBlackListReasonService;
+
+    private final JwtTokenValidator jwtTokenValidator;
+    private final JwtTokenResolver jwtTokenResolver;
 
     //아이디 중복확인
     @ApiLogger(option = "user")
@@ -128,14 +135,16 @@ public class UserController {
     }
 
     //비밀번호 재설정 요청 시
+    @ResponseStatus(HttpStatus.OK)
     @ApiLogger(option = "user")
     @PostMapping("reset-pw")
-    public ResponseEntity<Map<String, Boolean>> resetPw(
+    public Map<String, Boolean> resetPw(
         @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
         @RequestHeader String Authorization) {
-        return ResponseEntity
-            .ok()
-            .body(userResetPasswordService.execute(Authorization, editMyPasswordForm));
+        return userService.executeEditPassword(
+            userService.loadUserFromUserIdx(jwtTokenResolver.getId(Authorization)),
+            editMyPasswordForm.getPrePassword(),
+            editMyPasswordForm.getNewPassword());
     }
 
     // 안드, IOS 로그인 요청 시

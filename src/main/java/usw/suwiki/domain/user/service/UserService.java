@@ -7,8 +7,10 @@ import static usw.suwiki.global.exception.ErrorType.USER_AND_EMAIL_OVERLAP;
 import static usw.suwiki.global.exception.ErrorType.USER_NOT_EMAIL_AUTHED;
 import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
 import static usw.suwiki.global.exception.ErrorType.USER_NOT_FOUND;
+import static usw.suwiki.global.util.ApiResponseFactory.successFlag;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,7 +29,6 @@ import usw.suwiki.domain.postreport.entity.ExamPostReport;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.user.dto.UserRequestDto;
-import usw.suwiki.domain.user.dto.UserRequestDto.EditMyPasswordForm;
 import usw.suwiki.domain.user.dto.UserRequestDto.FindIdForm;
 import usw.suwiki.domain.user.dto.UserRequestDto.FindPasswordForm;
 import usw.suwiki.domain.user.dto.UserRequestDto.JoinForm;
@@ -86,16 +87,15 @@ public class UserService {
         );
     }
 
-    public boolean isEmailAuthTokenExpired(ConfirmationToken confirmationToken) {
-        LocalDateTime expiredAt = confirmationToken.getExpiresAt();
-        return expiredAt.isBefore(LocalDateTime.now());
-    }
-
     // 이메일 인증을 받은 사용자인지 유저 테이블에서 검사
     public void isUserEmailAuth(Long userIdx) {
-        User targetUser = loadUserFromUserIdx(userIdx);
-        confirmationTokenRepository.verifyUserEmailAuth(targetUser.getId())
-            .orElseThrow(() -> new AccountException(USER_NOT_EMAIL_AUTHED));
+        Optional<ConfirmationToken> confirmationToken =
+            confirmationTokenRepository.findByUserIdx(userIdx);
+        if (confirmationToken.isPresent()) {
+            confirmationToken.get().isVerified();
+            return;
+        }
+        throw new AccountException(USER_NOT_EMAIL_AUTHED);
     }
 
     public boolean sendEmailFindId(FindIdForm findIdForm) {
@@ -121,29 +121,15 @@ public class UserService {
         throw new AccountException(USER_NOT_FOUND);
     }
 
-    public void editMyPassword(EditMyPasswordForm editMyPasswordForm, String accessToken) {
-        User user = loadUserFromLoginId(jwtTokenResolver.getLoginId(accessToken));
-        user.updatePassword(bCryptPasswordEncoder, editMyPasswordForm.getNewPassword());
-    }
-
-    public void validatePasswordAtEditPassword(String loginId, String prePassword) {
-        if (userRepository.findByLoginId(loginId).isEmpty()) {
-            throw new AccountException(USER_NOT_EXISTS);
-        }
-        if (bCryptPasswordEncoder.matches(prePassword,
-            userRepository.findByLoginId(loginId).get().getPassword())) {
-            bCryptPasswordEncoder.matches(prePassword,
-                userRepository.findByLoginId(loginId).get().getPassword());
-            return;
-        }
-        throw new AccountException(PASSWORD_ERROR);
-    }
-
-    public void compareNewPasswordVersusPrePassword(String loginId, String newPassword) {
-        if (bCryptPasswordEncoder.matches(newPassword,
-            userRepository.findByLoginId(loginId).get().getPassword())) {
+    public Map<String, Boolean> executeEditPassword(
+        User user, String prePassword, String newPassword) {
+        if (prePassword.equals(newPassword)) {
             throw new AccountException(PASSWORD_NOT_CHANGED);
+        } else if (!user.getPassword().equals(bCryptPasswordEncoder.encode(prePassword))) {
+            throw new AccountException(PASSWORD_ERROR);
         }
+        user.updatePassword(bCryptPasswordEncoder, newPassword);
+        return successFlag();
     }
 
     public boolean validatePasswordAtUserTable(String loginId, String password) {
