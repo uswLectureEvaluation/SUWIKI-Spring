@@ -39,7 +39,6 @@ import usw.suwiki.domain.user.service.UserCheckEmailService;
 import usw.suwiki.domain.user.service.UserFavoriteMajorService;
 import usw.suwiki.domain.user.service.UserFindIdService;
 import usw.suwiki.domain.user.service.UserFindPasswordService;
-import usw.suwiki.domain.user.service.UserJoinService;
 import usw.suwiki.domain.user.service.UserLoadRestrictAndBlackListReasonService;
 import usw.suwiki.domain.user.service.UserLoginService;
 import usw.suwiki.domain.user.service.UserMyPageService;
@@ -59,8 +58,6 @@ import usw.suwiki.global.jwt.JwtTokenResolver;
 public class UserController {
 
     private final UserService userService;
-    private final UserCheckEmailService userCheckEmailService;
-    private final UserJoinService userJoinService;
     private final UserVerifyEmailService userVerifyEmailService;
     private final UserFindIdService userFindIdService;
     private final UserFindPasswordService userFindPasswordService;
@@ -83,22 +80,24 @@ public class UserController {
     }
 
     //이메일 중복 확인
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("check-email")
-    public ResponseEntity<Map<String, Boolean>> overlapEmail(
+    public Map<String, Boolean> overlapEmail(
         @Valid @RequestBody CheckEmailForm checkEmailForm) {
-        return ResponseEntity
-            .ok()
-            .body(userCheckEmailService.execute(checkEmailForm));
+        return userService.executeCheckEmail(checkEmailForm.getEmail());
     }
 
     //회원가입 버튼 클릭 시 -> 유저 저장, 인증 이메일 발송
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("join")
-    public ResponseEntity<Map<String, Boolean>> join(@Valid @RequestBody JoinForm joinForm) {
-        return ResponseEntity
-            .ok()
-            .body(userJoinService.execute(joinForm));
+    public Map<String, Boolean> join(@Valid @RequestBody JoinForm joinForm) {
+        return userService.executeJoin(
+            joinForm.getLoginId(),
+            joinForm.getPassword(),
+            joinForm.getEmail()
+        );
     }
 
     // 이메일 인증 링크를 눌렀을 때

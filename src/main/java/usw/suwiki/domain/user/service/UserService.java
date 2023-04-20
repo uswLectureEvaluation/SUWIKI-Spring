@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.blacklistdomain.BlackListService;
 import usw.suwiki.domain.email.entity.ConfirmationToken;
 import usw.suwiki.domain.email.repository.ConfirmationTokenRepository;
 import usw.suwiki.domain.email.service.ConfirmationTokenService;
@@ -32,12 +33,10 @@ import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.user.dto.UserRequestDto;
 import usw.suwiki.domain.user.dto.UserRequestDto.FindIdForm;
 import usw.suwiki.domain.user.dto.UserRequestDto.FindPasswordForm;
-import usw.suwiki.domain.user.dto.UserRequestDto.JoinForm;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
 import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
 import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
@@ -62,7 +61,7 @@ public class UserService {
     private final BuildEmailAuthForm buildEmailAuthForm;
     private final BuildFindLoginIdForm BuildFindLoginIdForm;
     private final BuildFindPasswordForm BuildFindPasswordForm;
-    private final JwtTokenResolver jwtTokenResolver;
+    private final BlackListService blackListService;
 
     public Map<String, Boolean> executeCheckId(String loginId) {
         if (userRepository.findByLoginId(loginId).isPresent() ||
@@ -76,30 +75,39 @@ public class UserService {
         }};
     }
 
-    public void join(JoinForm joinForm) {
-        if (userRepository.findByLoginId(joinForm.getLoginId()).isPresent() ||
-            userRepository.findByEmail(joinForm.getEmail()).isPresent()) {
+    public Map<String, Boolean> executeCheckEmail(String email) {
+        if (userRepository.findByEmail(email).isPresent() ||
+            userIsolationRepository.findByEmail(email).isPresent()) {
+            return new HashMap<>() {{
+                put("overlap", true);
+            }};
+        }
+        return new HashMap<>() {{
+            put("overlap", false);
+        }};
+    }
+
+    public Map<String, Boolean> executeJoin(String loginId, String password, String email) {
+        blackListService.joinRequestUserIsBlackList(email);
+
+        if (userRepository.findByLoginId(loginId).isPresent() ||
+            userIsolationRepository.findByLoginId(loginId).isPresent() ||
+            userRepository.findByEmail(email).isPresent() ||
+            userIsolationRepository.findByEmail(email).isPresent()) {
             throw new AccountException(USER_AND_EMAIL_OVERLAP);
         }
 
-        if (!joinForm.getEmail().contains("@suwon.ac.kr")) {
+        if (!email.contains("@suwon.ac.kr")) {
             throw new AccountException(IS_NOT_EMAIL_FORM);
         }
 
-        User user = User.makeUser(
-            joinForm.getLoginId(),
-            bCryptPasswordEncoder.encode(joinForm.getPassword()),
-            joinForm.getEmail()
-        );
-
+        User user = User.makeUser(loginId, bCryptPasswordEncoder.encode(password), email);
         ConfirmationToken confirmationToken = ConfirmationToken.makeToken(user);
-
         confirmationTokenService.saveConfirmationToken(ConfirmationToken.makeToken(user));
-        emailSender.send(
-            joinForm.getEmail(),
-            buildEmailAuthForm
-                .buildEmail(BASE_LINK + confirmationToken.getToken())
+        emailSender.send(email, buildEmailAuthForm
+            .buildEmail(BASE_LINK + confirmationToken.getToken())
         );
+        return successFlag();
     }
 
     // 이메일 인증을 받은 사용자인지 유저 테이블에서 검사
