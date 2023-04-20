@@ -1,5 +1,10 @@
 package usw.suwiki.domain.user.userIsolation.service;
 
+import static usw.suwiki.global.exception.ErrorType.PASSWORD_ERROR;
+import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
+
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,9 +19,8 @@ import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.user.user.entity.User;
-import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.user.repository.RestrictingUserRepository;
-import usw.suwiki.domain.user.user.service.UserService;
+import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.userIsolation.entity.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
@@ -24,18 +28,11 @@ import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.util.emailBuild.BuildSoonDormantTargetForm;
 import usw.suwiki.global.util.emailBuild.UserAutoDeletedWarningForm;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static usw.suwiki.global.exception.ErrorType.PASSWORD_ERROR;
-import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class UserIsolationService {
 
-    private final UserService userService;
     private final UserRepository userRepository;
     private final FavoriteMajorService favoriteMajorService;
     private final ConfirmationTokenRepository confirmationTokenRepository;
@@ -54,18 +51,18 @@ public class UserIsolationService {
 
     public UserIsolation loadUserFromLoginId(String loginId) {
         return userIsolationRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new AccountException(USER_NOT_EXISTS));
+            .orElseThrow(() -> new AccountException(USER_NOT_EXISTS));
     }
 
     public void convertToIsolationUser(User user) {
         UserIsolation userIsolation = UserIsolation.builder()
-                .userIdx(user.getId())
-                .loginId(user.getLoginId())
-                .password(user.getPassword())
-                .email(user.getEmail())
-                .lastLogin(user.getLastLogin())
-                .requestedQuitDate(user.getRequestedQuitDate())
-                .build();
+            .userIdx(user.getId())
+            .loginId(user.getLoginId())
+            .password(user.getPassword())
+            .email(user.getEmail())
+            .lastLogin(user.getLastLogin())
+            .requestedQuitDate(user.getRequestedQuitDate())
+            .build();
         userIsolationRepository.save(userIsolation);
         userRepository.applyUserSoftDelete(user.getId());
     }
@@ -78,7 +75,7 @@ public class UserIsolationService {
         } else {
             throw new AccountException(PASSWORD_ERROR);
         }
-        return userService.loadUserFromLoginId(loginId);
+        return userRepository.findByLoginId(loginId).get();
     }
 
     @Scheduled(cron = "2 0 0 * * *")
