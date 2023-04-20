@@ -1,5 +1,7 @@
 package usw.suwiki.domain.user.user.repository;
 
+import static usw.suwiki.domain.user.user.entity.QUser.user;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -8,7 +10,6 @@ import usw.suwiki.domain.user.userIsolation.entity.UserIsolation;
 
 import java.time.LocalDateTime;
 
-import static usw.suwiki.domain.user.entity.QUser.user;
 
 @Repository
 @RequiredArgsConstructor
