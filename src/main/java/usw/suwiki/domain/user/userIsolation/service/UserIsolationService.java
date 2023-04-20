@@ -67,17 +67,12 @@ public class UserIsolationService {
                 .requestedQuitDate(user.getRequestedQuitDate())
                 .build();
         userIsolationRepository.save(userIsolation);
-
         userRepository.applyUserSoftDelete(user.getId());
-    }
-
-    public boolean validatePasswordAtIsolationTable(String loginId, String password) {
-        return bCryptPasswordEncoder.matches(password, userIsolationRepository.findByLoginId(loginId).get().getPassword());
     }
 
     public User sleepingUserLogin(String loginId, String password) {
         UserIsolation userIsolation = loadUserFromLoginId(loginId);
-        if (validatePasswordAtIsolationTable(loginId, password)) {
+        if (userIsolation.validatePassword(bCryptPasswordEncoder, password)) {
             userRepository.unapplyUserSoftDelete(userIsolation.getUserIdx(), userIsolation);
             userIsolationRepository.deleteByLoginId(loginId);
         } else {
@@ -123,19 +118,20 @@ public class UserIsolationService {
         LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
         List<UserIsolation> targetUser = userIsolationRepository.findByLastLoginBefore(targetTime);
         for (int i = 0; i < targetUser.toArray().length; i++) {
-            viewExamService.deleteByUserIdx(targetUser.get(i).getUserIdx());
-            refreshTokenRepository.deleteByUserIdx(targetUser.get(i).getUserIdx());
-            examReportRepository.deleteByReportedUserIdx(targetUser.get(i).getUserIdx());
-            examReportRepository.deleteByReportingUserIdx(targetUser.get(i).getUserIdx());
-            evaluateReportRepository.deleteByReportingUserIdx(targetUser.get(i).getUserIdx());
-            evaluateReportRepository.deleteByReportedUserIdx(targetUser.get(i).getUserIdx());
-            evaluatePostsService.deleteByUser(targetUser.get(i).getUserIdx());
-            examPostsService.deleteByUser(targetUser.get(i).getUserIdx());
-            favoriteMajorService.deleteAllByUser(targetUser.get(i).getUserIdx());
-            restrictingUserRepository.deleteByUserIdx(targetUser.get(i).getUserIdx());
-            confirmationTokenRepository.deleteByUserIdx(targetUser.get(i).getUserIdx());
+            Long userIdx = targetUser.get(i).getUserIdx();
+            viewExamService.deleteByUserIdx(userIdx);
+            refreshTokenRepository.deleteByUserIdx(userIdx);
+            examReportRepository.deleteByReportedUserIdx(userIdx);
+            examReportRepository.deleteByReportingUserIdx(userIdx);
+            evaluateReportRepository.deleteByReportingUserIdx(userIdx);
+            evaluateReportRepository.deleteByReportedUserIdx(userIdx);
+            evaluatePostsService.deleteByUser(userIdx);
+            examPostsService.deleteByUser(userIdx);
+            favoriteMajorService.deleteAllByUser(userIdx);
+            restrictingUserRepository.deleteByUserIdx(userIdx);
+            confirmationTokenRepository.deleteByUserIdx(userIdx);
             userIsolationRepository.deleteByLoginId(targetUser.get(i).getLoginId());
-            userRepository.deleteById(targetUser.get(i).getUserIdx());
+            userRepository.deleteById(userIdx);
         }
     }
 }

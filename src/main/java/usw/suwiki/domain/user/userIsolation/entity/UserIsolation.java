@@ -1,12 +1,16 @@
 package usw.suwiki.domain.user.userIsolation.entity;
 
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
 @Getter
@@ -14,6 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserIsolation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,4 +34,11 @@ public class UserIsolation {
     private LocalDateTime requestedQuitDate;
     @Column
     private LocalDateTime lastLogin;
+
+    public boolean validatePassword(
+        BCryptPasswordEncoder bCryptPasswordEncoder,
+        String inputPassword
+    ) {
+        return this.password.equals(inputPassword);
+    }
 }

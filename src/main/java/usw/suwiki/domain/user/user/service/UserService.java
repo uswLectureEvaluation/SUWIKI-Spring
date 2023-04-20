@@ -256,7 +256,6 @@ public class UserService {
         return successFlag();
     }
 
-
     public boolean validatePasswordAtUserTable(String loginId, String password) {
         return bCryptPasswordEncoder.matches(password,
             userRepository.findByLoginId(loginId).get().getPassword());
@@ -285,8 +284,9 @@ public class UserService {
         return examPostsRepository.findById(ExamPostsIdx);
     }
 
-    public void reportExamPost(ExamReportForm userReportForm,
-        Long reportingUserIdx) {
+    public void reportExamPost(
+        ExamReportForm userReportForm, Long reportingUserIdx
+    ) {
         Long reportTargetUser = loadExamPostsByIndex(userReportForm.getExamIdx()).getUser().getId();
         ExamPosts reportedTargetPost = loadExamPostsByIndex(userReportForm.getExamIdx());
         ExamPostReport target = ExamPostReport.builder()
@@ -301,8 +301,9 @@ public class UserService {
         examReportRepository.save(target);
     }
 
-    public void reportEvaluatePost(EvaluateReportForm userReportForm,
-        Long reportingUserIdx) {
+    public void reportEvaluatePost(
+        EvaluateReportForm userReportForm, Long reportingUserIdx
+    ) {
         Long reportTargetUser = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getUser()
             .getId();
         EvaluatePosts reportTargetPost = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx());

@@ -1,6 +1,13 @@
 package usw.suwiki.domain.user.user.controller;
 
 import static org.springframework.http.HttpStatus.OK;
+import static usw.suwiki.domain.user.user.dto.UserRequestDto.EditMyPasswordForm;
+import static usw.suwiki.domain.user.user.dto.UserRequestDto.EvaluateReportForm;
+import static usw.suwiki.domain.user.user.dto.UserRequestDto.ExamReportForm;
+import static usw.suwiki.domain.user.user.dto.UserRequestDto.FindIdForm;
+import static usw.suwiki.domain.user.user.dto.UserRequestDto.FindPasswordForm;
+import static usw.suwiki.domain.user.user.dto.UserRequestDto.JoinForm;
+import static usw.suwiki.domain.user.user.dto.UserRequestDto.LoginForm;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
-import usw.suwiki.domain.user.user.dto.UserRequestDto;
+import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckEmailForm;
+import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckLoginIdForm;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.UserQuitForm;
 import usw.suwiki.domain.user.user.dto.UserResponseDto.LoadMyBlackListReasonForm;
 import usw.suwiki.domain.user.user.dto.UserResponseDto.LoadMyRestrictedReasonForm;
@@ -52,7 +60,7 @@ public class UserController {
     @ApiLogger(option = "user")
     @PostMapping("check-id")
     public Map<String, Boolean> overlapId(
-        @Valid @RequestBody UserRequestDto.CheckLoginIdForm checkLoginIdForm) {
+        @Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
         return userService.executeCheckId(checkLoginIdForm.getLoginId());
     }
 
@@ -61,7 +69,7 @@ public class UserController {
     @ApiLogger(option = "user")
     @PostMapping("check-email")
     public Map<String, Boolean> overlapEmail(
-        @Valid @RequestBody UserRequestDto.CheckEmailForm checkEmailForm) {
+        @Valid @RequestBody CheckEmailForm checkEmailForm) {
         return userService.executeCheckEmail(checkEmailForm.getEmail());
     }
 
@@ -69,7 +77,9 @@ public class UserController {
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("join")
-    public Map<String, Boolean> join(@Valid @RequestBody UserRequestDto.JoinForm joinForm) {
+    public Map<String, Boolean> join(
+        @Valid @RequestBody JoinForm joinForm
+    ) {
         return userService.executeJoin(
             joinForm.getLoginId(),
             joinForm.getPassword(),
@@ -89,7 +99,7 @@ public class UserController {
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("find-id")
-    public Map<String, Boolean> findId(@Valid @RequestBody UserRequestDto.FindIdForm findIdForm) {
+    public Map<String, Boolean> findId(@Valid @RequestBody FindIdForm findIdForm) {
         return userService.executeFindId(findIdForm.getEmail());
     }
 
@@ -98,7 +108,7 @@ public class UserController {
     @ApiLogger(option = "user")
     @PostMapping("find-pw")
     public Map<String, Boolean> findPw(
-        @Valid @RequestBody UserRequestDto.FindPasswordForm findPasswordForm) {
+        @Valid @RequestBody FindPasswordForm findPasswordForm) {
         return userService.executeFindPw(
             findPasswordForm.getLoginId(),
             findPasswordForm.getEmail()
@@ -110,7 +120,7 @@ public class UserController {
     @ApiLogger(option = "user")
     @PostMapping("reset-pw")
     public Map<String, Boolean> resetPw(
-        @Valid @RequestBody UserRequestDto.EditMyPasswordForm editMyPasswordForm,
+        @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
         @RequestHeader String Authorization) {
         return userService.executeEditPassword(
             userService.loadUserFromUserIdx(jwtTokenResolver.getId(Authorization)),
@@ -123,7 +133,7 @@ public class UserController {
     @ApiLogger(option = "user")
     @PostMapping("login")
     public Map<String, String> mobileLogin(
-        @Valid @RequestBody UserRequestDto.LoginForm loginForm) {
+        @Valid @RequestBody LoginForm loginForm) {
         return userService.executeLogin(
             loginForm.getLoginId(),
             loginForm.getPassword()
@@ -135,7 +145,7 @@ public class UserController {
     @ApiLogger(option = "user")
     @PostMapping("client-login")
     public Map<String, String> clientLogin(
-        @Valid @RequestBody UserRequestDto.LoginForm loginForm,
+        @Valid @RequestBody LoginForm loginForm,
         HttpServletResponse response
     ) {
         Map<String, String> tokenPair = userService.executeLogin(
@@ -154,17 +164,16 @@ public class UserController {
     }
 
     // 프론트 로그아웃
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("client-logout")
-    public ResponseEntity<Map<String, Boolean>> clientLogout(HttpServletResponse response) {
+    public Map<String, Boolean> clientLogout(HttpServletResponse response) {
         Cookie refreshCookie = new Cookie("refreshToken", "");
         refreshCookie.setMaxAge(0);
         response.addCookie(refreshCookie);
-        return ResponseEntity
-            .ok()
-            .body(new HashMap<>() {{
-                put("Success", true);
-            }});
+        return new HashMap<>() {{
+            put("Success", true);
+        }};
     }
 
     @ResponseStatus(OK)
@@ -180,7 +189,8 @@ public class UserController {
     @PostMapping("/client-refresh")
     public Map<String, String> clientTokenRefresh(
         @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
-        HttpServletResponse response) {
+        HttpServletResponse response
+    ) {
         Map<String, String> tokenPair = userService.executeJWTRefreshForWebClient(
             requestRefreshCookie
         );
@@ -215,25 +225,24 @@ public class UserController {
     }
 
     // 강의평가 신고
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/report/evaluate")
-    public ResponseEntity<Map<String, Boolean>> reportEvaluate(
-        @Valid @RequestBody UserRequestDto.EvaluateReportForm evaluateReportForm,
-        @Valid @RequestHeader String Authorization) {
-        return ResponseEntity
-            .ok()
-            .body(userReportService.executeForEvaluatePost(evaluateReportForm, Authorization));
+    public Map<String, Boolean> reportEvaluate(
+        @Valid @RequestBody EvaluateReportForm evaluateReportForm,
+        @Valid @RequestHeader String Authorization
+    ) {
+        return userReportService.executeForEvaluatePost(evaluateReportForm, Authorization);
     }
 
     // 시험정보 신고
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/report/exam")
-    public ResponseEntity<Map<String, Boolean>> reportExam(
-        @Valid @RequestBody UserRequestDto.ExamReportForm examReportForm,
+    public Map<String, Boolean> reportExam(
+        @Valid @RequestBody ExamReportForm examReportForm,
         @Valid @RequestHeader String Authorization) {
-        return ResponseEntity
-            .ok()
-            .body(userReportService.executeForExamPost(examReportForm, Authorization));
+        return userReportService.executeForExamPost(examReportForm, Authorization);
     }
 
     // 전공 즐겨찾기 등록하기

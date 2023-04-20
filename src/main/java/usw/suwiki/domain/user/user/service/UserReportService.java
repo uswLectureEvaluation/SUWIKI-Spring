@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static usw.suwiki.global.exception.ErrorType.USER_RESTRICTED;
+import static usw.suwiki.global.util.ApiResponseFactory.successFlag;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +29,7 @@ public class UserReportService {
         if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUser = jwtTokenResolver.getId(Authorization);
         userService.reportEvaluatePost(evaluateReportForm, reportingUser);
-        return new HashMap<>() {{
-            put("success", true);
-        }};
+        return successFlag();
     }
 
     public Map<String, Boolean> executeForExamPost(ExamReportForm examReportForm, String Authorization) {
@@ -38,8 +37,6 @@ public class UserReportService {
         if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUser = jwtTokenResolver.getId(Authorization);
         userService.reportExamPost(examReportForm, reportingUser);
-        return new HashMap<>() {{
-            put("success", true);
-        }};
+        return successFlag();
     }
 }
