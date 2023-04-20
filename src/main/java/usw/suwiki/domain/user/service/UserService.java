@@ -21,6 +21,7 @@ import usw.suwiki.domain.blacklistdomain.BlackListService;
 import usw.suwiki.domain.email.entity.ConfirmationToken;
 import usw.suwiki.domain.email.repository.ConfirmationTokenRepository;
 import usw.suwiki.domain.email.service.ConfirmationTokenService;
+import usw.suwiki.domain.email.service.EmailAuthService;
 import usw.suwiki.domain.email.service.EmailSender;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
@@ -62,6 +63,7 @@ public class UserService {
     private final BuildFindLoginIdForm BuildFindLoginIdForm;
     private final BuildFindPasswordForm BuildFindPasswordForm;
     private final BlackListService blackListService;
+    private final EmailAuthService emailAuthService;
 
     public Map<String, Boolean> executeCheckId(String loginId) {
         if (userRepository.findByLoginId(loginId).isPresent() ||
@@ -108,6 +110,10 @@ public class UserService {
             .buildEmail(BASE_LINK + confirmationToken.getToken())
         );
         return successFlag();
+    }
+
+    public String executeVerifyEmail(String token) {
+        return emailAuthService.confirmToken(token);
     }
 
     // 이메일 인증을 받은 사용자인지 유저 테이블에서 검사

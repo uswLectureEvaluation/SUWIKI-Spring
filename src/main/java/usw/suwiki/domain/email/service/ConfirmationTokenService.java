@@ -31,11 +31,6 @@ public class ConfirmationTokenService {
         return confirmationTokenRepository.findByToken(token);
     }
 
-    // 이메일 인증 토큰 인증시각 스탬프
-    public void setConfirmedAt(String token) {
-        confirmationTokenRepository.updateConfirmedAt(token, LocalDateTime.now());
-    }
-
     // 이메일 인증 토큰 삭제(토큰 ID로 삭제)
     public void deleteById(Long tokenId) {
         confirmationTokenRepository.deleteById(tokenId);

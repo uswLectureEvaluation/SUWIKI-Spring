@@ -35,7 +35,6 @@ import usw.suwiki.domain.user.dto.UserRequestDto.UserQuitForm;
 import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonForm;
 import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonForm;
 import usw.suwiki.domain.user.dto.UserResponseDto.MyPageForm;
-import usw.suwiki.domain.user.service.UserCheckEmailService;
 import usw.suwiki.domain.user.service.UserFavoriteMajorService;
 import usw.suwiki.domain.user.service.UserFindIdService;
 import usw.suwiki.domain.user.service.UserFindPasswordService;
@@ -46,7 +45,6 @@ import usw.suwiki.domain.user.service.UserQuitService;
 import usw.suwiki.domain.user.service.UserReportService;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.domain.user.service.UserTokenRefreshService;
-import usw.suwiki.domain.user.service.UserVerifyEmailService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.jwt.JwtTokenResolver;
@@ -58,7 +56,6 @@ import usw.suwiki.global.jwt.JwtTokenResolver;
 public class UserController {
 
     private final UserService userService;
-    private final UserVerifyEmailService userVerifyEmailService;
     private final UserFindIdService userFindIdService;
     private final UserFindPasswordService userFindPasswordService;
     private final UserLoginService userLoginService;
@@ -101,12 +98,11 @@ public class UserController {
     }
 
     // 이메일 인증 링크를 눌렀을 때
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("verify-email")
-    public ResponseEntity<String> confirmEmail(@RequestParam("token") String token) {
-        return ResponseEntity
-            .ok()
-            .body(userVerifyEmailService.execute(token));
+    public String confirmEmail(@RequestParam("token") String token) {
+        return userService.executeVerifyEmail(token);
     }
 
     //아이디 찾기 요청 시

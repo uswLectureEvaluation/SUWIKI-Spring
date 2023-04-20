@@ -26,18 +26,15 @@ public class EmailAuthService {
     public String confirmToken(String token) {
         Optional<ConfirmationToken> confirmationToken = confirmationTokenService.getToken(token);
         if (confirmationToken.isPresent()) {
-            if (confirmationToken.get().getConfirmedAt() != null) {
-                return buildEmailAuthFailedForm.tokenIsAlreadyUsed();
-            } else if (confirmationToken.get().isExpiredAt()) {
+            if (confirmationToken.get().isVerified()) {
                 confirmationTokenService.deleteAllByToken(token);
                 userRepository.deleteById(confirmationToken.get().getUserIdx());
                 return buildEmailAuthFailedForm.tokenIsExpired();
-            } else {
-                confirmationTokenService.setConfirmedAt(token);
-                Long userIdx = confirmationToken.get().getUserIdx();
-                userRepository.updateUserEmailAuthStatus(userIdx);
-                return buildEmailAuthSuccessForm.buildEmail();
             }
+            confirmationToken.get().updateConfirmedAt();
+            userService.loadUserFromUserIdx(confirmationToken.get().getUserIdx())
+                .activateUser();
+            return buildEmailAuthSuccessForm.buildEmail();
         }
         return buildEmailAuthFailedForm.internalError();
     }

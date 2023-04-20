@@ -139,4 +139,11 @@ public class User {
     public boolean validatePassword(String inputPassword) {
         return this.password.equals(inputPassword);
     }
+
+    public void activateUser() {
+        this.restricted = false;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        this.role = Role.USER;
+    }
 }
