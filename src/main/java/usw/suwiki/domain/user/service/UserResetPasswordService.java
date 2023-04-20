@@ -15,17 +15,17 @@ import java.util.Map;
 @Transactional
 public class UserResetPasswordService {
 
-    private final UserCommonService userCommonService;
+    private final UserService userService;
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
     public Map<String, Boolean> execute(String Authorization, EditMyPasswordForm editMyPasswordForm) {
         jwtTokenValidator.validateAccessToken(Authorization);
-        userCommonService.validatePasswordAtEditPassword(
+        userService.validatePasswordAtEditPassword(
                 jwtTokenResolver.getLoginId(Authorization), editMyPasswordForm.getPrePassword());
-        userCommonService.compareNewPasswordVersusPrePassword(
+        userService.compareNewPasswordVersusPrePassword(
                 jwtTokenResolver.getLoginId(Authorization), editMyPasswordForm.getNewPassword());
-        userCommonService.editMyPassword(editMyPasswordForm, Authorization);
+        userService.editMyPassword(editMyPasswordForm, Authorization);
 
         return new HashMap<>() {{
             put("success", true);

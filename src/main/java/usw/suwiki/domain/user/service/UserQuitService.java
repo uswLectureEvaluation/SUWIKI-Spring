@@ -19,14 +19,14 @@ import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
 public class UserQuitService {
 
     private final JwtTokenValidator jwtTokenValidator;
-    private final UserCommonService userCommonService;
+    private final UserService userService;
     private final QuitRequestUserService quitRequestUserService;
 
     public Map<String, Boolean> execute(UserQuitForm userQuitForm, String Authorization) {
         jwtTokenValidator.validateAccessToken(Authorization);
-        if (!userCommonService.validatePasswordAtUserTable(userQuitForm.getLoginId(), userQuitForm.getPassword()))
+        if (!userService.validatePasswordAtUserTable(userQuitForm.getLoginId(), userQuitForm.getPassword()))
             throw new AccountException(USER_NOT_EXISTS);
-        User theUserRequestedQuit = userCommonService.loadUserFromLoginId(userQuitForm.getLoginId());
+        User theUserRequestedQuit = userService.loadUserFromLoginId(userQuitForm.getLoginId());
         quitRequestUserService.waitQuit(theUserRequestedQuit.getId());
         return new HashMap<>() {{
             put("success", true);

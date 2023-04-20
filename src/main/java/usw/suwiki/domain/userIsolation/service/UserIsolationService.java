@@ -17,7 +17,7 @@ import usw.suwiki.domain.user.dto.UserRequestDto;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.user.repository.RestrictingUserRepository;
-import usw.suwiki.domain.user.service.UserCommonService;
+import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.domain.userIsolation.entity.UserIsolation;
 import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
@@ -36,7 +36,7 @@ import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
 @Transactional
 public class UserIsolationService {
 
-    private final UserCommonService userCommonService;
+    private final UserService userService;
     private final UserRepository userRepository;
     private final FavoriteMajorService favoriteMajorService;
     private final ConfirmationTokenRepository confirmationTokenRepository;
@@ -84,7 +84,7 @@ public class UserIsolationService {
         } else {
             throw new AccountException(PASSWORD_ERROR);
         }
-        return userCommonService.loadUserFromLoginId(loginForm.getLoginId());
+        return userService.loadUserFromLoginId(loginForm.getLoginId());
     }
 
     @Scheduled(cron = "2 0 0 * * *")

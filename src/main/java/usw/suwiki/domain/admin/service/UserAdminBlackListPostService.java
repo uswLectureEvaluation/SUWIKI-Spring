@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostBlacklistForm;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.ExamPostBlacklistForm;
-import usw.suwiki.domain.admin.service.UserAdminCommonService;
-import usw.suwiki.domain.user.service.UserCommonService;
+import usw.suwiki.domain.user.service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,11 +15,11 @@ import java.util.Map;
 @Transactional
 public class UserAdminBlackListPostService {
 
-    private final UserCommonService userCommonService;
+    private final UserService userService;
     private final UserAdminCommonService userAdminCommonService;
 
     public Map<String, Boolean> executeEvaluatePost(EvaluatePostBlacklistForm evaluatePostBlacklistForm) {
-        Long userIdx = userCommonService.loadEvaluatePostsByIndex(evaluatePostBlacklistForm.getEvaluateIdx()).getUser().getId();
+        Long userIdx = userService.loadEvaluatePostsByIndex(evaluatePostBlacklistForm.getEvaluateIdx()).getUser().getId();
         userAdminCommonService.banishEvaluatePost(evaluatePostBlacklistForm.getEvaluateIdx());
         if (userAdminCommonService.isAlreadyBlackList(userIdx)) {
             return new HashMap<>() {{
@@ -39,7 +38,7 @@ public class UserAdminBlackListPostService {
     }
 
     public Map<String, Boolean> executeExamPost(ExamPostBlacklistForm examPostBlacklistForm) {
-        Long userIdx = userCommonService.loadExamPostsByIndex(examPostBlacklistForm.getExamIdx()).getUser().getId();
+        Long userIdx = userService.loadExamPostsByIndex(examPostBlacklistForm.getExamIdx()).getUser().getId();
         userAdminCommonService.blacklistOrRestrictAndDeleteExamPost(examPostBlacklistForm.getExamIdx());
 
         if (userAdminCommonService.isAlreadyBlackList(userIdx)) {

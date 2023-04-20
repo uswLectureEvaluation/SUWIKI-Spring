@@ -21,13 +21,13 @@ public class UserReportService {
 
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
-    private final UserCommonService userCommonService;
+    private final UserService userService;
 
     public Map<String, Boolean> executeForEvaluatePost(EvaluateReportForm evaluateReportForm, String Authorization) {
         jwtTokenValidator.validateAccessToken(Authorization);
         if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUser = jwtTokenResolver.getId(Authorization);
-        userCommonService.reportEvaluatePost(evaluateReportForm, reportingUser);
+        userService.reportEvaluatePost(evaluateReportForm, reportingUser);
         return new HashMap<>() {{
             put("success", true);
         }};
@@ -37,7 +37,7 @@ public class UserReportService {
         jwtTokenValidator.validateAccessToken(Authorization);
         if (jwtTokenResolver.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUser = jwtTokenResolver.getId(Authorization);
-        userCommonService.reportExamPost(examReportForm, reportingUser);
+        userService.reportExamPost(examReportForm, reportingUser);
         return new HashMap<>() {{
             put("success", true);
         }};

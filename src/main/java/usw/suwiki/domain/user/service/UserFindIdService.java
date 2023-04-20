@@ -16,10 +16,10 @@ import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
 @Transactional
 public class UserFindIdService {
 
-    private final UserCommonService userCommonService;
+    private final UserService userService;
 
     public Map<String, Boolean> execute(FindIdForm findIdForm) {
-        if (!userCommonService.sendEmailFindId(findIdForm)) throw new AccountException(USER_NOT_EXISTS);
+        if (!userService.sendEmailFindId(findIdForm)) throw new AccountException(USER_NOT_EXISTS);
 
         return new HashMap<>() {{
             put("success", true);

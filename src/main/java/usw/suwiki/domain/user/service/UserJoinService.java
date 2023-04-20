@@ -15,11 +15,11 @@ import java.util.Map;
 public class UserJoinService {
 
     private final BlackListService blackListService;
-    private final UserCommonService userCommonService;
+    private final UserService userService;
 
     public Map<String, Boolean> execute(JoinForm joinForm) {
         blackListService.joinRequestUserIsBlackList(joinForm.getEmail());
-        userCommonService.join(joinForm);
+        userService.join(joinForm);
 
         return new HashMap<>() {{
             put("success", true);

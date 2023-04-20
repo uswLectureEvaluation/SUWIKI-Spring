@@ -23,20 +23,20 @@ public class UserTokenRefreshService {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenResolver jwtTokenResolver;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserCommonService userCommonService;
+    private final UserService userService;
 
     public Map<String, String> executeForWebClient(Cookie requestRefreshCookie) {
         String refreshToken = requestRefreshCookie.getValue();
         if (refreshTokenRepository.findByPayload(refreshToken).isEmpty())
             throw new AccountException(USER_RESTRICTED);
         Long userIdx = refreshTokenRepository.findByPayload(refreshToken).get().getUserIdx();
-        User user = userCommonService.loadUserFromUserIdx(userIdx);
+        User user = userService.loadUserFromUserIdx(userIdx);
         String accessToken = jwtTokenProvider.createAccessToken(user);
         String newRefreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(user);
         Map<String, String> tokenPair = new HashMap<>();
         tokenPair.put("AccessToken", accessToken);
         tokenPair.put("RefreshToken", newRefreshToken);
-        userCommonService.setLastLogin(user);
+        userService.setLastLogin(user);
         return tokenPair;
     }
 
@@ -44,12 +44,12 @@ public class UserTokenRefreshService {
         if (refreshTokenRepository.findByPayload(Authorization).isEmpty())
             throw new AccountException(USER_RESTRICTED);
         Long userIdx = refreshTokenRepository.findByPayload(Authorization).get().getUserIdx();
-        User user = userCommonService.loadUserFromUserIdx(userIdx);
+        User user = userService.loadUserFromUserIdx(userIdx);
         String newRefreshToken = jwtTokenResolver.refreshTokenUpdateOrCreate(user);
         Map<String, String> tokenPair = new HashMap<>();
         tokenPair.put("AccessToken", jwtTokenProvider.createAccessToken(user));
         tokenPair.put("RefreshToken", newRefreshToken);
-        userCommonService.setLastLogin(user);
+        userService.setLastLogin(user);
         return tokenPair;
     }
 }

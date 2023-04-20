@@ -16,10 +16,10 @@ import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
 @Transactional
 public class UserFindPasswordService {
 
-    private final UserCommonService userCommonService;
+    private final UserService userService;
 
     public Map<String, Boolean> execute(FindPasswordForm findPasswordForm) {
-        if (!userCommonService.sendEmailFindPassword(findPasswordForm)) throw new AccountException(USER_NOT_EXISTS);
+        if (!userService.sendEmailFindPassword(findPasswordForm)) throw new AccountException(USER_NOT_EXISTS);
         return new HashMap<>() {{
             put("success", true);
         }};

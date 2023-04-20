@@ -11,7 +11,7 @@ import usw.suwiki.domain.exam.entity.ExamPosts;
 import usw.suwiki.domain.restrictinguser.repository.RestrictingUser;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.RestrictingUserRepository;
-import usw.suwiki.domain.user.service.UserCommonService;
+import usw.suwiki.domain.user.service.UserService;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @Transactional
 public class RestrictingUserAddRestrictingService {
 
-    private final UserCommonService userCommonService;
+    private final UserService userService;
     private final UserAdminCommonService userAdminCommonService;
     private final RestrictingUserRepository restrictingUserRepository;
 
@@ -28,8 +28,8 @@ public class RestrictingUserAddRestrictingService {
             EvaluatePostRestrictForm evaluatePostRestrictForm, ExamPostRestrictForm examPostRestrictForm) {
 
         if (evaluatePostRestrictForm != null) {
-            EvaluatePosts evaluatePosts = userCommonService.loadEvaluatePostsByIndex(evaluatePostRestrictForm.getEvaluateIdx());
-            User targetUser = userCommonService.loadUserFromUserIdx(evaluatePosts.getUser().getId());
+            EvaluatePosts evaluatePosts = userService.loadEvaluatePostsByIndex(evaluatePostRestrictForm.getEvaluateIdx());
+            User targetUser = userService.loadUserFromUserIdx(evaluatePosts.getUser().getId());
             if (targetUser.getRestrictedCount() >= 2) {
                 userAdminCommonService.blacklistOrRestrictAndDeleteExamPost(evaluatePosts.getId());
                 userAdminCommonService.executeBlacklistByEvaluatePost(
@@ -50,8 +50,8 @@ public class RestrictingUserAddRestrictingService {
             }
         }
 
-        ExamPosts examPosts = userCommonService.loadExamPostsByIndex(examPostRestrictForm.getExamIdx());
-        User user = userCommonService.loadUserFromUserIdx(examPosts.getUser().getId());
+        ExamPosts examPosts = userService.loadExamPostsByIndex(examPostRestrictForm.getExamIdx());
+        User user = userService.loadUserFromUserIdx(examPosts.getUser().getId());
 
         if (user.getRestrictedCount() >= 2) {
             userAdminCommonService.blacklistOrRestrictAndDeleteExamPost(examPosts.getId());

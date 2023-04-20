@@ -26,7 +26,7 @@ import usw.suwiki.domain.viewExam.service.ViewExamService;
 public class QuitRequestUserService {
 
     // User
-    private final UserCommonService userCommonService;
+    private final UserService userService;
     private final UserRepository userRepository;
     private final FavoriteMajorService favoriteMajorService;
     private final ConfirmationTokenRepository confirmationTokenRepository;
@@ -53,7 +53,7 @@ public class QuitRequestUserService {
         // 회원탈퇴 요청한 유저의 시험정보 삭제
         examPostsService.deleteByUser(userIdx);
         // 유저 이용불가 처리
-        userCommonService.loadUserFromUserIdx(userIdx)
+        userService.loadUserFromUserIdx(userIdx)
             .disable();
     }
 

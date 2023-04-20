@@ -15,12 +15,12 @@ public class UserMyPageService {
 
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
-    private final UserCommonService userCommonService;
+    private final UserService userService;
 
     public MyPageForm execute(String Authorization) {
         jwtTokenValidator.validateAccessToken(Authorization);
         Long userIdx = jwtTokenResolver.getId(Authorization);
-        User user = userCommonService.loadUserFromUserIdx(userIdx);
+        User user = userService.loadUserFromUserIdx(userIdx);
         return MyPageForm.builder()
                 .loginId(user.getLoginId())
                 .email(user.getEmail())
