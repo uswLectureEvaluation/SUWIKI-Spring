@@ -10,6 +10,7 @@ import static usw.suwiki.global.exception.ErrorType.USER_NOT_FOUND;
 import static usw.suwiki.global.util.ApiResponseFactory.successFlag;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ import usw.suwiki.domain.user.dto.UserRequestDto.FindPasswordForm;
 import usw.suwiki.domain.user.dto.UserRequestDto.JoinForm;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
+import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
@@ -49,6 +51,7 @@ public class UserService {
     private final String BASE_LINK = "https://api.suwiki.kr/user/verify-email/?token=";
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepository;
+    private final UserIsolationRepository userIsolationRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EvaluatePostsRepository evaluatePostsRepository;
     private final ExamPostsRepository examPostsRepository;
@@ -60,6 +63,18 @@ public class UserService {
     private final BuildFindLoginIdForm BuildFindLoginIdForm;
     private final BuildFindPasswordForm BuildFindPasswordForm;
     private final JwtTokenResolver jwtTokenResolver;
+
+    public Map<String, Boolean> executeCheckId(String loginId) {
+        if (userRepository.findByLoginId(loginId).isPresent() ||
+            userIsolationRepository.findByLoginId(loginId).isPresent()) {
+            return new HashMap<>() {{
+                put("overlap", true);
+            }};
+        }
+        return new HashMap<>() {{
+            put("overlap", false);
+        }};
+    }
 
     public void join(JoinForm joinForm) {
         if (userRepository.findByLoginId(joinForm.getLoginId()).isPresent() ||

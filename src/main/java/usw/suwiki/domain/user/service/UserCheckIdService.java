@@ -19,14 +19,6 @@ public class UserCheckIdService {
     private final UserIsolationRepository userIsolationRepository;
 
     public Map<String, Boolean> execute(CheckLoginIdForm checkLoginIdForm) {
-        if (userRepository.findByLoginId(checkLoginIdForm.getLoginId()).isPresent() ||
-                userIsolationRepository.findByLoginId(checkLoginIdForm.getLoginId()).isPresent()) {
-            return new HashMap<>() {{
-                put("overlap", true);
-            }};
-        }
-        return new HashMap<>() {{
-            put("overlap", false);
-        }};
+
     }
 }

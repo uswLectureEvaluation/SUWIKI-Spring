@@ -1,5 +1,7 @@
 package usw.suwiki.domain.user.controller;
 
+import static org.springframework.http.HttpStatus.OK;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +9,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -35,7 +36,6 @@ import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonForm;
 import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonForm;
 import usw.suwiki.domain.user.dto.UserResponseDto.MyPageForm;
 import usw.suwiki.domain.user.service.UserCheckEmailService;
-import usw.suwiki.domain.user.service.UserCheckIdService;
 import usw.suwiki.domain.user.service.UserFavoriteMajorService;
 import usw.suwiki.domain.user.service.UserFindIdService;
 import usw.suwiki.domain.user.service.UserFindPasswordService;
@@ -51,7 +51,6 @@ import usw.suwiki.domain.user.service.UserVerifyEmailService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.jwt.JwtTokenResolver;
-import usw.suwiki.global.jwt.JwtTokenValidator;
 
 @RestController
 @RequestMapping("/user")
@@ -60,7 +59,6 @@ import usw.suwiki.global.jwt.JwtTokenValidator;
 public class UserController {
 
     private final UserService userService;
-    private final UserCheckIdService userCheckIdService;
     private final UserCheckEmailService userCheckEmailService;
     private final UserJoinService userJoinService;
     private final UserVerifyEmailService userVerifyEmailService;
@@ -73,18 +71,15 @@ public class UserController {
     private final UserReportService userReportService;
     private final UserFavoriteMajorService userFavoriteMajorService;
     private final UserLoadRestrictAndBlackListReasonService userLoadRestrictAndBlackListReasonService;
-
-    private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
 
     //아이디 중복확인
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("check-id")
-    public ResponseEntity<Map<String, Boolean>> overlapId(
+    public Map<String, Boolean> overlapId(
         @Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
-        return ResponseEntity
-            .ok()
-            .body(userCheckIdService.execute(checkLoginIdForm));
+        return userService.executeCheckId(checkLoginIdForm.getLoginId());
     }
 
     //이메일 중복 확인
@@ -135,7 +130,7 @@ public class UserController {
     }
 
     //비밀번호 재설정 요청 시
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("reset-pw")
     public Map<String, Boolean> resetPw(
