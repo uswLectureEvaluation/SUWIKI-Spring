@@ -1,9 +1,11 @@
 package usw.suwiki.domain.user.entity;
 
+import static usw.suwiki.global.exception.ErrorType.USER_NOT_EMAIL_AUTHED;
 import static usw.suwiki.global.exception.ErrorType.USER_POINT_LACK;
 import static usw.suwiki.global.util.passwordfactory.PasswordRandomizer.randomizePassword;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,6 +18,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import usw.suwiki.domain.email.entity.ConfirmationToken;
 import usw.suwiki.global.exception.errortype.AccountException;
 
 @Entity
@@ -145,5 +148,19 @@ public class User {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         this.role = Role.USER;
+    }
+
+    public boolean isUserEmailAuthed(Optional<ConfirmationToken> confirmationToken) {
+        if (confirmationToken.isPresent()) {
+            if (confirmationToken.get().isVerified()) {
+                return true;
+            }
+            throw new AccountException(USER_NOT_EMAIL_AUTHED);
+        }
+        throw new AccountException(USER_NOT_EMAIL_AUTHED);
+    }
+
+    public void updateLastLoginDate() {
+        this.lastLogin = LocalDateTime.now();
     }
 }

@@ -36,9 +36,7 @@ import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonForm;
 import usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonForm;
 import usw.suwiki.domain.user.dto.UserResponseDto.MyPageForm;
 import usw.suwiki.domain.user.service.UserFavoriteMajorService;
-import usw.suwiki.domain.user.service.UserFindPasswordService;
 import usw.suwiki.domain.user.service.UserLoadRestrictAndBlackListReasonService;
-import usw.suwiki.domain.user.service.UserLoginService;
 import usw.suwiki.domain.user.service.UserMyPageService;
 import usw.suwiki.domain.user.service.UserQuitService;
 import usw.suwiki.domain.user.service.UserReportService;
@@ -55,8 +53,6 @@ import usw.suwiki.global.jwt.JwtTokenResolver;
 public class UserController {
 
     private final UserService userService;
-    private final UserFindPasswordService userFindPasswordService;
-    private final UserLoginService userLoginService;
     private final UserMyPageService userMyPageService;
     private final UserTokenRefreshService userTokenRefreshService;
     private final UserQuitService userQuitService;
@@ -112,13 +108,15 @@ public class UserController {
     }
 
     //비밀번호 찾기 요청 시
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("find-pw")
-    public ResponseEntity<Map<String, Boolean>> findPw(
+    public Map<String, Boolean> findPw(
         @Valid @RequestBody FindPasswordForm findPasswordForm) {
-        return ResponseEntity
-            .ok()
-            .body(userFindPasswordService.execute(findPasswordForm));
+        return userService.executeFindPw(
+            findPasswordForm.getLoginId(),
+            findPasswordForm.getEmail()
+        );
     }
 
     //비밀번호 재설정 요청 시
@@ -135,31 +133,38 @@ public class UserController {
     }
 
     // 안드, IOS 로그인 요청 시
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("login")
-    public ResponseEntity<Map<String, String>> mobileLogin(
+    public Map<String, String> mobileLogin(
         @Valid @RequestBody LoginForm loginForm) {
-        return ResponseEntity
-            .ok()
-            .body(userLoginService.execute(loginForm));
+        return userService.executeLogin(
+            loginForm.getLoginId(),
+            loginForm.getPassword()
+        );
     }
 
     // 프론트 로그인 요청 시 --> RefreshToken, AccessToken 쿠키로 셋팅
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("client-login")
-    public ResponseEntity<Map<String, String>> clientLogin(
-        @Valid @RequestBody LoginForm loginForm, HttpServletResponse response) {
-        Map<String, String> tokenPair = userLoginService.execute(loginForm);
+    public Map<String, String> clientLogin(
+        @Valid @RequestBody LoginForm loginForm,
+        HttpServletResponse response
+    ) {
+        Map<String, String> tokenPair = userService.executeLogin(
+            loginForm.getLoginId(),
+            loginForm.getPassword()
+        );
         Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
         refreshCookie.setMaxAge(14 * 24 * 60 * 60); // expires in 14 days
         refreshCookie.setSecure(true);
         refreshCookie.setHttpOnly(true);
         response.addCookie(refreshCookie);
-        return ResponseEntity
-            .ok()
-            .body(new HashMap<>() {{
-                put("AccessToken", tokenPair.get("AccessToken"));
-            }});
+
+        return new HashMap<>() {{
+            put("AccessToken", tokenPair.get("AccessToken"));
+        }};
     }
 
     // 프론트 로그아웃

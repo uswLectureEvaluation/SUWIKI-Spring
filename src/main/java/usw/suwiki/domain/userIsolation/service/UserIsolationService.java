@@ -76,15 +76,15 @@ public class UserIsolationService {
         return bCryptPasswordEncoder.matches(password, userIsolationRepository.findByLoginId(loginId).get().getPassword());
     }
 
-    public User sleepingUserLogin(UserRequestDto.LoginForm loginForm) {
-        UserIsolation userIsolation = loadUserFromLoginId(loginForm.getLoginId());
-        if (validatePasswordAtIsolationTable(loginForm.getLoginId(), loginForm.getPassword())) {
+    public User sleepingUserLogin(String loginId, String password) {
+        UserIsolation userIsolation = loadUserFromLoginId(loginId);
+        if (validatePasswordAtIsolationTable(loginId, password)) {
             userRepository.unapplyUserSoftDelete(userIsolation.getUserIdx(), userIsolation);
-            userIsolationRepository.deleteByLoginId(loginForm.getLoginId());
+            userIsolationRepository.deleteByLoginId(loginId);
         } else {
             throw new AccountException(PASSWORD_ERROR);
         }
-        return userService.loadUserFromLoginId(loginForm.getLoginId());
+        return userService.loadUserFromLoginId(loginId);
     }
 
     @Scheduled(cron = "2 0 0 * * *")

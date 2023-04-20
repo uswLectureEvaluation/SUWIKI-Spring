@@ -32,12 +32,13 @@ import usw.suwiki.domain.postreport.entity.ExamPostReport;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.user.dto.UserRequestDto;
-import usw.suwiki.domain.user.dto.UserRequestDto.FindIdForm;
-import usw.suwiki.domain.user.dto.UserRequestDto.FindPasswordForm;
 import usw.suwiki.domain.user.entity.User;
 import usw.suwiki.domain.user.repository.UserRepository;
 import usw.suwiki.domain.userIsolation.repository.UserIsolationRepository;
+import usw.suwiki.domain.userIsolation.service.UserIsolationService;
 import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.global.jwt.JwtTokenProvider;
+import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
 import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
 import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
@@ -64,6 +65,9 @@ public class UserService {
     private final BuildFindPasswordForm BuildFindPasswordForm;
     private final BlackListService blackListService;
     private final EmailAuthService emailAuthService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenResolver jwtTokenResolver;
+    private final UserIsolationService userIsolationService;
 
     public Map<String, Boolean> executeCheckId(String loginId) {
         if (userRepository.findByLoginId(loginId).isPresent() ||
@@ -119,33 +123,56 @@ public class UserService {
     public Map<String, Boolean> executeFindId(String email) {
         Optional<User> requestUser = userRepository.findByEmail(email);
         if (requestUser.isPresent()) {
-            emailSender.send(email, BuildFindLoginIdForm.buildEmail(requestUser.get().getLoginId()));
+            emailSender.send(email,
+                BuildFindLoginIdForm.buildEmail(requestUser.get().getLoginId()));
             return successFlag();
         }
         throw new AccountException(USER_NOT_EXISTS);
     }
 
-    // 이메일 인증을 받은 사용자인지 유저 테이블에서 검사
-    public void isUserEmailAuth(Long userIdx) {
-        Optional<ConfirmationToken> confirmationToken =
-            confirmationTokenRepository.findByUserIdx(userIdx);
-        if (confirmationToken.isPresent()) {
-            confirmationToken.get().isVerified();
-            return;
-        }
-        throw new AccountException(USER_NOT_EMAIL_AUTHED);
-    }
-
-    public boolean sendEmailFindPassword(FindPasswordForm findPasswordForm) {
-        Optional<User> user = userRepository.findByLoginId(findPasswordForm.getLoginId());
+    public Map<String, Boolean> executeFindPw(String loginId, String email) {
+        Optional<User> user = userRepository.findByLoginId(loginId);
         if (user.isPresent()) {
-            emailSender.send(findPasswordForm.getEmail(), BuildFindPasswordForm.buildEmail(
-                user.get().updateRandomPassword(
-                    bCryptPasswordEncoder)
-            ));
-            return true;
+            emailSender.send(email,
+                BuildFindPasswordForm.buildEmail(
+                    user.get().updateRandomPassword(bCryptPasswordEncoder)
+                )
+            );
+            return successFlag();
         }
         throw new AccountException(USER_NOT_FOUND);
+    }
+
+    public Map<String, String> executeLogin(String loginId, String password) {
+        Map<String, String> tokenPair = new HashMap<>();
+        if (userIsolationRepository.findByLoginId(loginId).isEmpty()) {
+            User notSleepingUser = loadUserFromLoginId(loginId);
+            notSleepingUser.isUserEmailAuthed(
+                confirmationTokenRepository.findByUserIdx(notSleepingUser.getId())
+            );
+            if (notSleepingUser.validatePassword(password)) {
+                tokenPair.put(
+                    "AccessToken", jwtTokenProvider.createAccessToken(notSleepingUser)
+                );
+                tokenPair.put(
+                    "RefreshToken", jwtTokenResolver.refreshTokenUpdateOrCreate(notSleepingUser)
+                );
+                notSleepingUser.updateLastLoginDate();
+                return tokenPair;
+            }
+            throw new AccountException(PASSWORD_ERROR);
+        } else if (userIsolationRepository.findByLoginId(loginId).isPresent()) {
+            User sleepingUser = userIsolationService.sleepingUserLogin(loginId, password);
+            tokenPair.put(
+                "AccessToken", jwtTokenProvider.createAccessToken(sleepingUser)
+            );
+            tokenPair.put(
+                "RefreshToken", jwtTokenResolver.refreshTokenUpdateOrCreate(sleepingUser)
+            );
+            sleepingUser.updateLastLoginDate();
+            return tokenPair;
+        }
+        throw new AccountException(PASSWORD_ERROR);
     }
 
     public Map<String, Boolean> executeEditPassword(
