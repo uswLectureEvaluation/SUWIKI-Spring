@@ -10,7 +10,7 @@ application.yml
 application.properties
 *.yml
 .idea/workspace.xml
-
+/logs
 .idea
 
 ### STS ###
