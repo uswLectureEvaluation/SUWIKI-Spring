@@ -25,7 +25,6 @@ import usw.suwiki.domain.admin.dto.UserAdminResponseDto.LoadAllReportedPostForm;
 import usw.suwiki.domain.admin.service.UserAdminBlackListPostService;
 import usw.suwiki.domain.admin.service.UserAdminLoadDetailReportingPostService;
 import usw.suwiki.domain.admin.service.UserAdminLoadReportingPostService;
-import usw.suwiki.domain.admin.service.UserAdminLoginService;
 import usw.suwiki.domain.admin.service.UserAdminNoProblemPostService;
 import usw.suwiki.domain.admin.service.UserAdminRestrictPostService;
 import usw.suwiki.domain.admin.service.UserAdminService;
@@ -42,7 +41,6 @@ import usw.suwiki.global.annotation.ApiLogger;
 public class UserAdminController {
 
     private final UserAdminService userAdminService;
-    private final UserAdminLoginService userAdminLoginService;
     private final UserAdminRestrictPostService userAdminRestrictPostService;
     private final UserAdminBlackListPostService userAdminBlackListPostService;
     private final UserAdminNoProblemPostService userAdminNoProblemPostService;
@@ -53,10 +51,10 @@ public class UserAdminController {
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> administratorLogin(
+    public Map<String, String> administratorLogin(
         @Valid @RequestBody LoginForm loginForm
     ) {
-        return userAdminLoginService.adminLogin(loginForm);
+        return userAdminService.adminLogin(loginForm);
     }
 
     // 강의평가 게시물 정지 먹이기
