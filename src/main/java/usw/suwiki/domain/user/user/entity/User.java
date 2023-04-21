@@ -165,4 +165,12 @@ public class User {
     public void updateLastLoginDate() {
         this.lastLogin = LocalDateTime.now();
     }
+
+    public void increaseRestrictedCountByReportedPost() {
+        this.restrictedCount += 1;
+    }
+
+    public void increasePointByReporting() {
+        this.point += 1;
+    }
 }

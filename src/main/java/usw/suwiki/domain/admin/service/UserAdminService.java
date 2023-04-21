@@ -1,5 +1,13 @@
 package usw.suwiki.domain.admin.service;
 
+import static usw.suwiki.global.exception.ErrorType.SERVER_ERROR;
+import static usw.suwiki.global.exception.ErrorType.USER_ALREADY_BLACKLISTED;
+import static usw.suwiki.global.exception.ErrorType.USER_RESTRICTED;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,21 +22,23 @@ import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
 import usw.suwiki.domain.postreport.entity.ExamPostReport;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
+import usw.suwiki.domain.user.user.dto.UserRequestDto;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.user.service.UserService;
+import usw.suwiki.global.exception.ErrorType;
 import usw.suwiki.global.exception.errortype.AccountException;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static usw.suwiki.global.exception.ErrorType.SERVER_ERROR;
-import static usw.suwiki.global.exception.ErrorType.USER_ALREADY_BLACKLISTED;
+import usw.suwiki.global.jwt.JwtTokenProvider;
+import usw.suwiki.global.jwt.JwtTokenResolver;
+import usw.suwiki.global.jwt.JwtTokenValidator;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserAdminCommonService {
+public class UserAdminService {
+
+    private final Long BANNED_PERIOD = 365L;
+    private final Integer NESTED_RESTRICTED_TIME = 3;
     private final UserService userService;
     private final BlacklistRepository blacklistRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -36,57 +46,58 @@ public class UserAdminCommonService {
     private final ExamPostsService examPostsService;
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenValidator jwtTokenValidator;
+    private final JwtTokenResolver jwtTokenResolver;
     private final UserRepository userRepository;
 
-    // 강의평가 블랙리스트
-    public void executeBlacklistByEvaluatePost(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
-        User user = userService.loadUserFromUserIdx(userIdx);
-        userRepository.updateRestricted(userIdx, true);
-
-        String hashTargetEmail = bCryptPasswordEncoder.encode(user.getEmail());
-        if (blacklistRepository.findByUserId(user.getId()).isPresent()) {
-            throw new AccountException(USER_ALREADY_BLACKLISTED);
+    // 관리자 권한 검증
+    public void executeValidateAdmin(String authorization) {
+        jwtTokenValidator.validateAccessToken(authorization);
+        if (!jwtTokenResolver.getUserRole(authorization).equals("ADMIN")) {
+            throw new AccountException(USER_RESTRICTED);
         }
-
-        if (user.getRestrictedCount() >= 3) {
-            bannedPeriod += 365L;
-        }
-
-        BlacklistDomain blacklistDomain = BlacklistDomain.builder()
-                .userIdx(user.getId())
-                .bannedReason(bannedReason)
-                .hashedEmail(hashTargetEmail)
-                .judgement(judgement)
-                .expiredAt(LocalDateTime.now().plusDays(bannedPeriod))
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
-        blacklistRepository.save(blacklistDomain);
     }
 
-    // 시험정보 블랙리스트
-    public void executeBlacklistByExamPost(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
+    // 관리자 로그인
+    public Map<String, String> adminLogin(UserRequestDto.LoginForm loginForm) {
+        if (userService.matchPassword(loginForm.getLoginId(), loginForm.getPassword())) {
+            User user = userService.loadUserFromLoginId(loginForm.getLoginId());
+            String accessToken = jwtTokenProvider.createAccessToken(user);
+            int userCount = userRepository.findAll().size();
+            return new HashMap<>() {{
+                put("AccessToken", accessToken);
+                put("UserCount", String.valueOf(userCount));
+            }};
+        }
+        throw new AccountException(ErrorType.PASSWORD_ERROR);
+    }
+
+    // 블랙리스트 추가
+    public void executeBlacklist(
+        Long userIdx, Long bannedPeriod, String bannedReason, String judgement
+    ) {
         User user = userService.loadUserFromUserIdx(userIdx);
-        userRepository.updateRestricted(userIdx, true);
+        user.editRestricted(true);
+
         String hashTargetEmail = bCryptPasswordEncoder.encode(user.getEmail());
         if (blacklistRepository.findByUserId(user.getId()).isPresent()) {
             throw new AccountException(USER_ALREADY_BLACKLISTED);
         }
 
-        if (user.getRestrictedCount() >= 3) {
-            bannedPeriod += 365L;
+        if (user.getRestrictedCount() >= NESTED_RESTRICTED_TIME) {
+            bannedPeriod += BANNED_PERIOD;
         }
 
         BlacklistDomain blacklistDomain = BlacklistDomain.builder()
-                .userIdx(user.getId())
-                .bannedReason(bannedReason)
-                .judgement(judgement)
-                .hashedEmail(hashTargetEmail)
-                .expiredAt(LocalDateTime.now().plusDays(bannedPeriod))
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
+            .userIdx(user.getId())
+            .bannedReason(bannedReason)
+            .hashedEmail(hashTargetEmail)
+            .judgement(judgement)
+            .expiredAt(LocalDateTime.now().plusDays(bannedPeriod))
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .build();
 
         blacklistRepository.save(blacklistDomain);
     }
@@ -119,12 +130,12 @@ public class UserAdminCommonService {
 
     public void plusRestrictCount(Long userIdx) {
         User user = userService.loadUserFromUserIdx(userIdx);
-        userRepository.updateRestrictedCount(user.getId(), (user.getRestrictedCount() + 1));
+        user.increaseRestrictedCountByReportedPost();
     }
 
     public void plusReportingUserPoint(Long reportingUserIdx) {
         User user = userService.loadUserFromUserIdx(reportingUserIdx);
-        userRepository.updatePoint(user.getId(), (user.getPoint() + 1));
+        user.increasePointByReporting();
     }
 
     public List<EvaluatePostReport> loadReportedEvaluateList() {

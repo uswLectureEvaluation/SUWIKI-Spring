@@ -7,7 +7,9 @@ import static usw.suwiki.global.exception.ErrorType.USER_AND_EMAIL_OVERLAP;
 import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
 import static usw.suwiki.global.exception.ErrorType.USER_NOT_FOUND;
 import static usw.suwiki.global.exception.ErrorType.USER_RESTRICTED;
-import static usw.suwiki.global.util.ApiResponseFactory.successFlag;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapFalseFlag;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapTrueFlag;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successFlag;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -22,7 +24,6 @@ import usw.suwiki.domain.blacklistdomain.BlackListService;
 import usw.suwiki.domain.confirmationtoken.entity.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenService;
-import usw.suwiki.domain.confirmationtoken.service.EmailAuthService;
 import usw.suwiki.domain.confirmationtoken.service.EmailSender;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
@@ -74,7 +75,6 @@ public class UserService {
     private final BuildFindLoginIdForm BuildFindLoginIdForm;
     private final BuildFindPasswordForm BuildFindPasswordForm;
     private final BlackListService blackListService;
-    private final EmailAuthService emailAuthService;
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenResolver jwtTokenResolver;
@@ -89,25 +89,17 @@ public class UserService {
     public Map<String, Boolean> executeCheckId(String loginId) {
         if (userRepository.findByLoginId(loginId).isPresent() ||
             userIsolationRepository.findByLoginId(loginId).isPresent()) {
-            return new HashMap<>() {{
-                put("overlap", true);
-            }};
+            return overlapTrueFlag();
         }
-        return new HashMap<>() {{
-            put("overlap", false);
-        }};
+        return overlapFalseFlag();
     }
 
     public Map<String, Boolean> executeCheckEmail(String email) {
         if (userRepository.findByEmail(email).isPresent() ||
             userIsolationRepository.findByEmail(email).isPresent()) {
-            return new HashMap<>() {{
-                put("overlap", true);
-            }};
+            return overlapTrueFlag();
         }
-        return new HashMap<>() {{
-            put("overlap", false);
-        }};
+        return overlapFalseFlag();
     }
 
     public Map<String, Boolean> executeJoin(String loginId, String password, String email) {
@@ -134,7 +126,7 @@ public class UserService {
     }
 
     public String executeVerifyEmail(String token) {
-        return emailAuthService.confirmToken(token);
+        return confirmationTokenService.confirmToken(token);
     }
 
     public Map<String, Boolean> executeFindId(String email) {
@@ -167,7 +159,7 @@ public class UserService {
             notSleepingUser.isUserEmailAuthed(
                 confirmationTokenRepository.findByUserIdx(notSleepingUser.getId())
             );
-            if (validatePasswordAtUserTable(loginId, password)) {
+            if (matchPassword(loginId, password)) {
                 tokenPair.put(
                     "AccessToken", jwtTokenProvider.createAccessToken(notSleepingUser)
                 );
@@ -255,7 +247,7 @@ public class UserService {
         return successFlag();
     }
 
-    public boolean validatePasswordAtUserTable(String loginId, String password) {
+    public boolean matchPassword(String loginId, String password) {
         return bCryptPasswordEncoder.matches(password,
             userRepository.findByLoginId(loginId).get().getPassword());
     }

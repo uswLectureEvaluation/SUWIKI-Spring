@@ -14,7 +14,7 @@ import static usw.suwiki.global.exception.ErrorType.SEND_MAIL_FAILED;
 
 @Service
 @AllArgsConstructor
-public class EmailService implements EmailSender {
+public class EmailSendService implements EmailSender {
 
     private final JavaMailSender javaMailSender;
 

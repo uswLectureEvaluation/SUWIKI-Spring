@@ -9,11 +9,10 @@ import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtTokenResolver;
 import usw.suwiki.global.jwt.JwtTokenValidator;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static usw.suwiki.global.exception.ErrorType.USER_RESTRICTED;
-import static usw.suwiki.global.util.ApiResponseFactory.successFlag;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successFlag;
 
 @Service
 @RequiredArgsConstructor

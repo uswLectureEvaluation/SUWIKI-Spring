@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.ExamPostRestrictForm;
-import usw.suwiki.domain.admin.service.UserAdminCommonService;
+import usw.suwiki.domain.admin.service.UserAdminService;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.exam.entity.ExamPosts;
 import usw.suwiki.domain.user.restrictinguser.repository.RestrictingUser;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 public class RestrictingUserAddRestrictingService {
 
     private final UserService userService;
-    private final UserAdminCommonService userAdminCommonService;
+    private final UserAdminService userAdminService;
     private final RestrictingUserRepository restrictingUserRepository;
 
     private void commonMethod(
@@ -31,8 +31,8 @@ public class RestrictingUserAddRestrictingService {
             EvaluatePosts evaluatePosts = userService.loadEvaluatePostsByIndex(evaluatePostRestrictForm.getEvaluateIdx());
             User targetUser = userService.loadUserFromUserIdx(evaluatePosts.getUser().getId());
             if (targetUser.getRestrictedCount() >= 2) {
-                userAdminCommonService.blacklistOrRestrictAndDeleteExamPost(evaluatePosts.getId());
-                userAdminCommonService.executeBlacklistByEvaluatePost(
+                userAdminService.blacklistOrRestrictAndDeleteExamPost(evaluatePosts.getId());
+                userAdminService.executeBlacklist(
                         targetUser.getId(), 90L,
                         "신고 누적으로 인한 블랙리스트", "신고누적 블랙리스트 1년");
             } else if (targetUser.getRestrictedCount() < 3) {
@@ -54,8 +54,8 @@ public class RestrictingUserAddRestrictingService {
         User user = userService.loadUserFromUserIdx(examPosts.getUser().getId());
 
         if (user.getRestrictedCount() >= 2) {
-            userAdminCommonService.blacklistOrRestrictAndDeleteExamPost(examPosts.getId());
-            userAdminCommonService.executeBlacklistByExamPost(
+            userAdminService.blacklistOrRestrictAndDeleteExamPost(examPosts.getId());
+            userAdminService.executeBlacklist(
                     user.getId(), 90L,
                     "신고 누적으로 인한 블랙리스트", "신고누적 블랙리스트 1년");
         } else if (user.getRestrictedCount() < 3) {
