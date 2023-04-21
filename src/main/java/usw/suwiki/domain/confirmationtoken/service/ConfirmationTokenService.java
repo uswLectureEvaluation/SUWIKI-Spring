@@ -28,7 +28,7 @@ public class ConfirmationTokenService {
     public String confirmToken(String token) {
         Optional<ConfirmationToken> confirmationToken = getToken(token);
         if (confirmationToken.isPresent()) {
-            if (confirmationToken.get().isVerified()) {
+            if (confirmationToken.get().isTokenExpired()) {
                 deleteAllByToken(token);
                 userRepository.deleteById(confirmationToken.get().getUserIdx());
                 return buildEmailAuthFailedForm.tokenIsExpired();
@@ -45,8 +45,8 @@ public class ConfirmationTokenService {
         confirmationTokenRepository.save(token);
     }
 
-    @Transactional(readOnly = true)
     // 토큰 파싱
+    @Transactional(readOnly = true)
     public Optional<ConfirmationToken> getToken(String token) {
         return confirmationTokenRepository.findByToken(token);
     }
