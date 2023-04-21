@@ -86,6 +86,7 @@ public class UserService {
     private final ExamPostsService examPostsService;
     private final PostReportService postReportService;
 
+    @Transactional(readOnly = true)
     public Map<String, Boolean> executeCheckId(String loginId) {
         if (userRepository.findByLoginId(loginId).isPresent() ||
             userIsolationRepository.findByLoginId(loginId).isPresent()) {
@@ -94,6 +95,7 @@ public class UserService {
         return overlapFalseFlag();
     }
 
+    @Transactional(readOnly = true)
     public Map<String, Boolean> executeCheckEmail(String email) {
         if (userRepository.findByEmail(email).isPresent() ||
             userIsolationRepository.findByEmail(email).isPresent()) {
@@ -117,8 +119,11 @@ public class UserService {
         }
 
         User user = User.makeUser(loginId, bCryptPasswordEncoder.encode(password), email);
+        userRepository.save(user);
+
         ConfirmationToken confirmationToken = ConfirmationToken.makeToken(user);
-        confirmationTokenService.saveConfirmationToken(ConfirmationToken.makeToken(user));
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+
         emailSender.send(email, buildEmailAuthForm
             .buildEmail(BASE_LINK + confirmationToken.getToken())
         );
