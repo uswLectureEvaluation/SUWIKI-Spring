@@ -135,8 +135,9 @@ public class User {
     }
 
     public String updateRandomPassword(BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.password = bCryptPasswordEncoder.encode(randomizePassword());
-        return this.password;
+        String generatedPassword = randomizePassword();
+        this.password = bCryptPasswordEncoder.encode(generatedPassword);
+        return generatedPassword;
     }
 
     public boolean validatePassword(
