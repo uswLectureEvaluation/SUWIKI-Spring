@@ -1,5 +1,10 @@
 package usw.suwiki.domain.blacklistdomain;
 
+import static usw.suwiki.global.exception.ErrorType.YOU_ARE_IN_BLACKLIST;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -9,12 +14,6 @@ import usw.suwiki.domain.blacklistdomain.entity.BlacklistDomain;
 import usw.suwiki.domain.user.user.dto.UserResponseDto.LoadMyBlackListReasonForm;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.global.exception.errortype.AccountException;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static usw.suwiki.global.exception.ErrorType.YOU_ARE_IN_BLACKLIST;
 
 
 @Service

@@ -192,7 +192,7 @@ public class UserService {
         User user, String prePassword, String newPassword) {
         if (prePassword.equals(newPassword)) {
             throw new AccountException(PASSWORD_NOT_CHANGED);
-        } else if (!user.getPassword().equals(bCryptPasswordEncoder.encode(prePassword))) {
+        } else if (!matchPassword(user.getLoginId(), prePassword)) {
             throw new AccountException(PASSWORD_ERROR);
         }
         user.updatePassword(bCryptPasswordEncoder, newPassword);
@@ -252,8 +252,8 @@ public class UserService {
         return successFlag();
     }
 
-    public boolean matchPassword(String loginId, String password) {
-        return bCryptPasswordEncoder.matches(password,
+    public boolean matchPassword(String loginId, String inputPassword) {
+        return bCryptPasswordEncoder.matches(inputPassword,
             userRepository.findByLoginId(loginId).get().getPassword());
     }
 
