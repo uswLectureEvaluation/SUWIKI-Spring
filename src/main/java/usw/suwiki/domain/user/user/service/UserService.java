@@ -104,6 +104,7 @@ public class UserService {
         return overlapFalseFlag();
     }
 
+    @Transactional
     public Map<String, Boolean> executeJoin(String loginId, String password, String email) {
         blackListService.joinRequestUserIsBlackList(email);
 
@@ -145,11 +146,16 @@ public class UserService {
     }
 
     public Map<String, Boolean> executeFindPw(String loginId, String email) {
-        Optional<User> user = userRepository.findByLoginId(loginId);
-        if (user.isPresent()) {
-            emailSender.send(email,
-                BuildFindPasswordForm.buildEmail(
-                    user.get().updateRandomPassword(bCryptPasswordEncoder)
+        Optional<User> userByLoginId = userRepository.findByLoginId(loginId);
+        Optional<User> userByEmail = userRepository.findByEmail(email);
+        User user;
+        if (userByLoginId.equals(userByEmail) &&
+            userByLoginId.isPresent() &&
+            userByEmail.isPresent())
+        {
+            user = userByLoginId.get();
+            emailSender.send(email, BuildFindPasswordForm.buildEmail(
+                    user.updateRandomPassword(bCryptPasswordEncoder)
                 )
             );
             return successFlag();
