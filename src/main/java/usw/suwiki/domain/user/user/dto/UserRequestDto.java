@@ -19,6 +19,7 @@ public class UserRequestDto {
 
     @Getter
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class LoginForm {
 
         @NotEmpty

@@ -189,14 +189,15 @@ public class UserService {
         throw new AccountException(USER_NOT_FOUND);
     }
 
-    public Map<String, String> executeLogin(String loginId, String password) {
+    public Map<String, String> executeLogin(String loginId, String inputPassword) {
         Map<String, String> tokenPair = new HashMap<>();
-        if (userIsolationRepository.findByLoginId(loginId).isEmpty()) {
+        if (userRepository.findByLoginId(loginId).isPresent() &&
+            userIsolationRepository.findByLoginId(loginId).isEmpty()) {
             User notSleepingUser = loadUserFromLoginId(loginId);
             notSleepingUser.isUserEmailAuthed(
                 confirmationTokenRepository.findByUserIdx(notSleepingUser.getId())
             );
-            if (matchPassword(loginId, password)) {
+            if (matchPassword(loginId, inputPassword)) {
                 tokenPair.put(
                     "AccessToken", jwtTokenProvider.createAccessToken(notSleepingUser)
                 );
@@ -206,8 +207,9 @@ public class UserService {
                 notSleepingUser.updateLastLoginDate();
                 return tokenPair;
             }
-        } else if (userIsolationRepository.findByLoginId(loginId).isPresent()) {
-            User sleepingUser = userIsolationService.sleepingUserLogin(loginId, password);
+        } else if (userIsolationRepository.findByLoginId(loginId).isPresent() &&
+            userRepository.findByLoginId(loginId).isEmpty()) {
+            User sleepingUser = userIsolationService.sleepingUserLogin(loginId, inputPassword);
             tokenPair.put(
                 "AccessToken", jwtTokenProvider.createAccessToken(sleepingUser)
             );
@@ -285,8 +287,10 @@ public class UserService {
     }
 
     public boolean matchPassword(String loginId, String inputPassword) {
-        return bCryptPasswordEncoder.matches(inputPassword,
-            userRepository.findByLoginId(loginId).get().getPassword());
+        return bCryptPasswordEncoder.matches(
+            inputPassword,
+            userRepository.findByLoginId(loginId).get().getPassword()
+        );
     }
 
     public User convertOptionalUserToDomainUser(Optional<User> optionalUser) {

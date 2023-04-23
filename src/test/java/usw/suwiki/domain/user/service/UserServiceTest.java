@@ -2,17 +2,23 @@ package usw.suwiki.domain.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static usw.suwiki.global.exception.ErrorType.IS_NOT_EMAIL_FORM;
+import static usw.suwiki.global.exception.ErrorType.PASSWORD_ERROR;
 import static usw.suwiki.global.exception.ErrorType.USER_AND_EMAIL_OVERLAP;
+import static usw.suwiki.global.exception.ErrorType.USER_NOT_EMAIL_AUTHED;
 import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
 import static usw.suwiki.global.exception.ErrorType.USER_NOT_FOUND;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapFalseFlag;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapTrueFlag;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successFlag;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import usw.suwiki.domain.blacklistdomain.BlackListService;
+import usw.suwiki.domain.confirmationtoken.entity.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenService;
 import usw.suwiki.domain.confirmationtoken.service.EmailSender;
@@ -39,6 +46,7 @@ import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckLoginIdForm;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.FindIdForm;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.FindPasswordForm;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.JoinForm;
+import usw.suwiki.domain.user.user.dto.UserRequestDto.LoginForm;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.user.service.UserService;
@@ -413,6 +421,7 @@ public class UserServiceTest {
         // Then
         assertThat(result).isEqualTo(successFlag());
     }
+
     @DisplayName("비밀번호 찾기 테스트 - 성공, 휴면유저 테이블에 존재할 시")
     @Test
     void 비밀번호_찾기_테스트_성공_휴면_유저_테이블에_존재할_시() {
@@ -435,5 +444,116 @@ public class UserServiceTest {
 
         // Then
         assertThat(result).isEqualTo(successFlag());
+    }
+
+    @DisplayName("로그인 테스트 - 유저를 찾을 수 없음 (비밀번호를 찾을 수 없음)")
+    @Test
+    void 로그인_테스트_유저를_찾을_수_없음() {
+        // Given
+        final String inputLoginId = "diger";
+        final String password = "qwer1234!";
+        final LoginForm loginForm = new LoginForm(inputLoginId, password);
+
+        // When
+        when(userRepository.findByLoginId(loginForm.getLoginId()))
+            .thenReturn(Optional.empty());
+        when(userIsolationRepository.findByLoginId(loginForm.getLoginId()))
+            .thenReturn(Optional.empty());
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            userService.executeLogin(loginForm.getLoginId(), loginForm.getPassword());
+        });
+
+        // Then
+        assertEquals(PASSWORD_ERROR.getMessage(), exception.getMessage());
+    }
+
+    @DisplayName("로그인 테스트 - 이메일 인증을 수행하지 않음")
+    @Test
+    void 로그인_테스트_이메일_인증을_수행하지_않음() {
+        // Given
+        final String inputLoginId = "diger";
+        final String password = "qwer1234!";
+        final LoginForm loginForm = new LoginForm(inputLoginId, password);
+        final User user = User.builder()
+            .loginId(loginForm.getLoginId())
+            .password("testPassw0!rd")
+            .build();
+
+        // When
+        when(userRepository.findByLoginId(loginForm.getLoginId()))
+            .thenReturn(Optional.ofNullable(user));
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            userService.executeLogin(loginForm.getLoginId(), loginForm.getPassword());
+        });
+
+        // Then
+        assertEquals(USER_NOT_EMAIL_AUTHED.getMessage(), exception.getMessage());
+    }
+
+    @DisplayName("로그인 테스트 - 유저테이블에서 비밀번호가 일치하지 않음")
+    @Test
+    void 로그인_테스트_유저테이블에서_비밀번호가_일치하지_않음() {
+        // Given
+        final String inputLoginId = "diger";
+        final String password = "qwer1234!";
+        final LoginForm loginForm = new LoginForm(inputLoginId, password);
+        final User user = User.builder()
+            .loginId(loginForm.getLoginId())
+            .password("testPassw0!rd")
+            .restricted(false)
+            .build();
+        final ConfirmationToken confirmationToken = ConfirmationToken.builder()
+            .token("blah blah")
+            .confirmedAt(LocalDateTime.now())
+            .build();
+
+        // When
+        when(userRepository.findByLoginId(loginForm.getLoginId()))
+            .thenReturn(Optional.ofNullable(user));
+        when(confirmationTokenRepository.findByUserIdx(user.getId()))
+            .thenReturn(Optional.of(confirmationToken));
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            userService.executeLogin(loginForm.getLoginId(), loginForm.getPassword());
+        });
+
+        // Then
+        assertEquals(PASSWORD_ERROR.getMessage(), exception.getMessage());
+    }
+
+    @DisplayName("로그인 테스트 - 성공")
+    @Test
+    void 로그인_테스트_성공() {
+        // Given
+        final String inputLoginId = "diger";
+        final String inputPassword = "qwer1234!";
+        final LoginForm loginForm = new LoginForm(inputLoginId, inputPassword);
+        final User user = User.builder()
+            .loginId(loginForm.getLoginId())
+            .password(loginForm.getPassword())
+            .build();
+        final ConfirmationToken confirmationToken = ConfirmationToken.builder()
+            .token("blah blah")
+            .confirmedAt(LocalDateTime.now())
+            .build();
+
+        // When
+        when(userRepository.findByLoginId(loginForm.getLoginId()))
+            .thenReturn(Optional.ofNullable(user));
+        when(userIsolationRepository.findByLoginId(loginForm.getLoginId()))
+            .thenReturn(Optional.empty());
+        when(confirmationTokenRepository.findByUserIdx(Objects.requireNonNull(user).getId()))
+            .thenReturn(Optional.of(confirmationToken));
+        when(userService.matchPassword(loginForm.getLoginId(), loginForm.getPassword()))
+            .thenReturn(true);
+        Map<String, String> result = userService.executeLogin(
+            loginForm.getLoginId(),
+            loginForm.getPassword()
+        );
+
+        // Then
+        assertThat(result).isInstanceOf(HashMap.class);
     }
 }
