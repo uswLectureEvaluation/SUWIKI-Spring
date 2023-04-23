@@ -43,6 +43,7 @@ import usw.suwiki.domain.user.user.dto.UserRequestDto.ExamReportForm;
 import usw.suwiki.domain.user.user.dto.UserResponseDto.MyPageForm;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
+import usw.suwiki.domain.user.userIsolation.entity.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.user.userIsolation.service.UserIsolationService;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
@@ -137,9 +138,18 @@ public class UserService {
 
     public Map<String, Boolean> executeFindId(String email) {
         Optional<User> requestUser = userRepository.findByEmail(email);
+        Optional<UserIsolation> requestIsolationUser = userIsolationRepository.findByEmail(email);
         if (requestUser.isPresent()) {
-            emailSender.send(email,
-                BuildFindLoginIdForm.buildEmail(requestUser.get().getLoginId()));
+            emailSender.send(
+                email,
+                BuildFindLoginIdForm.buildEmail(requestUser.get().getLoginId())
+            );
+            return successFlag();
+        } else if (requestIsolationUser.isPresent()) {
+            emailSender.send(
+                email,
+                BuildFindLoginIdForm.buildEmail(requestIsolationUser.get().getLoginId())
+            );
             return successFlag();
         }
         throw new AccountException(USER_NOT_EXISTS);
@@ -148,14 +158,30 @@ public class UserService {
     public Map<String, Boolean> executeFindPw(String loginId, String email) {
         Optional<User> userByLoginId = userRepository.findByLoginId(loginId);
         Optional<User> userByEmail = userRepository.findByEmail(email);
+
+        Optional<UserIsolation> isolationUserByLoginId =
+            userIsolationRepository.findByLoginId(loginId);
+        Optional<UserIsolation> isolationUserByEmail =
+            userIsolationRepository.findByEmail(email);
+
         User user;
+        UserIsolation userIsolation;
+
         if (userByLoginId.equals(userByEmail) &&
             userByLoginId.isPresent() &&
-            userByEmail.isPresent())
-        {
+            userByEmail.isPresent()) {
             user = userByLoginId.get();
             emailSender.send(email, BuildFindPasswordForm.buildEmail(
                     user.updateRandomPassword(bCryptPasswordEncoder)
+                )
+            );
+            return successFlag();
+        } else if (isolationUserByLoginId.equals(isolationUserByEmail) &&
+            isolationUserByLoginId.isPresent() && isolationUserByEmail.isPresent()
+        ) {
+            userIsolation = isolationUserByEmail.get();
+            emailSender.send(email, BuildFindPasswordForm.buildEmail(
+                    userIsolation.updateRandomPassword(bCryptPasswordEncoder)
                 )
             );
             return successFlag();

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static usw.suwiki.global.exception.ErrorType.IS_NOT_EMAIL_FORM;
 import static usw.suwiki.global.exception.ErrorType.USER_AND_EMAIL_OVERLAP;
 import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
+import static usw.suwiki.global.exception.ErrorType.USER_NOT_FOUND;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapFalseFlag;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapTrueFlag;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successFlag;
@@ -36,6 +37,7 @@ import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckEmailForm;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckLoginIdForm;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.FindIdForm;
+import usw.suwiki.domain.user.user.dto.UserRequestDto.FindPasswordForm;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.JoinForm;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
@@ -315,6 +317,8 @@ public class UserServiceTest {
         // When
         when(userRepository.findByEmail(findIdForm.getEmail()))
             .thenReturn(Optional.empty());
+        when(userIsolationRepository.findByEmail(findIdForm.getEmail()))
+            .thenReturn(Optional.empty());
 
         Throwable exception = assertThrows(RuntimeException.class, () -> {
             userService.executeFindId(findIdForm.getEmail());
@@ -339,6 +343,97 @@ public class UserServiceTest {
 
         // Then
         assertThat(foundedUser.getEmail()).isEqualTo(findIdForm.getEmail());
+        assertThat(result).isEqualTo(successFlag());
+    }
+
+    @DisplayName("비밀번호 찾기 테스트 - 로그인 아이디로 해당 유저를 찾을 수 없을 때")
+    @Test
+    void 비밀번호_찾기_테스트_로그인_아이디로_해당_유저를_찾을_수_없을_때() {
+        // Given
+        final String inputLoginId = "diger";
+        final String inputEmail = "18018008@suwon.ac.kr";
+        final FindPasswordForm findPasswordForm = new FindPasswordForm(inputLoginId, inputEmail);
+
+        // When
+        when(userRepository.findByLoginId(findPasswordForm.getLoginId()))
+            .thenReturn(Optional.empty());
+        when(userIsolationRepository.findByLoginId(findPasswordForm.getLoginId()))
+            .thenReturn(Optional.empty());
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            userService.executeFindPw(findPasswordForm.getLoginId(), findPasswordForm.getEmail());
+        });
+
+        // Then
+        assertEquals(USER_NOT_FOUND.getMessage(), exception.getMessage());
+    }
+
+    @DisplayName("비밀번호 찾기 테스트 - 이메일로 해당 유저를 찾을 수 없을 때")
+    @Test
+    void 비밀번호_찾기_테스트_이메일로_해당_유저를_찾을_수_없을_때() {
+        // Given
+        final String inputLoginId = "diger";
+        final String inputEmail = "18018008@suwon.ac.kr";
+        final FindPasswordForm findPasswordForm = new FindPasswordForm(inputLoginId, inputEmail);
+
+        // When
+        when(userRepository.findByEmail(findPasswordForm.getEmail()))
+            .thenReturn(Optional.empty());
+        when(userIsolationRepository.findByEmail(findPasswordForm.getEmail()))
+            .thenReturn(Optional.empty());
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            userService.executeFindPw(findPasswordForm.getLoginId(), findPasswordForm.getEmail());
+        });
+
+        // Then
+        assertEquals(USER_NOT_FOUND.getMessage(), exception.getMessage());
+    }
+
+    @DisplayName("비밀번호 찾기 테스트 - 성공 유저 테이블에 존재할 시")
+    @Test
+    void 비밀번호_찾기_테스트_성공_유저_테이블에_존재할_시() {
+        // Given
+        final String inputLoginId = "diger";
+        final String inputEmail = "18018008@suwon.ac.kr";
+        final FindPasswordForm findPasswordForm = new FindPasswordForm(inputLoginId, inputEmail);
+        final User user = User.builder()
+            .loginId(findPasswordForm.getLoginId())
+            .email(findPasswordForm.getEmail())
+            .build();
+
+        // When
+        when(userRepository.findByLoginId(findPasswordForm.getLoginId()))
+            .thenReturn(Optional.ofNullable(user));
+        when(userRepository.findByEmail(findPasswordForm.getEmail()))
+            .thenReturn(Optional.ofNullable(user));
+
+        Map<String, Boolean> result = userService.executeFindPw(inputLoginId, inputEmail);
+
+        // Then
+        assertThat(result).isEqualTo(successFlag());
+    }
+    @DisplayName("비밀번호 찾기 테스트 - 성공, 휴면유저 테이블에 존재할 시")
+    @Test
+    void 비밀번호_찾기_테스트_성공_휴면_유저_테이블에_존재할_시() {
+        // Given
+        final String inputLoginId = "diger";
+        final String inputEmail = "18018008@suwon.ac.kr";
+        final FindPasswordForm findPasswordForm = new FindPasswordForm(inputLoginId, inputEmail);
+        final UserIsolation userIsolation = UserIsolation.builder()
+            .loginId(findPasswordForm.getLoginId())
+            .email(findPasswordForm.getEmail())
+            .build();
+
+        // When
+        when(userIsolationRepository.findByLoginId(findPasswordForm.getLoginId()))
+            .thenReturn(Optional.ofNullable(userIsolation));
+        when(userIsolationRepository.findByEmail(findPasswordForm.getEmail()))
+            .thenReturn(Optional.ofNullable(userIsolation));
+
+        Map<String, Boolean> result = userService.executeFindPw(inputLoginId, inputEmail);
+
+        // Then
         assertThat(result).isEqualTo(successFlag());
     }
 }

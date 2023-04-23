@@ -38,6 +38,7 @@ public class UserRequestDto {
 
     @Getter
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class FindPasswordForm {
 
         @NotEmpty

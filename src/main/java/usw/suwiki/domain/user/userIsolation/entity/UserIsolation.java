@@ -1,5 +1,7 @@
 package usw.suwiki.domain.user.userIsolation.entity;
 
+import static usw.suwiki.global.util.passwordfactory.PasswordRandomizer.randomizePassword;
+
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,5 +42,11 @@ public class UserIsolation {
         String inputPassword
     ) {
         return this.password.equals(inputPassword);
+    }
+
+    public String updateRandomPassword(BCryptPasswordEncoder bCryptPasswordEncoder) {
+        String generatedPassword = randomizePassword();
+        this.password = bCryptPasswordEncoder.encode(generatedPassword);
+        return generatedPassword;
     }
 }
