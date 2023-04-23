@@ -2,8 +2,9 @@ package usw.suwiki.domain.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapFalseFlag;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapTrueFlag;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +27,7 @@ import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.postreport.service.PostReportService;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
+import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckEmailForm;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckLoginIdForm;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
@@ -99,7 +101,7 @@ public class UserServiceTest {
     @Test
     public void 아이디_중복_확인_테스트_중복일_시() {
         // Given
-        final String inputLoginId = "kim";
+        final String inputLoginId = "diger";
         final CheckLoginIdForm checkLoginIdForm = new CheckLoginIdForm(inputLoginId);
         final User user = User.builder().loginId(inputLoginId).build();
 
@@ -109,19 +111,15 @@ public class UserServiceTest {
         Map<String, Boolean> result = userService.executeCheckId(inputLoginId);
 
         // Then
-        assertThat(user.getLoginId()).isEqualTo(inputLoginId);
-        assertThat(result).isEqualTo(new HashMap<>() {{
-            put("overlap", true);
-        }});
+        assertThat(result).isEqualTo(overlapTrueFlag());
     }
 
     @DisplayName("아이디 중복 확인 테스트 - 중복이 아닐 시")
     @Test
     public void 아이디_중복_확인_테스트_중복이_아닐_시() {
         // Given
-        final String inputLoginId = "kim";
+        final String inputLoginId = "diger";
         final CheckLoginIdForm checkLoginIdForm = new CheckLoginIdForm(inputLoginId);
-        final User user = User.builder().loginId(inputLoginId).build();
 
         // When
         when(userRepository.findByLoginId(checkLoginIdForm.getLoginId()))
@@ -129,9 +127,39 @@ public class UserServiceTest {
         Map<String, Boolean> result = userService.executeCheckId(inputLoginId);
 
         // Then
-        assertThat(user.getLoginId()).isNotEqualTo(checkLoginIdForm.getLoginId());
-        assertThat(result).isEqualTo(new HashMap<>() {{
-            put("overlap", favoriteMajorService);
-        }});
+        assertThat(result).isEqualTo(overlapFalseFlag());
+    }
+
+    @DisplayName("이메일 중복 확인 테스트 - 중복일 시")
+    @Test
+    public void 이메일_중복_확인_테스트_중복일_시() {
+        // Given
+        final String inputEmail = "18018008@suwon.ac.kr";
+        final CheckEmailForm checkEmailForm = new CheckEmailForm(inputEmail);
+        final User user = User.builder().email(inputEmail).build();
+
+        // When
+        when(userRepository.findByEmail(checkEmailForm.getEmail()))
+            .thenReturn(Optional.ofNullable(user));
+        Map<String, Boolean> result = userService.executeCheckEmail(inputEmail);
+
+        // Then
+        assertThat(result).isEqualTo(overlapTrueFlag());
+    }
+
+    @DisplayName("이메일 중복 확인 테스트 - 중복이 아닐 시")
+    @Test
+    public void 이메일_중복_확인_테스트_중복이_아닐_시() {
+        // Given
+        final String inputEmail = "18018008@suwon.ac.kr";
+        final CheckEmailForm checkEmailForm = new CheckEmailForm(inputEmail);
+
+        // When
+        when(userRepository.findByEmail(checkEmailForm.getEmail()))
+            .thenReturn(Optional.empty());
+        Map<String, Boolean> result = userService.executeCheckEmail(inputEmail);
+
+        // Then
+        assertThat(result).isEqualTo(overlapFalseFlag());
     }
 }
