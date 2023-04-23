@@ -50,7 +50,12 @@ public class UserRequestDto {
     @Getter
     @NoArgsConstructor
     public static class CheckLoginIdForm {
+
         private String loginId;
+
+        public CheckLoginIdForm(String loginId) {
+            this.loginId = loginId;
+        }
     }
 
     @Getter
