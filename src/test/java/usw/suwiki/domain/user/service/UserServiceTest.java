@@ -1,9 +1,14 @@
 package usw.suwiki.domain.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+import static usw.suwiki.global.exception.ErrorType.IS_NOT_EMAIL_FORM;
+import static usw.suwiki.global.exception.ErrorType.USER_AND_EMAIL_OVERLAP;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapFalseFlag;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapTrueFlag;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successFlag;
 
 import java.util.Map;
 import java.util.Optional;
@@ -29,9 +34,11 @@ import usw.suwiki.domain.postreport.service.PostReportService;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckEmailForm;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckLoginIdForm;
+import usw.suwiki.domain.user.user.dto.UserRequestDto.JoinForm;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.user.service.UserService;
+import usw.suwiki.domain.user.userIsolation.entity.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.user.userIsolation.service.UserIsolationService;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
@@ -161,5 +168,138 @@ public class UserServiceTest {
 
         // Then
         assertThat(result).isEqualTo(overlapFalseFlag());
+    }
+
+    @DisplayName("회원 가입 테스트 - 학교 이메일 형식과 다를 경우")
+    @Test
+    void 회원_가입_테스트_학교_이메일_형식과_다를_경우() {
+        // Given
+        final String inputEmail = "18018008@gmail.com";
+        final String inputLoginId = "diger";
+        final String inputPassword = "qwer1234!";
+        final JoinForm joinForm = new JoinForm(inputLoginId, inputPassword, inputEmail);
+
+        // When
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            userService.executeJoin(
+                joinForm.getLoginId(),
+                joinForm.getPassword(),
+                joinForm.getEmail());
+        });
+
+        // Then
+        assertEquals(IS_NOT_EMAIL_FORM.getMessage(), exception.getMessage());
+    }
+
+    @DisplayName("회원 가입 테스트 - 아이디 중복일 시(일반 유저 테이블)")
+    @Test
+    void 회원_가입_테스트_아이디_중복일_시() {
+        // Given
+        final String inputEmail = "18018008@gmail.com";
+        final String inputLoginId = "diger";
+        final String inputPassword = "qwer1234!";
+        final JoinForm joinForm = new JoinForm(inputLoginId, inputPassword, inputEmail);
+
+        // When
+        when(userRepository.findByLoginId(joinForm.getLoginId()))
+            .thenReturn(Optional.of(new User()));
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            userService.executeJoin(
+                joinForm.getLoginId(),
+                joinForm.getPassword(),
+                joinForm.getEmail());
+        });
+        // Then
+        assertEquals(USER_AND_EMAIL_OVERLAP.getMessage(), exception.getMessage());
+    }
+
+    @DisplayName("회원 가입 테스트 - 아이디 중복일 시(휴면 유저 테이블)")
+    @Test
+    void 회원_가입_테스트_아이디_중복일_시_휴면_유저테이블에서_중복() {
+        // Given
+        final String inputEmail = "18018008@gmail.com";
+        final String inputLoginId = "diger";
+        final String inputPassword = "qwer1234!";
+        final JoinForm joinForm = new JoinForm(inputLoginId, inputPassword, inputEmail);
+
+        // When
+        when(userIsolationRepository.findByLoginId(joinForm.getLoginId()))
+            .thenReturn(Optional.of(new UserIsolation()));
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            userService.executeJoin(
+                joinForm.getLoginId(),
+                joinForm.getPassword(),
+                joinForm.getEmail());
+        });
+        // Then
+        assertEquals(USER_AND_EMAIL_OVERLAP.getMessage(), exception.getMessage());
+    }
+
+    @DisplayName("회원 가입 테스트 - 이메일 중복일 시(일반 유저 테이블)")
+    @Test
+    void 회원_가입_테스트_이메일_중복일_시() {
+        // Given
+        final String inputEmail = "18018008@gmail.com";
+        final String inputLoginId = "diger";
+        final String inputPassword = "qwer1234!";
+        final JoinForm joinForm = new JoinForm(inputLoginId, inputPassword, inputEmail);
+
+        // When
+        when(userRepository.findByEmail(joinForm.getEmail()))
+            .thenReturn(Optional.of(new User()));
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            userService.executeJoin(
+                joinForm.getLoginId(),
+                joinForm.getPassword(),
+                joinForm.getEmail());
+        });
+        // Then
+        assertEquals(USER_AND_EMAIL_OVERLAP.getMessage(), exception.getMessage());
+    }
+
+    @DisplayName("회원 가입 테스트 - 이메일 중복일 시(휴면 유저 테이블)")
+    @Test
+    void 회원_가입_테스트_이메일_중복일_시_휴면_유저테이블에서_중복() {
+        // Given
+        final String inputEmail = "18018008@gmail.com";
+        final String inputLoginId = "diger";
+        final String inputPassword = "qwer1234!";
+        final JoinForm joinForm = new JoinForm(inputLoginId, inputPassword, inputEmail);
+
+        // When
+        when(userIsolationRepository.findByEmail(joinForm.getEmail()))
+            .thenReturn(Optional.of(new UserIsolation()));
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            userService.executeJoin(
+                joinForm.getLoginId(),
+                joinForm.getPassword(),
+                joinForm.getEmail());
+        });
+        // Then
+        assertEquals(USER_AND_EMAIL_OVERLAP.getMessage(), exception.getMessage());
+    }
+
+    @DisplayName("회원 가입 테스트 - 회원가입 성공")
+    @Test
+    public void 회원_가입_테스트_회원가입_성공() {
+        // Given
+        final String inputEmail = "18018008@suwon.ac.kr";
+        final String inputLoginId = "diger";
+        final String inputPassword = "qwer1234!";
+        final JoinForm joinForm = new JoinForm(inputLoginId, inputPassword, inputEmail);
+
+        // When
+        Map<String, Boolean> result = userService.executeJoin(
+            joinForm.getLoginId(),
+            joinForm.getPassword(),
+            joinForm.getEmail()
+        );
+
+        // Then
+        assertThat(result).isEqualTo(successFlag());
     }
 }

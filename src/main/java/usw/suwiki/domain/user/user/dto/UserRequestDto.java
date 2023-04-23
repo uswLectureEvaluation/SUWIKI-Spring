@@ -1,6 +1,7 @@
 package usw.suwiki.domain.user.user.dto;
 
 import javax.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ public class UserRequestDto {
 
     @Getter
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class JoinForm {
 
         private String loginId;
