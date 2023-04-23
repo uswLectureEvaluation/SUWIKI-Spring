@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static usw.suwiki.global.exception.ErrorType.IS_NOT_EMAIL_FORM;
 import static usw.suwiki.global.exception.ErrorType.USER_AND_EMAIL_OVERLAP;
+import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapFalseFlag;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapTrueFlag;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successFlag;
@@ -34,6 +35,7 @@ import usw.suwiki.domain.postreport.service.PostReportService;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckEmailForm;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckLoginIdForm;
+import usw.suwiki.domain.user.user.dto.UserRequestDto.FindIdForm;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.JoinForm;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
@@ -300,6 +302,43 @@ public class UserServiceTest {
         );
 
         // Then
+        assertThat(result).isEqualTo(successFlag());
+    }
+
+    @DisplayName("아이디 찾기 테스트 - 해당 이메일로 아이디를 찾을 수 없을 때")
+    @Test
+    void 아이디_찾기_테스트_해당_이메일로_아이디를_찾을_수_없을_때() {
+        // Given
+        final String inputEmail = "18018008@gmail.com";
+        final FindIdForm findIdForm = new FindIdForm(inputEmail);
+
+        // When
+        when(userRepository.findByEmail(findIdForm.getEmail()))
+            .thenReturn(Optional.empty());
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            userService.executeFindId(findIdForm.getEmail());
+        });
+
+        // Then
+        assertEquals(USER_NOT_EXISTS.getMessage(), exception.getMessage());
+    }
+
+    @DisplayName("아이디 찾기 테스트 - 성공")
+    @Test
+    void 아이디_찾기_테스트_성공() {
+        // Given
+        final String inputEmail = "18018008@suwon.ac.kr";
+        final FindIdForm findIdForm = new FindIdForm(inputEmail);
+        final User foundedUser = User.builder().email(findIdForm.getEmail()).build();
+
+        // When
+        when(userRepository.findByEmail(findIdForm.getEmail()))
+            .thenReturn(Optional.of(foundedUser));
+        Map<String, Boolean> result = userService.executeFindId(findIdForm.getEmail());
+
+        // Then
+        assertThat(foundedUser.getEmail()).isEqualTo(findIdForm.getEmail());
         assertThat(result).isEqualTo(successFlag());
     }
 }
