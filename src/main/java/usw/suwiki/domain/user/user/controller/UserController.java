@@ -153,7 +153,7 @@ public class UserController {
             loginForm.getPassword()
         );
         Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
-        refreshCookie.setMaxAge(14 * 24 * 60 * 60); // expires in 14 days
+        refreshCookie.setMaxAge(270 * 24 * 60 * 60); // expires in 14 days
         refreshCookie.setSecure(true);
         refreshCookie.setHttpOnly(true);
         response.addCookie(refreshCookie);
