@@ -65,7 +65,7 @@ public class JwtResolver {
             }
             return refreshToken.getPayload();
         }
-        return jwtProvider.createRefreshToken();
+        return jwtProvider.createRefreshToken(user);
     }
 
     @Transactional
