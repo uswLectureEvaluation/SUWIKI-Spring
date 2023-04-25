@@ -1,7 +1,7 @@
 package usw.suwiki.domain.user.userIsolation.service;
 
-import static usw.suwiki.global.exception.ErrorType.PASSWORD_ERROR;
-import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
+import static usw.suwiki.global.exception.ExceptionType.PASSWORD_ERROR;
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
 
 import java.time.LocalDateTime;
 import java.util.List;

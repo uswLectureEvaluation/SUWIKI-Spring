@@ -1,10 +1,10 @@
 package usw.suwiki.global.exception.errortype;
 
-import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.ExceptionType;
 
 public class TokenException extends BaseException {
 
-    public TokenException(ErrorType errorType) {
-        super(errorType);
+    public TokenException(ExceptionType exceptionType) {
+        super(exceptionType);
     }
 }

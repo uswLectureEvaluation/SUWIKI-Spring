@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorType {
+public enum ExceptionType {
 
     // Internal Serer Error
     SERVER_ERROR("SERVER001", "서버 오류 입니다. 관리자에게 문의해주세요", HttpStatus.INTERNAL_SERVER_ERROR),
@@ -26,6 +26,7 @@ public enum ErrorType {
     IS_NOT_EMAIL_FORM("USER007", "올바른 이메일 형식이 아닙니다.", HttpStatus.BAD_REQUEST),
     USER_AND_EMAIL_NOT_EXISTS_AND_AUTH("USER0010", "아이디 혹은 이메일이 존재하지 않거나, 이메일 인증을 받지 않은 사용자 입니다.", HttpStatus.BAD_REQUEST),
     USER_RESTRICTED("USER011", "접근 권한이 없는 사용자 입니다. 관리자에게 문의하세요.", HttpStatus.FORBIDDEN), //403
+    LOGIN_REQUIRED("USER011", "로그인이 필요합니다.", HttpStatus.FORBIDDEN), //403
     USER_AND_EMAIL_OVERLAP("USER012", "아이디 혹은 이메일이 중복됩니다.", HttpStatus.BAD_REQUEST),
 
     YOU_ARE_IN_BLACKLIST("USER016", "블랙리스트 대상입니다. 이용할 수 없습니다.", HttpStatus.FORBIDDEN),
@@ -61,8 +62,6 @@ public enum ErrorType {
     // Security 401 Error
     UNAUTHENTICATED("SECURITY001", "로그인이 필요한 기능입니다.", HttpStatus.UNAUTHORIZED), //401
     LOGIN_FAILED("SECURITY003", "로그인에 실패했습니다. ID, PASSWORD 를 확인해주세요.", HttpStatus.UNAUTHORIZED),
-    LOGIN_REQUIRED("SECURITY004", "세션이 만료되었습니다. 다시 로그인 하세요.", HttpStatus.UNAUTHORIZED),
-
     // Param
     PARAM_VALID_ERROR("PARAM001", "Exception Message", HttpStatus.BAD_REQUEST),
 

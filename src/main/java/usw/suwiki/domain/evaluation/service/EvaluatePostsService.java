@@ -15,7 +15,7 @@ import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.global.PageOption;
-import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
 
 import javax.transaction.Transactional;
@@ -34,9 +34,9 @@ public class EvaluatePostsService {
         EvaluatePosts posts = new EvaluatePosts(evaluatePostsSaveDto);
         Lecture lecture = lectureService.findById(lectureId);
         User user = userRepository.findById(userIdx)
-                .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
+                .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
         if (lecture == null) {
-            throw new AccountException(ErrorType.NOT_EXISTS_LECTURE);
+            throw new AccountException(ExceptionType.NOT_EXISTS_LECTURE);
         }
         posts.setLecture(lecture);
         posts.setUser(user);
@@ -83,7 +83,7 @@ public class EvaluatePostsService {
     public boolean verifyIsUserWriteEvaluatePost(Long userIdx, Long lectureId) {
         Lecture lecture = lectureService.findById(lectureId);
         User user = userRepository.findById(userIdx)
-                .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
+                .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
         ;
         return evaluatePostsRepository.verifyPostsByIdx(user, lecture);
     }
@@ -114,7 +114,7 @@ public class EvaluatePostsService {
     public void deleteById(Long evaluateIdx, Long userIdx) {
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         User user = userRepository.findById(userIdx)
-                .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
+                .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
 
         EvaluatePostsToLecture lectureEvaluation = new EvaluatePostsToLecture(posts);
         lectureService.updateLectureEvaluationIfDeletePost(lectureEvaluation);

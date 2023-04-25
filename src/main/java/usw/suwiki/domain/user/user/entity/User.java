@@ -1,7 +1,7 @@
 package usw.suwiki.domain.user.user.entity;
 
-import static usw.suwiki.global.exception.ErrorType.USER_NOT_EMAIL_AUTHED;
-import static usw.suwiki.global.exception.ErrorType.USER_POINT_LACK;
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EMAIL_AUTHED;
+import static usw.suwiki.global.exception.ExceptionType.USER_POINT_LACK;
 import static usw.suwiki.global.util.passwordfactory.PasswordRandomizer.randomizePassword;
 
 import java.time.LocalDateTime;

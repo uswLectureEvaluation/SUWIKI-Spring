@@ -1,15 +1,15 @@
 package usw.suwiki.global.exception.errortype;
 
 import lombok.Getter;
-import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.ExceptionType;
 
 public class BaseException extends RuntimeException {
 
     @Getter
-    private ErrorType errorType;
+    private ExceptionType exceptionType;
 
-    public BaseException(ErrorType errorType) {
-        super(errorType.getMessage());
-        this.errorType = errorType;
+    public BaseException(ExceptionType exceptionType) {
+        super(exceptionType.getMessage());
+        this.exceptionType = exceptionType;
     }
 }

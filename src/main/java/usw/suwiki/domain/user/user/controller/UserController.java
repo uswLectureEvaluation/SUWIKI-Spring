@@ -41,7 +41,7 @@ import usw.suwiki.domain.user.user.service.UserReportService;
 import usw.suwiki.domain.user.user.service.UserService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
-import usw.suwiki.global.jwt.JwtTokenResolver;
+import usw.suwiki.global.jwt.JwtResolver;
 
 @RestController
 @RequestMapping("/user")
@@ -53,7 +53,7 @@ public class UserController {
     private final UserReportService userReportService;
     private final UserFavoriteMajorService userFavoriteMajorService;
     private final UserLoadRestrictAndBlackListReasonService userLoadRestrictAndBlackListReasonService;
-    private final JwtTokenResolver jwtTokenResolver;
+    private final JwtResolver jwtResolver;
 
     //아이디 중복확인
     @ResponseStatus(OK)
@@ -123,7 +123,7 @@ public class UserController {
         @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
         @RequestHeader String Authorization) {
         return userService.executeEditPassword(
-            userService.loadUserFromUserIdx(jwtTokenResolver.getId(Authorization)),
+            userService.loadUserFromUserIdx(jwtResolver.getId(Authorization)),
             editMyPasswordForm.getPrePassword(),
             editMyPasswordForm.getNewPassword());
     }
@@ -209,7 +209,8 @@ public class UserController {
     @ApiLogger(option = "user")
     @PostMapping("/refresh")
     public Map<String, String> tokenRefresh(
-        @Valid @RequestHeader String Authorization) {
+        @Valid @RequestHeader String Authorization
+    ) {
         return userService.executeJWTRefreshForMobileClient(Authorization);
     }
 

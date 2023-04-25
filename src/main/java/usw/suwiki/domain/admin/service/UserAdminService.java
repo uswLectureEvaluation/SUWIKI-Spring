@@ -1,8 +1,8 @@
 package usw.suwiki.domain.admin.service;
 
-import static usw.suwiki.global.exception.ErrorType.SERVER_ERROR;
-import static usw.suwiki.global.exception.ErrorType.USER_ALREADY_BLACKLISTED;
-import static usw.suwiki.global.exception.ErrorType.USER_RESTRICTED;
+import static usw.suwiki.global.exception.ExceptionType.SERVER_ERROR;
+import static usw.suwiki.global.exception.ExceptionType.USER_ALREADY_BLACKLISTED;
+import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -26,11 +26,11 @@ import usw.suwiki.domain.user.user.dto.UserRequestDto;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.user.service.UserService;
-import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.jwt.JwtTokenProvider;
-import usw.suwiki.global.jwt.JwtTokenResolver;
-import usw.suwiki.global.jwt.JwtTokenValidator;
+import usw.suwiki.global.jwt.JwtProvider;
+import usw.suwiki.global.jwt.JwtResolver;
+import usw.suwiki.global.jwt.JwtValidator;
 
 @Service
 @Transactional
@@ -46,15 +46,15 @@ public class UserAdminService {
     private final ExamPostsService examPostsService;
     private final EvaluateReportRepository evaluateReportRepository;
     private final ExamReportRepository examReportRepository;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final JwtTokenValidator jwtTokenValidator;
-    private final JwtTokenResolver jwtTokenResolver;
+    private final JwtProvider jwtProvider;
+    private final JwtValidator jwtValidator;
+    private final JwtResolver jwtResolver;
     private final UserRepository userRepository;
 
     // 관리자 권한 검증
     public void executeValidateAdmin(String authorization) {
-        jwtTokenValidator.validateAccessToken(authorization);
-        if (!jwtTokenResolver.getUserRole(authorization).equals("ADMIN")) {
+        jwtValidator.validateJwt(authorization);
+        if (!jwtResolver.getUserRole(authorization).equals("ADMIN")) {
             throw new AccountException(USER_RESTRICTED);
         }
     }
@@ -63,14 +63,14 @@ public class UserAdminService {
     public Map<String, String> adminLogin(UserRequestDto.LoginForm loginForm) {
         if (userService.matchPassword(loginForm.getLoginId(), loginForm.getPassword())) {
             User user = userService.loadUserFromLoginId(loginForm.getLoginId());
-            String accessToken = jwtTokenProvider.createAccessToken(user);
+            String accessToken = jwtProvider.createAccessToken(user);
             int userCount = userRepository.findAll().size();
             return new HashMap<>() {{
                 put("AccessToken", accessToken);
                 put("UserCount", String.valueOf(userCount));
             }};
         }
-        throw new AccountException(ErrorType.PASSWORD_ERROR);
+        throw new AccountException(ExceptionType.PASSWORD_ERROR);
     }
 
     // 블랙리스트 추가
