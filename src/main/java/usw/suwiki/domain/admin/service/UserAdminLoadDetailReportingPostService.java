@@ -9,7 +9,7 @@ import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.global.exception.errortype.AccountException;
 
-import static usw.suwiki.global.exception.ErrorType.SERVER_ERROR;
+import static usw.suwiki.global.exception.ExceptionType.SERVER_ERROR;
 
 @Service
 @RequiredArgsConstructor

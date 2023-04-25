@@ -10,7 +10,7 @@ import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.viewExam.dto.PurchaseHistoryDto;
 import usw.suwiki.domain.viewExam.entity.ViewExam;
-import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
 
 import java.util.ArrayList;
@@ -27,9 +27,9 @@ public class ViewExamService {
 
     public void save(Long lectureId, Long userIdx) {
         User user = userRepository.findById(userIdx)
-                .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
+                .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
         if (user.getPoint() < 20) {
-            throw new AccountException(ErrorType.USER_POINT_LACK);
+            throw new AccountException(ExceptionType.USER_POINT_LACK);
         }
         Lecture lecture = lectureService.findById(lectureId);
         userRepository.updateViewExamCount(user.getId(), user.getViewExamCount() + 1);

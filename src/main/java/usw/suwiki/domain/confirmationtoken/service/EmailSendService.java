@@ -10,7 +10,7 @@ import usw.suwiki.global.exception.errortype.MailException;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import static usw.suwiki.global.exception.ErrorType.SEND_MAIL_FAILED;
+import static usw.suwiki.global.exception.ExceptionType.SEND_MAIL_FAILED;
 
 @Service
 @AllArgsConstructor

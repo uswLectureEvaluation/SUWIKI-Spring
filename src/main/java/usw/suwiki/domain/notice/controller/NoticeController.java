@@ -23,10 +23,10 @@ import usw.suwiki.domain.notice.service.NoticeService;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
-import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.jwt.JwtTokenResolver;
-import usw.suwiki.global.jwt.JwtTokenValidator;
+import usw.suwiki.global.jwt.JwtResolver;
+import usw.suwiki.global.jwt.JwtValidator;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,59 +35,61 @@ import usw.suwiki.global.jwt.JwtTokenValidator;
 public class NoticeController {
 
     private final NoticeService noticeService;
-    private final JwtTokenValidator jwtTokenValidator;
-    private final JwtTokenResolver jwtTokenResolver;
+    private final JwtValidator jwtValidator;
+    private final JwtResolver jwtResolver;
 
     @ApiLogger(option = "notice")
     @GetMapping("/all")
     public ResponseEntity<ResponseForm> findNoticeList(
-        @RequestParam(required = false) Optional<Integer> page) {
+        @RequestParam(required = false) Optional<Integer> page
+    ) {
         HttpHeaders header = new HttpHeaders();
         List<NoticeResponseDto> list = noticeService.findNoticeList(new PageOption(page));
         ResponseForm data = new ResponseForm(list);
-        return new ResponseEntity<ResponseForm>(data, header, HttpStatus.valueOf(200));
+        return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
     }
 
     @ApiLogger(option = "notice")
     @GetMapping("/")
-    public ResponseEntity<ResponseForm> findNoticeByNoticeId(@RequestParam Long noticeId) {
+    public ResponseEntity<ResponseForm> findNoticeByNoticeId(
+        @RequestParam Long noticeId
+    ) {
         HttpHeaders header = new HttpHeaders();
         NoticeDetailResponseDto dto = noticeService.findNoticeDetail(noticeId);
         ResponseForm data = new ResponseForm(dto);
-        return new ResponseEntity<ResponseForm>(data, header, HttpStatus.valueOf(200));
+        return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
     }
 
     @ApiLogger(option = "notice")
     @PostMapping("/")
-    public ResponseEntity<String> saveNotice(@RequestBody NoticeSaveOrUpdateDto dto,
-        @RequestHeader String Authorization) {
+    public ResponseEntity<String> saveNotice(
+        @RequestBody NoticeSaveOrUpdateDto dto,
+        @RequestHeader String Authorization
+    ) {
         HttpHeaders header = new HttpHeaders();
-        if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) {
-                noticeService.save(dto);
-                return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
-            } else {
-                throw new AccountException(ErrorType.USER_RESTRICTED);
-            }
+        jwtValidator.validateJwt(Authorization);
+        if (jwtResolver.getUserRole(Authorization).equals("ADMIN")) {
+            noticeService.save(dto);
+            return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
         } else {
-            throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+            throw new AccountException(ExceptionType.USER_RESTRICTED);
         }
     }
 
     @ApiLogger(option = "notice")
     @PutMapping("/")
-    public ResponseEntity<String> updateNotice(@RequestParam Long noticeId,
-        @RequestBody NoticeSaveOrUpdateDto dto, @RequestHeader String Authorization) {
+    public ResponseEntity<String> updateNotice(
+        @RequestParam Long noticeId,
+        @RequestBody NoticeSaveOrUpdateDto dto,
+        @RequestHeader String Authorization
+    ) {
         HttpHeaders header = new HttpHeaders();
-        if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) {
-                noticeService.update(dto, noticeId);
-                return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
-            } else {
-                throw new AccountException(ErrorType.USER_RESTRICTED);
-            }
+        jwtValidator.validateJwt(Authorization);
+        if (jwtResolver.getUserRole(Authorization).equals("ADMIN")) {
+            noticeService.update(dto, noticeId);
+            return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
         } else {
-            throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+            throw new AccountException(ExceptionType.USER_RESTRICTED);
         }
     }
 
@@ -96,15 +98,12 @@ public class NoticeController {
     public ResponseEntity<String> deleteNotice(@RequestParam Long noticeId,
         @RequestHeader String Authorization) {
         HttpHeaders header = new HttpHeaders();
-        if (jwtTokenValidator.validateAccessToken(Authorization)) {
-            if (jwtTokenResolver.getUserRole(Authorization).equals("ADMIN")) {
-                noticeService.delete(noticeId);
-                return new ResponseEntity<String>("success", header, HttpStatus.valueOf(200));
-            } else {
-                throw new AccountException(ErrorType.USER_RESTRICTED);
-            }
+        jwtValidator.validateJwt(Authorization);
+        if (jwtResolver.getUserRole(Authorization).equals("ADMIN")) {
+            noticeService.delete(noticeId);
+            return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
         } else {
-            throw new AccountException(ErrorType.TOKEN_IS_NOT_FOUND);
+            throw new AccountException(ExceptionType.USER_RESTRICTED);
         }
     }
 }

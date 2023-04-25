@@ -3,13 +3,10 @@ package usw.suwiki.domain.lecture.domain.repository;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.controller.dto.LecturesAndCountDto;
-import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.exception.ErrorType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -66,7 +63,7 @@ public class JpaLectureRepository implements LectureRepository {
         Integer page = initializePageNumber(option.getPageNumber());
 
         // if (!Arrays.asList(orderOptions).contains(orderOption)) {
-        //     throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
+        //     throw new AccountException(ExceptionType.INVALID_ORDER_OPTION);
         // }
 
         String query = String.format("SELECT l FROM Lecture l "
@@ -98,7 +95,7 @@ public class JpaLectureRepository implements LectureRepository {
         Integer page = initializePageNumber(option.getPageNumber());
 
         // if (!Arrays.asList(orderOptions).contains(orderOption)) {
-        //     throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
+        //     throw new AccountException(ExceptionType.INVALID_ORDER_OPTION);
         // }
 
         String query = String.format("SELECT l FROM Lecture l "
@@ -122,7 +119,7 @@ public class JpaLectureRepository implements LectureRepository {
         Integer page = initializePageNumber(option.getPageNumber());
 
         // if (!Arrays.asList(orderOptions).contains(orderOption)) {
-        //     throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
+        //     throw new AccountException(ExceptionType.INVALID_ORDER_OPTION);
         // }
 
         String majorType = option.getMajorType();
@@ -156,7 +153,7 @@ public class JpaLectureRepository implements LectureRepository {
         Integer page = initializePageNumber(option.getPageNumber());
 
         // if (!Arrays.asList(orderOptions).contains(orderOption)) {
-        //     throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
+        //     throw new AccountException(ExceptionType.INVALID_ORDER_OPTION);
         // }
 
         String majorType = option.getMajorType();

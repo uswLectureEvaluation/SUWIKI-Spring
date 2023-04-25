@@ -1,12 +1,12 @@
 package usw.suwiki.domain.user.user.service;
 
-import static usw.suwiki.global.exception.ErrorType.IS_NOT_EMAIL_FORM;
-import static usw.suwiki.global.exception.ErrorType.PASSWORD_ERROR;
-import static usw.suwiki.global.exception.ErrorType.PASSWORD_NOT_CHANGED;
-import static usw.suwiki.global.exception.ErrorType.USER_AND_EMAIL_OVERLAP;
-import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
-import static usw.suwiki.global.exception.ErrorType.USER_NOT_FOUND;
-import static usw.suwiki.global.exception.ErrorType.USER_RESTRICTED;
+import static usw.suwiki.global.exception.ExceptionType.IS_NOT_EMAIL_FORM;
+import static usw.suwiki.global.exception.ExceptionType.LOGIN_REQUIRED;
+import static usw.suwiki.global.exception.ExceptionType.PASSWORD_ERROR;
+import static usw.suwiki.global.exception.ExceptionType.PASSWORD_NOT_CHANGED;
+import static usw.suwiki.global.exception.ExceptionType.USER_AND_EMAIL_OVERLAP;
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_FOUND;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapFalseFlag;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapTrueFlag;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successFlag;
@@ -48,9 +48,9 @@ import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.user.userIsolation.service.UserIsolationService;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
 import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.jwt.JwtTokenProvider;
-import usw.suwiki.global.jwt.JwtTokenResolver;
-import usw.suwiki.global.jwt.JwtTokenValidator;
+import usw.suwiki.global.jwt.JwtProvider;
+import usw.suwiki.global.jwt.JwtResolver;
+import usw.suwiki.global.jwt.JwtValidator;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
 import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
 import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
@@ -76,9 +76,9 @@ public class UserService {
     private final BuildFindLoginIdForm BuildFindLoginIdForm;
     private final BuildFindPasswordForm BuildFindPasswordForm;
     private final BlackListService blackListService;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final JwtTokenValidator jwtTokenValidator;
-    private final JwtTokenResolver jwtTokenResolver;
+    private final JwtProvider jwtProvider;
+    private final JwtValidator jwtValidator;
+    private final JwtResolver jwtResolver;
     private final UserIsolationService userIsolationService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final FavoriteMajorService favoriteMajorService;
@@ -199,10 +199,11 @@ public class UserService {
             );
             if (matchPassword(loginId, inputPassword)) {
                 tokenPair.put(
-                    "AccessToken", jwtTokenProvider.createAccessToken(notSleepingUser)
+                    "AccessToken", jwtProvider.createAccessToken(notSleepingUser)
                 );
                 tokenPair.put(
-                    "RefreshToken", jwtTokenResolver.refreshTokenUpdateOrCreate(notSleepingUser)
+                    "RefreshToken",
+                    jwtResolver.judgementRefreshTokenCreateOrUpdateInLogin(notSleepingUser)
                 );
                 notSleepingUser.updateLastLoginDate();
                 return tokenPair;
@@ -211,10 +212,10 @@ public class UserService {
             userRepository.findByLoginId(loginId).isEmpty()) {
             User sleepingUser = userIsolationService.sleepingUserLogin(loginId, inputPassword);
             tokenPair.put(
-                "AccessToken", jwtTokenProvider.createAccessToken(sleepingUser)
+                "AccessToken", jwtProvider.createAccessToken(sleepingUser)
             );
             tokenPair.put(
-                "RefreshToken", jwtTokenResolver.refreshTokenUpdateOrCreate(sleepingUser)
+                "RefreshToken", jwtResolver.judgementRefreshTokenCreateOrUpdateInLogin(sleepingUser)
             );
             sleepingUser.updateLastLoginDate();
             return tokenPair;
@@ -234,7 +235,7 @@ public class UserService {
     }
 
     public MyPageForm executeLoadMyPage(String Authorization) {
-        Long userIdx = jwtTokenResolver.getId(Authorization);
+        Long userIdx = jwtResolver.getId(Authorization);
         User user = loadUserFromUserIdx(userIdx);
         return MyPageForm.builder()
             .loginId(user.getLoginId())
@@ -249,31 +250,33 @@ public class UserService {
     public Map<String, String> executeJWTRefreshForWebClient(Cookie requestRefreshCookie) {
         String refreshToken = requestRefreshCookie.getValue();
         if (refreshTokenRepository.findByPayload(refreshToken).isEmpty()) {
-            throw new AccountException(USER_RESTRICTED);
+            throw new AccountException(LOGIN_REQUIRED);
         }
         Long userIdx = refreshTokenRepository.findByPayload(refreshToken).get().getUserIdx();
         User user = loadUserFromUserIdx(userIdx);
         return new HashMap<>() {{
-            put("AccessToken", jwtTokenProvider.createAccessToken(user));
-            put("RefreshToken", jwtTokenResolver.refreshTokenUpdateOrCreate(user));
+            put("AccessToken", jwtProvider.createAccessToken(user));
+            put("RefreshToken",
+                jwtResolver.judgementRefreshTokenCreateOrUpdateInRefreshRequest(user));
         }};
     }
 
     public Map<String, String> executeJWTRefreshForMobileClient(String Authorization) {
         if (refreshTokenRepository.findByPayload(Authorization).isEmpty()) {
-            throw new AccountException(USER_RESTRICTED);
+            throw new AccountException(LOGIN_REQUIRED);
         }
         Long userIdx = refreshTokenRepository.findByPayload(Authorization).get().getUserIdx();
         User user = loadUserFromUserIdx(userIdx);
         return new HashMap<>() {{
-            put("AccessToken", jwtTokenProvider.createAccessToken(user));
-            put("RefreshToken", jwtTokenResolver.refreshTokenUpdateOrCreate(user));
+            put("AccessToken", jwtProvider.createAccessToken(user));
+            put("RefreshToken",
+                jwtResolver.judgementRefreshTokenCreateOrUpdateInRefreshRequest(user));
         }};
     }
 
     public Map<String, Boolean> executeQuit(String Authorization, String inputPassword) {
-        jwtTokenValidator.validateAccessToken(Authorization);
-        User user = loadUserFromUserIdx(jwtTokenResolver.getId(Authorization));
+        jwtValidator.validateJwt(Authorization);
+        User user = loadUserFromUserIdx(jwtResolver.getId(Authorization));
         if (user.validatePassword(bCryptPasswordEncoder, inputPassword)) {
             throw new AccountException(USER_NOT_EXISTS);
         }

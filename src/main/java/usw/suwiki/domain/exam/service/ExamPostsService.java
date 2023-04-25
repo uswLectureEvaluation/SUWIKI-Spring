@@ -13,7 +13,7 @@ import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.global.PageOption;
-import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
 
 import javax.transaction.Transactional;
@@ -35,7 +35,7 @@ public class ExamPostsService {
         Optional<User> user = userRepository.findById(userIdx);
 
         if (lecture == null) {
-            throw new AccountException(ErrorType.NOT_EXISTS_LECTURE);
+            throw new AccountException(ExceptionType.NOT_EXISTS_LECTURE);
         } else {
             posts.setLecture(lecture);
             posts.setUser(user.get());
@@ -105,7 +105,7 @@ public class ExamPostsService {
     public void deleteById(Long examIdx, Long userIdx) {
         ExamPosts posts = examPostsRepository.findById(examIdx);
         userRepository.findById(userIdx)
-                .orElseThrow(() -> new AccountException(ErrorType.USER_NOT_EXISTS));
+                .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
         userRepository.updateWrittenExamCount(userIdx, posts.getUser().getPoint() - 30);
         examPostsRepository.delete(posts);
     }
