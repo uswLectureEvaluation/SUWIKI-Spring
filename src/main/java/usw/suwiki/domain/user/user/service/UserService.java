@@ -7,7 +7,6 @@ import static usw.suwiki.global.exception.ExceptionType.PASSWORD_NOT_CHANGED;
 import static usw.suwiki.global.exception.ExceptionType.USER_AND_EMAIL_OVERLAP;
 import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
 import static usw.suwiki.global.exception.ExceptionType.USER_NOT_FOUND;
-import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapFalseFlag;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapTrueFlag;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successFlag;
@@ -152,8 +151,7 @@ public class UserService {
         User user;
         if (userByLoginId.equals(userByEmail) &&
             userByLoginId.isPresent() &&
-            userByEmail.isPresent())
-        {
+            userByEmail.isPresent()) {
             user = userByLoginId.get();
             emailSender.send(email, BuildFindPasswordForm.buildEmail(
                     user.updateRandomPassword(bCryptPasswordEncoder)
@@ -176,7 +174,8 @@ public class UserService {
                     "AccessToken", jwtProvider.createAccessToken(notSleepingUser)
                 );
                 tokenPair.put(
-                    "RefreshToken", jwtResolver.refreshTokenUpdateOrCreate(notSleepingUser)
+                    "RefreshToken",
+                    jwtResolver.judgementRefreshTokenCreateOrUpdateInLogin(notSleepingUser)
                 );
                 notSleepingUser.updateLastLoginDate();
                 return tokenPair;
@@ -187,7 +186,7 @@ public class UserService {
                 "AccessToken", jwtProvider.createAccessToken(sleepingUser)
             );
             tokenPair.put(
-                "RefreshToken", jwtResolver.refreshTokenUpdateOrCreate(sleepingUser)
+                "RefreshToken", jwtResolver.judgementRefreshTokenCreateOrUpdateInLogin(sleepingUser)
             );
             sleepingUser.updateLastLoginDate();
             return tokenPair;
@@ -222,13 +221,14 @@ public class UserService {
     public Map<String, String> executeJWTRefreshForWebClient(Cookie requestRefreshCookie) {
         String refreshToken = requestRefreshCookie.getValue();
         if (refreshTokenRepository.findByPayload(refreshToken).isEmpty()) {
-            throw new AccountException(USER_RESTRICTED);
+            throw new AccountException(LOGIN_REQUIRED);
         }
         Long userIdx = refreshTokenRepository.findByPayload(refreshToken).get().getUserIdx();
         User user = loadUserFromUserIdx(userIdx);
         return new HashMap<>() {{
             put("AccessToken", jwtProvider.createAccessToken(user));
-            put("RefreshToken", jwtResolver.refreshTokenUpdateOrCreate(user));
+            put("RefreshToken",
+                jwtResolver.judgementRefreshTokenCreateOrUpdateInRefreshRequest(user));
         }};
     }
 
@@ -240,7 +240,8 @@ public class UserService {
         User user = loadUserFromUserIdx(userIdx);
         return new HashMap<>() {{
             put("AccessToken", jwtProvider.createAccessToken(user));
-            put("RefreshToken", jwtResolver.refreshTokenUpdateOrCreate(user));
+            put("RefreshToken",
+                jwtResolver.judgementRefreshTokenCreateOrUpdateInRefreshRequest(user));
         }};
     }
 
