@@ -7,7 +7,6 @@ import usw.suwiki.domain.lecture.controller.dto.LecturesAndCountDto;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -64,7 +63,7 @@ public class JpaLectureRepository implements LectureRepository {
         Integer page = initializePageNumber(option.getPageNumber());
 
         // if (!Arrays.asList(orderOptions).contains(orderOption)) {
-        //     throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
+        //     throw new AccountException(ExceptionType.INVALID_ORDER_OPTION);
         // }
 
         String query = String.format("SELECT l FROM Lecture l "
@@ -96,7 +95,7 @@ public class JpaLectureRepository implements LectureRepository {
         Integer page = initializePageNumber(option.getPageNumber());
 
         // if (!Arrays.asList(orderOptions).contains(orderOption)) {
-        //     throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
+        //     throw new AccountException(ExceptionType.INVALID_ORDER_OPTION);
         // }
 
         String query = String.format("SELECT l FROM Lecture l "
@@ -120,7 +119,7 @@ public class JpaLectureRepository implements LectureRepository {
         Integer page = initializePageNumber(option.getPageNumber());
 
         // if (!Arrays.asList(orderOptions).contains(orderOption)) {
-        //     throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
+        //     throw new AccountException(ExceptionType.INVALID_ORDER_OPTION);
         // }
 
         String majorType = option.getMajorType();
@@ -154,7 +153,7 @@ public class JpaLectureRepository implements LectureRepository {
         Integer page = initializePageNumber(option.getPageNumber());
 
         // if (!Arrays.asList(orderOptions).contains(orderOption)) {
-        //     throw new AccountException(ErrorType.INVALID_ORDER_OPTION);
+        //     throw new AccountException(ExceptionType.INVALID_ORDER_OPTION);
         // }
 
         String majorType = option.getMajorType();

@@ -1,7 +1,7 @@
 package usw.suwiki.domain.user.userIsolation.service;
 
-import static usw.suwiki.global.exception.ErrorType.PASSWORD_ERROR;
-import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
+import static usw.suwiki.global.exception.ExceptionType.PASSWORD_ERROR;
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -67,9 +67,9 @@ public class UserIsolationService {
         userRepository.applyUserSoftDelete(user.getId());
     }
 
-    public User sleepingUserLogin(String loginId, String password) {
+    public User sleepingUserLogin(String loginId, String inputPassword) {
         UserIsolation userIsolation = loadUserFromLoginId(loginId);
-        if (validatePasswordAtUserIsolationTable(loginId, password)) {
+        if (validatePasswordAtUserIsolationTable(loginId, inputPassword)) {
             userRepository.unapplyUserSoftDelete(userIsolation.getUserIdx(), userIsolation);
             userIsolationRepository.deleteByLoginId(loginId);
         } else {
@@ -78,9 +78,11 @@ public class UserIsolationService {
         return userRepository.findByLoginId(loginId).get();
     }
 
-    public boolean validatePasswordAtUserIsolationTable(String loginId, String password) {
-        return bCryptPasswordEncoder.matches(password,
-            userRepository.findByLoginId(loginId).get().getPassword());
+    public boolean validatePasswordAtUserIsolationTable(String loginId, String inputPassword) {
+        return bCryptPasswordEncoder.matches(
+            inputPassword,
+            userIsolationRepository.findByLoginId(loginId).get().getPassword()
+        );
     }
 
     @Scheduled(cron = "2 0 0 * * *")

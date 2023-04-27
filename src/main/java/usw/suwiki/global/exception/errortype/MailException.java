@@ -1,11 +1,11 @@
 package usw.suwiki.global.exception.errortype;
 
-import usw.suwiki.global.exception.ErrorType;
+import usw.suwiki.global.exception.ExceptionType;
 
 public class MailException extends BaseException {
 
-    public MailException(ErrorType errorType) {
-        super(errorType);
+    public MailException(ExceptionType exceptionType) {
+        super(exceptionType);
     }
 
 }

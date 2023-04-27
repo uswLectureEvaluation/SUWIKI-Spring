@@ -1,7 +1,7 @@
 package usw.suwiki.global.exception;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static usw.suwiki.global.exception.ErrorType.PARAM_VALID_ERROR;
+import static usw.suwiki.global.exception.ExceptionType.PARAM_VALID_ERROR;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -39,25 +39,25 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = {BaseException.class})
     public ResponseEntity<ErrorResponse> handleBaseException(BaseException e) {
         String className = e.getClass().getName();
-        ErrorType errorType = e.getErrorType();
+        ExceptionType exceptionType = e.getExceptionType();
 
         ErrorResponse errorResponse = ErrorResponse.builder()
             .exception(className.substring(className.lastIndexOf(".") + 1))
-            .code(errorType.getCode())
-            .message(errorType.getMessage())
-            .status(errorType.getStatus().value())
-            .error(errorType.getStatus().getReasonPhrase())
+            .code(exceptionType.getCode())
+            .message(exceptionType.getMessage())
+            .status(exceptionType.getStatus().value())
+            .error(exceptionType.getStatus().getReasonPhrase())
             .build();
 
         log.error("code : {}, message : {}", errorResponse.getCode(), errorResponse.getMessage());
 
-        return new ResponseEntity<>(errorResponse, errorType.getStatus());
+        return new ResponseEntity<>(errorResponse, exceptionType.getStatus());
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class, BindException.class})
     public ResponseEntity<ErrorResponse> handleBindValidationException(Exception e) {
         String className = e.getClass().getName();
-        ErrorType errorType = PARAM_VALID_ERROR;
+        ExceptionType exceptionType = PARAM_VALID_ERROR;
         String message = "";
 
         if (e instanceof MethodArgumentNotValidException) {
@@ -70,15 +70,15 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
             .exception(className.substring(className.lastIndexOf(".") + 1))
-            .code(errorType.getCode())
+            .code(exceptionType.getCode())
             .message(message)
-            .status(errorType.getStatus().value())
-            .error(errorType.getStatus().getReasonPhrase())
+            .status(exceptionType.getStatus().value())
+            .error(exceptionType.getStatus().getReasonPhrase())
             .build();
 
         log.error("code : {}, message : {}", errorResponse.getCode(), errorResponse.getMessage());
 
-        return new ResponseEntity<>(errorResponse, errorType.getStatus());
+        return new ResponseEntity<>(errorResponse, exceptionType.getStatus());
     }
 
 }

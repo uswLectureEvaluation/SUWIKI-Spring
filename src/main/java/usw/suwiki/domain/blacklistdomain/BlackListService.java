@@ -1,6 +1,6 @@
 package usw.suwiki.domain.blacklistdomain;
 
-import static usw.suwiki.global.exception.ErrorType.YOU_ARE_IN_BLACKLIST;
+import static usw.suwiki.global.exception.ExceptionType.YOU_ARE_IN_BLACKLIST;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

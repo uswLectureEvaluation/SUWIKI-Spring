@@ -8,8 +8,8 @@ import usw.suwiki.domain.user.restrictinguser.service.RestrictingUserCommonServi
 import usw.suwiki.domain.user.user.dto.UserResponseDto.LoadMyBlackListReasonForm;
 import usw.suwiki.domain.user.user.dto.UserResponseDto.LoadMyRestrictedReasonForm;
 import usw.suwiki.domain.user.user.entity.User;
-import usw.suwiki.global.jwt.JwtTokenResolver;
-import usw.suwiki.global.jwt.JwtTokenValidator;
+import usw.suwiki.global.jwt.JwtResolver;
+import usw.suwiki.global.jwt.JwtValidator;
 
 import java.util.List;
 
@@ -18,21 +18,21 @@ import java.util.List;
 @Transactional
 public class UserLoadRestrictAndBlackListReasonService {
 
-    private final JwtTokenValidator jwtTokenValidator;
-    private final JwtTokenResolver jwtTokenResolver;
+    private final JwtValidator jwtValidator;
+    private final JwtResolver jwtResolver;
     private final UserService userService;
     private final BlackListService blackListService;
     private final RestrictingUserCommonService restrictingUserCommonService;
 
     public List<LoadMyBlackListReasonForm> executeForBlackListReason(String Authorization) {
-        jwtTokenValidator.validateAccessToken(Authorization);
-        User requestUser = userService.loadUserFromUserIdx(jwtTokenResolver.getId(Authorization));
+        jwtValidator.validateJwt(Authorization);
+        User requestUser = userService.loadUserFromUserIdx(jwtResolver.getId(Authorization));
         return blackListService.getBlacklistLog(requestUser.getId());
     }
 
     public List<LoadMyRestrictedReasonForm> executeForRestrictedReason(String Authorization) {
-        jwtTokenValidator.validateAccessToken(Authorization);
-        User requestUser = userService.loadUserFromUserIdx(jwtTokenResolver.getId(Authorization));
+        jwtValidator.validateJwt(Authorization);
+        User requestUser = userService.loadUserFromUserIdx(jwtResolver.getId(Authorization));
         return restrictingUserCommonService.loadRestrictedLog(requestUser.getId());
     }
 }
