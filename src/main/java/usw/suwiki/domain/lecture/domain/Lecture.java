@@ -1,5 +1,6 @@
 package usw.suwiki.domain.lecture.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -53,14 +54,26 @@ public class Lecture extends BaseTimeEntity {
     }
 
 
-    public void toEntity(JsonToLectureForm dto) {
-        this.name = dto.getLectureName();
-        this.semester = dto.getSelectedSemester();
-        this.professor = dto.getProfessor();
-        this.majorType = dto.getMajorType();
-        this.type = dto.getLectureType();
-        createLectureDetail(dto);
-        createLectureEvaluationInfo();
+    public static Lecture toEntity(JsonToLectureForm dto) {
+        Lecture entity = Lecture.builder()
+            .name(dto.getLectureName())
+            .professor(dto.getProfessor())
+            .semester(dto.getSelectedSemester())
+            .majorType(dto.getMajorType())
+            .build();
+        entity.createLectureEvaluationInfo();
+        entity.createLectureDetail(dto);
+
+        return entity;
+    }
+
+    @Builder
+    public Lecture(String semester, String professor, String name, String majorType, String type) {
+        this.name = name;
+        this.semester = semester;
+        this.professor = professor;
+        this.majorType = majorType;
+        this.type = type;
     }
 
     private void createLectureEvaluationInfo() {

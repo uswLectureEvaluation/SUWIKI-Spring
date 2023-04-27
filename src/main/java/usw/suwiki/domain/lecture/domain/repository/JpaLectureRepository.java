@@ -3,8 +3,6 @@ package usw.suwiki.domain.lecture.domain.repository;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.controller.dto.LecturesAndCountDto;
-import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.exception.ErrorType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;

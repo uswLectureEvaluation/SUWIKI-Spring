@@ -10,22 +10,37 @@ import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
 
 @Embeddable
 @Access(AccessType.FIELD)
-@NoArgsConstructor
 public class LectureEvaluationInfo {
-	private float lectureTotalAvg = 0;
-	private float lectureSatisfactionAvg = 0;
-	private float lectureHoneyAvg = 0;
-	private float lectureLearningAvg = 0;
-	private float lectureTeamAvg = 0;
-	private float lectureDifficultyAvg = 0;
-	private float lectureHomeworkAvg = 0;
+	private float lectureTotalAvg;
+	private float lectureSatisfactionAvg;
+	private float lectureHoneyAvg;
+	private float lectureLearningAvg;
+	private float lectureTeamAvg;
+	private float lectureDifficultyAvg;
+	private float lectureHomeworkAvg;
 
-	private float lectureSatisfactionValue = 0;
-	private float lectureHoneyValue = 0;
-	private float lectureLearningValue = 0;
-	private float lectureTeamValue = 0;
-	private float lectureDifficultyValue = 0;
-	private float lectureHomeworkValue = 0;
+	private float lectureSatisfactionValue;
+	private float lectureHoneyValue;
+	private float lectureLearningValue;
+	private float lectureTeamValue;
+	private float lectureDifficultyValue;
+	private float lectureHomeworkValue;
+
+	public LectureEvaluationInfo() {
+		this.lectureTotalAvg = 0.0f;
+		this.lectureSatisfactionAvg = 0.0f;
+		this.lectureHoneyAvg = 0.0f;
+		this.lectureLearningAvg = 0.0f;
+		this.lectureTeamAvg = 0.0f;
+		this.lectureDifficultyAvg = 0.0f;
+		this.lectureHomeworkAvg = 0.0f;
+		this.lectureSatisfactionValue = 0.0f;
+		this.lectureHoneyValue = 0.0f;
+		this. lectureLearningValue = 0.0f;
+		this.lectureTeamValue = 0.0f;
+		this.lectureDifficultyValue = 0.0f;
+		this.lectureHomeworkValue = 0.0f;
+	}
 
 	public void calculateLectureAverage(int postsCount) {
 		final int EVALUATION_TYPE_COUNT = 3;
@@ -39,13 +54,13 @@ public class LectureEvaluationInfo {
 	}
 
 	public void calculateIfPostCountLessThanOne() {
-		this.lectureTotalAvg = 0;
-		this.lectureSatisfactionAvg = 0;
-		this.lectureHoneyAvg = 0;
-		this.lectureLearningAvg = 0;
-		this.lectureTeamAvg = 0;
-		this.lectureDifficultyAvg = 0;
-		this.lectureHomeworkAvg = 0;
+		this.lectureTotalAvg = 0.0f;
+		this.lectureSatisfactionAvg = 0.0f;
+		this.lectureHoneyAvg = 0.0f;
+		this.lectureLearningAvg = 0.0f;
+		this.lectureTeamAvg = 0.0f;
+		this.lectureDifficultyAvg = 0.0f;
+		this.lectureHomeworkAvg = 0.0f;
 	}
 
 	public void addLectureValue(EvaluatePostsToLecture dto) {
