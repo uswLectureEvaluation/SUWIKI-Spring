@@ -14,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 @SpringBootTest
 class InsertNewLectureTest {
 
