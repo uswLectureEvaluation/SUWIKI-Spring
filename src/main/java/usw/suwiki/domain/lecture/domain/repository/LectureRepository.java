@@ -25,5 +25,4 @@ public interface LectureRepository {
     LecturesAndCountDto findAllLectureByMajorType(LectureFindOption lectureFindOption);
 
     List<String> findAllMajorType();
-
 }
