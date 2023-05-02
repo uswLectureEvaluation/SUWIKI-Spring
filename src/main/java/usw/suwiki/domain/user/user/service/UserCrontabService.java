@@ -19,7 +19,7 @@ public class UserCrontabService {
     private final BuildPersonalInformationUsingNotifyForm buildPersonalInformationUsingNotifyForm;
     private final EmailSendService emailSendService;
 
-    @Scheduled(cron = "8 0 0 1 1 *")
+    @Scheduled(cron = "0 1 0 1 3 *")
     public void sendPrivacyPolicyMail() {
         List<User> users = userRepository.findAll();
         String emailContent = buildPersonalInformationUsingNotifyForm.buildEmail();
