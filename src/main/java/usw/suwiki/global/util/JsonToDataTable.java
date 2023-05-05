@@ -19,105 +19,105 @@ import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 @Service
 public class JsonToDataTable {
 
-    private final LectureRepository lectureRepository;
+	private final LectureRepository lectureRepository;
 
-    //이상한 강의명 예외 처리 로직.
-    private JsonToLectureForm handleLectureNameException(JsonToLectureForm dto) {
+	//이상한 강의명 예외 처리 로직.
+	private JsonToLectureForm handleLectureNameException(JsonToLectureForm dto) {
 
-        if (dto.getLectureName().contains("재수강-")) {
-            int index = dto.getLectureName().indexOf("(");
-            String lectureName = dto.getLectureName().substring(0, index);
-            dto.setLectureName(lectureName);
-        }
+		if (dto.getLectureName().contains("재수강-")) {
+			int index = dto.getLectureName().indexOf("(");
+			String lectureName = dto.getLectureName().substring(0, index);
+			dto.setLectureName(lectureName);
+		}
 
-        if (dto.getLectureName().contains("재수강")) {
-            dto.setLectureName(dto.getLectureName().replace("(재수강)", ""));
-            dto.setLectureName(dto.getLectureName().replace("재수강", ""));
-        }
+		if (dto.getLectureName().contains("재수강")) {
+			dto.setLectureName(dto.getLectureName().replace("(재수강)", ""));
+			dto.setLectureName(dto.getLectureName().replace("재수강", ""));
+		}
 
-        if (dto.getLectureName().contains("비대면수업")) {
-            dto.setLectureName(dto.getLectureName().replace("(비대면수업)", ""));
-            dto.setLectureName(dto.getLectureName().replace("비대면수업-", ""));
-            dto.setLectureName(dto.getLectureName().replace("비대면수업_", ""));
-            dto.setLectureName(dto.getLectureName().replace("비대면수업", ""));
-        }
-        if (dto.getLectureName().contains("대면수업")) {
-            dto.setLectureName(dto.getLectureName().replace("(대면수업)", ""));
-            dto.setLectureName(dto.getLectureName().replace("대면수업-", ""));
-            dto.setLectureName(dto.getLectureName().replace("대면수업_", ""));
-            dto.setLectureName(dto.getLectureName().replace("대면수업", ""));
-        }
-        if (dto.getLectureName().contains("혼합수업")) {
-            dto.setLectureName(dto.getLectureName().replace("(혼합수업)", ""));
-            dto.setLectureName(dto.getLectureName().replace("혼합수업-", ""));
-            dto.setLectureName(dto.getLectureName().replace("혼합수업_", ""));
-            dto.setLectureName(dto.getLectureName().replace("혼합수업", ""));
-        }
+		if (dto.getLectureName().contains("비대면수업")) {
+			dto.setLectureName(dto.getLectureName().replace("(비대면수업)", ""));
+			dto.setLectureName(dto.getLectureName().replace("비대면수업-", ""));
+			dto.setLectureName(dto.getLectureName().replace("비대면수업_", ""));
+			dto.setLectureName(dto.getLectureName().replace("비대면수업", ""));
+		}
+		if (dto.getLectureName().contains("대면수업")) {
+			dto.setLectureName(dto.getLectureName().replace("(대면수업)", ""));
+			dto.setLectureName(dto.getLectureName().replace("대면수업-", ""));
+			dto.setLectureName(dto.getLectureName().replace("대면수업_", ""));
+			dto.setLectureName(dto.getLectureName().replace("대면수업", ""));
+		}
+		if (dto.getLectureName().contains("혼합수업")) {
+			dto.setLectureName(dto.getLectureName().replace("(혼합수업)", ""));
+			dto.setLectureName(dto.getLectureName().replace("혼합수업-", ""));
+			dto.setLectureName(dto.getLectureName().replace("혼합수업_", ""));
+			dto.setLectureName(dto.getLectureName().replace("혼합수업", ""));
+		}
 
-        return dto;
-    }
+		return dto;
+	}
 
-    public void toEntity(String path) throws IOException, ParseException, InterruptedException {
+	public void toEntity(String path) throws IOException, ParseException, InterruptedException {
 
-        Reader reader = new FileReader(path);
+		Reader reader = new FileReader(path);
 
-        JSONParser parser = new JSONParser();
-        Object obj = parser.parse(reader);
+		JSONParser parser = new JSONParser();
+		Object obj = parser.parse(reader);
 
-        JSONArray jsonArray = (JSONArray) obj;
+		JSONArray jsonArray = (JSONArray) obj;
 
-        if (jsonArray.size() > 0) {
-            for (int i = 0; i < jsonArray.size(); i++) {
-                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+		if (jsonArray.size() > 0) {
+			for (int i = 0; i < jsonArray.size(); i++) {
+				JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
-                JsonToLectureForm dto = JsonToLectureForm.builder()
-                    .capprType((String) jsonObject.get("capprTypeNm"))
-                    .evaluateType((String) jsonObject.get("cretEvalNm"))
-                    .lectureCode((String) jsonObject.get("subjtCd"))
-                    .selectedSemester(jsonObject.get("subjtEstbYear") + "-" + String.valueOf(
-                        jsonObject.get("subjtEstbSmrCd")).substring(0, 1))
-                    .grade(Integer.parseInt(jsonObject.get("trgtGrdeCd").toString()))
-                    .lectureType((String) jsonObject.get("facDvnm"))
-                    .placeSchedule(String.valueOf(jsonObject.get("timtSmryCn")))
-                    .diclNo(String.valueOf(jsonObject.get("diclNo")))
-                    .majorType(String.valueOf(jsonObject.get("estbDpmjNm")))
-                    .point(Double.parseDouble(String.valueOf(jsonObject.get("point"))))
-                    .professor(String.valueOf(jsonObject.get("reprPrfsEnoNm")))
-                    .lectureName(String.valueOf(jsonObject.get("subjtNm")))
-                    .build();
+				JsonToLectureForm dto = JsonToLectureForm.builder()
+					.capprType((String) jsonObject.get("capprTypeNm"))
+					.evaluateType((String) jsonObject.get("cretEvalNm"))
+					.lectureCode((String) jsonObject.get("subjtCd"))
+					.selectedSemester(jsonObject.get("subjtEstbYear") + "-" + String.valueOf(
+						jsonObject.get("subjtEstbSmrCd")).substring(0, 1))
+					.grade(Integer.parseInt(jsonObject.get("trgtGrdeCd").toString()))
+					.lectureType((String) jsonObject.get("facDvnm"))
+					.placeSchedule(String.valueOf(jsonObject.get("timtSmryCn")))
+					.diclNo(String.valueOf(jsonObject.get("diclNo")))
+					.majorType(String.valueOf(jsonObject.get("estbDpmjNm")))
+					.point(Double.parseDouble(String.valueOf(jsonObject.get("point"))))
+					.professor(String.valueOf(jsonObject.get("reprPrfsEnoNm")))
+					.lectureName(String.valueOf(jsonObject.get("subjtNm")))
+					.build();
 
-                //professor 없으면 "-" 로 채움 (null 값 들어가지 않게)
-                if (dto.getProfessor().isEmpty() || dto.getProfessor() == null) {
-                    dto.setProfessor("-");
-                }
+				//professor 없으면 "-" 로 채움 (null 값 들어가지 않게)
+				if (dto.getProfessor().isEmpty() || dto.getProfessor() == null) {
+					dto.setProfessor("-");
+				}
 
-                //handleException
-                dto = handleLectureNameException(dto);
+				//handleException
+				dto = handleLectureNameException(dto);
 
-                //"·" to replace "-"
-                if (dto.getMajorType().contains("·")) {
-                    String majorType = dto.getMajorType();
-                    majorType = majorType.replace("·", "-");
-                    dto.setMajorType(majorType);
-                }
+				//"·" to replace "-"
+				if (dto.getMajorType().contains("·")) {
+					String majorType = dto.getMajorType();
+					majorType = majorType.replace("·", "-");
+					dto.setMajorType(majorType);
+				}
 
-                Lecture lecture = lectureRepository.verifyJsonLecture(dto.getLectureName(),
-                    dto.getProfessor(), dto.getMajorType());
+				Lecture lecture = lectureRepository.verifyJsonLecture(dto.getLectureName(),
+					dto.getProfessor(), dto.getMajorType());
 
-                if (lecture != null) {
-                    if (!lecture.getSemester().contains(dto.getSelectedSemester())) {
-                        String updateString =
-                            lecture.getSemester() + ", " + dto.getSelectedSemester();
-                        lecture.setSemester(updateString);  //refactoring 필요
-                        lectureRepository.save(lecture);
-                    }
-                } else if (lecture == null) {
-                    Lecture savedLecture = new Lecture();
-                    savedLecture.toEntity(dto);
-                    Thread.sleep(1);
-                    lectureRepository.save(savedLecture);
-                }
-            }
-        }
-    }
+				if (lecture != null) {
+					if (!lecture.getSemester().contains(dto.getSelectedSemester())) {
+						String updateString =
+							lecture.getSemester() + ", " + dto.getSelectedSemester();
+						lecture.setSemester(updateString);  //refactoring 필요
+						lectureRepository.save(lecture);
+					}
+				} else if (lecture == null) {
+					Lecture savedLecture = new Lecture();
+					savedLecture.toEntity(dto);
+					Thread.sleep(1);
+					lectureRepository.save(savedLecture);
+				}
+			}
+		}
+	}
 }
