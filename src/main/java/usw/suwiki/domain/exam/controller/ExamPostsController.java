@@ -1,6 +1,5 @@
 package usw.suwiki.domain.exam.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +17,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.domain.exam.FindByLectureToExam;
-import usw.suwiki.domain.exam.dto.ExamPostsSaveDto;
-import usw.suwiki.domain.exam.dto.ExamPostsUpdateDto;
-import usw.suwiki.domain.exam.dto.ExamResponseByLectureIdDto;
-import usw.suwiki.domain.exam.dto.ExamResponseByUserIdxDto;
+import usw.suwiki.domain.exam.controller.dto.ReadExamPostResponse;
+import usw.suwiki.domain.exam.controller.dto.ExamPostsSaveDto;
+import usw.suwiki.domain.exam.controller.dto.ExamPostsUpdateDto;
+import usw.suwiki.domain.exam.controller.dto.ExamResponseByUserIdxDto;
 import usw.suwiki.domain.exam.service.ExamPostsService;
 import usw.suwiki.domain.viewExam.dto.PurchaseHistoryDto;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
@@ -47,37 +45,25 @@ public class ExamPostsController {
 
     @ApiLogger(option = "examPosts")
     @GetMapping
-    public ResponseEntity<FindByLectureToExam> findByLecture(
+    public ReadExamPostResponse readExamPostApi(
         @RequestParam Long lectureId,
         @RequestHeader String Authorization,
-        @RequestParam(required = false) Optional<Integer> page
-    ) {
-        HttpHeaders header = new HttpHeaders();
-        jwtValidator.validateJwt(Authorization);
-        if (jwtResolver.getUserIsRestricted(Authorization)) {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
+        @RequestParam(required = false) Optional<Integer> page) {
+
+        validateAuth(Authorization);
+        Long userId = jwtResolver.getId(Authorization);
+
+        boolean canRead = viewExamService.validateReadExamPost(userId, lectureId);
+        if (!canRead) {
+            boolean isWrite = examPostsService.isWrite(userId, lectureId);
+            return ReadExamPostResponse.ForbiddenToRead(isWrite);
         }
-        List<ExamResponseByLectureIdDto> list = examPostsService.findExamPostsByLectureId(
-            new PageOption(page), lectureId);
-        FindByLectureToExam data = new FindByLectureToExam(list);
-        if (examPostsService.verifyWriteExamPosts(jwtResolver.getId(Authorization),
-            lectureId)) {
-            data.setWritten(false);
-        }
-        if (list.isEmpty()) {
-            data.setExamDataExist(false);
-            return new ResponseEntity<FindByLectureToExam>(data, header,
-                HttpStatus.valueOf(200));
-        } else {
-            if (viewExamService.verifyAuth(lectureId, jwtResolver.getId(Authorization))) {
-                return new ResponseEntity<FindByLectureToExam>(data, header,
-                    HttpStatus.valueOf(200));
-            } else {
-                data.setData(new ArrayList<>());
-                return new ResponseEntity<FindByLectureToExam>(data, header,
-                    HttpStatus.valueOf(200));
-            }
-        }
+
+        //시험정보 데이터 존재 여부
+        ReadExamPostResponse response = examPostsService.readExamPost(userId, lectureId,
+            new PageOption(page));
+
+        return response;
     }
 
     @ApiLogger(option = "examPosts")
@@ -86,34 +72,27 @@ public class ExamPostsController {
         @RequestParam Long lectureId,
         @RequestHeader String Authorization
     ) {
-        HttpHeaders header = new HttpHeaders();
-        jwtValidator.validateJwt(Authorization);
-        if (jwtResolver.getUserIsRestricted(Authorization)) {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
-        }
-        viewExamService.save(lectureId, jwtResolver.getId(Authorization));
-        return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
+        validateAuth(Authorization);
+        viewExamService.open(lectureId, jwtResolver.getId(Authorization));
+
+        return ResponseEntity.ok("success");
     }
 
     @ApiLogger(option = "examPosts")
     @PostMapping
-    public ResponseEntity<String> saveExamPosts(
+    public ResponseEntity<String> writeExamPostApi(
         @RequestParam Long lectureId,
         @RequestBody ExamPostsSaveDto dto,
         @RequestHeader String Authorization
     ) {
-        HttpHeaders header = new HttpHeaders();
-        jwtValidator.validateJwt(Authorization);
-        if (jwtResolver.getUserIsRestricted(Authorization)) {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
-        }
+        validateAuth(Authorization);
         Long userIdx = jwtResolver.getId(Authorization);
-        if (examPostsService.verifyWriteExamPosts(userIdx, lectureId)) {
-            examPostsService.save(dto, userIdx, lectureId);
-            return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
-        } else {
+
+        if (examPostsService.isWrite(userIdx, lectureId)) {
             throw new AccountException(ExceptionType.POSTS_WRITE_OVERLAP);
         }
+        examPostsService.write(dto, userIdx, lectureId);
+        return ResponseEntity.ok("success");
     }
 
     @ApiLogger(option = "examPosts")
@@ -158,16 +137,11 @@ public class ExamPostsController {
         @RequestParam Long examIdx,
         @RequestHeader String Authorization
     ) {
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(MediaType.APPLICATION_JSON);
-        jwtValidator.validateJwt(Authorization);
-        if (jwtResolver.getUserIsRestricted(Authorization)) {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
-        }
+        validateAuth(Authorization);
         Long userIdx = jwtResolver.getId(Authorization);
         if (examPostsService.verifyDeleteExamPosts(userIdx, examIdx)) {
             examPostsService.deleteById(examIdx, userIdx);
-            return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
+            return ResponseEntity.ok("success");
         } else {
             throw new AccountException(ExceptionType.USER_POINT_LACK);
         }
@@ -176,11 +150,19 @@ public class ExamPostsController {
     @ApiLogger(option = "examPosts")
     @GetMapping("/purchase") // 이름 수정 , 널값 처리 프론트
     public ResponseEntity<ResponseForm> showPurchaseHistory(@RequestHeader String Authorization) {
-        HttpHeaders header = new HttpHeaders();
         jwtValidator.validateJwt(Authorization);
-        Long userIdx = jwtResolver.getId(Authorization);
-        List<PurchaseHistoryDto> list = viewExamService.findByUserId(userIdx);
+        Long userId = jwtResolver.getId(Authorization);
+
+        List<PurchaseHistoryDto> list = viewExamService.findByUserId(userId);
         ResponseForm data = new ResponseForm(list);
-        return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
+
+        return ResponseEntity.ok(data);
+    }
+
+    private void validateAuth(String authorization) {
+        jwtValidator.validateJwt(authorization);
+        if (jwtResolver.getUserIsRestricted(authorization)) {
+            throw new AccountException(ExceptionType.USER_RESTRICTED);
+        }
     }
 }

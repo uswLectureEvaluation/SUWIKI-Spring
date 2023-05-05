@@ -29,6 +29,12 @@ public class ViewExam extends BaseTimeEntity {
     @JoinColumn(name = "lecture_id")
     private Lecture lecture;
 
+    @Builder
+    public ViewExam(User user, Lecture lecture) {
+        this.user = user;
+        this.lecture = lecture;
+    }
+
     public void setUserInViewExam(User user) {
         this.user = user;
     }

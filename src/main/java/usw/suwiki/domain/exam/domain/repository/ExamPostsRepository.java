@@ -1,6 +1,6 @@
-package usw.suwiki.domain.exam.repository;
+package usw.suwiki.domain.exam.domain.repository;
 
-import usw.suwiki.domain.exam.entity.ExamPosts;
+import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.global.PageOption;
@@ -16,7 +16,7 @@ public interface ExamPostsRepository {
 
     List<ExamPosts> findByUserId(PageOption option, Long userId);
 
-    boolean verifyPostsByIdx(User user, Lecture lecture);
+    boolean isWrite(User user, Lecture lecture);
 
     void delete(ExamPosts examPosts);
 

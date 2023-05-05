@@ -25,18 +25,23 @@ public class ViewExamService {
     private final LectureService lectureService;
     private final UserRepository userRepository;
 
-    public void save(Long lectureId, Long userIdx) {
+    public boolean validateReadExamPost(Long userId, Long lectureId) {
+        return viewExamRepository.validateIsExists(userId, lectureId);
+    }
+
+    public void open(Long lectureId, Long userIdx) {
         User user = userRepository.findById(userIdx)
                 .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
-        if (user.getPoint() < 20) {
-            throw new AccountException(ExceptionType.USER_POINT_LACK);
-        }
+
+        //기존에 이미 있는 정보면 더이상 저장 안되게 막기
+        // viewExamRepository.find
         Lecture lecture = lectureService.findById(lectureId);
-        userRepository.updateViewExamCount(user.getId(), user.getViewExamCount() + 1);
-        userRepository.updatePoint(user.getId(), (user.getPoint() + 20));
-        ViewExam viewExam = new ViewExam();
-        viewExam.setUserInViewExam(user);
-        viewExam.setLectureInViewExam(lecture);
+        user.purchaseExamPost();
+
+        ViewExam viewExam = ViewExam.builder()
+            .user(user)
+            .lecture(lecture)
+            .build();
         viewExamRepository.save(viewExam);
     }
 

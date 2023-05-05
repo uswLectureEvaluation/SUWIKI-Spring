@@ -1,7 +1,7 @@
-package usw.suwiki.domain.exam.repository;
+package usw.suwiki.domain.exam.domain.repository;
 
 import org.springframework.stereotype.Repository;
-import usw.suwiki.domain.exam.entity.ExamPosts;
+import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.global.PageOption;
@@ -63,14 +63,14 @@ public class JpaExamPostsRepository implements ExamPostsRepository {
     }
 
     @Override
-    public boolean verifyPostsByIdx(User user, Lecture lecture) {
+    public boolean isWrite(User user, Lecture lecture) {
         List resultList = em.createQuery("SELECT p from ExamPosts p WHERE p.user = :user AND p.lecture = :lecture")
                 .setParameter("user", user)
                 .setParameter("lecture", lecture)
                 .getResultList();
         if (resultList.isEmpty()) {
-            return true;
-        } else return false;
+            return false;
+        } else return true;
     }
 
     @Override

@@ -34,7 +34,7 @@ import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenService;
 import usw.suwiki.domain.confirmationtoken.service.EmailSender;
 import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
-import usw.suwiki.domain.exam.repository.ExamPostsRepository;
+import usw.suwiki.domain.exam.domain.repository.ExamPostsRepository;
 import usw.suwiki.domain.exam.service.ExamPostsService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
