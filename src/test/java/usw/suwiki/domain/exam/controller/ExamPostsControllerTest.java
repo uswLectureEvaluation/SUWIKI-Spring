@@ -90,7 +90,7 @@ class ExamPostsControllerTest extends BaseIntegrationTest {
 
 		//when
 		ResultActions resultActions = mvc.perform(
-				post("/exam-posts/purchase/")
+				post("/exam-posts/purchase/?lectureId=1")
 					.header("Authorization", authorization)
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON))
@@ -98,8 +98,6 @@ class ExamPostsControllerTest extends BaseIntegrationTest {
 
 		//then
 		resultActions
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.canRead").value(Boolean.FALSE))
-			.andExpect(jsonPath("$.examDataExist").value(Boolean.TRUE));
+			.andExpect(status().isBadRequest());
 	}
 }

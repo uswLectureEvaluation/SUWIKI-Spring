@@ -1,5 +1,7 @@
 package usw.suwiki.domain.exam.controller;
 
+import static usw.suwiki.global.exception.ExceptionType.*;
+
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.global.exception.errortype.ExamPostException;
 import usw.suwiki.global.jwt.JwtResolver;
 import usw.suwiki.global.jwt.JwtValidator;
 
@@ -53,8 +56,7 @@ public class ExamPostsController {
         validateAuth(Authorization);
         Long userId = jwtResolver.getId(Authorization);
 
-        boolean canRead = viewExamService.validateReadExamPost(userId, lectureId);
-        System.out.println("canRead : " + canRead);
+        boolean canRead = viewExamService.isExist(userId, lectureId);
 
         if (!canRead) {
             boolean isWrite = examPostsService.isWrite(userId, lectureId);
@@ -71,11 +73,16 @@ public class ExamPostsController {
     @ApiLogger(option = "examPosts")
     @PostMapping("/purchase")
     public ResponseEntity<String> buyExamInfo(
-        @RequestParam Long lectureId,
-        @RequestHeader String Authorization
-    ) {
+        @RequestHeader String Authorization,
+        @RequestParam Long lectureId) {
         validateAuth(Authorization);
-        viewExamService.open(lectureId, jwtResolver.getId(Authorization));
+        Long userId = jwtResolver.getId(Authorization);
+
+        boolean exist = viewExamService.isExist(userId, lectureId);
+        if (exist) {
+            throw new ExamPostException(POSTS_WRITE_OVERLAP);
+        }
+        viewExamService.open(lectureId, userId);
 
         return ResponseEntity.ok("success");
     }
@@ -91,7 +98,7 @@ public class ExamPostsController {
         Long userIdx = jwtResolver.getId(Authorization);
 
         if (examPostsService.isWrite(userIdx, lectureId)) {
-            throw new AccountException(ExceptionType.POSTS_WRITE_OVERLAP);
+            throw new AccountException(POSTS_WRITE_OVERLAP);
         }
         examPostsService.write(dto, userIdx, lectureId);
         return ResponseEntity.ok("success");
@@ -108,7 +115,7 @@ public class ExamPostsController {
         header.setContentType(MediaType.APPLICATION_JSON);
         jwtValidator.validateJwt(Authorization);
         if (jwtResolver.getUserIsRestricted(Authorization)) {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
+            throw new AccountException(USER_RESTRICTED);
         }
         examPostsService.update(examIdx, dto);
         return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
@@ -123,7 +130,7 @@ public class ExamPostsController {
         HttpHeaders header = new HttpHeaders();
         jwtValidator.validateJwt(Authorization);
         if (jwtResolver.getUserIsRestricted(Authorization)) {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
+            throw new AccountException(USER_RESTRICTED);
         }
         List<ExamResponseByUserIdxDto> list = examPostsService.findExamPostsByUserId(
             new PageOption(page),
@@ -145,7 +152,7 @@ public class ExamPostsController {
             examPostsService.deleteById(examIdx, userIdx);
             return ResponseEntity.ok("success");
         } else {
-            throw new AccountException(ExceptionType.USER_POINT_LACK);
+            throw new AccountException(USER_POINT_LACK);
         }
     }
 
@@ -164,7 +171,7 @@ public class ExamPostsController {
     private void validateAuth(String authorization) {
         jwtValidator.validateJwt(authorization);
         if (jwtResolver.getUserIsRestricted(authorization)) {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
+            throw new AccountException(USER_RESTRICTED);
         }
     }
 }

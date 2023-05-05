@@ -25,7 +25,7 @@ public class ViewExamService {
     private final LectureService lectureService;
     private final UserRepository userRepository;
 
-    public boolean validateReadExamPost(Long userId, Long lectureId) {
+    public boolean isExist(Long userId, Long lectureId) {
         return viewExamRepository.validateIsExists(userId, lectureId);
     }
 
@@ -33,8 +33,6 @@ public class ViewExamService {
         User user = userRepository.findById(userIdx)
                 .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
 
-        //기존에 이미 있는 정보면 더이상 저장 안되게 막기
-        // viewExamRepository.find
         Lecture lecture = lectureService.findById(lectureId);
         user.purchaseExamPost();
 
