@@ -46,14 +46,16 @@ public class ExamPostsController {
     @ApiLogger(option = "examPosts")
     @GetMapping
     public ReadExamPostResponse readExamPostApi(
-        @RequestParam Long lectureId,
         @RequestHeader String Authorization,
+        @RequestParam Long lectureId,
         @RequestParam(required = false) Optional<Integer> page) {
 
         validateAuth(Authorization);
         Long userId = jwtResolver.getId(Authorization);
 
         boolean canRead = viewExamService.validateReadExamPost(userId, lectureId);
+        System.out.println("canRead : " + canRead);
+
         if (!canRead) {
             boolean isWrite = examPostsService.isWrite(userId, lectureId);
             return ReadExamPostResponse.ForbiddenToRead(isWrite);

@@ -24,6 +24,7 @@ public class ReadExamPostResponse {
         ReadExamPostResponse response = new ReadExamPostResponse(data);
         response.isExamDataExist = Boolean.TRUE;
         response.isWritten = isWrite;
+        response.canRead = Boolean.TRUE;
         return response;
     }
 
@@ -31,6 +32,7 @@ public class ReadExamPostResponse {
         ReadExamPostResponse response = new ReadExamPostResponse(new ArrayList<>());
         response.isExamDataExist = Boolean.FALSE;
         response.isWritten = isWrite;
+        response.canRead = Boolean.TRUE;
         return response;
     }
 
