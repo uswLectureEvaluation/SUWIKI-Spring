@@ -2,12 +2,14 @@ package usw.suwiki.domain.exam.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import usw.suwiki.domain.exam.dto.ExamPostsSaveDto;
-import usw.suwiki.domain.exam.dto.ExamPostsUpdateDto;
-import usw.suwiki.domain.exam.dto.ExamResponseByLectureIdDto;
-import usw.suwiki.domain.exam.dto.ExamResponseByUserIdxDto;
-import usw.suwiki.domain.exam.entity.ExamPosts;
-import usw.suwiki.domain.exam.repository.ExamPostsRepository;
+
+import usw.suwiki.domain.exam.controller.dto.ReadExamPostResponse;
+import usw.suwiki.domain.exam.controller.dto.ExamPostsSaveDto;
+import usw.suwiki.domain.exam.controller.dto.ExamPostsUpdateDto;
+import usw.suwiki.domain.exam.controller.dto.ExamResponseByLectureIdDto;
+import usw.suwiki.domain.exam.controller.dto.ExamResponseByUserIdxDto;
+import usw.suwiki.domain.exam.domain.ExamPosts;
+import usw.suwiki.domain.exam.domain.repository.ExamPostsRepository;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.user.entity.User;
@@ -29,20 +31,18 @@ public class ExamPostsService {
     private final LectureService lectureService;
     private final UserRepository userRepository;
 
-    public void save(ExamPostsSaveDto dto, Long userIdx, Long lectureId) {
+    public void write(ExamPostsSaveDto dto, Long userIdx, Long lectureId) {
         ExamPosts posts = new ExamPosts(dto);
         Lecture lecture = lectureService.findById(lectureId);
-        Optional<User> user = userRepository.findById(userIdx);
+        User user = userRepository.findById(userIdx).get();
 
         if (lecture == null) {
             throw new AccountException(ExceptionType.NOT_EXISTS_LECTURE);
-        } else {
-            posts.setLecture(lecture);
-            posts.setUser(user.get());
-            userRepository.updatePoint(userIdx, (user.get().getPoint() + 20));
-            userRepository.updateWrittenExamCount(userIdx, user.get().getWrittenExam() + 1);
-            examPostsRepository.save(posts);
         }
+        posts.setLecture(lecture);
+        posts.setUser(user);
+        user.increasePointByWritingExamPost();
+        examPostsRepository.save(posts);
     }
 
     public ExamPosts findById(Long examIdx) {
@@ -54,13 +54,18 @@ public class ExamPostsService {
         posts.update(dto);
     }
 
-    public List<ExamResponseByLectureIdDto> findExamPostsByLectureId(PageOption option, Long lectureId) {
-        List<ExamResponseByLectureIdDto> dtoList = new ArrayList<>();
+    public ReadExamPostResponse readExamPost(Long userId, Long lectureId, PageOption option) {
+        List<ExamResponseByLectureIdDto> result = new ArrayList<>();
         List<ExamPosts> list = examPostsRepository.findByLectureId(option, lectureId);
+        boolean isWrite = isWrite(userId, lectureId);
         for (ExamPosts post : list) {
-            dtoList.add(new ExamResponseByLectureIdDto(post));
+            result.add(new ExamResponseByLectureIdDto(post));
         }
-        return dtoList;
+
+        if (result.isEmpty()) {
+            return ReadExamPostResponse.hasNotExamPost(isWrite);
+        }
+        return ReadExamPostResponse.hasExamPost(result, isWrite);
     }
 
     public List<ExamResponseByUserIdxDto> findExamPostsByUserId(PageOption option, Long userId) {
@@ -74,18 +79,16 @@ public class ExamPostsService {
         return dtoList;
     }
 
-    public boolean verifyWriteExamPosts(Long userIdx, Long lectureId) {
+    public boolean isWrite(Long userIdx, Long lectureId) {
         Lecture lecture = lectureService.findById(lectureId);
         Optional<User> user = userRepository.findById(userIdx);
-        return examPostsRepository.verifyPostsByIdx(user.get(), lecture);
+        return examPostsRepository.isWrite(user.get(), lecture);
     }
 
     public void deleteByUser(Long userIdx) {
         List<ExamPosts> list = examPostsRepository.findAllByUserId(userIdx);
 
-        if (list.isEmpty()) {
-            return;
-        } else {
+        if (!list.isEmpty()) {
             for (ExamPosts examPosts : list) {
                 examPostsRepository.delete(examPosts);
             }

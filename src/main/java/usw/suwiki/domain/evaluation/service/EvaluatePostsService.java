@@ -35,16 +35,17 @@ public class EvaluatePostsService {
         Lecture lecture = lectureService.findById(lectureId);
         User user = userRepository.findById(userIdx)
                 .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
+
         if (lecture == null) {
             throw new AccountException(ExceptionType.NOT_EXISTS_LECTURE);
         }
+
         posts.setLecture(lecture);
         posts.setUser(user);
-        userRepository.updatePoint(userIdx, (user.getPoint() + 10));
-        userRepository.updateWrittenEvaluateCount(userIdx, user.getWrittenEvaluation() + 1);
+        user.updateWritingEvaluatePost();
+
         EvaluatePostsToLecture lectureEvaluation = new EvaluatePostsToLecture(posts);
         lectureService.updateLectureEvaluationIfCreateNewPost(lectureEvaluation);
-
         evaluatePostsRepository.save(posts);
     }
 
