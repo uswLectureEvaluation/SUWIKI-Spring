@@ -2,7 +2,6 @@ package usw.suwiki.domain.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static usw.suwiki.global.exception.ExceptionType.IS_NOT_EMAIL_FORM;
