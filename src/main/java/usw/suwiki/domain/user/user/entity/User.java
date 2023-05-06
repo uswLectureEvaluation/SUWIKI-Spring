@@ -126,12 +126,22 @@ public class User {
         this.viewExamCount += 1;
     }
 
-    public void decreasePointByDeletePosts() {
+    public void decreasePointByDeleteEvaluatePosts() {
         final int deletePostRequiringPoint = 30;
         if (this.point < deletePostRequiringPoint) {
             throw new AccountException(USER_POINT_LACK);
         }
         this.point -= deletePostRequiringPoint;
+        this.writtenEvaluation -= 1;
+    }
+
+    public void decreasePointByDeleteExamPosts() {
+        final int deletePostRequiringPoint = 30;
+        if (this.point < deletePostRequiringPoint) {
+            throw new AccountException(USER_POINT_LACK);
+        }
+        this.point -= deletePostRequiringPoint;
+        this.writtenExam -= 1;
     }
 
     public void updatePassword(BCryptPasswordEncoder bCryptPasswordEncoder, String newPassword) {

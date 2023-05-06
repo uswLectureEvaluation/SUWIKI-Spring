@@ -1,8 +1,10 @@
 package usw.suwiki.domain.evaluation.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.Synchronized;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
 import usw.suwiki.domain.evaluation.dto.EvaluatePostsSaveDto;
 import usw.suwiki.domain.evaluation.dto.EvaluatePostsUpdateDto;
@@ -18,14 +20,11 @@ import usw.suwiki.global.PageOption;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
 
-import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-
 @Transactional
 @RequiredArgsConstructor
 @Service
 public class EvaluatePostsService {
+
     private final EvaluatePostsRepository evaluatePostsRepository;
     private final LectureService lectureService;
     private final UserRepository userRepository;
@@ -34,7 +33,7 @@ public class EvaluatePostsService {
         EvaluatePosts posts = new EvaluatePosts(evaluatePostsSaveDto);
         Lecture lecture = lectureService.findById(lectureId);
         User user = userRepository.findById(userIdx)
-                .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
+            .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
 
         if (lecture == null) {
             throw new AccountException(ExceptionType.NOT_EXISTS_LECTURE);
@@ -61,7 +60,8 @@ public class EvaluatePostsService {
         lectureService.updateLectureEvaluationIfUpdatePost(beforeUpdated, updated);
     }
 
-    public List<EvaluateResponseByLectureIdDto> findEvaluatePostsByLectureId(PageOption option, Long lectureId) {
+    public List<EvaluateResponseByLectureIdDto> findEvaluatePostsByLectureId(PageOption option,
+        Long lectureId) {
         List<EvaluateResponseByLectureIdDto> dtoList = new ArrayList<>();
         List<EvaluatePosts> list = evaluatePostsRepository.findByLectureId(option, lectureId);
         for (EvaluatePosts post : list) {
@@ -70,7 +70,8 @@ public class EvaluatePostsService {
         return dtoList;
     }
 
-    public List<EvaluateResponseByUserIdxDto> findEvaluatePostsByUserId(PageOption option, Long userId) {
+    public List<EvaluateResponseByUserIdxDto> findEvaluatePostsByUserId(PageOption option,
+        Long userId) {
         List<EvaluateResponseByUserIdxDto> dtoList = new ArrayList<>();
         List<EvaluatePosts> list = evaluatePostsRepository.findByUserId(option, userId);
         for (EvaluatePosts post : list) {
@@ -84,7 +85,7 @@ public class EvaluatePostsService {
     public boolean verifyIsUserWriteEvaluatePost(Long userIdx, Long lectureId) {
         Lecture lecture = lectureService.findById(lectureId);
         User user = userRepository.findById(userIdx)
-                .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
+            .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
         ;
         return evaluatePostsRepository.verifyPostsByIdx(user, lecture);
     }
@@ -103,7 +104,8 @@ public class EvaluatePostsService {
         List<EvaluatePosts> list = evaluatePostsRepository.findAllByUserId(userIdx);
         if (!list.isEmpty()) {
             for (EvaluatePosts evaluatePosts : list) {
-                EvaluatePostsToLecture lectureEvaluation = new EvaluatePostsToLecture(evaluatePosts);
+                EvaluatePostsToLecture lectureEvaluation = new EvaluatePostsToLecture(
+                    evaluatePosts);
                 lectureService.updateLectureEvaluationIfDeletePost(lectureEvaluation);
 
                 evaluatePostsRepository.delete(evaluatePosts);
@@ -111,11 +113,10 @@ public class EvaluatePostsService {
         }
     }
 
-    @Synchronized
     public void deleteById(Long evaluateIdx, Long userIdx) {
         EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
         User user = userRepository.findById(userIdx)
-                .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
+            .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
 
         EvaluatePostsToLecture lectureEvaluation = new EvaluatePostsToLecture(posts);
         lectureService.updateLectureEvaluationIfDeletePost(lectureEvaluation);
