@@ -2,15 +2,14 @@ package usw.suwiki.domain.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import static usw.suwiki.global.exception.ErrorType.IS_NOT_EMAIL_FORM;
-import static usw.suwiki.global.exception.ErrorType.PASSWORD_ERROR;
-import static usw.suwiki.global.exception.ErrorType.USER_AND_EMAIL_OVERLAP;
-import static usw.suwiki.global.exception.ErrorType.USER_NOT_EMAIL_AUTHED;
-import static usw.suwiki.global.exception.ErrorType.USER_NOT_EXISTS;
-import static usw.suwiki.global.exception.ErrorType.USER_NOT_FOUND;
+import static usw.suwiki.global.exception.ExceptionType.IS_NOT_EMAIL_FORM;
+import static usw.suwiki.global.exception.ExceptionType.PASSWORD_ERROR;
+import static usw.suwiki.global.exception.ExceptionType.USER_AND_EMAIL_OVERLAP;
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EMAIL_AUTHED;
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_FOUND;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapFalseFlag;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapTrueFlag;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successFlag;
@@ -54,9 +53,9 @@ import usw.suwiki.domain.user.userIsolation.entity.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.user.userIsolation.service.UserIsolationService;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
-import usw.suwiki.global.jwt.JwtTokenProvider;
-import usw.suwiki.global.jwt.JwtTokenResolver;
-import usw.suwiki.global.jwt.JwtTokenValidator;
+import usw.suwiki.global.jwt.JwtProvider;
+import usw.suwiki.global.jwt.JwtResolver;
+import usw.suwiki.global.jwt.JwtValidator;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
 import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
 import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
@@ -93,11 +92,11 @@ public class UserServiceTest {
     @Mock
     BlackListService blackListService;
     @Mock
-    JwtTokenProvider jwtTokenProvider;
+    JwtProvider jwtTokenProvider;
     @Mock
-    JwtTokenValidator jwtTokenValidator;
+    JwtValidator jwtTokenValidator;
     @Mock
-    JwtTokenResolver jwtTokenResolver;
+    JwtResolver jwtTokenResolver;
     @Mock
     UserIsolationService userIsolationService;
     @Mock
