@@ -1,11 +1,11 @@
-package usw.suwiki.domain.exam.entity;
+package usw.suwiki.domain.exam.domain;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
-import usw.suwiki.domain.exam.dto.ExamPostsSaveDto;
-import usw.suwiki.domain.exam.dto.ExamPostsUpdateDto;
+import usw.suwiki.domain.exam.controller.dto.ExamPostsSaveDto;
+import usw.suwiki.domain.exam.controller.dto.ExamPostsUpdateDto;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.global.BaseTimeEntity;

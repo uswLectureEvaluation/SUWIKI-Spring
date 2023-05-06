@@ -1,7 +1,7 @@
-package usw.suwiki.domain.exam.dto;
+package usw.suwiki.domain.exam.controller.dto;
 
 import lombok.Getter;
-import usw.suwiki.domain.exam.entity.ExamPosts;
+import usw.suwiki.domain.exam.domain.ExamPosts;
 
 @Getter
 public class ExamResponseByUserIdxDto {

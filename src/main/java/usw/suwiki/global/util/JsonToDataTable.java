@@ -14,9 +14,9 @@ import usw.suwiki.domain.lecture.controller.dto.JsonToLectureForm;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class JsonToDataTable {
 
     private final LectureRepository lectureRepository;
@@ -112,8 +112,7 @@ public class JsonToDataTable {
                         lectureRepository.save(lecture);
                     }
                 } else if (lecture == null) {
-                    Lecture savedLecture = new Lecture();
-                    savedLecture.toEntity(dto);
+                    Lecture savedLecture = Lecture.toEntity(dto);
                     Thread.sleep(1);
                     lectureRepository.save(savedLecture);
                 }

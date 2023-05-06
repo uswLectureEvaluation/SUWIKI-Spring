@@ -16,7 +16,7 @@ import usw.suwiki.domain.blacklistdomain.BlacklistRepository;
 import usw.suwiki.domain.blacklistdomain.entity.BlacklistDomain;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
-import usw.suwiki.domain.exam.entity.ExamPosts;
+import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.exam.service.ExamPostsService;
 import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
 import usw.suwiki.domain.postreport.entity.ExamPostReport;

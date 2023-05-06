@@ -106,20 +106,24 @@ public class User {
         this.requestedQuitDate = LocalDateTime.now();
     }
 
-    public void increasePointByWritingEvaluatePost() {
-        this.point += 10;
+    public void updateWritingEvaluatePost() {
+        final int WRITE_EVALUATE_POST = 10;
+        this.point += WRITE_EVALUATE_POST;
+        this.writtenEvaluation += 1;
     }
 
     public void increasePointByWritingExamPost() {
         this.point += 20;
+        this.writtenExam += 1;
     }
 
-    public void decreasePointByPurchaseExamPost() {
+    public void purchaseExamPost() {
         final int examPostRequiringPoint = 20;
         if (this.point < examPostRequiringPoint) {
             throw new AccountException(USER_POINT_LACK);
         }
         this.point -= examPostRequiringPoint;
+        this.viewExamCount += 1;
     }
 
     public void decreasePointByDeletePosts() {

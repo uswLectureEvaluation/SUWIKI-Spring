@@ -7,7 +7,7 @@ import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.ExamPostRestrictForm;
 import usw.suwiki.domain.admin.service.UserAdminService;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
-import usw.suwiki.domain.exam.entity.ExamPosts;
+import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.user.restrictinguser.repository.RestrictingUser;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.RestrictingUserRepository;

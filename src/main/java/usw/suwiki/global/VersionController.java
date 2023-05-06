@@ -25,7 +25,7 @@ public class VersionController {
         HttpHeaders header = new HttpHeaders();
         float version = SuwikiVersion.version;
         VersionResponseDto dto = new VersionResponseDto(version);
-        return new ResponseEntity<VersionResponseDto>(dto, header, HttpStatus.valueOf(200));
+        return new ResponseEntity<>(dto, header, HttpStatus.valueOf(200));
     }
 
     @ApiLogger(option = "version")

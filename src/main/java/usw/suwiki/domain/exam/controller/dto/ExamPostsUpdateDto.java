@@ -1,4 +1,4 @@
-package usw.suwiki.domain.exam.dto;
+package usw.suwiki.domain.exam.controller.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

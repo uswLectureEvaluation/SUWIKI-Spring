@@ -18,7 +18,6 @@ import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtResolver;
-import usw.suwiki.global.jwt.JwtValidator;
 
 
 @RestController
@@ -28,22 +27,20 @@ import usw.suwiki.global.jwt.JwtValidator;
 public class LectureController {
 
     private final LectureService lectureService;
-    private final JwtValidator jwtValidator;
     private final JwtResolver jwtResolver;
 
     @ApiLogger(option = "lecture")
     @GetMapping("/search")
     public ResponseEntity<LectureAndCountResponseForm> searchLectureApi(
-        @RequestParam(required = false) String searchValue,
+        @RequestParam String searchValue,
         @RequestParam(required = false) String option,
         @RequestParam(required = false) Integer page,
         @RequestParam(required = false) String majorType
     ) {
         LectureFindOption findOption = new LectureFindOption(option, page, majorType);
         LectureAndCountResponseForm response = lectureService.findLectureByKeyword(
-            searchValue,
-            findOption
-        );
+            searchValue, findOption);
+
         return ResponseEntity.ok(response);
     }
 
@@ -65,7 +62,6 @@ public class LectureController {
         @RequestParam Long lectureId,
         @RequestHeader String Authorization) {
 
-        jwtValidator.validateJwt(Authorization);
         if (jwtResolver.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }

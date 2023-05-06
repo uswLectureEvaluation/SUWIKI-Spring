@@ -22,6 +22,16 @@ public class JpaViewExamRepository implements ViewExamRepository {
     }
 
     @Override
+    public boolean validateIsExists(Long userId, Long lectureId) {
+        return em.createQuery("SELECT CASE WHEN COUNT(v) > 0 THEN true ELSE false END "
+                + "FROM ViewExam v "
+                + "WHERE (v.user.id = :userId and v.lecture.id = :lectureId)", Boolean.class)
+            .setParameter("userId", userId)
+            .setParameter("lectureId", lectureId)
+            .getSingleResult();
+    }
+
+    @Override
     public List<ViewExam> findByUserId(Long userIdx) {
         List<ViewExam> resultList = em.createQuery("SELECT v FROM ViewExam v JOIN v.user u WHERE u.id = :idx ORDER BY v.createDate")
                 .setParameter("idx", userIdx)
