@@ -59,8 +59,10 @@ public class ExamPostsController {
         boolean canRead = viewExamService.isExist(userId, lectureId);
 
         if (!canRead) {
-            boolean isWrite = examPostsService.isWrite(userId, lectureId);
-            return ReadExamPostResponse.ForbiddenToRead(isWrite);
+            ReadExamPostResponse response = examPostsService.readExamPost(userId, lectureId,
+                new PageOption(page));
+            response.forbiddenToRead();
+            return response;
         }
 
         //시험정보 데이터 존재 여부
