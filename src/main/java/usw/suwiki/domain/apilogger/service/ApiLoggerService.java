@@ -18,7 +18,6 @@ import usw.suwiki.domain.apilogger.repository.ApiLoggerRepository;
 public class ApiLoggerService {
 
     private final ApiLoggerRepository apiLoggerRepository;
-
     private final String lecturePostsOption = "lecture";
     private final String evaluatePostsOption = "evaluatePosts";
     private final String examPostsOption = "examPosts";
