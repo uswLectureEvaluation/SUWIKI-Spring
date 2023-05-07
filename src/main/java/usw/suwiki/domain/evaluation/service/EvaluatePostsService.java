@@ -1,7 +1,5 @@
 package usw.suwiki.domain.evaluation.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +13,15 @@ import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.user.entity.User;
-import usw.suwiki.domain.user.user.repository.UserRepository;
+import usw.suwiki.domain.user.user.service.UserService;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static usw.suwiki.global.exception.ExceptionType.USER_POINT_LACK;
 
 @Transactional
 @RequiredArgsConstructor
@@ -27,13 +30,12 @@ public class EvaluatePostsService {
 
     private final EvaluatePostsRepository evaluatePostsRepository;
     private final LectureService lectureService;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     public void save(EvaluatePostsSaveDto evaluatePostsSaveDto, Long userIdx, Long lectureId) {
         EvaluatePosts posts = new EvaluatePosts(evaluatePostsSaveDto);
         Lecture lecture = lectureService.findById(lectureId);
-        User user = userRepository.findById(userIdx)
-            .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
+        User user = userService.loadUserFromUserIdx(userIdx);
 
         if (lecture == null) {
             throw new AccountException(ExceptionType.NOT_EXISTS_LECTURE);
@@ -61,7 +63,7 @@ public class EvaluatePostsService {
     }
 
     public List<EvaluateResponseByLectureIdDto> findEvaluatePostsByLectureId(PageOption option,
-        Long lectureId) {
+                                                                             Long lectureId) {
         List<EvaluateResponseByLectureIdDto> dtoList = new ArrayList<>();
         List<EvaluatePosts> list = evaluatePostsRepository.findByLectureId(option, lectureId);
         for (EvaluatePosts post : list) {
@@ -71,7 +73,7 @@ public class EvaluatePostsService {
     }
 
     public List<EvaluateResponseByUserIdxDto> findEvaluatePostsByUserId(PageOption option,
-        Long userId) {
+                                                                        Long userId) {
         List<EvaluateResponseByUserIdxDto> dtoList = new ArrayList<>();
         List<EvaluatePosts> list = evaluatePostsRepository.findByUserId(option, userId);
         for (EvaluatePosts post : list) {
@@ -84,44 +86,30 @@ public class EvaluatePostsService {
 
     public boolean verifyIsUserWriteEvaluatePost(Long userIdx, Long lectureId) {
         Lecture lecture = lectureService.findById(lectureId);
-        User user = userRepository.findById(userIdx)
-            .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
-        ;
+        User user = userService.loadUserFromUserIdx(userIdx);
         return evaluatePostsRepository.verifyPostsByIdx(user, lecture);
     }
 
-    public boolean deleteEvaluatePost(Long userIdx, Long evaluateIdx) {
-        EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
-        Integer point = posts.getUser().getPoint();
-        if (point >= 30) {
-            userRepository.updatePoint(userIdx, (posts.getUser().getPoint() - 30));
-            return true;
-        }
-        return false;
-    }
-
-    public void deleteByUser(Long userIdx) {
+    public void deleteFromUserIdx(Long userIdx) {
         List<EvaluatePosts> list = evaluatePostsRepository.findAllByUserId(userIdx);
         if (!list.isEmpty()) {
             for (EvaluatePosts evaluatePosts : list) {
-                EvaluatePostsToLecture lectureEvaluation = new EvaluatePostsToLecture(
-                    evaluatePosts);
+                EvaluatePostsToLecture lectureEvaluation = new EvaluatePostsToLecture(evaluatePosts);
                 lectureService.updateLectureEvaluationIfDeletePost(lectureEvaluation);
-
                 evaluatePostsRepository.delete(evaluatePosts);
             }
         }
     }
 
-    public void deleteById(Long evaluateIdx, Long userIdx) {
-        EvaluatePosts posts = evaluatePostsRepository.findById(evaluateIdx);
-        User user = userRepository.findById(userIdx)
-            .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
+    public void executeDeleteEvaluatePost(Long evaluateIdx, Long userIdx) {
+        EvaluatePosts post = evaluatePostsRepository.findById(evaluateIdx);
+        User user = userService.loadUserFromUserIdx(userIdx);
+        user.decreasePointAndWrittenEvaluationByDeleteEvaluatePosts();
+        evaluatePostsRepository.delete(post);
+        throw new AccountException(USER_POINT_LACK);
+    }
 
-        EvaluatePostsToLecture lectureEvaluation = new EvaluatePostsToLecture(posts);
-        lectureService.updateLectureEvaluationIfDeletePost(lectureEvaluation);
-
-        userRepository.updateWrittenEvaluateCount(userIdx, user.getWrittenEvaluation() - 1);
-        evaluatePostsRepository.delete(posts);
+    public EvaluatePosts loadEvaluatePostsFromEvaluatePostsIdx(Long evaluateIdx) {
+        return evaluatePostsRepository.findById(evaluateIdx);
     }
 }

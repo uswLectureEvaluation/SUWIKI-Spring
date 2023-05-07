@@ -10,10 +10,10 @@ import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepositor
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.service.ExamPostsService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
-import usw.suwiki.domain.postreport.service.PostReportService;
+import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.user.user.entity.User;
-import usw.suwiki.domain.user.user.repository.RestrictingUserRepository;
+import usw.suwiki.domain.admin.restrictinguser.RestrictingUserRepository;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.userIsolation.entity.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
@@ -33,7 +33,7 @@ public class QuitRequestUserService {
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
     private final RestrictingUserRepository restrictingUserRepository;
-    private final PostReportService postReportService;
+    private final ReportPostService reportPostService;
 
     // 회원탈퇴 요청 후 30일 뒤 테이블에서 제거
     @Transactional
@@ -47,17 +47,17 @@ public class QuitRequestUserService {
             for (int index = 0; index < targetUser.toArray().length; index++) {
                 Long userId = targetUser.get(index).getId();
                 // 삭제 예정 유저의 구매한 시험 정보 삭제
-                viewExamService.deleteByUserIdx(userId);
+                viewExamService.deleteFromUserIdx(userId);
                 // 리프레시 토큰 삭제
                 refreshTokenRepository.deleteByUserIdx(userId);
                 // 신고된 게시글 삭제
-                postReportService.deleteByUserIdx(userId);
+                reportPostService.deleteFromUserIdx(userId);
                 // 삭제 예정 유저의 강의평가 삭제
-                evaluatePostsService.deleteByUser(userId);
+                evaluatePostsService.deleteFromUserIdx(userId);
                 // 삭제 예정 유저의 시험정보 삭제
-                examPostsService.deleteByUser(userId);
+                examPostsService.deleteFromUserIdx(userId);
                 // 즐겨찾기 게시글 삭제
-                favoriteMajorService.deleteAllByUser(userId);
+                favoriteMajorService.deleteFromUserIdx(userId);
                 // 제한 테이블에서 삭제
                 restrictingUserRepository.deleteByUserIdx(userId);
                 // 이메일 인증 토큰 삭제
@@ -69,16 +69,16 @@ public class QuitRequestUserService {
             for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
                 Long userIdx = targetUserIsolation.get(i).getUserIdx();
                 // 삭제 예정 유저의 구매한 시험 정보 삭제
-                viewExamService.deleteByUserIdx(userIdx);
+                viewExamService.deleteFromUserIdx(userIdx);
                 // 리프레시 토큰 삭제
                 refreshTokenRepository.deleteByUserIdx(userIdx);
-                postReportService.deleteByUserIdx(userIdx);
+                reportPostService.deleteFromUserIdx(userIdx);
                 // 삭제 예정 유저의 강의평가 삭제
-                evaluatePostsService.deleteByUser(userIdx);
+                evaluatePostsService.deleteFromUserIdx(userIdx);
                 // 삭제 예정 유저의 시험정보 삭제
-                examPostsService.deleteByUser(userIdx);
+                examPostsService.deleteFromUserIdx(userIdx);
                 // 즐겨찾기 게시글 삭제
-                favoriteMajorService.deleteAllByUser(userIdx);
+                favoriteMajorService.deleteFromUserIdx(userIdx);
                 // 제한 테이블에서 삭제
                 restrictingUserRepository.deleteByUserIdx(userIdx);
                 // 이메일 인증 토큰 삭제

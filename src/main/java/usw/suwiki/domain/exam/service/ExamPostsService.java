@@ -1,19 +1,15 @@
 package usw.suwiki.domain.exam.service;
 
+import com.mysql.cj.MysqlConnection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import usw.suwiki.domain.exam.controller.dto.ReadExamPostResponse;
-import usw.suwiki.domain.exam.controller.dto.ExamPostsSaveDto;
-import usw.suwiki.domain.exam.controller.dto.ExamPostsUpdateDto;
-import usw.suwiki.domain.exam.controller.dto.ExamResponseByLectureIdDto;
-import usw.suwiki.domain.exam.controller.dto.ExamResponseByUserIdxDto;
+import usw.suwiki.domain.exam.controller.dto.*;
 import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.exam.domain.repository.ExamPostsRepository;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.user.entity.User;
-import usw.suwiki.domain.user.user.repository.UserRepository;
+import usw.suwiki.domain.user.user.service.UserService;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
@@ -21,7 +17,6 @@ import usw.suwiki.global.exception.errortype.AccountException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor
@@ -29,12 +24,12 @@ import java.util.Optional;
 public class ExamPostsService {
     private final ExamPostsRepository examPostsRepository;
     private final LectureService lectureService;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     public void write(ExamPostsSaveDto dto, Long userIdx, Long lectureId) {
         ExamPosts posts = new ExamPosts(dto);
         Lecture lecture = lectureService.findById(lectureId);
-        User user = userRepository.findById(userIdx).get();
+        User user = userService.loadUserFromUserIdx(userIdx);
 
         if (lecture == null) {
             throw new AccountException(ExceptionType.NOT_EXISTS_LECTURE);
@@ -80,12 +75,13 @@ public class ExamPostsService {
     }
 
     public boolean isWrite(Long userIdx, Long lectureId) {
-        Lecture lecture = lectureService.findById(lectureId);
-        Optional<User> user = userRepository.findById(userIdx);
-        return examPostsRepository.isWrite(user.get(), lecture);
+        return examPostsRepository.isWrite(
+                userService.loadUserFromUserIdx(userIdx),
+                lectureService.findById(lectureId)
+        );
     }
 
-    public void deleteByUser(Long userIdx) {
+    public void deleteFromUserIdx(Long userIdx) {
         List<ExamPosts> list = examPostsRepository.findAllByUserId(userIdx);
 
         if (!list.isEmpty()) {
@@ -95,21 +91,14 @@ public class ExamPostsService {
         }
     }
 
-    public boolean verifyDeleteExamPosts(Long userIdx, Long examIdx) {
-        ExamPosts posts = examPostsRepository.findById(examIdx);
-        Integer point = posts.getUser().getPoint();
-        if (point >= 30) {
-            userRepository.updatePoint(userIdx, (posts.getUser().getPoint() - 30));
-            return true;
-        }
-        return false;
+    public void executeDeleteExamPosts(Long userIdx, Long examIdx) {
+        ExamPosts post = examPostsRepository.findById(examIdx);
+        User user = userService.loadUserFromUserIdx(userIdx);
+        user.decreasePointAndWrittenExamByDeleteExamPosts();
+        examPostsRepository.delete(post);
     }
 
-    public void deleteById(Long examIdx, Long userIdx) {
-        ExamPosts posts = examPostsRepository.findById(examIdx);
-        userRepository.findById(userIdx)
-                .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
-        userRepository.updateWrittenExamCount(userIdx, posts.getUser().getPoint() - 30);
-        examPostsRepository.delete(posts);
+    public ExamPosts loadExamPostsFromExamPostsIdx(Long examIdx) {
+        return examPostsRepository.findById(examIdx);
     }
 }

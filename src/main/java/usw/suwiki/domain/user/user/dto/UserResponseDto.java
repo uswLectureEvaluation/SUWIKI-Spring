@@ -9,7 +9,7 @@ public class UserResponseDto {
 
     @Getter
     @Builder
-    public static class MyPageForm {
+    public static class MyPageResponseForm {
         private String loginId;
         private String email;
         private Integer point;
@@ -20,7 +20,7 @@ public class UserResponseDto {
 
     @Getter
     @Builder
-    public static class LoadMyRestrictedReasonForm {
+    public static class LoadMyRestrictedReasonResponseForm {
         private String restrictedReason;
         private String judgement;
         private LocalDateTime createdAt;
@@ -29,7 +29,7 @@ public class UserResponseDto {
 
     @Getter
     @Builder
-    public static class LoadMyBlackListReasonForm {
+    public static class LoadMyBlackListReasonResponseForm {
         private String blackListReason;
         private String judgement;
         private LocalDateTime createdAt;

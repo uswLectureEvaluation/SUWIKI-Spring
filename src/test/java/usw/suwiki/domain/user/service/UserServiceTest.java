@@ -26,11 +26,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import usw.suwiki.domain.blacklistdomain.BlackListService;
+import usw.suwiki.domain.admin.blacklistdomain.BlackListService;
 import usw.suwiki.domain.confirmationtoken.entity.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenService;
-import usw.suwiki.domain.confirmationtoken.service.EmailSender;
+import usw.suwiki.global.mailsender.EmailSender;
 import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.domain.repository.ExamPostsRepository;
@@ -38,7 +38,7 @@ import usw.suwiki.domain.exam.service.ExamPostsService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
-import usw.suwiki.domain.postreport.service.PostReportService;
+import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckEmailForm;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckLoginIdForm;
@@ -110,7 +110,7 @@ public class UserServiceTest {
     @Mock
     ExamPostsService examPostsService;
     @Mock
-    PostReportService postReportService;
+    ReportPostService reportPostService;
 
     @InjectMocks
     UserService userService;

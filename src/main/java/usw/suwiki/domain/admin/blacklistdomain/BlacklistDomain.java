@@ -1,5 +1,4 @@
-package usw.suwiki.domain.user.restrictinguser.repository;
-
+package usw.suwiki.domain.admin.blacklistdomain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +10,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class RestrictingUser {
+@NoArgsConstructor
+public class BlacklistDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,10 +23,13 @@ public class RestrictingUser {
     private Long userIdx;
 
     @Column
-    private LocalDateTime restrictingDate;
+    private String hashedEmail;
 
     @Column
-    private String restrictingReason;
+    private LocalDateTime expiredAt;
+
+    @Column
+    private String bannedReason;
 
     @Column
     private String judgement;
@@ -37,5 +39,4 @@ public class RestrictingUser {
 
     @Column
     private LocalDateTime updatedAt;
-
 }

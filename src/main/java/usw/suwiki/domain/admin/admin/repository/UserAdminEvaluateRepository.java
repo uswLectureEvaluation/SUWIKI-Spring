@@ -1,4 +1,4 @@
-package usw.suwiki.domain.admin.repository;
+package usw.suwiki.domain.admin.admin.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

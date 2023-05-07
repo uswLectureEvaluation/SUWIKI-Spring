@@ -1,59 +1,48 @@
 package usw.suwiki.domain.user.user.service;
 
-import static usw.suwiki.global.exception.ExceptionType.IS_NOT_EMAIL_FORM;
-import static usw.suwiki.global.exception.ExceptionType.LOGIN_REQUIRED;
-import static usw.suwiki.global.exception.ExceptionType.PASSWORD_ERROR;
-import static usw.suwiki.global.exception.ExceptionType.PASSWORD_NOT_CHANGED;
-import static usw.suwiki.global.exception.ExceptionType.USER_AND_EMAIL_OVERLAP;
-import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
-import static usw.suwiki.global.exception.ExceptionType.USER_NOT_FOUND;
-import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapFalseFlag;
-import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapTrueFlag;
-import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successFlag;
-
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import javax.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.blacklistdomain.BlackListService;
+import usw.suwiki.domain.admin.blacklistdomain.BlackListService;
 import usw.suwiki.domain.confirmationtoken.entity.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
-import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenService;
-import usw.suwiki.domain.confirmationtoken.service.EmailSender;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
-import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
-import usw.suwiki.domain.exam.domain.repository.ExamPostsRepository;
 import usw.suwiki.domain.exam.service.ExamPostsService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
 import usw.suwiki.domain.postreport.entity.ExamPostReport;
-import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
-import usw.suwiki.domain.postreport.repository.ExamReportRepository;
-import usw.suwiki.domain.postreport.service.PostReportService;
-import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
+import usw.suwiki.domain.postreport.service.ReportPostService;
+import usw.suwiki.domain.refreshToken.entity.RefreshToken;
+import usw.suwiki.domain.refreshToken.service.RefreshTokenService;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.EvaluateReportForm;
 import usw.suwiki.domain.user.user.dto.UserRequestDto.ExamReportForm;
-import usw.suwiki.domain.user.user.dto.UserResponseDto.MyPageForm;
+import usw.suwiki.domain.user.user.dto.UserResponseDto.MyPageResponseForm;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.userIsolation.entity.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
-import usw.suwiki.domain.user.userIsolation.service.UserIsolationService;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtProvider;
 import usw.suwiki.global.jwt.JwtResolver;
 import usw.suwiki.global.jwt.JwtValidator;
+import usw.suwiki.global.mailsender.EmailSender;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
 import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
 import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
+
+import javax.servlet.http.Cookie;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static usw.suwiki.global.exception.ExceptionType.*;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.*;
 
 
 @Service
@@ -61,17 +50,14 @@ import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
 @Transactional
 public class UserService {
 
-    private final String BASE_LINK = "https://api.suwiki.kr/user/verify-email/?token=";
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private static final String BASE_LINK = "https://api.suwiki.kr/user/verify-email/?token=";
+    private static final String MAIL_FORM = "@suwon.ac.kr";
     private final UserRepository userRepository;
     private final UserIsolationRepository userIsolationRepository;
-    private final ConfirmationTokenRepository confirmationTokenRepository;
-    private final EvaluatePostsRepository evaluatePostsRepository;
-    private final ExamPostsRepository examPostsRepository;
-    private final EvaluateReportRepository evaluateReportRepository;
-    private final ExamReportRepository examReportRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EmailSender emailSender;
-    private final ConfirmationTokenService confirmationTokenService;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final RefreshTokenService refreshTokenService;
     private final BuildEmailAuthForm buildEmailAuthForm;
     private final BuildFindLoginIdForm BuildFindLoginIdForm;
     private final BuildFindPasswordForm BuildFindPasswordForm;
@@ -79,18 +65,16 @@ public class UserService {
     private final JwtProvider jwtProvider;
     private final JwtValidator jwtValidator;
     private final JwtResolver jwtResolver;
-    private final UserIsolationService userIsolationService;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final FavoriteMajorService favoriteMajorService;
     private final ViewExamService viewExamService;
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
-    private final PostReportService postReportService;
+    private final ReportPostService reportPostService;
 
     @Transactional(readOnly = true)
     public Map<String, Boolean> executeCheckId(String loginId) {
         if (userRepository.findByLoginId(loginId).isPresent() ||
-            userIsolationRepository.findByLoginId(loginId).isPresent()) {
+                userIsolationRepository.findByLoginId(loginId).isPresent()) {
             return overlapTrueFlag();
         }
         return overlapFalseFlag();
@@ -99,7 +83,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public Map<String, Boolean> executeCheckEmail(String email) {
         if (userRepository.findByEmail(email).isPresent() ||
-            userIsolationRepository.findByEmail(email).isPresent()) {
+                userIsolationRepository.findByEmail(email).isPresent()) {
             return overlapTrueFlag();
         }
         return overlapFalseFlag();
@@ -107,33 +91,27 @@ public class UserService {
 
     @Transactional
     public Map<String, Boolean> executeJoin(String loginId, String password, String email) {
-        blackListService.joinRequestUserIsBlackList(email);
+        blackListService.isUserInBlackListThatRequestJoin(email);
 
         if (userRepository.findByLoginId(loginId).isPresent() ||
-            userIsolationRepository.findByLoginId(loginId).isPresent() ||
-            userRepository.findByEmail(email).isPresent() ||
-            userIsolationRepository.findByEmail(email).isPresent()) {
+                userIsolationRepository.findByLoginId(loginId).isPresent() ||
+                userRepository.findByEmail(email).isPresent() ||
+                userIsolationRepository.findByEmail(email).isPresent())
             throw new AccountException(USER_AND_EMAIL_OVERLAP);
-        }
 
-        if (!email.contains("@suwon.ac.kr")) {
-            throw new AccountException(IS_NOT_EMAIL_FORM);
-        }
+        if (!email.contains(MAIL_FORM)) throw new AccountException(IS_NOT_EMAIL_FORM);
 
         User user = User.makeUser(loginId, bCryptPasswordEncoder.encode(password), email);
         userRepository.save(user);
 
         ConfirmationToken confirmationToken = ConfirmationToken.makeToken(user);
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        confirmationTokenRepository.save(confirmationToken);
 
-        emailSender.send(email, buildEmailAuthForm
-            .buildEmail(BASE_LINK + confirmationToken.getToken())
+        emailSender.send(
+                email,
+                buildEmailAuthForm.buildEmail(BASE_LINK + confirmationToken.getToken())
         );
         return successFlag();
-    }
-
-    public String executeVerifyEmail(String token) {
-        return confirmationTokenService.confirmToken(token);
     }
 
     public Map<String, Boolean> executeFindId(String email) {
@@ -141,14 +119,14 @@ public class UserService {
         Optional<UserIsolation> requestIsolationUser = userIsolationRepository.findByEmail(email);
         if (requestUser.isPresent()) {
             emailSender.send(
-                email,
-                BuildFindLoginIdForm.buildEmail(requestUser.get().getLoginId())
+                    email,
+                    BuildFindLoginIdForm.buildEmail(requestUser.get().getLoginId())
             );
             return successFlag();
         } else if (requestIsolationUser.isPresent()) {
             emailSender.send(
-                email,
-                BuildFindLoginIdForm.buildEmail(requestIsolationUser.get().getLoginId())
+                    email,
+                    BuildFindLoginIdForm.buildEmail(requestIsolationUser.get().getLoginId())
             );
             return successFlag();
         }
@@ -160,29 +138,29 @@ public class UserService {
         Optional<User> userByEmail = userRepository.findByEmail(email);
 
         Optional<UserIsolation> isolationUserByLoginId =
-            userIsolationRepository.findByLoginId(loginId);
+                userIsolationRepository.findByLoginId(loginId);
         Optional<UserIsolation> isolationUserByEmail =
-            userIsolationRepository.findByEmail(email);
+                userIsolationRepository.findByEmail(email);
 
         User user;
         UserIsolation userIsolation;
 
         if (userByLoginId.equals(userByEmail) &&
-            userByLoginId.isPresent() &&
-            userByEmail.isPresent()) {
+                userByLoginId.isPresent() &&
+                userByEmail.isPresent()) {
             user = userByLoginId.get();
             emailSender.send(email, BuildFindPasswordForm.buildEmail(
-                    user.updateRandomPassword(bCryptPasswordEncoder)
-                )
+                            user.updateRandomPassword(bCryptPasswordEncoder)
+                    )
             );
             return successFlag();
         } else if (isolationUserByLoginId.equals(isolationUserByEmail) &&
-            isolationUserByLoginId.isPresent() && isolationUserByEmail.isPresent()
+                isolationUserByLoginId.isPresent() && isolationUserByEmail.isPresent()
         ) {
             userIsolation = isolationUserByEmail.get();
             emailSender.send(email, BuildFindPasswordForm.buildEmail(
-                    userIsolation.updateRandomPassword(bCryptPasswordEncoder)
-                )
+                            userIsolation.updateRandomPassword(bCryptPasswordEncoder)
+                    )
             );
             return successFlag();
         }
@@ -192,30 +170,39 @@ public class UserService {
     public Map<String, String> executeLogin(String loginId, String inputPassword) {
         Map<String, String> tokenPair = new HashMap<>();
         if (userRepository.findByLoginId(loginId).isPresent() &&
-            userIsolationRepository.findByLoginId(loginId).isEmpty()) {
+                userIsolationRepository.findByLoginId(loginId).isEmpty()) {
             User notSleepingUser = loadUserFromLoginId(loginId);
             notSleepingUser.isUserEmailAuthed(
-                confirmationTokenRepository.findByUserIdx(notSleepingUser.getId())
+                    confirmationTokenRepository.findByUserIdx(notSleepingUser.getId())
             );
             if (matchPassword(loginId, inputPassword)) {
                 tokenPair.put(
-                    "AccessToken", jwtProvider.createAccessToken(notSleepingUser)
+                        "AccessToken", jwtProvider.createAccessToken(notSleepingUser)
                 );
                 tokenPair.put(
-                    "RefreshToken",
-                    jwtResolver.judgementRefreshTokenCreateOrUpdateInLogin(notSleepingUser)
+                        "RefreshToken",
+                        jwtResolver.judgementRefreshTokenCreateOrUpdateInLogin(notSleepingUser)
                 );
                 notSleepingUser.updateLastLoginDate();
                 return tokenPair;
             }
         } else if (userIsolationRepository.findByLoginId(loginId).isPresent() &&
-            userRepository.findByLoginId(loginId).isEmpty()) {
-            User sleepingUser = userIsolationService.sleepingUserLogin(loginId, inputPassword);
+                userRepository.findByLoginId(loginId).isEmpty()) {
+            UserIsolation userIsolation = userIsolationRepository.findByLoginId(loginId).get();
+            if (bCryptPasswordEncoder.matches(
+                    inputPassword,
+                    userIsolationRepository.findByLoginId(loginId).get().getPassword()
+            )) {
+                rollBackSoftDeletedForIsolation(userIsolation.getUserIdx());
+                userIsolationRepository.deleteByLoginId(loginId);
+            }
+
+            User sleepingUser = loadUserFromLoginId(loginId);
             tokenPair.put(
-                "AccessToken", jwtProvider.createAccessToken(sleepingUser)
+                    "AccessToken", jwtProvider.createAccessToken(sleepingUser)
             );
             tokenPair.put(
-                "RefreshToken", jwtResolver.judgementRefreshTokenCreateOrUpdateInLogin(sleepingUser)
+                    "RefreshToken", jwtResolver.judgementRefreshTokenCreateOrUpdateInLogin(sleepingUser)
             );
             sleepingUser.updateLastLoginDate();
             return tokenPair;
@@ -224,7 +211,7 @@ public class UserService {
     }
 
     public Map<String, Boolean> executeEditPassword(
-        User user, String prePassword, String newPassword) {
+            User user, String prePassword, String newPassword) {
         if (prePassword.equals(newPassword)) {
             throw new AccountException(PASSWORD_NOT_CHANGED);
         } else if (!matchPassword(user.getLoginId(), prePassword)) {
@@ -234,43 +221,39 @@ public class UserService {
         return successFlag();
     }
 
-    public MyPageForm executeLoadMyPage(String Authorization) {
+    public MyPageResponseForm executeLoadMyPage(String Authorization) {
         Long userIdx = jwtResolver.getId(Authorization);
         User user = loadUserFromUserIdx(userIdx);
-        return MyPageForm.builder()
-            .loginId(user.getLoginId())
-            .email(user.getEmail())
-            .point(user.getPoint())
-            .writtenEvaluation(user.getWrittenEvaluation())
-            .writtenExam(user.getWrittenExam())
-            .viewExam(user.getViewExamCount())
-            .build();
+        return MyPageResponseForm.builder()
+                .loginId(user.getLoginId())
+                .email(user.getEmail())
+                .point(user.getPoint())
+                .writtenEvaluation(user.getWrittenEvaluation())
+                .writtenExam(user.getWrittenExam())
+                .viewExam(user.getViewExamCount())
+                .build();
     }
 
     public Map<String, String> executeJWTRefreshForWebClient(Cookie requestRefreshCookie) {
-        String refreshToken = requestRefreshCookie.getValue();
-        if (refreshTokenRepository.findByPayload(refreshToken).isEmpty()) {
-            throw new AccountException(LOGIN_REQUIRED);
-        }
-        Long userIdx = refreshTokenRepository.findByPayload(refreshToken).get().getUserIdx();
-        User user = loadUserFromUserIdx(userIdx);
+        String payload = requestRefreshCookie.getValue();
+        RefreshToken refreshToken = refreshTokenService.loadRefreshTokenFromPayload(payload);
+        User user = loadUserFromUserIdx(refreshToken.getUserIdx());
         return new HashMap<>() {{
-            put("AccessToken", jwtProvider.createAccessToken(user));
+            put("AccessToken",
+                    jwtProvider.createAccessToken(user));
             put("RefreshToken",
-                jwtResolver.judgementRefreshTokenCreateOrUpdateInRefreshRequest(user));
+                    jwtResolver.judgementRefreshTokenCreateOrUpdateInRefreshRequest(user));
         }};
     }
 
     public Map<String, String> executeJWTRefreshForMobileClient(String Authorization) {
-        if (refreshTokenRepository.findByPayload(Authorization).isEmpty()) {
-            throw new AccountException(LOGIN_REQUIRED);
-        }
-        Long userIdx = refreshTokenRepository.findByPayload(Authorization).get().getUserIdx();
-        User user = loadUserFromUserIdx(userIdx);
+        RefreshToken refreshToken = refreshTokenService.loadRefreshTokenFromPayload(Authorization);
+        User user = loadUserFromUserIdx(refreshToken.getUserIdx());
         return new HashMap<>() {{
-            put("AccessToken", jwtProvider.createAccessToken(user));
+            put("AccessToken",
+                    jwtProvider.createAccessToken(user));
             put("RefreshToken",
-                jwtResolver.judgementRefreshTokenCreateOrUpdateInRefreshRequest(user));
+                    jwtResolver.judgementRefreshTokenCreateOrUpdateInRefreshRequest(user));
         }};
     }
 
@@ -280,19 +263,19 @@ public class UserService {
         if (user.validatePassword(bCryptPasswordEncoder, inputPassword)) {
             throw new AccountException(USER_NOT_EXISTS);
         }
-        postReportService.deleteByUserIdx(user.getId());
-        favoriteMajorService.deleteAllByUser(user.getId());
-        viewExamService.deleteByUserIdx(user.getId());
-        examPostsService.deleteByUser(user.getId());
-        evaluatePostsService.deleteByUser(user.getId());
-        user.disable();
+        reportPostService.deleteFromUserIdx(user.getId());
+        favoriteMajorService.deleteFromUserIdx(user.getId());
+        viewExamService.deleteFromUserIdx(user.getId());
+        examPostsService.deleteFromUserIdx(user.getId());
+        evaluatePostsService.deleteFromUserIdx(user.getId());
+        user.waitQuit();
         return successFlag();
     }
 
     public boolean matchPassword(String loginId, String inputPassword) {
         return bCryptPasswordEncoder.matches(
-            inputPassword,
-            userRepository.findByLoginId(loginId).get().getPassword()
+                inputPassword,
+                userRepository.findByLoginId(loginId).get().getPassword()
         );
     }
 
@@ -311,54 +294,62 @@ public class UserService {
         return convertOptionalUserToDomainUser(userRepository.findByLoginId(loginId));
     }
 
-    public EvaluatePosts loadEvaluatePostsByIndex(Long EvaluatePostsIdx) {
-        return evaluatePostsRepository.findById(EvaluatePostsIdx);
-    }
-
-    public ExamPosts loadExamPostsByIndex(Long ExamPostsIdx) {
-        return examPostsRepository.findById(ExamPostsIdx);
-    }
-
     public void reportExamPost(
-        ExamReportForm userReportForm, Long reportingUserIdx
+            ExamReportForm userReportForm,
+            Long reportingUserIdx
     ) {
-        Long reportTargetUser = loadExamPostsByIndex(userReportForm.getExamIdx()).getUser().getId();
-        ExamPosts reportedTargetPost = loadExamPostsByIndex(userReportForm.getExamIdx());
-        ExamPostReport target = ExamPostReport.builder()
-            .examIdx(userReportForm.getExamIdx())
-            .lectureName(reportedTargetPost.getLectureName())
-            .professor(reportedTargetPost.getProfessor())
-            .content(reportedTargetPost.getContent())
-            .reportedUserIdx(reportTargetUser)
-            .reportingUserIdx(reportingUserIdx)
-            .reportedDate(LocalDateTime.now())
-            .build();
-        examReportRepository.save(target);
+        ExamPosts examPost = examPostsService.loadExamPostsFromExamPostsIdx(userReportForm.getExamIdx());
+        Long reportTargetUser = examPost.getUser().getId();
+        ExamPostReport target = ExamPostReport
+                .builder()
+                .examIdx(userReportForm.getExamIdx())
+                .lectureName(examPost.getLectureName())
+                .professor(examPost.getProfessor())
+                .content(examPost.getContent())
+                .reportedUserIdx(reportTargetUser)
+                .reportingUserIdx(reportingUserIdx)
+                .reportedDate(LocalDateTime.now())
+                .build();
+        reportPostService.saveExamPostReport(target);
     }
 
     public void reportEvaluatePost(
-        EvaluateReportForm userReportForm, Long reportingUserIdx
+            EvaluateReportForm userReportForm,
+            Long reportingUserIdx
     ) {
-        Long reportTargetUser = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx()).getUser()
-            .getId();
-        EvaluatePosts reportTargetPost = loadEvaluatePostsByIndex(userReportForm.getEvaluateIdx());
-        EvaluatePostReport target = EvaluatePostReport.builder()
-            .evaluateIdx(userReportForm.getEvaluateIdx())
-            .lectureName(reportTargetPost.getLectureName())
-            .professor(reportTargetPost.getProfessor())
-            .content(reportTargetPost.getContent())
-            .reportedUserIdx(reportTargetUser)
-            .reportingUserIdx(reportingUserIdx)
-            .reportedDate(LocalDateTime.now())
-            .build();
-        evaluateReportRepository.save(target);
+        EvaluatePosts evaluatePost = evaluatePostsService.loadEvaluatePostsFromEvaluatePostsIdx(userReportForm.getEvaluateIdx());
+        Long reportTargetUser = evaluatePost.getUser().getId();
+        EvaluatePostReport evaluatePostReport = EvaluatePostReport.builder()
+                .evaluateIdx(userReportForm.getEvaluateIdx())
+                .lectureName(evaluatePost.getLectureName())
+                .professor(evaluatePost.getProfessor())
+                .content(evaluatePost.getContent())
+                .reportedUserIdx(reportTargetUser)
+                .reportingUserIdx(reportingUserIdx)
+                .reportedDate(LocalDateTime.now())
+                .build();
+        reportPostService.saveEvaluatePostReport(evaluatePostReport);
     }
 
-    public Long whoIsEvaluateReporting(Long evaluateIdx) {
-        return evaluateReportRepository.findByEvaluateIdx(evaluateIdx).get().getReportingUserIdx();
+    public void deleteFromUserIdx(Long userIdx) {
+        userRepository.deleteById(userIdx);
     }
 
-    public Long whoIsExamReporting(Long examIdx) {
-        return examReportRepository.findByExamIdx(examIdx).get().getReportingUserIdx();
+    public void softDeleteForIsolation(Long userIdx) {
+        User user = loadUserFromUserIdx(userIdx);
+        user.sleep();
+    }
+
+    public void rollBackSoftDeletedForIsolation(Long userIdx) {
+        User user = loadUserFromUserIdx(userIdx);
+        user.sleep();
+    }
+
+    public List<User> loadUsersLastLoginBeforeTargetTime(LocalDateTime targetTime) {
+        return userRepository.findByLastLoginBefore(targetTime);
+    }
+
+    public int findAllUsersSize() {
+        return userRepository.findAll().size();
     }
 }

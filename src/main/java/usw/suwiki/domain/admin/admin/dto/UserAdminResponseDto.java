@@ -1,4 +1,4 @@
-package usw.suwiki.domain.admin.dto;
+package usw.suwiki.domain.admin.admin.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

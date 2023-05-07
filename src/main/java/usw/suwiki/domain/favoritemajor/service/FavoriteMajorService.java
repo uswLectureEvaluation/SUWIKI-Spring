@@ -36,7 +36,7 @@ public class FavoriteMajorService {
         favoriteMajorRepository.delete(favorite);
     }
 
-    public void deleteAllByUser(Long userIdx) {
+    public void deleteFromUserIdx(Long userIdx) {
         List<FavoriteMajor> list = favoriteMajorRepository.findAllByUser(userIdx);
         for (FavoriteMajor favorite : list) {
             favoriteMajorRepository.delete(favorite);

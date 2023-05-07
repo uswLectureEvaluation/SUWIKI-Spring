@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.confirmationtoken.service.EmailSendService;
+import usw.suwiki.global.mailsender.EmailSendService;
 import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.global.util.emailBuild.BuildPersonalInformationUsingNotifyForm;

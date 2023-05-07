@@ -1,18 +1,5 @@
 package usw.suwiki.domain.user.user.entity;
 
-import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EMAIL_AUTHED;
-import static usw.suwiki.global.exception.ExceptionType.USER_POINT_LACK;
-import static usw.suwiki.global.util.passwordfactory.PasswordRandomizer.randomizePassword;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +7,14 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import usw.suwiki.domain.confirmationtoken.entity.ConfirmationToken;
 import usw.suwiki.global.exception.errortype.AccountException;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EMAIL_AUTHED;
+import static usw.suwiki.global.exception.ExceptionType.USER_POINT_LACK;
+import static usw.suwiki.global.util.passwordfactory.PasswordRandomizer.randomizePassword;
 
 @Entity
 @Getter
@@ -76,23 +71,23 @@ public class User {
 
     public static User makeUser(String loginId, String password, String email) {
         return User.builder()
-            .loginId(loginId)
-            .password(password)
-            .email(email)
-            .restricted(true)
-            .restrictedCount(0)
-            .writtenEvaluation(0)
-            .writtenExam(0)
-            .point(0)
-            .viewExamCount(0)
-            .build();
+                .loginId(loginId)
+                .password(password)
+                .email(email)
+                .restricted(true)
+                .restrictedCount(0)
+                .writtenEvaluation(0)
+                .writtenExam(0)
+                .point(0)
+                .viewExamCount(0)
+                .build();
     }
 
     public void editRestricted(boolean restricted) {
         this.restricted = restricted;
     }
 
-    public void disable() {
+    public void waitQuit() {
         this.restricted = true;
         this.restrictedCount = null;
         this.role = null;
@@ -104,6 +99,18 @@ public class User {
         this.createdAt = null;
         this.updatedAt = null;
         this.requestedQuitDate = LocalDateTime.now();
+    }
+
+    public void sleep() {
+        this.loginId = null;
+        this.password = null;
+        this.email = null;
+    }
+
+    public void awake(String loginId, String password, String email) {
+        this.loginId = loginId;
+        this.password = password;
+        this.email = email;
     }
 
     public void updateWritingEvaluatePost() {
@@ -126,7 +133,7 @@ public class User {
         this.viewExamCount += 1;
     }
 
-    public void decreasePointByDeleteEvaluatePosts() {
+    public void decreasePointAndWrittenEvaluationByDeleteEvaluatePosts() {
         final int deletePostRequiringPoint = 30;
         if (this.point < deletePostRequiringPoint) {
             throw new AccountException(USER_POINT_LACK);
@@ -135,7 +142,7 @@ public class User {
         this.writtenEvaluation -= 1;
     }
 
-    public void decreasePointByDeleteExamPosts() {
+    public void decreasePointAndWrittenExamByDeleteExamPosts() {
         final int deletePostRequiringPoint = 30;
         if (this.point < deletePostRequiringPoint) {
             throw new AccountException(USER_POINT_LACK);
@@ -155,7 +162,7 @@ public class User {
     }
 
     public boolean validatePassword(
-        BCryptPasswordEncoder bCryptPasswordEncoder, String inputPassword
+            BCryptPasswordEncoder bCryptPasswordEncoder, String inputPassword
     ) {
         return bCryptPasswordEncoder.encode(inputPassword).matches(password);
     }

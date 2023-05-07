@@ -1,4 +1,4 @@
-package usw.suwiki.domain.admin.dto;
+package usw.suwiki.domain.admin.admin.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

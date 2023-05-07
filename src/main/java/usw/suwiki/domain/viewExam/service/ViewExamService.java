@@ -70,7 +70,7 @@ public class ViewExamService {
         return dtoList;
     }
 
-    public void deleteByUserIdx(Long userIdx) {
+    public void deleteFromUserIdx(Long userIdx) {
         List<ViewExam> list = viewExamRepository.findByUserId(userIdx);
         for (ViewExam viewExam : list) {
             viewExamRepository.delete(viewExam);

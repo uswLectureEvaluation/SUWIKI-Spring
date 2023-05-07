@@ -1,4 +1,4 @@
-package usw.suwiki.domain.confirmationtoken.service;
+package usw.suwiki.global.mailsender;
 
 import lombok.AllArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
