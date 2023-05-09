@@ -10,9 +10,9 @@ import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.service.ExamPostsService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
-import usw.suwiki.domain.refreshToken.service.RefreshTokenService;
+import usw.suwiki.domain.refreshToken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.user.user.User;
-import usw.suwiki.domain.user.user.service.UserService;
+import usw.suwiki.domain.user.user.service.UserBusinessService;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
@@ -26,11 +26,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserIsolationService {
+public class UserIsolationBusinessService {
 
-    private final UserService userService;
+    private final UserBusinessService userBusinessService;
     private final RestrictingUserService restrictingUserService;
-    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenCRUDService refreshTokenCRUDService;
     private final ReportPostService reportPostService;
     private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
     private final FavoriteMajorService favoriteMajorService;
@@ -42,23 +42,10 @@ public class UserIsolationService {
     private final ExamPostsService examPostsService;
     private final ViewExamService viewExamService;
 
-    public void convertToIsolationUser(User user) {
-        UserIsolation userIsolation = UserIsolation.builder()
-                .userIdx(user.getId())
-                .loginId(user.getLoginId())
-                .password(user.getPassword())
-                .email(user.getEmail())
-                .lastLogin(user.getLastLogin())
-                .requestedQuitDate(user.getRequestedQuitDate())
-                .build();
-        userIsolationRepository.save(userIsolation);
-        userService.softDeleteForIsolation(user.getId());
-    }
-
     @Scheduled(cron = "2 0 0 * * *")
     public void sendEmailAboutSleeping() {
         LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
-        List<User> users = userService.loadUsersLastLoginBeforeTargetTime(targetTime);
+        List<User> users = userBusinessService.loadUsersLastLoginBeforeTargetTime(targetTime);
         for (User user : users) {
             emailSender.send(user.getEmail(), buildSoonDormantTargetForm.buildEmail());
         }
@@ -67,7 +54,7 @@ public class UserIsolationService {
     @Scheduled(cron = "4 0 0 * * *")
     public void convertSleepingTable() {
         LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
-        List<User> users = userService.loadUsersLastLoginBeforeTargetTime(targetTime);
+        List<User> users = userBusinessService.loadUsersLastLoginBeforeTargetTime(targetTime);
         for (User user : users) {
             convertToIsolationUser(user);
         }
@@ -76,7 +63,7 @@ public class UserIsolationService {
     @Scheduled(cron = "6 0 0 * * *")
     public void sendEmailAutoDeleteTargeted() {
         LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
-        List<User> users = userService.loadUsersLastLoginBeforeTargetTime(targetTime);
+        List<User> users = userBusinessService.loadUsersLastLoginBeforeTargetTime(targetTime);
         for (User user : users) {
             emailSender.send(user.getEmail(), userAutoDeletedWarningForm.buildEmail());
         }
@@ -90,7 +77,7 @@ public class UserIsolationService {
         for (UserIsolation user : users) {
             Long userIdx = user.getUserIdx();
             viewExamService.deleteFromUserIdx(userIdx);
-            refreshTokenService.deleteFromUserIdx(userIdx);
+            refreshTokenCRUDService.deleteFromUserIdx(userIdx);
             reportPostService.deleteFromUserIdx(userIdx);
             evaluatePostsService.deleteFromUserIdx(userIdx);
             examPostsService.deleteFromUserIdx(userIdx);
@@ -98,7 +85,20 @@ public class UserIsolationService {
             restrictingUserService.deleteFromUserIdx(userIdx);
             confirmationTokenCRUDService.deleteFromUserIdx(userIdx);
             userIsolationRepository.deleteByUserIdx(user.getUserIdx());
-            userService.deleteFromUserIdx(userIdx);
+            userBusinessService.deleteFromUserIdx(userIdx);
         }
+    }
+
+    private void convertToIsolationUser(User user) {
+        UserIsolation userIsolation = UserIsolation.builder()
+                .userIdx(user.getId())
+                .loginId(user.getLoginId())
+                .password(user.getPassword())
+                .email(user.getEmail())
+                .lastLogin(user.getLastLogin())
+                .requestedQuitDate(user.getRequestedQuitDate())
+                .build();
+        userIsolationRepository.save(userIsolation);
+        userBusinessService.softDeleteForIsolation(user.getId());
     }
 }

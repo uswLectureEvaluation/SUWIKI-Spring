@@ -1,24 +1,5 @@
 package usw.suwiki.domain.user.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
-import static usw.suwiki.global.exception.ExceptionType.IS_NOT_EMAIL_FORM;
-import static usw.suwiki.global.exception.ExceptionType.PASSWORD_ERROR;
-import static usw.suwiki.global.exception.ExceptionType.USER_AND_EMAIL_OVERLAP;
-import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EMAIL_AUTHED;
-import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
-import static usw.suwiki.global.exception.ExceptionType.USER_NOT_FOUND;
-import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapFalseFlag;
-import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapTrueFlag;
-import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successFlag;
-
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,42 +7,30 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import usw.suwiki.domain.admin.blacklistdomain.service.BlacklistDomainService;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
-import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenBusinessService;
-import usw.suwiki.global.mailsender.EmailSender;
-import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
-import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
-import usw.suwiki.domain.exam.domain.repository.ExamPostsRepository;
-import usw.suwiki.domain.exam.service.ExamPostsService;
-import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
-import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
-import usw.suwiki.domain.postreport.repository.ExamReportRepository;
-import usw.suwiki.domain.postreport.service.ReportPostService;
-import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
-import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.CheckEmailForm;
-import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.CheckLoginIdForm;
-import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.FindIdForm;
-import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.FindPasswordForm;
-import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.JoinForm;
-import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
 import usw.suwiki.domain.user.user.User;
+import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.*;
 import usw.suwiki.domain.user.user.repository.UserRepository;
-import usw.suwiki.domain.user.user.service.UserService;
+import usw.suwiki.domain.user.user.service.UserBusinessService;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
-import usw.suwiki.domain.user.userIsolation.service.UserIsolationService;
-import usw.suwiki.domain.viewExam.service.ViewExamService;
-import usw.suwiki.global.jwt.JwtProvider;
-import usw.suwiki.global.jwt.JwtResolver;
-import usw.suwiki.global.jwt.JwtValidator;
-import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
-import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
-import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+import static usw.suwiki.global.exception.ExceptionType.*;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+public class UserBusinessServiceTest {
 
     @Mock
     BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -71,49 +40,8 @@ public class UserServiceTest {
     UserIsolationRepository userIsolationRepository;
     @Mock
     ConfirmationTokenRepository confirmationTokenRepository;
-    @Mock
-    EvaluatePostsRepository evaluatePostsRepository;
-    @Mock
-    ExamPostsRepository examPostsRepository;
-    @Mock
-    EvaluateReportRepository evaluateReportRepository;
-    @Mock
-    ExamReportRepository examReportRepository;
-    @Mock
-    EmailSender emailSender;
-    @Mock
-    ConfirmationTokenBusinessService confirmationTokenBusinessService;
-    @Mock
-    BuildEmailAuthForm buildEmailAuthForm;
-    @Mock
-    BuildFindLoginIdForm BuildFindLoginIdForm;
-    @Mock
-    BuildFindPasswordForm BuildFindPasswordForm;
-    @Mock
-    BlacklistDomainService blacklistDomainService;
-    @Mock
-    JwtProvider jwtTokenProvider;
-    @Mock
-    JwtValidator jwtTokenValidator;
-    @Mock
-    JwtResolver jwtTokenResolver;
-    @Mock
-    UserIsolationService userIsolationService;
-    @Mock
-    RefreshTokenRepository refreshTokenRepository;
-    @Mock
-    FavoriteMajorService favoriteMajorService;
-    @Mock
-    ViewExamService viewExamService;
-    @Mock
-    EvaluatePostsService evaluatePostsService;
-    @Mock
-    ExamPostsService examPostsService;
-    @Mock
-    ReportPostService reportPostService;
-
     @InjectMocks
-    UserService userService;
+    UserBusinessService userBusinessService;
 
     @DisplayName("아이디 중복 확인 테스트 - 중복일 시")
     @Test
@@ -125,8 +53,8 @@ public class UserServiceTest {
 
         // When
         when(userRepository.findByLoginId(checkLoginIdForm.getLoginId()))
-            .thenReturn(Optional.ofNullable(user));
-        Map<String, Boolean> result = userService.executeCheckId(inputLoginId);
+                .thenReturn(Optional.ofNullable(user));
+        Map<String, Boolean> result = userBusinessService.executeCheckId(inputLoginId);
 
         // Then
         assertThat(result).isEqualTo(overlapTrueFlag());
@@ -141,8 +69,8 @@ public class UserServiceTest {
 
         // When
         when(userRepository.findByLoginId(checkLoginIdForm.getLoginId()))
-            .thenReturn(Optional.empty());
-        Map<String, Boolean> result = userService.executeCheckId(inputLoginId);
+                .thenReturn(Optional.empty());
+        Map<String, Boolean> result = userBusinessService.executeCheckId(inputLoginId);
 
         // Then
         assertThat(result).isEqualTo(overlapFalseFlag());
@@ -158,8 +86,8 @@ public class UserServiceTest {
 
         // When
         when(userRepository.findByEmail(checkEmailForm.getEmail()))
-            .thenReturn(Optional.ofNullable(user));
-        Map<String, Boolean> result = userService.executeCheckEmail(inputEmail);
+                .thenReturn(Optional.ofNullable(user));
+        Map<String, Boolean> result = userBusinessService.executeCheckEmail(inputEmail);
 
         // Then
         assertThat(result).isEqualTo(overlapTrueFlag());
@@ -174,8 +102,8 @@ public class UserServiceTest {
 
         // When
         when(userRepository.findByEmail(checkEmailForm.getEmail()))
-            .thenReturn(Optional.empty());
-        Map<String, Boolean> result = userService.executeCheckEmail(inputEmail);
+                .thenReturn(Optional.empty());
+        Map<String, Boolean> result = userBusinessService.executeCheckEmail(inputEmail);
 
         // Then
         assertThat(result).isEqualTo(overlapFalseFlag());
@@ -192,10 +120,10 @@ public class UserServiceTest {
 
         // When
         Throwable exception = assertThrows(RuntimeException.class, () -> {
-            userService.executeJoin(
-                joinForm.getLoginId(),
-                joinForm.getPassword(),
-                joinForm.getEmail());
+            userBusinessService.executeJoin(
+                    joinForm.getLoginId(),
+                    joinForm.getPassword(),
+                    joinForm.getEmail());
         });
 
         // Then
@@ -213,13 +141,13 @@ public class UserServiceTest {
 
         // When
         when(userRepository.findByLoginId(joinForm.getLoginId()))
-            .thenReturn(Optional.of(new User()));
+                .thenReturn(Optional.of(new User()));
 
         Throwable exception = assertThrows(RuntimeException.class, () -> {
-            userService.executeJoin(
-                joinForm.getLoginId(),
-                joinForm.getPassword(),
-                joinForm.getEmail());
+            userBusinessService.executeJoin(
+                    joinForm.getLoginId(),
+                    joinForm.getPassword(),
+                    joinForm.getEmail());
         });
         // Then
         assertEquals(USER_AND_EMAIL_OVERLAP.getMessage(), exception.getMessage());
@@ -236,13 +164,13 @@ public class UserServiceTest {
 
         // When
         when(userIsolationRepository.findByLoginId(joinForm.getLoginId()))
-            .thenReturn(Optional.of(new UserIsolation()));
+                .thenReturn(Optional.of(new UserIsolation()));
 
         Throwable exception = assertThrows(RuntimeException.class, () -> {
-            userService.executeJoin(
-                joinForm.getLoginId(),
-                joinForm.getPassword(),
-                joinForm.getEmail());
+            userBusinessService.executeJoin(
+                    joinForm.getLoginId(),
+                    joinForm.getPassword(),
+                    joinForm.getEmail());
         });
         // Then
         assertEquals(USER_AND_EMAIL_OVERLAP.getMessage(), exception.getMessage());
@@ -259,13 +187,13 @@ public class UserServiceTest {
 
         // When
         when(userRepository.findByEmail(joinForm.getEmail()))
-            .thenReturn(Optional.of(new User()));
+                .thenReturn(Optional.of(new User()));
 
         Throwable exception = assertThrows(RuntimeException.class, () -> {
-            userService.executeJoin(
-                joinForm.getLoginId(),
-                joinForm.getPassword(),
-                joinForm.getEmail());
+            userBusinessService.executeJoin(
+                    joinForm.getLoginId(),
+                    joinForm.getPassword(),
+                    joinForm.getEmail());
         });
         // Then
         assertEquals(USER_AND_EMAIL_OVERLAP.getMessage(), exception.getMessage());
@@ -282,13 +210,13 @@ public class UserServiceTest {
 
         // When
         when(userIsolationRepository.findByEmail(joinForm.getEmail()))
-            .thenReturn(Optional.of(new UserIsolation()));
+                .thenReturn(Optional.of(new UserIsolation()));
 
         Throwable exception = assertThrows(RuntimeException.class, () -> {
-            userService.executeJoin(
-                joinForm.getLoginId(),
-                joinForm.getPassword(),
-                joinForm.getEmail());
+            userBusinessService.executeJoin(
+                    joinForm.getLoginId(),
+                    joinForm.getPassword(),
+                    joinForm.getEmail());
         });
         // Then
         assertEquals(USER_AND_EMAIL_OVERLAP.getMessage(), exception.getMessage());
@@ -304,10 +232,10 @@ public class UserServiceTest {
         final JoinForm joinForm = new JoinForm(inputLoginId, inputPassword, inputEmail);
 
         // When
-        Map<String, Boolean> result = userService.executeJoin(
-            joinForm.getLoginId(),
-            joinForm.getPassword(),
-            joinForm.getEmail()
+        Map<String, Boolean> result = userBusinessService.executeJoin(
+                joinForm.getLoginId(),
+                joinForm.getPassword(),
+                joinForm.getEmail()
         );
 
         // Then
@@ -323,12 +251,12 @@ public class UserServiceTest {
 
         // When
         when(userRepository.findByEmail(findIdForm.getEmail()))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
         when(userIsolationRepository.findByEmail(findIdForm.getEmail()))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
         Throwable exception = assertThrows(RuntimeException.class, () -> {
-            userService.executeFindId(findIdForm.getEmail());
+            userBusinessService.executeFindId(findIdForm.getEmail());
         });
 
         // Then
@@ -345,8 +273,8 @@ public class UserServiceTest {
 
         // When
         when(userRepository.findByEmail(findIdForm.getEmail()))
-            .thenReturn(Optional.of(foundedUser));
-        Map<String, Boolean> result = userService.executeFindId(findIdForm.getEmail());
+                .thenReturn(Optional.of(foundedUser));
+        Map<String, Boolean> result = userBusinessService.executeFindId(findIdForm.getEmail());
 
         // Then
         assertThat(foundedUser.getEmail()).isEqualTo(findIdForm.getEmail());
@@ -363,12 +291,12 @@ public class UserServiceTest {
 
         // When
         when(userRepository.findByLoginId(findPasswordForm.getLoginId()))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
         when(userIsolationRepository.findByLoginId(findPasswordForm.getLoginId()))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
         Throwable exception = assertThrows(RuntimeException.class, () -> {
-            userService.executeFindPw(findPasswordForm.getLoginId(), findPasswordForm.getEmail());
+            userBusinessService.executeFindPw(findPasswordForm.getLoginId(), findPasswordForm.getEmail());
         });
 
         // Then
@@ -385,12 +313,12 @@ public class UserServiceTest {
 
         // When
         when(userRepository.findByEmail(findPasswordForm.getEmail()))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
         when(userIsolationRepository.findByEmail(findPasswordForm.getEmail()))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
         Throwable exception = assertThrows(RuntimeException.class, () -> {
-            userService.executeFindPw(findPasswordForm.getLoginId(), findPasswordForm.getEmail());
+            userBusinessService.executeFindPw(findPasswordForm.getLoginId(), findPasswordForm.getEmail());
         });
 
         // Then
@@ -405,17 +333,17 @@ public class UserServiceTest {
         final String inputEmail = "18018008@suwon.ac.kr";
         final FindPasswordForm findPasswordForm = new FindPasswordForm(inputLoginId, inputEmail);
         final User user = User.builder()
-            .loginId(findPasswordForm.getLoginId())
-            .email(findPasswordForm.getEmail())
-            .build();
+                .loginId(findPasswordForm.getLoginId())
+                .email(findPasswordForm.getEmail())
+                .build();
 
         // When
         when(userRepository.findByLoginId(findPasswordForm.getLoginId()))
-            .thenReturn(Optional.ofNullable(user));
+                .thenReturn(Optional.ofNullable(user));
         when(userRepository.findByEmail(findPasswordForm.getEmail()))
-            .thenReturn(Optional.ofNullable(user));
+                .thenReturn(Optional.ofNullable(user));
 
-        Map<String, Boolean> result = userService.executeFindPw(inputLoginId, inputEmail);
+        Map<String, Boolean> result = userBusinessService.executeFindPw(inputLoginId, inputEmail);
 
         // Then
         assertThat(result).isEqualTo(successFlag());
@@ -429,17 +357,17 @@ public class UserServiceTest {
         final String inputEmail = "18018008@suwon.ac.kr";
         final FindPasswordForm findPasswordForm = new FindPasswordForm(inputLoginId, inputEmail);
         final UserIsolation userIsolation = UserIsolation.builder()
-            .loginId(findPasswordForm.getLoginId())
-            .email(findPasswordForm.getEmail())
-            .build();
+                .loginId(findPasswordForm.getLoginId())
+                .email(findPasswordForm.getEmail())
+                .build();
 
         // When
         when(userIsolationRepository.findByLoginId(findPasswordForm.getLoginId()))
-            .thenReturn(Optional.ofNullable(userIsolation));
+                .thenReturn(Optional.ofNullable(userIsolation));
         when(userIsolationRepository.findByEmail(findPasswordForm.getEmail()))
-            .thenReturn(Optional.ofNullable(userIsolation));
+                .thenReturn(Optional.ofNullable(userIsolation));
 
-        Map<String, Boolean> result = userService.executeFindPw(inputLoginId, inputEmail);
+        Map<String, Boolean> result = userBusinessService.executeFindPw(inputLoginId, inputEmail);
 
         // Then
         assertThat(result).isEqualTo(successFlag());
@@ -455,12 +383,12 @@ public class UserServiceTest {
 
         // When
         when(userRepository.findByLoginId(loginForm.getLoginId()))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
         when(userIsolationRepository.findByLoginId(loginForm.getLoginId()))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
         Throwable exception = assertThrows(RuntimeException.class, () -> {
-            userService.executeLogin(loginForm.getLoginId(), loginForm.getPassword());
+            userBusinessService.executeLogin(loginForm.getLoginId(), loginForm.getPassword());
         });
 
         // Then
@@ -475,16 +403,16 @@ public class UserServiceTest {
         final String password = "qwer1234!";
         final LoginForm loginForm = new LoginForm(inputLoginId, password);
         final User user = User.builder()
-            .loginId(loginForm.getLoginId())
-            .password("testPassw0!rd")
-            .build();
+                .loginId(loginForm.getLoginId())
+                .password("testPassw0!rd")
+                .build();
 
         // When
         when(userRepository.findByLoginId(loginForm.getLoginId()))
-            .thenReturn(Optional.ofNullable(user));
+                .thenReturn(Optional.ofNullable(user));
 
         Throwable exception = assertThrows(RuntimeException.class, () -> {
-            userService.executeLogin(loginForm.getLoginId(), loginForm.getPassword());
+            userBusinessService.executeLogin(loginForm.getLoginId(), loginForm.getPassword());
         });
 
         // Then
@@ -499,23 +427,23 @@ public class UserServiceTest {
         final String password = "qwer1234!";
         final LoginForm loginForm = new LoginForm(inputLoginId, password);
         final User user = User.builder()
-            .loginId(loginForm.getLoginId())
-            .password("testPassw0!rd")
-            .restricted(false)
-            .build();
+                .loginId(loginForm.getLoginId())
+                .password("testPassw0!rd")
+                .restricted(false)
+                .build();
         final ConfirmationToken confirmationToken = ConfirmationToken.builder()
-            .token("blah blah")
-            .confirmedAt(LocalDateTime.now())
-            .build();
+                .token("blah blah")
+                .confirmedAt(LocalDateTime.now())
+                .build();
 
         // When
         when(userRepository.findByLoginId(loginForm.getLoginId()))
-            .thenReturn(Optional.ofNullable(user));
+                .thenReturn(Optional.ofNullable(user));
         when(confirmationTokenRepository.findByUserIdx(user.getId()))
-            .thenReturn(Optional.of(confirmationToken));
+                .thenReturn(Optional.of(confirmationToken));
 
         Throwable exception = assertThrows(RuntimeException.class, () -> {
-            userService.executeLogin(loginForm.getLoginId(), loginForm.getPassword());
+            userBusinessService.executeLogin(loginForm.getLoginId(), loginForm.getPassword());
         });
 
         // Then
@@ -530,26 +458,26 @@ public class UserServiceTest {
         final String inputPassword = "qwer1234!";
         final LoginForm loginForm = new LoginForm(inputLoginId, inputPassword);
         final User user = User.builder()
-            .loginId(loginForm.getLoginId())
-            .password(loginForm.getPassword())
-            .build();
+                .loginId(loginForm.getLoginId())
+                .password(loginForm.getPassword())
+                .build();
         final ConfirmationToken confirmationToken = ConfirmationToken.builder()
-            .token("blah blah")
-            .confirmedAt(LocalDateTime.now())
-            .build();
+                .token("blah blah")
+                .confirmedAt(LocalDateTime.now())
+                .build();
 
         // When
         when(userRepository.findByLoginId(loginForm.getLoginId()))
-            .thenReturn(Optional.ofNullable(user));
+                .thenReturn(Optional.ofNullable(user));
         when(userIsolationRepository.findByLoginId(loginForm.getLoginId()))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
         when(confirmationTokenRepository.findByUserIdx(Objects.requireNonNull(user).getId()))
-            .thenReturn(Optional.of(confirmationToken));
-        when(userService.matchPassword(loginForm.getLoginId(), loginForm.getPassword()))
-            .thenReturn(true);
-        Map<String, String> result = userService.executeLogin(
-            loginForm.getLoginId(),
-            loginForm.getPassword()
+                .thenReturn(Optional.of(confirmationToken));
+        when(bCryptPasswordEncoder.matches(loginForm.getPassword(), user.getPassword()))
+                .thenReturn(true);
+        Map<String, String> result = userBusinessService.executeLogin(
+                loginForm.getLoginId(),
+                loginForm.getPassword()
         );
 
         // Then

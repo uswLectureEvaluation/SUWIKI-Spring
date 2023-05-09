@@ -7,10 +7,9 @@ import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.MyPageResponseForm;
-import usw.suwiki.domain.user.user.service.UserService;
+import usw.suwiki.domain.user.user.service.UserBusinessService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
-import usw.suwiki.global.jwt.JwtResolver;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -28,26 +27,25 @@ import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.*;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserController {
 
-    private final UserService userService;
+    private final UserBusinessService userBusinessService;
     private final ConfirmationTokenBusinessService confirmationTokenBusinessService;
-    private final JwtResolver jwtResolver;
 
     //아이디 중복확인
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
-    @PostMapping("check-id")
+    @PostMapping("/check-id")
     public Map<String, Boolean> overlapId(
             @Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
-        return userService.executeCheckId(checkLoginIdForm.getLoginId());
+        return userBusinessService.executeCheckId(checkLoginIdForm.getLoginId());
     }
 
     //이메일 중복 확인
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
-    @PostMapping("check-email")
+    @PostMapping("/check-email")
     public Map<String, Boolean> overlapEmail(
             @Valid @RequestBody CheckEmailForm checkEmailForm) {
-        return userService.executeCheckEmail(checkEmailForm.getEmail());
+        return userBusinessService.executeCheckEmail(checkEmailForm.getEmail());
     }
 
     //회원가입 버튼 클릭 시 -> 유저 저장, 인증 이메일 발송
@@ -57,7 +55,7 @@ public class UserController {
     public Map<String, Boolean> join(
             @Valid @RequestBody JoinForm joinForm
     ) {
-        return userService.executeJoin(
+        return userBusinessService.executeJoin(
                 joinForm.getLoginId(),
                 joinForm.getPassword(),
                 joinForm.getEmail()
@@ -77,7 +75,7 @@ public class UserController {
     @ApiLogger(option = "user")
     @PostMapping("find-id")
     public Map<String, Boolean> findId(@Valid @RequestBody FindIdForm findIdForm) {
-        return userService.executeFindId(findIdForm.getEmail());
+        return userBusinessService.executeFindId(findIdForm.getEmail());
     }
 
     //비밀번호 찾기 요청 시
@@ -86,7 +84,7 @@ public class UserController {
     @PostMapping("find-pw")
     public Map<String, Boolean> findPw(
             @Valid @RequestBody FindPasswordForm findPasswordForm) {
-        return userService.executeFindPw(
+        return userBusinessService.executeFindPw(
                 findPasswordForm.getLoginId(),
                 findPasswordForm.getEmail()
         );
@@ -99,7 +97,7 @@ public class UserController {
     public Map<String, Boolean> resetPw(
             @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
             @RequestHeader String Authorization) {
-        return userService.executeEditPassword(
+        return userBusinessService.executeEditPassword(
                 Authorization,
                 editMyPasswordForm.getPrePassword(),
                 editMyPasswordForm.getNewPassword());
@@ -111,7 +109,7 @@ public class UserController {
     @PostMapping("login")
     public Map<String, String> mobileLogin(
             @Valid @RequestBody LoginForm loginForm) {
-        return userService.executeLogin(
+        return userBusinessService.executeLogin(
                 loginForm.getLoginId(),
                 loginForm.getPassword()
         );
@@ -125,7 +123,7 @@ public class UserController {
             @Valid @RequestBody LoginForm loginForm,
             HttpServletResponse response
     ) {
-        Map<String, String> tokenPair = userService.executeLogin(
+        Map<String, String> tokenPair = userBusinessService.executeLogin(
                 loginForm.getLoginId(),
                 loginForm.getPassword()
         );
@@ -157,7 +155,7 @@ public class UserController {
     @ApiLogger(option = "user")
     @GetMapping("/my-page")
     public MyPageResponseForm myPage(@Valid @RequestHeader String Authorization) {
-        return userService.executeLoadMyPage(Authorization);
+        return userBusinessService.executeLoadMyPage(Authorization);
     }
 
     // Web 토큰 갱신
@@ -168,7 +166,7 @@ public class UserController {
             @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
             HttpServletResponse response
     ) {
-        Map<String, String> tokenPair = userService.executeJWTRefreshForWebClient(
+        Map<String, String> tokenPair = userBusinessService.executeJWTRefreshForWebClient(
                 requestRefreshCookie
         );
         Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
@@ -188,7 +186,7 @@ public class UserController {
     public Map<String, String> tokenRefresh(
             @Valid @RequestHeader String Authorization
     ) {
-        return userService.executeJWTRefreshForMobileClient(Authorization);
+        return userBusinessService.executeJWTRefreshForMobileClient(Authorization);
     }
 
     // 회원 탈퇴
@@ -199,7 +197,7 @@ public class UserController {
             @Valid @RequestBody UserQuitForm userQuitForm,
             @Valid @RequestHeader String Authorization
     ) {
-        return userService.executeQuit(Authorization, userQuitForm.getPassword());
+        return userBusinessService.executeQuit(Authorization, userQuitForm.getPassword());
     }
 
     // 강의평가 신고
@@ -210,7 +208,7 @@ public class UserController {
             @Valid @RequestBody EvaluateReportForm evaluateReportForm,
             @Valid @RequestHeader String Authorization
     ) {
-        return userService.executeReportEvaluatePost(evaluateReportForm, Authorization);
+        return userBusinessService.executeReportEvaluatePost(evaluateReportForm, Authorization);
     }
 
     // 시험정보 신고
@@ -220,7 +218,7 @@ public class UserController {
     public Map<String, Boolean> reportExam(
             @Valid @RequestBody ExamReportForm examReportForm,
             @Valid @RequestHeader String Authorization) {
-        return userService.executeReportExamPost(examReportForm, Authorization);
+        return userBusinessService.executeReportExamPost(examReportForm, Authorization);
     }
 
     // 전공 즐겨찾기 등록하기
@@ -231,7 +229,7 @@ public class UserController {
             @RequestHeader String Authorization,
             @RequestBody FavoriteSaveDto favoriteSaveDto
     ) {
-        userService.executeFavoriteMajorSave(Authorization, favoriteSaveDto);
+        userBusinessService.executeFavoriteMajorSave(Authorization, favoriteSaveDto);
         return "success";
     }
 
@@ -242,7 +240,7 @@ public class UserController {
     public String deleteFavoriteMajor(
             @RequestHeader String Authorization,
             @RequestParam String majorType) {
-        userService.executeFavoriteMajorDelete(Authorization, majorType);
+        userBusinessService.executeFavoriteMajorDelete(Authorization, majorType);
         return "success";
     }
 
@@ -251,7 +249,7 @@ public class UserController {
     @ApiLogger(option = "user")
     @GetMapping("/favorite-major")
     public ResponseForm loadFavoriteMajor(@RequestHeader String Authorization) {
-        return userService.executeFavoriteMajorLoad(Authorization);
+        return userBusinessService.executeFavoriteMajorLoad(Authorization);
     }
 
     // 땡큐 영수형
@@ -276,7 +274,7 @@ public class UserController {
     public List<LoadMyRestrictedReasonResponseForm> loadRestrictedReason(
             @Valid @RequestHeader String Authorization
     ) {
-        return userService.executeLoadRestrictedReason(Authorization);
+        return userBusinessService.executeLoadRestrictedReason(Authorization);
     }
 
     // 블랙리스트 사유 불러오기
@@ -285,7 +283,7 @@ public class UserController {
     @GetMapping("/blacklist-reason")
     public List<LoadMyBlackListReasonResponseForm> loadBlacklistReason(
             @Valid @RequestHeader String Authorization) {
-        return userService.executeLoadBlackListReason(Authorization);
+        return userBusinessService.executeLoadBlackListReason(Authorization);
     }
 }
 

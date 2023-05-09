@@ -1,7 +1,7 @@
 package usw.suwiki.domain.viewExam.repository;
 
 import org.springframework.stereotype.Repository;
-import usw.suwiki.domain.viewExam.entity.ViewExam;
+import usw.suwiki.domain.viewExam.ViewExam;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;

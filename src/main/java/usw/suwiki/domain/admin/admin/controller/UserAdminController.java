@@ -2,11 +2,11 @@ package usw.suwiki.domain.admin.admin.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.admin.admin.dto.UserAdminRequestDto;
-import usw.suwiki.domain.admin.admin.dto.UserAdminResponseDto;
-import usw.suwiki.domain.admin.admin.service.UserAdminService;
-import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
-import usw.suwiki.domain.postreport.entity.ExamPostReport;
+import usw.suwiki.domain.admin.admin.dto.UserAdminRequestDto.*;
+import usw.suwiki.domain.admin.admin.dto.UserAdminResponseDto.LoadAllReportedPostForm;
+import usw.suwiki.domain.admin.admin.service.UserAdminBusinessService;
+import usw.suwiki.domain.postreport.EvaluatePostReport;
+import usw.suwiki.domain.postreport.ExamPostReport;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
 import usw.suwiki.global.annotation.ApiLogger;
 
@@ -22,7 +22,7 @@ import static org.springframework.http.HttpStatus.OK;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserAdminController {
 
-    private final UserAdminService userAdminService;
+    private final UserAdminBusinessService userAdminBusinessService;
 
     // 관리자 전용 로그인 API
     @ResponseStatus(OK)
@@ -31,7 +31,7 @@ public class UserAdminController {
     public Map<String, String> administratorLogin(
             @Valid @RequestBody LoginForm loginForm
     ) {
-        return userAdminService.executeAdminLogin(loginForm);
+        return userAdminBusinessService.executeAdminLogin(loginForm);
     }
 
     // 강의평가 게시물 정지 먹이기
@@ -40,10 +40,9 @@ public class UserAdminController {
     @PostMapping("/restrict/evaluate-post")
     public Map<String, Boolean> restrictEvaluatePost(
             @Valid @RequestHeader String Authorization,
-            @Valid @RequestBody UserAdminRequestDto.EvaluatePostRestrictForm evaluatePostRestrictForm
+            @Valid @RequestBody EvaluatePostRestrictForm evaluatePostRestrictForm
     ) {
-        userAdminService.executeValidateAdmin(Authorization);
-        return userAdminService.executeRestrictEvaluatePost(evaluatePostRestrictForm);
+        return userAdminBusinessService.executeRestrictEvaluatePost(Authorization, evaluatePostRestrictForm);
     }
 
     // 시험정보 게시물 정지 먹이기
@@ -52,10 +51,9 @@ public class UserAdminController {
     @PostMapping("/restrict/exam-post")
     public Map<String, Boolean> restrictExamPost(
             @Valid @RequestHeader String Authorization,
-            @Valid @RequestBody UserAdminRequestDto.ExamPostRestrictForm examPostRestrictForm
+            @Valid @RequestBody ExamPostRestrictForm examPostRestrictForm
     ) {
-        userAdminService.executeValidateAdmin(Authorization);
-        return userAdminService.executeRestrictExamPost(examPostRestrictForm);
+        return userAdminBusinessService.executeRestrictExamPost(Authorization, examPostRestrictForm);
     }
 
 
@@ -65,10 +63,9 @@ public class UserAdminController {
     @PostMapping("/blacklist/evaluate-post")
     public Map<String, Boolean> banEvaluatePost(
             @Valid @RequestHeader String Authorization,
-            @Valid @RequestBody UserAdminRequestDto.EvaluatePostBlacklistForm evaluatePostBlacklistForm
+            @Valid @RequestBody EvaluatePostBlacklistForm evaluatePostBlacklistForm
     ) {
-        userAdminService.executeValidateAdmin(Authorization);
-        return userAdminService.executeBlackListEvaluatePost(evaluatePostBlacklistForm);
+        return userAdminBusinessService.executeBlackListEvaluatePost(Authorization, evaluatePostBlacklistForm);
     }
 
     // 시험정보 게시물 블랙리스트 먹이기
@@ -77,10 +74,9 @@ public class UserAdminController {
     @PostMapping("/blacklist/exam-post")
     public Map<String, Boolean> banExamPost(
             @Valid @RequestHeader String Authorization,
-            @Valid @RequestBody UserAdminRequestDto.ExamPostBlacklistForm examPostBlacklistForm
+            @Valid @RequestBody ExamPostBlacklistForm examPostBlacklistForm
     ) {
-        userAdminService.executeValidateAdmin(Authorization);
-        return userAdminService.executeBlackListExamPost(examPostBlacklistForm);
+        return userAdminBusinessService.executeBlackListExamPost(Authorization, examPostBlacklistForm);
     }
 
     // 이상 없는 신고 강의평가 게시글이면 지워주기
@@ -89,10 +85,9 @@ public class UserAdminController {
     @PostMapping("/no-problem/evaluate-post")
     public Map<String, Boolean> noProblemEvaluatePost(
             @Valid @RequestHeader String Authorization,
-            @Valid @RequestBody UserAdminRequestDto.EvaluatePostNoProblemForm evaluatePostNoProblemForm
+            @Valid @RequestBody EvaluatePostNoProblemForm evaluatePostNoProblemForm
     ) {
-        userAdminService.executeValidateAdmin(Authorization);
-        return userAdminService.executeEvaluatePost(evaluatePostNoProblemForm);
+        return userAdminBusinessService.executeNoProblemEvaluatePost(Authorization, evaluatePostNoProblemForm);
     }
 
     // 이상 없는 신고 시험정보 게시글이면 지워주기
@@ -101,21 +96,19 @@ public class UserAdminController {
     @PostMapping("/no-problem/exam-post")
     public Map<String, Boolean> noProblemExamPost(
             @Valid @RequestHeader String Authorization,
-            @Valid @RequestBody UserAdminRequestDto.ExamPostNoProblemForm examPostNoProblemForm
+            @Valid @RequestBody ExamPostNoProblemForm examPostNoProblemForm
     ) {
-        userAdminService.executeValidateAdmin(Authorization);
-        return userAdminService.executeExamPost(examPostNoProblemForm);
+        return userAdminBusinessService.executeNoProblemExamPost(Authorization, examPostNoProblemForm);
     }
 
     // 신고받은 게시글 리스트 불러오기
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @GetMapping("/report/list")
-    public UserAdminResponseDto.LoadAllReportedPostForm loadReportedPost(
+    public LoadAllReportedPostForm loadReportedPost(
             @Valid @RequestHeader String Authorization
     ) {
-        userAdminService.executeValidateAdmin(Authorization);
-        return userAdminService.executeLoadAllReportedPosts();
+        return userAdminBusinessService.executeLoadAllReportedPosts(Authorization);
     }
 
 
@@ -127,8 +120,7 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestParam Long target
     ) {
-        userAdminService.executeValidateAdmin(Authorization);
-        return userAdminService.executeLoadDetailReportedEvaluatePost(target);
+        return userAdminBusinessService.executeLoadDetailReportedEvaluatePost(Authorization, target);
     }
 
     // 시험정보에 관련된 신고 게시글 자세히 보기
@@ -139,8 +131,6 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestParam Long target
     ) {
-
-        userAdminService.executeValidateAdmin(Authorization);
-        return userAdminService.executeLoadDetailReportedExamPost(target);
+        return userAdminBusinessService.executeLoadDetailReportedExamPost(Authorization, target);
     }
 }

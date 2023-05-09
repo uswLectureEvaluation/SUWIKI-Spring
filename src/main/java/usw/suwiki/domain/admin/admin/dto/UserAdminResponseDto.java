@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
-import usw.suwiki.domain.postreport.entity.ExamPostReport;
+import usw.suwiki.domain.postreport.EvaluatePostReport;
+import usw.suwiki.domain.postreport.ExamPostReport;
 
 import java.util.List;
 

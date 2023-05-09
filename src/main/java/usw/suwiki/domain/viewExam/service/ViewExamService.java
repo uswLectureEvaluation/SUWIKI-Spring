@@ -9,7 +9,7 @@ import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.viewExam.dto.PurchaseHistoryDto;
-import usw.suwiki.domain.viewExam.entity.ViewExam;
+import usw.suwiki.domain.viewExam.ViewExam;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
 

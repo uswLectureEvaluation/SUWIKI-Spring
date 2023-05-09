@@ -15,8 +15,7 @@ import usw.suwiki.global.PageOption;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.jwt.JwtResolver;
-import usw.suwiki.global.jwt.JwtValidator;
+import usw.suwiki.global.jwt.JwtAgent;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,8 +32,7 @@ import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
 public class EvaluateController {
 
     private final EvaluatePostsService evaluatePostsService;
-    private final JwtValidator jwtValidator;
-    private final JwtResolver jwtResolver;
+    private final JwtAgent jwtAgent;
 
     @ApiLogger(option = "evaluatePosts")
     @GetMapping
@@ -44,8 +42,8 @@ public class EvaluateController {
             @RequestParam(required = false) Optional<Integer> page
     ) {
         HttpHeaders header = new HttpHeaders();
-        jwtValidator.validateJwt(Authorization);
-        if (jwtResolver.getUserIsRestricted(Authorization)) {
+        jwtAgent.validateJwt(Authorization);
+        if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
         List<EvaluateResponseByLectureIdDto> list =
@@ -55,7 +53,7 @@ public class EvaluateController {
                 );
         FindByLectureToJson data = new FindByLectureToJson(list);
         if (evaluatePostsService.verifyIsUserWriteEvaluatePost(
-                jwtResolver.getId(Authorization), lectureId)) {
+                jwtAgent.getId(Authorization), lectureId)) {
             data.setWritten(false);
         }
         return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
@@ -70,8 +68,8 @@ public class EvaluateController {
     ) {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(APPLICATION_JSON);
-        jwtValidator.validateJwt(Authorization);
-        if (jwtResolver.getUserIsRestricted(Authorization)) {
+        jwtAgent.validateJwt(Authorization);
+        if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
         evaluatePostsService.update(evaluateIdx, dto);
@@ -88,11 +86,11 @@ public class EvaluateController {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(APPLICATION_JSON);
 
-        jwtValidator.validateJwt(Authorization);
-        if (jwtResolver.getUserIsRestricted(Authorization)) {
+        jwtAgent.validateJwt(Authorization);
+        if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
-        Long userIdx = jwtResolver.getId(Authorization);
+        Long userIdx = jwtAgent.getId(Authorization);
         if (evaluatePostsService.verifyIsUserWriteEvaluatePost(userIdx, lectureId)) {
             evaluatePostsService.save(dto, userIdx, lectureId);
             return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
@@ -109,14 +107,14 @@ public class EvaluateController {
             @RequestParam(required = false) Optional<Integer> page
     ) {
         HttpHeaders header = new HttpHeaders();
-        jwtValidator.validateJwt(Authorization);
-        if (jwtResolver.getUserIsRestricted(Authorization)) {
+        jwtAgent.validateJwt(Authorization);
+        if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
 
         List<EvaluateResponseByUserIdxDto> list = evaluatePostsService.findEvaluatePostsByUserId(
                 new PageOption(page),
-                jwtResolver.getId(Authorization)
+                jwtAgent.getId(Authorization)
         );
 
         ResponseForm data = new ResponseForm(list);
@@ -130,11 +128,11 @@ public class EvaluateController {
             @RequestParam Long evaluateIdx,
             @RequestHeader String Authorization
     ) {
-        jwtValidator.validateJwt(Authorization);
-        if (jwtResolver.getUserIsRestricted(Authorization)) {
+        jwtAgent.validateJwt(Authorization);
+        if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
-        Long userIdx = jwtResolver.getId(Authorization);
+        Long userIdx = jwtAgent.getId(Authorization);
         evaluatePostsService.executeDeleteEvaluatePost(evaluateIdx, userIdx);
         return "success";
     }

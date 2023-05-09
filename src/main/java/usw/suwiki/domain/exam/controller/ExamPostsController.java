@@ -18,8 +18,7 @@ import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.exception.errortype.ExamPostException;
-import usw.suwiki.global.jwt.JwtResolver;
-import usw.suwiki.global.jwt.JwtValidator;
+import usw.suwiki.global.jwt.JwtAgent;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,8 +33,7 @@ import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
 public class ExamPostsController {
 
     private final ExamPostsService examPostsService;
-    private final JwtValidator jwtValidator;
-    private final JwtResolver jwtResolver;
+    private final JwtAgent jwtAgent;
     private final ViewExamService viewExamService;
 
     @ApiLogger(option = "examPosts")
@@ -46,7 +44,7 @@ public class ExamPostsController {
             @RequestParam(required = false) Optional<Integer> page) {
 
         validateAuth(Authorization);
-        Long userId = jwtResolver.getId(Authorization);
+        Long userId = jwtAgent.getId(Authorization);
 
         boolean canRead = viewExamService.isExist(userId, lectureId);
 
@@ -68,7 +66,7 @@ public class ExamPostsController {
             @RequestHeader String Authorization,
             @RequestParam Long lectureId) {
         validateAuth(Authorization);
-        Long userId = jwtResolver.getId(Authorization);
+        Long userId = jwtAgent.getId(Authorization);
 
         boolean exist = viewExamService.isExist(userId, lectureId);
         if (exist) {
@@ -87,7 +85,7 @@ public class ExamPostsController {
             @RequestHeader String Authorization
     ) {
         validateAuth(Authorization);
-        Long userIdx = jwtResolver.getId(Authorization);
+        Long userIdx = jwtAgent.getId(Authorization);
 
         if (examPostsService.isWrite(userIdx, lectureId)) {
             throw new AccountException(POSTS_WRITE_OVERLAP);
@@ -105,8 +103,8 @@ public class ExamPostsController {
     ) {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
-        jwtValidator.validateJwt(Authorization);
-        if (jwtResolver.getUserIsRestricted(Authorization)) {
+        jwtAgent.validateJwt(Authorization);
+        if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
         examPostsService.update(examIdx, dto);
@@ -120,13 +118,13 @@ public class ExamPostsController {
             @RequestParam(required = false) Optional<Integer> page
     ) {
         HttpHeaders header = new HttpHeaders();
-        jwtValidator.validateJwt(Authorization);
-        if (jwtResolver.getUserIsRestricted(Authorization)) {
+        jwtAgent.validateJwt(Authorization);
+        if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
         List<ExamResponseByUserIdxDto> list = examPostsService.findExamPostsByUserId(
                 new PageOption(page),
-                jwtResolver.getId(Authorization));
+                jwtAgent.getId(Authorization));
 
         ResponseForm data = new ResponseForm(list);
         return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
@@ -139,7 +137,7 @@ public class ExamPostsController {
             @RequestHeader String Authorization
     ) {
         validateAuth(Authorization);
-        Long userIdx = jwtResolver.getId(Authorization);
+        Long userIdx = jwtAgent.getId(Authorization);
         examPostsService.executeDeleteExamPosts(userIdx, examIdx);
         return ResponseEntity.ok("success");
     }
@@ -147,8 +145,8 @@ public class ExamPostsController {
     @ApiLogger(option = "examPosts")
     @GetMapping("/purchase") // 이름 수정 , 널값 처리 프론트
     public ResponseEntity<ResponseForm> showPurchaseHistory(@RequestHeader String Authorization) {
-        jwtValidator.validateJwt(Authorization);
-        Long userId = jwtResolver.getId(Authorization);
+        jwtAgent.validateJwt(Authorization);
+        Long userId = jwtAgent.getId(Authorization);
 
         List<PurchaseHistoryDto> list = viewExamService.findByUserId(userId);
         ResponseForm data = new ResponseForm(list);
@@ -157,8 +155,8 @@ public class ExamPostsController {
     }
 
     private void validateAuth(String authorization) {
-        jwtValidator.validateJwt(authorization);
-        if (jwtResolver.getUserIsRestricted(authorization)) {
+        jwtAgent.validateJwt(authorization);
+        if (jwtAgent.getUserIsRestricted(authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
     }

@@ -3,7 +3,7 @@ package usw.suwiki.domain.viewExam.repository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import usw.suwiki.domain.viewExam.entity.ViewExam;
+import usw.suwiki.domain.viewExam.ViewExam;
 
 import java.util.List;
 
