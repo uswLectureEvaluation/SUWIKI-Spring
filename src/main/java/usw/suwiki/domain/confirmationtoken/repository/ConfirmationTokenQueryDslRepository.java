@@ -1,6 +1,6 @@
 package usw.suwiki.domain.confirmationtoken.repository;
 
-import usw.suwiki.domain.confirmationtoken.entity.ConfirmationToken;
+import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 
 import java.time.LocalDateTime;
 import java.util.List;

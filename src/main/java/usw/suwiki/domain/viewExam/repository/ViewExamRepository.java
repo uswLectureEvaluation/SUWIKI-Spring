@@ -3,8 +3,6 @@ package usw.suwiki.domain.viewExam.repository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import usw.suwiki.domain.lecture.domain.Lecture;
-import usw.suwiki.domain.user.user.entity.User;
 import usw.suwiki.domain.viewExam.entity.ViewExam;
 
 import java.util.List;

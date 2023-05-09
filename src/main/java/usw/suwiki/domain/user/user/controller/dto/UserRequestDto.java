@@ -1,4 +1,4 @@
-package usw.suwiki.domain.user.user.dto;
+package usw.suwiki.domain.user.user.controller.dto;
 
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;

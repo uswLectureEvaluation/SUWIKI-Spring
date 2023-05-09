@@ -1,6 +1,5 @@
 package usw.suwiki.domain.exam.service;
 
-import com.mysql.cj.MysqlConnection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import usw.suwiki.domain.exam.controller.dto.*;
@@ -8,8 +7,8 @@ import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.exam.domain.repository.ExamPostsRepository;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
-import usw.suwiki.domain.user.user.entity.User;
-import usw.suwiki.domain.user.user.service.UserService;
+import usw.suwiki.domain.user.user.User;
+import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
@@ -24,12 +23,12 @@ import java.util.List;
 public class ExamPostsService {
     private final ExamPostsRepository examPostsRepository;
     private final LectureService lectureService;
-    private final UserService userService;
+    private final UserCRUDService userCRUDService;
 
     public void write(ExamPostsSaveDto dto, Long userIdx, Long lectureId) {
         ExamPosts posts = new ExamPosts(dto);
         Lecture lecture = lectureService.findById(lectureId);
-        User user = userService.loadUserFromUserIdx(userIdx);
+        User user = userCRUDService.loadUserFromUserIdx(userIdx);
 
         if (lecture == null) {
             throw new AccountException(ExceptionType.NOT_EXISTS_LECTURE);
@@ -76,7 +75,7 @@ public class ExamPostsService {
 
     public boolean isWrite(Long userIdx, Long lectureId) {
         return examPostsRepository.isWrite(
-                userService.loadUserFromUserIdx(userIdx),
+                userCRUDService.loadUserFromUserIdx(userIdx),
                 lectureService.findById(lectureId)
         );
     }
@@ -93,7 +92,7 @@ public class ExamPostsService {
 
     public void executeDeleteExamPosts(Long userIdx, Long examIdx) {
         ExamPosts post = examPostsRepository.findById(examIdx);
-        User user = userService.loadUserFromUserIdx(userIdx);
+        User user = userCRUDService.loadUserFromUserIdx(userIdx);
         user.decreasePointAndWrittenExamByDeleteExamPosts();
         examPostsRepository.delete(post);
     }

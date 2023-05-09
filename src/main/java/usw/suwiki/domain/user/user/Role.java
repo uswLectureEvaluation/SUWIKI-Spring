@@ -1,4 +1,4 @@
-package usw.suwiki.domain.user.user.entity;
+package usw.suwiki.domain.user.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

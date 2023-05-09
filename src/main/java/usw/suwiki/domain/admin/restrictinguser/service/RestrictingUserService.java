@@ -1,4 +1,4 @@
-package usw.suwiki.domain.admin.restrictinguser;
+package usw.suwiki.domain.admin.restrictinguser.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -6,20 +6,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
 import usw.suwiki.domain.admin.admin.dto.UserAdminRequestDto.ExamPostRestrictForm;
-import usw.suwiki.domain.admin.admin.service.UserAdminService;
-import usw.suwiki.domain.admin.blacklistdomain.BlackListService;
+import usw.suwiki.domain.admin.blacklistdomain.service.BlacklistDomainCRUDService;
+import usw.suwiki.domain.admin.restrictinguser.RestrictingUser;
+import usw.suwiki.domain.admin.restrictinguser.repository.RestrictingUserRepository;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.exam.service.ExamPostsService;
-import usw.suwiki.domain.user.user.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
-import usw.suwiki.domain.user.user.entity.User;
-import usw.suwiki.domain.user.user.service.UserService;
+import usw.suwiki.domain.user.user.User;
+import usw.suwiki.domain.user.user.service.UserCRUDService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,11 +28,10 @@ public class RestrictingUserService {
     private final static String JUDGEMENT = "신고누적 블랙리스트 1년";
     private final static Long BANNED_PERIOD = 90L;
 
-    private final UserService userService;
+    private final UserCRUDService userCRUDService;
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
-    private final UserAdminService userAdminService;
-    private final BlackListService blackListService;
+    private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final RestrictingUserRepository restrictingUserRepository;
 
     public void executeRestrictUserFromEvaluatePost(
@@ -42,10 +39,10 @@ public class RestrictingUserService {
     ) {
         EvaluatePosts evaluatePost = evaluatePostsService
                 .loadEvaluatePostsFromEvaluatePostsIdx(evaluatePostRestrictForm.getEvaluateIdx());
-        User user = userService.loadUserFromUserIdx(evaluatePost.getUser().getId());
+        User user = userCRUDService.loadUserFromUserIdx(evaluatePost.getUser().getId());
 
         if (user.getRestrictedCount() >= 2) {
-            blackListService.executeBlacklist(
+            blacklistDomainCRUDService.saveBlackListDomain(
                     user.getId(),
                     BANNED_PERIOD,
                     BANNED_REASON,
@@ -69,10 +66,10 @@ public class RestrictingUserService {
     public void executeRestrictUserFromExamPost(ExamPostRestrictForm examPostRestrictForm) {
         ExamPosts examPost = examPostsService
                 .loadExamPostsFromExamPostsIdx(examPostRestrictForm.getExamIdx());
-        User user = userService.loadUserFromUserIdx(examPost.getUser().getId());
+        User user = userCRUDService.loadUserFromUserIdx(examPost.getUser().getId());
 
         if (user.getRestrictedCount() >= 2) {
-            blackListService.executeBlacklist(
+            blacklistDomainCRUDService.saveBlackListDomain(
                     user.getId(),
                     BANNED_PERIOD,
                     BANNED_REASON,
@@ -92,32 +89,13 @@ public class RestrictingUserService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public List<LoadMyRestrictedReasonResponseForm> loadRestrictedLog(Long userIdx) {
-        Optional<RestrictingUser> wrappedRestrictingUser = restrictingUserRepository.findByUserIdx(userIdx);
-        List<LoadMyRestrictedReasonResponseForm> finalResultForm = new ArrayList<>();
-
-        if (wrappedRestrictingUser.isPresent()) {
-            RestrictingUser RestrictingUser = wrappedRestrictingUser.get();
-            LoadMyRestrictedReasonResponseForm resultForm = LoadMyRestrictedReasonResponseForm
-                    .builder()
-                    .restrictedReason(RestrictingUser.getRestrictingReason())
-                    .judgement(RestrictingUser.getJudgement())
-                    .createdAt(RestrictingUser.getCreatedAt())
-                    .restrictingDate(RestrictingUser.getRestrictingDate())
-                    .build();
-            finalResultForm.add(resultForm);
-        }
-
-        return finalResultForm;
-    }
 
     @Scheduled(cron = "10 0 0 * * *")
     public void isUnrestrictedTarget() {
         List<RestrictingUser> restrictingUsers =
                 restrictingUserRepository.findByRestrictingDateBefore(LocalDateTime.now());
         for (RestrictingUser restrictingUser : restrictingUsers) {
-            User user = userService.loadUserFromUserIdx(restrictingUser.getUserIdx());
+            User user = userCRUDService.loadUserFromUserIdx(restrictingUser.getUserIdx());
             user.editRestricted(false);
             restrictingUserRepository.deleteByUserIdx(user.getId());
         }

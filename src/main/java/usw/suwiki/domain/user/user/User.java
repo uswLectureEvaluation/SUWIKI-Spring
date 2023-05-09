@@ -1,11 +1,11 @@
-package usw.suwiki.domain.user.user.entity;
+package usw.suwiki.domain.user.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import usw.suwiki.domain.confirmationtoken.entity.ConfirmationToken;
+import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.global.exception.errortype.AccountException;
 
 import javax.persistence.*;

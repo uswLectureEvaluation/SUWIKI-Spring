@@ -1,14 +1,15 @@
 package usw.suwiki.domain.admin.admin.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.admin.dto.UserAdminRequestDto;
 import usw.suwiki.domain.admin.admin.dto.UserAdminRequestDto.EvaluatePostBlacklistForm;
 import usw.suwiki.domain.admin.admin.dto.UserAdminRequestDto.ExamPostBlacklistForm;
 import usw.suwiki.domain.admin.admin.dto.UserAdminResponseDto.LoadAllReportedPostForm;
-import usw.suwiki.domain.admin.blacklistdomain.BlackListService;
-import usw.suwiki.domain.admin.restrictinguser.RestrictingUserService;
+import usw.suwiki.domain.admin.blacklistdomain.service.BlacklistDomainCRUDService;
+import usw.suwiki.domain.admin.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
@@ -16,9 +17,9 @@ import usw.suwiki.domain.exam.service.ExamPostsService;
 import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
 import usw.suwiki.domain.postreport.entity.ExamPostReport;
 import usw.suwiki.domain.postreport.service.ReportPostService;
-import usw.suwiki.domain.user.user.dto.UserRequestDto;
-import usw.suwiki.domain.user.user.entity.User;
-import usw.suwiki.domain.user.user.service.UserService;
+import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
+import usw.suwiki.domain.user.user.User;
+import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtProvider;
 import usw.suwiki.global.jwt.JwtResolver;
@@ -36,16 +37,16 @@ import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successCapit
 @RequiredArgsConstructor
 public class UserAdminService {
 
-    private final BlackListService blackListService;
-    private final UserService userService;
+    private final BlacklistDomainCRUDService blacklistDomainCRUDService;
+    private final UserCRUDService userCRUDService;
     private final ReportPostService reportPostService;
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
-    private final UserAdminService userAdminService;
     private final RestrictingUserService restrictingUserService;
     private final JwtProvider jwtProvider;
     private final JwtValidator jwtValidator;
     private final JwtResolver jwtResolver;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     // 관리자 권한 검증
     public void executeValidateAdmin(String authorization) {
@@ -56,11 +57,11 @@ public class UserAdminService {
     }
 
     // 관리자 로그인
-    public Map<String, String> executeAdminLogin(UserRequestDto.LoginForm loginForm) {
-        if (userService.matchPassword(loginForm.getLoginId(), loginForm.getPassword())) {
+    public Map<String, String> executeAdminLogin(LoginForm loginForm) {
+        if (bCryptPasswordEncoder.matches(loginForm.getLoginId(), loginForm.getPassword())) {
             return new HashMap<>() {{
-                put("AccessToken", jwtProvider.createAccessToken(userService.loadUserFromLoginId(loginForm.getLoginId())));
-                put("UserCount", String.valueOf(userService.findAllUsersSize()));
+                put("AccessToken", jwtProvider.createAccessToken(userCRUDService.loadUserFromLoginId(loginForm.getLoginId())));
+                put("UserCount", String.valueOf(userCRUDService.findAllUsersSize()));
             }};
         }
         throw new AccountException(PASSWORD_ERROR);
@@ -97,24 +98,16 @@ public class UserAdminService {
 
     public Map<String, Boolean> executeRestrictEvaluatePost(UserAdminRequestDto.EvaluatePostRestrictForm evaluatePostRestrictForm) {
         restrictingUserService.executeRestrictUserFromEvaluatePost(evaluatePostRestrictForm);
-        userAdminService.plusRestrictCount(
-                userAdminService.deleteReportedEvaluatePostFromEvaluateIdx(
-                        evaluatePostRestrictForm.getEvaluateIdx()));
-        userAdminService.plusReportingUserPoint(
-                reportPostService.whoIsEvaluateReporting(
-                        evaluatePostRestrictForm.getEvaluateIdx()));
+        plusRestrictCount(deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostRestrictForm.getEvaluateIdx()));
+        plusReportingUserPoint(reportPostService.whoIsEvaluateReporting(evaluatePostRestrictForm.getEvaluateIdx()));
 
         return successCapitalFlag();
     }
 
     public Map<String, Boolean> executeRestrictExamPost(UserAdminRequestDto.ExamPostRestrictForm examPostRestrictForm) {
         restrictingUserService.executeRestrictUserFromExamPost(examPostRestrictForm);
-        userAdminService.plusRestrictCount(
-                userAdminService.deleteReportedExamPostFromEvaluateIdx(
-                        examPostRestrictForm.getExamIdx()));
-        userAdminService.plusReportingUserPoint(
-                reportPostService.whoIsExamReporting(
-                        examPostRestrictForm.getExamIdx()));
+        plusRestrictCount(deleteReportedExamPostFromEvaluateIdx(examPostRestrictForm.getExamIdx()));
+        plusReportingUserPoint(reportPostService.whoIsExamReporting(examPostRestrictForm.getExamIdx()));
 
         return successCapitalFlag();
     }
@@ -124,22 +117,18 @@ public class UserAdminService {
     ) {
 
         Long userIdx = evaluatePostsService
-                .loadEvaluatePostsFromEvaluatePostsIdx(
-                        evaluatePostBlacklistForm.getEvaluateIdx())
+                .loadEvaluatePostsFromEvaluatePostsIdx(evaluatePostBlacklistForm.getEvaluateIdx())
                 .getUser()
                 .getId();
 
-        userAdminService.deleteReportedEvaluatePostFromEvaluateIdx(
-                evaluatePostBlacklistForm.getEvaluateIdx()
-        );
-
-        blackListService.executeBlacklist(
+        deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostBlacklistForm.getEvaluateIdx());
+        blacklistDomainCRUDService.saveBlackListDomain(
                 userIdx,
                 365L,
                 evaluatePostBlacklistForm.getBannedReason(),
                 evaluatePostBlacklistForm.getJudgement()
         );
-        userAdminService.plusRestrictCount(userIdx);
+        plusRestrictCount(userIdx);
 
         return successCapitalFlag();
     }
@@ -147,20 +136,16 @@ public class UserAdminService {
     public Map<String, Boolean> executeBlackListExamPost(
             ExamPostBlacklistForm examPostBlacklistForm
     ) {
-        Long userIdx = examPostsService.loadExamPostsFromExamPostsIdx(
-                examPostBlacklistForm.getExamIdx()).getUser().getId();
+        Long userIdx = examPostsService.loadExamPostsFromExamPostsIdx(examPostBlacklistForm.getExamIdx()).getUser().getId();
 
-        userAdminService.deleteReportedExamPostFromEvaluateIdx(
-                examPostBlacklistForm.getExamIdx()
-        );
-
-        blackListService.executeBlacklist(
+        deleteReportedExamPostFromEvaluateIdx(examPostBlacklistForm.getExamIdx());
+        blacklistDomainCRUDService.saveBlackListDomain(
                 userIdx,
                 365L,
                 examPostBlacklistForm.getBannedReason(),
                 examPostBlacklistForm.getJudgement()
         );
-        userAdminService.plusRestrictCount(userIdx);
+        plusRestrictCount(userIdx);
 
         return successCapitalFlag();
     }
@@ -193,16 +178,12 @@ public class UserAdminService {
     }
 
     public void plusRestrictCount(Long userIdx) {
-        User user = userService.loadUserFromUserIdx(userIdx);
+        User user = userCRUDService.loadUserFromUserIdx(userIdx);
         user.increaseRestrictedCountByReportedPost();
     }
 
     public void plusReportingUserPoint(Long reportingUserIdx) {
-        User user = userService.loadUserFromUserIdx(reportingUserIdx);
+        User user = userCRUDService.loadUserFromUserIdx(reportingUserIdx);
         user.increasePointByReporting();
-    }
-
-    public Long whoIsEvaluateReporting(Long evaluateIdx) {
-        return reportPostService.loadDetailEvaluateReportFromReportingEvaluatePostId(evaluateIdx).getReportingUserIdx();
     }
 }

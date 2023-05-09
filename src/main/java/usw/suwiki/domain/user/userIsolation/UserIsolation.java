@@ -1,4 +1,4 @@
-package usw.suwiki.domain.user.userIsolation.entity;
+package usw.suwiki.domain.user.userIsolation;
 
 import static usw.suwiki.global.util.passwordfactory.PasswordRandomizer.randomizePassword;
 

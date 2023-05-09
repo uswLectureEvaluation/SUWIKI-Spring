@@ -2,30 +2,26 @@ package usw.suwiki.domain.user.userIsolation.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.admin.restrictinguser.RestrictingUserService;
-import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenService;
+import usw.suwiki.domain.admin.restrictinguser.service.RestrictingUserService;
+import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.service.ExamPostsService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.refreshToken.service.RefreshTokenService;
-import usw.suwiki.domain.user.user.entity.User;
+import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserService;
-import usw.suwiki.domain.user.userIsolation.entity.UserIsolation;
+import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
-import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.mailsender.EmailSender;
 import usw.suwiki.global.util.emailBuild.BuildSoonDormantTargetForm;
 import usw.suwiki.global.util.emailBuild.UserAutoDeletedWarningForm;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
 
 @Service
 @RequiredArgsConstructor
@@ -36,21 +32,15 @@ public class UserIsolationService {
     private final RestrictingUserService restrictingUserService;
     private final RefreshTokenService refreshTokenService;
     private final ReportPostService reportPostService;
-    private final ConfirmationTokenService confirmationTokenService;
+    private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
     private final FavoriteMajorService favoriteMajorService;
     private final UserIsolationRepository userIsolationRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final BuildSoonDormantTargetForm buildSoonDormantTargetForm;
     private final UserAutoDeletedWarningForm userAutoDeletedWarningForm;
     private final EmailSender emailSender;
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
     private final ViewExamService viewExamService;
-
-    public UserIsolation loadUserFromLoginId(String loginId) {
-        return userIsolationRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new AccountException(USER_NOT_EXISTS));
-    }
 
     public void convertToIsolationUser(User user) {
         UserIsolation userIsolation = UserIsolation.builder()
@@ -64,23 +54,6 @@ public class UserIsolationService {
         userIsolationRepository.save(userIsolation);
         userService.softDeleteForIsolation(user.getId());
     }
-
-//    public User sleepingUserLogin(String loginId, String inputPassword) {
-//        UserIsolation userIsolation = loadUserFromLoginId(loginId);
-//        if (validatePasswordAtUserIsolationTable(loginId, inputPassword)) {
-//            userService.rollBackSoftDeletedForIsolation(userIsolation.getUserIdx());
-//            userIsolationRepository.deleteByLoginId(loginId);
-//            return userService.loadUserFromLoginId(loginId);
-//        }
-//        throw new AccountException(PASSWORD_ERROR);
-//    }
-//
-//    public boolean validatePasswordAtUserIsolationTable(String loginId, String inputPassword) {
-//        return bCryptPasswordEncoder.matches(
-//                inputPassword,
-//                userIsolationRepository.findByLoginId(loginId).get().getPassword()
-//        );
-//    }
 
     @Scheduled(cron = "2 0 0 * * *")
     public void sendEmailAboutSleeping() {
@@ -123,7 +96,7 @@ public class UserIsolationService {
             examPostsService.deleteFromUserIdx(userIdx);
             favoriteMajorService.deleteFromUserIdx(userIdx);
             restrictingUserService.deleteFromUserIdx(userIdx);
-            confirmationTokenService.deleteFromUserIdx(userIdx);
+            confirmationTokenCRUDService.deleteFromUserIdx(userIdx);
             userIsolationRepository.deleteByUserIdx(user.getUserIdx());
             userService.deleteFromUserIdx(userIdx);
         }

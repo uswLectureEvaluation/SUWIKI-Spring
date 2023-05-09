@@ -12,8 +12,8 @@ import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
-import usw.suwiki.domain.user.user.entity.User;
-import usw.suwiki.domain.user.user.service.UserService;
+import usw.suwiki.domain.user.user.User;
+import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
@@ -30,12 +30,12 @@ public class EvaluatePostsService {
 
     private final EvaluatePostsRepository evaluatePostsRepository;
     private final LectureService lectureService;
-    private final UserService userService;
+    private final UserCRUDService userCRUDService;
 
     public void save(EvaluatePostsSaveDto evaluatePostsSaveDto, Long userIdx, Long lectureId) {
         EvaluatePosts posts = new EvaluatePosts(evaluatePostsSaveDto);
         Lecture lecture = lectureService.findById(lectureId);
-        User user = userService.loadUserFromUserIdx(userIdx);
+        User user = userCRUDService.loadUserFromUserIdx(userIdx);
 
         if (lecture == null) {
             throw new AccountException(ExceptionType.NOT_EXISTS_LECTURE);
@@ -62,8 +62,10 @@ public class EvaluatePostsService {
         lectureService.updateLectureEvaluationIfUpdatePost(beforeUpdated, updated);
     }
 
-    public List<EvaluateResponseByLectureIdDto> findEvaluatePostsByLectureId(PageOption option,
-                                                                             Long lectureId) {
+    public List<EvaluateResponseByLectureIdDto> findEvaluatePostsByLectureId(
+            PageOption option,
+            Long lectureId
+    ) {
         List<EvaluateResponseByLectureIdDto> dtoList = new ArrayList<>();
         List<EvaluatePosts> list = evaluatePostsRepository.findByLectureId(option, lectureId);
         for (EvaluatePosts post : list) {
@@ -72,8 +74,10 @@ public class EvaluatePostsService {
         return dtoList;
     }
 
-    public List<EvaluateResponseByUserIdxDto> findEvaluatePostsByUserId(PageOption option,
-                                                                        Long userId) {
+    public List<EvaluateResponseByUserIdxDto> findEvaluatePostsByUserId(
+            PageOption option,
+            Long userId
+    ) {
         List<EvaluateResponseByUserIdxDto> dtoList = new ArrayList<>();
         List<EvaluatePosts> list = evaluatePostsRepository.findByUserId(option, userId);
         for (EvaluatePosts post : list) {
@@ -86,7 +90,7 @@ public class EvaluatePostsService {
 
     public boolean verifyIsUserWriteEvaluatePost(Long userIdx, Long lectureId) {
         Lecture lecture = lectureService.findById(lectureId);
-        User user = userService.loadUserFromUserIdx(userIdx);
+        User user = userCRUDService.loadUserFromUserIdx(userIdx);
         return evaluatePostsRepository.verifyPostsByIdx(user, lecture);
     }
 
@@ -103,7 +107,7 @@ public class EvaluatePostsService {
 
     public void executeDeleteEvaluatePost(Long evaluateIdx, Long userIdx) {
         EvaluatePosts post = evaluatePostsRepository.findById(evaluateIdx);
-        User user = userService.loadUserFromUserIdx(userIdx);
+        User user = userCRUDService.loadUserFromUserIdx(userIdx);
         user.decreasePointAndWrittenEvaluationByDeleteEvaluatePosts();
         evaluatePostsRepository.delete(post);
         throw new AccountException(USER_POINT_LACK);

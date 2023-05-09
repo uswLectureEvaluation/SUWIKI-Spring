@@ -1,16 +1,12 @@
 package usw.suwiki.domain.user.user.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenService;
+import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenBusinessService;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
-import usw.suwiki.domain.user.user.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
-import usw.suwiki.domain.user.user.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
-import usw.suwiki.domain.user.user.dto.UserResponseDto.MyPageResponseForm;
-import usw.suwiki.domain.user.user.service.UserFavoriteMajorService;
-import usw.suwiki.domain.user.user.service.UserLoadRestrictAndBlackListReasonService;
-import usw.suwiki.domain.user.user.service.UserReportService;
+import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
+import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
+import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.MyPageResponseForm;
 import usw.suwiki.domain.user.user.service.UserService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
@@ -24,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
-import static usw.suwiki.domain.user.user.dto.UserRequestDto.*;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.*;
 
 @RestController
 @RequestMapping("/user")
@@ -33,10 +29,7 @@ import static usw.suwiki.domain.user.user.dto.UserRequestDto.*;
 public class UserController {
 
     private final UserService userService;
-    private final ConfirmationTokenService confirmationTokenService;
-    private final UserReportService userReportService;
-    private final UserFavoriteMajorService userFavoriteMajorService;
-    private final UserLoadRestrictAndBlackListReasonService userLoadRestrictAndBlackListReasonService;
+    private final ConfirmationTokenBusinessService confirmationTokenBusinessService;
     private final JwtResolver jwtResolver;
 
     //아이디 중복확인
@@ -76,7 +69,7 @@ public class UserController {
     @ApiLogger(option = "user")
     @GetMapping("verify-email")
     public String confirmEmail(@RequestParam("token") String token) {
-        return confirmationTokenService.confirmToken(token);
+        return confirmationTokenBusinessService.confirmToken(token);
     }
 
     //아이디 찾기 요청 시
@@ -107,7 +100,7 @@ public class UserController {
             @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
             @RequestHeader String Authorization) {
         return userService.executeEditPassword(
-                userService.loadUserFromUserIdx(jwtResolver.getId(Authorization)),
+                Authorization,
                 editMyPasswordForm.getPrePassword(),
                 editMyPasswordForm.getNewPassword());
     }
@@ -217,7 +210,7 @@ public class UserController {
             @Valid @RequestBody EvaluateReportForm evaluateReportForm,
             @Valid @RequestHeader String Authorization
     ) {
-        return userReportService.executeForEvaluatePost(evaluateReportForm, Authorization);
+        return userService.executeReportEvaluatePost(evaluateReportForm, Authorization);
     }
 
     // 시험정보 신고
@@ -227,41 +220,42 @@ public class UserController {
     public Map<String, Boolean> reportExam(
             @Valid @RequestBody ExamReportForm examReportForm,
             @Valid @RequestHeader String Authorization) {
-        return userReportService.executeForExamPost(examReportForm, Authorization);
+        return userService.executeReportExamPost(examReportForm, Authorization);
     }
 
     // 전공 즐겨찾기 등록하기
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/favorite-major")
-    public ResponseEntity<String> saveFavoriteMajor(
-            @RequestHeader String Authorization, @RequestBody FavoriteSaveDto favoriteSaveDto) {
-        userFavoriteMajorService.executeSave(Authorization, favoriteSaveDto);
-        return ResponseEntity
-                .ok()
-                .body("success");
+    public String saveFavoriteMajor(
+            @RequestHeader String Authorization,
+            @RequestBody FavoriteSaveDto favoriteSaveDto
+    ) {
+        userService.executeFavoriteMajorSave(Authorization, favoriteSaveDto);
+        return "success";
     }
 
     // 전공 즐겨찾기 삭제하기
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @DeleteMapping("/favorite-major")
-    public ResponseEntity<String> deleteFavoriteMajor(
-            @RequestHeader String Authorization, @RequestParam String majorType) {
-        userFavoriteMajorService.executeDelete(Authorization, majorType);
-        return ResponseEntity
-                .ok()
-                .body("success");
+    public String deleteFavoriteMajor(
+            @RequestHeader String Authorization,
+            @RequestParam String majorType) {
+        userService.executeFavoriteMajorDelete(Authorization, majorType);
+        return "success";
     }
 
     // 전공 즐겨찾기 불러오기
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("/favorite-major")
-    public ResponseEntity<ResponseForm> findByLecture(@RequestHeader String Authorization) {
-        return ResponseEntity
-                .ok()
-                .body(userFavoriteMajorService.executeLoad(Authorization));
+    public ResponseForm loadFavoriteMajor(@RequestHeader String Authorization) {
+        return userService.executeFavoriteMajorLoad(Authorization);
     }
 
     // 땡큐 영수형
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("/suki")
     public String thanksToSuki() {
@@ -276,25 +270,22 @@ public class UserController {
     }
 
     // 정지 사유 불러오기
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("/restricted-reason")
-    public ResponseEntity<List<LoadMyRestrictedReasonResponseForm>> restrictedReason(
-            @Valid @RequestHeader String Authorization) {
-        return ResponseEntity
-                .ok()
-                .body(userLoadRestrictAndBlackListReasonService.executeForRestrictedReason(
-                        Authorization));
+    public List<LoadMyRestrictedReasonResponseForm> loadRestrictedReason(
+            @Valid @RequestHeader String Authorization
+    ) {
+        return userService.executeLoadRestrictedReason(Authorization);
     }
 
     // 블랙리스트 사유 불러오기
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("/blacklist-reason")
-    public ResponseEntity<List<LoadMyBlackListReasonResponseForm>> banReason(
+    public List<LoadMyBlackListReasonResponseForm> loadBlacklistReason(
             @Valid @RequestHeader String Authorization) {
-        return ResponseEntity
-                .ok()
-                .body(
-                        userLoadRestrictAndBlackListReasonService.executeForBlackListReason(Authorization));
+        return userService.executeLoadBlackListReason(Authorization);
     }
 }
 

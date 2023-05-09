@@ -4,27 +4,33 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.admin.blacklistdomain.BlackListService;
-import usw.suwiki.domain.confirmationtoken.entity.ConfirmationToken;
+import usw.suwiki.domain.admin.blacklistdomain.service.BlacklistDomainService;
+import usw.suwiki.domain.admin.blacklistdomain.service.BlacklistDomainCRUDService;
+import usw.suwiki.domain.admin.restrictinguser.service.RestrictingUserCRUDService;
+import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.exam.service.ExamPostsService;
+import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
 import usw.suwiki.domain.postreport.entity.ExamPostReport;
 import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.refreshToken.entity.RefreshToken;
 import usw.suwiki.domain.refreshToken.service.RefreshTokenService;
-import usw.suwiki.domain.user.user.dto.UserRequestDto.EvaluateReportForm;
-import usw.suwiki.domain.user.user.dto.UserRequestDto.ExamReportForm;
-import usw.suwiki.domain.user.user.dto.UserResponseDto.MyPageResponseForm;
-import usw.suwiki.domain.user.user.entity.User;
+import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.EvaluateReportForm;
+import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.ExamReportForm;
+import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
+import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
+import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.MyPageResponseForm;
+import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
-import usw.suwiki.domain.user.userIsolation.entity.UserIsolation;
+import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
+import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtProvider;
 import usw.suwiki.global.jwt.JwtResolver;
@@ -52,16 +58,17 @@ public class UserService {
 
     private static final String BASE_LINK = "https://api.suwiki.kr/user/verify-email/?token=";
     private static final String MAIL_FORM = "@suwon.ac.kr";
+    private final UserCRUDService userCRUDService;
     private final UserRepository userRepository;
     private final UserIsolationRepository userIsolationRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final EmailSender emailSender;
     private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final EmailSender emailSender;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RefreshTokenService refreshTokenService;
     private final BuildEmailAuthForm buildEmailAuthForm;
     private final BuildFindLoginIdForm BuildFindLoginIdForm;
     private final BuildFindPasswordForm BuildFindPasswordForm;
-    private final BlackListService blackListService;
+    private final BlacklistDomainService blacklistDomainService;
     private final JwtProvider jwtProvider;
     private final JwtValidator jwtValidator;
     private final JwtResolver jwtResolver;
@@ -70,6 +77,8 @@ public class UserService {
     private final EvaluatePostsService evaluatePostsService;
     private final ExamPostsService examPostsService;
     private final ReportPostService reportPostService;
+    private final BlacklistDomainCRUDService blacklistDomainCRUDService;
+    private final RestrictingUserCRUDService restrictingUserCRUDService;
 
     @Transactional(readOnly = true)
     public Map<String, Boolean> executeCheckId(String loginId) {
@@ -91,7 +100,7 @@ public class UserService {
 
     @Transactional
     public Map<String, Boolean> executeJoin(String loginId, String password, String email) {
-        blackListService.isUserInBlackListThatRequestJoin(email);
+        blacklistDomainService.isUserInBlackListThatRequestJoin(email);
 
         if (userRepository.findByLoginId(loginId).isPresent() ||
                 userIsolationRepository.findByLoginId(loginId).isPresent() ||
@@ -168,26 +177,18 @@ public class UserService {
     }
 
     public Map<String, String> executeLogin(String loginId, String inputPassword) {
-        Map<String, String> tokenPair = new HashMap<>();
         if (userRepository.findByLoginId(loginId).isPresent() &&
-                userIsolationRepository.findByLoginId(loginId).isEmpty()) {
-            User notSleepingUser = loadUserFromLoginId(loginId);
-            notSleepingUser.isUserEmailAuthed(
-                    confirmationTokenRepository.findByUserIdx(notSleepingUser.getId())
-            );
-            if (matchPassword(loginId, inputPassword)) {
-                tokenPair.put(
-                        "AccessToken", jwtProvider.createAccessToken(notSleepingUser)
-                );
-                tokenPair.put(
-                        "RefreshToken",
-                        jwtResolver.judgementRefreshTokenCreateOrUpdateInLogin(notSleepingUser)
-                );
-                notSleepingUser.updateLastLoginDate();
-                return tokenPair;
+                userIsolationRepository.findByLoginId(loginId).isEmpty()
+        ) {
+            User user = userCRUDService.loadUserFromLoginId(loginId);
+            user.isUserEmailAuthed(confirmationTokenRepository.findByUserIdx(user.getId()));
+            if (bCryptPasswordEncoder.matches(user.getPassword(), inputPassword)) {
+                user.updateLastLoginDate();
+                return generateUserJWT(user);
             }
         } else if (userIsolationRepository.findByLoginId(loginId).isPresent() &&
-                userRepository.findByLoginId(loginId).isEmpty()) {
+                userRepository.findByLoginId(loginId).isEmpty()
+        ) {
             UserIsolation userIsolation = userIsolationRepository.findByLoginId(loginId).get();
             if (bCryptPasswordEncoder.matches(
                     inputPassword,
@@ -196,25 +197,20 @@ public class UserService {
                 rollBackSoftDeletedForIsolation(userIsolation.getUserIdx());
                 userIsolationRepository.deleteByLoginId(loginId);
             }
-
-            User sleepingUser = loadUserFromLoginId(loginId);
-            tokenPair.put(
-                    "AccessToken", jwtProvider.createAccessToken(sleepingUser)
-            );
-            tokenPair.put(
-                    "RefreshToken", jwtResolver.judgementRefreshTokenCreateOrUpdateInLogin(sleepingUser)
-            );
-            sleepingUser.updateLastLoginDate();
-            return tokenPair;
+            User user = userCRUDService.loadUserFromLoginId(loginId);
+            user.updateLastLoginDate();
+            return generateUserJWT(user);
         }
         throw new AccountException(PASSWORD_ERROR);
     }
 
     public Map<String, Boolean> executeEditPassword(
-            User user, String prePassword, String newPassword) {
+            String Authorization, String prePassword, String newPassword
+    ) {
+        User user = userCRUDService.loadUserFromUserIdx(jwtResolver.getId(Authorization));
         if (prePassword.equals(newPassword)) {
             throw new AccountException(PASSWORD_NOT_CHANGED);
-        } else if (!matchPassword(user.getLoginId(), prePassword)) {
+        } else if (!bCryptPasswordEncoder.matches(user.getPassword(), prePassword)) {
             throw new AccountException(PASSWORD_ERROR);
         }
         user.updatePassword(bCryptPasswordEncoder, newPassword);
@@ -223,7 +219,7 @@ public class UserService {
 
     public MyPageResponseForm executeLoadMyPage(String Authorization) {
         Long userIdx = jwtResolver.getId(Authorization);
-        User user = loadUserFromUserIdx(userIdx);
+        User user = userCRUDService.loadUserFromUserIdx(userIdx);
         return MyPageResponseForm.builder()
                 .loginId(user.getLoginId())
                 .email(user.getEmail())
@@ -237,7 +233,7 @@ public class UserService {
     public Map<String, String> executeJWTRefreshForWebClient(Cookie requestRefreshCookie) {
         String payload = requestRefreshCookie.getValue();
         RefreshToken refreshToken = refreshTokenService.loadRefreshTokenFromPayload(payload);
-        User user = loadUserFromUserIdx(refreshToken.getUserIdx());
+        User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
         return new HashMap<>() {{
             put("AccessToken",
                     jwtProvider.createAccessToken(user));
@@ -248,7 +244,7 @@ public class UserService {
 
     public Map<String, String> executeJWTRefreshForMobileClient(String Authorization) {
         RefreshToken refreshToken = refreshTokenService.loadRefreshTokenFromPayload(Authorization);
-        User user = loadUserFromUserIdx(refreshToken.getUserIdx());
+        User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
         return new HashMap<>() {{
             put("AccessToken",
                     jwtProvider.createAccessToken(user));
@@ -259,7 +255,7 @@ public class UserService {
 
     public Map<String, Boolean> executeQuit(String Authorization, String inputPassword) {
         jwtValidator.validateJwt(Authorization);
-        User user = loadUserFromUserIdx(jwtResolver.getId(Authorization));
+        User user = userCRUDService.loadUserFromUserIdx(jwtResolver.getId(Authorization));
         if (user.validatePassword(bCryptPasswordEncoder, inputPassword)) {
             throw new AccountException(USER_NOT_EXISTS);
         }
@@ -272,63 +268,92 @@ public class UserService {
         return successFlag();
     }
 
-    public boolean matchPassword(String loginId, String inputPassword) {
-        return bCryptPasswordEncoder.matches(
-                inputPassword,
-                userRepository.findByLoginId(loginId).get().getPassword()
-        );
-    }
-
-    public User convertOptionalUserToDomainUser(Optional<User> optionalUser) {
-        if (optionalUser.isPresent()) {
-            return optionalUser.get();
-        }
-        throw new AccountException(USER_NOT_EXISTS);
-    }
-
-    public User loadUserFromUserIdx(Long userIdx) {
-        return convertOptionalUserToDomainUser(userRepository.findById(userIdx));
-    }
-
-    public User loadUserFromLoginId(String loginId) {
-        return convertOptionalUserToDomainUser(userRepository.findByLoginId(loginId));
-    }
-
-    public void reportExamPost(
-            ExamReportForm userReportForm,
-            Long reportingUserIdx
+    public Map<String, Boolean> executeReportEvaluatePost(
+            EvaluateReportForm evaluateReportForm,
+            String Authorization
     ) {
-        ExamPosts examPost = examPostsService.loadExamPostsFromExamPostsIdx(userReportForm.getExamIdx());
-        Long reportTargetUser = examPost.getUser().getId();
+        jwtValidator.validateJwt(Authorization);
+        if (jwtResolver.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
+        Long reportingUserIdx = jwtResolver.getId(Authorization);
+        EvaluatePosts evaluatePost = evaluatePostsService.loadEvaluatePostsFromEvaluatePostsIdx(
+                evaluateReportForm.getEvaluateIdx());
+        Long reportedUserIdx = evaluatePost.getUser().getId();
+
+        reportPostService.saveEvaluatePostReport(EvaluatePostReport.builder()
+                .evaluateIdx(evaluateReportForm.getEvaluateIdx())
+                .lectureName(evaluatePost.getLectureName())
+                .professor(evaluatePost.getProfessor())
+                .content(evaluatePost.getContent())
+                .reportedUserIdx(reportedUserIdx)
+                .reportingUserIdx(reportingUserIdx)
+                .reportedDate(LocalDateTime.now())
+                .build());
+        return successFlag();
+    }
+
+    public Map<String, Boolean> executeReportExamPost(
+            ExamReportForm examReportForm,
+            String Authorization
+    ) {
+        jwtValidator.validateJwt(Authorization);
+        if (jwtResolver.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
+        Long reportingUserIdx = jwtResolver.getId(Authorization);
+        ExamPosts examPost = examPostsService.loadExamPostsFromExamPostsIdx(
+                examReportForm.getExamIdx());
+        Long reportedUserIdx = examPost.getUser().getId();
         ExamPostReport target = ExamPostReport
                 .builder()
-                .examIdx(userReportForm.getExamIdx())
+                .examIdx(examReportForm.getExamIdx())
                 .lectureName(examPost.getLectureName())
                 .professor(examPost.getProfessor())
                 .content(examPost.getContent())
-                .reportedUserIdx(reportTargetUser)
+                .reportedUserIdx(reportedUserIdx)
                 .reportingUserIdx(reportingUserIdx)
                 .reportedDate(LocalDateTime.now())
                 .build();
         reportPostService.saveExamPostReport(target);
+        return successFlag();
     }
 
-    public void reportEvaluatePost(
-            EvaluateReportForm userReportForm,
-            Long reportingUserIdx
-    ) {
-        EvaluatePosts evaluatePost = evaluatePostsService.loadEvaluatePostsFromEvaluatePostsIdx(userReportForm.getEvaluateIdx());
-        Long reportTargetUser = evaluatePost.getUser().getId();
-        EvaluatePostReport evaluatePostReport = EvaluatePostReport.builder()
-                .evaluateIdx(userReportForm.getEvaluateIdx())
-                .lectureName(evaluatePost.getLectureName())
-                .professor(evaluatePost.getProfessor())
-                .content(evaluatePost.getContent())
-                .reportedUserIdx(reportTargetUser)
-                .reportingUserIdx(reportingUserIdx)
-                .reportedDate(LocalDateTime.now())
-                .build();
-        reportPostService.saveEvaluatePostReport(evaluatePostReport);
+    public List<LoadMyBlackListReasonResponseForm> executeLoadBlackListReason(String Authorization) {
+        jwtValidator.validateJwt(Authorization);
+        User requestUser = userCRUDService.loadUserFromUserIdx(jwtResolver.getId(Authorization));
+        return blacklistDomainCRUDService.loadAllBlacklistLog(requestUser.getId());
+    }
+
+    public List<LoadMyRestrictedReasonResponseForm> executeLoadRestrictedReason(String Authorization) {
+        jwtValidator.validateJwt(Authorization);
+        User requestUser = userCRUDService.loadUserFromUserIdx(jwtResolver.getId(Authorization));
+        return restrictingUserCRUDService.loadRestrictedLog(requestUser.getId());
+    }
+
+    public void executeFavoriteMajorSave(String Authorization, FavoriteSaveDto favoriteSaveDto) {
+        jwtValidator.validateJwt(Authorization);
+        if (jwtResolver.getUserIsRestricted(Authorization)) {
+            throw new AccountException(USER_RESTRICTED);
+        }
+        Long userIdx = jwtResolver.getId(Authorization);
+        favoriteMajorService.save(favoriteSaveDto, userIdx);
+
+    }
+
+    public void executeFavoriteMajorDelete(String Authorization, String majorType) {
+        jwtValidator.validateJwt(Authorization);
+        if (jwtResolver.getUserIsRestricted(Authorization)) {
+            throw new AccountException(USER_RESTRICTED);
+        }
+        Long userIdx = jwtResolver.getId(Authorization);
+        favoriteMajorService.delete(userIdx, majorType);
+    }
+
+    public ResponseForm executeFavoriteMajorLoad(String Authorization) {
+        jwtValidator.validateJwt(Authorization);
+        if (jwtResolver.getUserIsRestricted(Authorization)) {
+            throw new AccountException(USER_RESTRICTED);
+        }
+        Long userIdx = jwtResolver.getId(Authorization);
+        List<String> list = favoriteMajorService.findMajorTypeByUser(userIdx);
+        return new ResponseForm(list);
     }
 
     public void deleteFromUserIdx(Long userIdx) {
@@ -336,12 +361,12 @@ public class UserService {
     }
 
     public void softDeleteForIsolation(Long userIdx) {
-        User user = loadUserFromUserIdx(userIdx);
+        User user = userCRUDService.loadUserFromUserIdx(userIdx);
         user.sleep();
     }
 
     public void rollBackSoftDeletedForIsolation(Long userIdx) {
-        User user = loadUserFromUserIdx(userIdx);
+        User user = userCRUDService.loadUserFromUserIdx(userIdx);
         user.sleep();
     }
 
@@ -349,7 +374,10 @@ public class UserService {
         return userRepository.findByLastLoginBefore(targetTime);
     }
 
-    public int findAllUsersSize() {
-        return userRepository.findAll().size();
+    private Map<String, String> generateUserJWT(User user) {
+        return new HashMap<>() {{
+            put("AccessToken", jwtProvider.createAccessToken(user));
+            put("RefreshToken", jwtResolver.judgementRefreshTokenCreateOrUpdateInLogin(user));
+        }};
     }
 }

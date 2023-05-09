@@ -2,7 +2,7 @@ package usw.suwiki.domain.confirmationtoken.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import usw.suwiki.domain.confirmationtoken.entity.ConfirmationToken;
+import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 
 import java.util.Optional;
 

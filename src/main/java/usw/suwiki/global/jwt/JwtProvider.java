@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.refreshToken.entity.RefreshToken;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
-import usw.suwiki.domain.user.user.entity.User;
+import usw.suwiki.domain.user.user.User;
 
 @Component
 @RequiredArgsConstructor

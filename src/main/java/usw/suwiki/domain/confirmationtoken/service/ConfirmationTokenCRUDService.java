@@ -3,25 +3,43 @@ package usw.suwiki.domain.confirmationtoken.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.confirmationtoken.entity.ConfirmationToken;
+import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
-@Service
 @RequiredArgsConstructor
+@Service
 @Transactional
 public class ConfirmationTokenCRUDService {
 
-    private final ConfirmationTokenService confirmationTokenService;
     private final ConfirmationTokenRepository confirmationTokenRepository;
 
-    public void callSaveConfirmationToken(ConfirmationToken confirmationToken) {
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
+    public void saveConfirmationToken(ConfirmationToken confirmationToken) {
+        confirmationTokenRepository.save(confirmationToken);
     }
 
-    public Optional<ConfirmationToken> findByUserIdx(Long userIdx) {
+    @Transactional(readOnly = true)
+    public Optional<ConfirmationToken> readConfirmationTokenFromUserIdx(Long userIdx) {
         return confirmationTokenRepository.findByUserIdx(userIdx);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<ConfirmationToken> readConfirmationTokenFromPayload(String payload) {
+        return confirmationTokenRepository.findByToken(payload);
+    }
+
+    public void deleteFromId(Long id) {
+        confirmationTokenRepository.deleteById(id);
+    }
+
+    public void deleteFromUserIdx(Long userIdx) {
+        confirmationTokenRepository.deleteByUserIdx(userIdx);
+    }
+
+    public List<ConfirmationToken> loadNotConfirmedTokensByExpiredAt(LocalDateTime time) {
+        return confirmationTokenRepository.loadNotConfirmedTokensByExpiredAt(time);
+    }
 }

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import usw.suwiki.domain.notice.dto.NoticeDetailResponseDto;
 import usw.suwiki.domain.notice.dto.NoticeResponseDto;
 import usw.suwiki.domain.notice.dto.NoticeSaveOrUpdateDto;
-import usw.suwiki.domain.notice.entity.Notice;
+import usw.suwiki.domain.notice.Notice;
 import usw.suwiki.domain.notice.repository.NoticeRepository;
 import usw.suwiki.global.PageOption;
 

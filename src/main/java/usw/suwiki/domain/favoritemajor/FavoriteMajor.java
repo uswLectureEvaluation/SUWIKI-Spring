@@ -1,8 +1,8 @@
-package usw.suwiki.domain.favoritemajor.entity;
+package usw.suwiki.domain.favoritemajor;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.user.user.entity.User;
+import usw.suwiki.domain.user.user.User;
 
 import javax.persistence.*;
 

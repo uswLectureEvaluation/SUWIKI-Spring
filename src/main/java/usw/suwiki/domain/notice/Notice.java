@@ -1,4 +1,4 @@
-package usw.suwiki.domain.notice.entity;
+package usw.suwiki.domain.notice;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

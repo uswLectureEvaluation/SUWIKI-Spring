@@ -1,7 +1,7 @@
 package usw.suwiki.domain.notice.repository;
 
 import org.springframework.stereotype.Repository;
-import usw.suwiki.domain.notice.entity.Notice;
+import usw.suwiki.domain.notice.Notice;
 import usw.suwiki.global.PageOption;
 
 import javax.persistence.EntityManager;

@@ -26,10 +26,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import usw.suwiki.domain.admin.blacklistdomain.BlackListService;
-import usw.suwiki.domain.confirmationtoken.entity.ConfirmationToken;
+import usw.suwiki.domain.admin.blacklistdomain.service.BlacklistDomainService;
+import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
-import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenService;
+import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenBusinessService;
 import usw.suwiki.global.mailsender.EmailSender;
 import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
@@ -40,16 +40,16 @@ import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
-import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckEmailForm;
-import usw.suwiki.domain.user.user.dto.UserRequestDto.CheckLoginIdForm;
-import usw.suwiki.domain.user.user.dto.UserRequestDto.FindIdForm;
-import usw.suwiki.domain.user.user.dto.UserRequestDto.FindPasswordForm;
-import usw.suwiki.domain.user.user.dto.UserRequestDto.JoinForm;
-import usw.suwiki.domain.user.user.dto.UserRequestDto.LoginForm;
-import usw.suwiki.domain.user.user.entity.User;
+import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.CheckEmailForm;
+import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.CheckLoginIdForm;
+import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.FindIdForm;
+import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.FindPasswordForm;
+import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.JoinForm;
+import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
+import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.user.service.UserService;
-import usw.suwiki.domain.user.userIsolation.entity.UserIsolation;
+import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.user.userIsolation.service.UserIsolationService;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
@@ -82,7 +82,7 @@ public class UserServiceTest {
     @Mock
     EmailSender emailSender;
     @Mock
-    ConfirmationTokenService confirmationTokenService;
+    ConfirmationTokenBusinessService confirmationTokenBusinessService;
     @Mock
     BuildEmailAuthForm buildEmailAuthForm;
     @Mock
@@ -90,7 +90,7 @@ public class UserServiceTest {
     @Mock
     BuildFindPasswordForm BuildFindPasswordForm;
     @Mock
-    BlackListService blackListService;
+    BlacklistDomainService blacklistDomainService;
     @Mock
     JwtProvider jwtTokenProvider;
     @Mock

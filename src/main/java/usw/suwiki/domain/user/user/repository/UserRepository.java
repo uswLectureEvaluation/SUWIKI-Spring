@@ -3,7 +3,7 @@ package usw.suwiki.domain.user.user.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.user.user.entity.User;
+import usw.suwiki.domain.user.user.User;
 
 import java.time.LocalDateTime;
 import java.util.List;

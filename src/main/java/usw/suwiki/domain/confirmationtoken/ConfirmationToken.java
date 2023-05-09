@@ -1,4 +1,4 @@
-package usw.suwiki.domain.confirmationtoken.entity;
+package usw.suwiki.domain.confirmationtoken;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.user.user.entity.User;
+import usw.suwiki.domain.user.user.User;
 
 @Entity
 @Getter

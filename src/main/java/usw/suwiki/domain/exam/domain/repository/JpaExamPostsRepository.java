@@ -3,7 +3,7 @@ package usw.suwiki.domain.exam.domain.repository;
 import org.springframework.stereotype.Repository;
 import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.lecture.domain.Lecture;
-import usw.suwiki.domain.user.user.entity.User;
+import usw.suwiki.domain.user.user.User;
 import usw.suwiki.global.PageOption;
 
 import javax.persistence.EntityManager;

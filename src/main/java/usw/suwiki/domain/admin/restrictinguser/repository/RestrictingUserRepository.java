@@ -1,4 +1,4 @@
-package usw.suwiki.domain.admin.restrictinguser;
+package usw.suwiki.domain.admin.restrictinguser.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

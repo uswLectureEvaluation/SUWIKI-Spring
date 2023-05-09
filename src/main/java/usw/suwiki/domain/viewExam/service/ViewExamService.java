@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.viewExam.repository.ViewExamRepository;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
-import usw.suwiki.domain.user.user.entity.User;
+import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.viewExam.dto.PurchaseHistoryDto;
 import usw.suwiki.domain.viewExam.entity.ViewExam;

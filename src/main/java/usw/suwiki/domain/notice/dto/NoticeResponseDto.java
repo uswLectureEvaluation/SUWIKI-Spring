@@ -2,7 +2,7 @@ package usw.suwiki.domain.notice.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.notice.entity.Notice;
+import usw.suwiki.domain.notice.Notice;
 
 import java.time.LocalDateTime;
 
