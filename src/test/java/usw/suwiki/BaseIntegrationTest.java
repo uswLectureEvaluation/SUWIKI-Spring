@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import usw.suwiki.global.exception.GlobalExceptionHandler;
+
 @SpringBootTest
 @Disabled
 @ActiveProfiles("test")
