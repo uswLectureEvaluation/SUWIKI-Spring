@@ -4,10 +4,13 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static usw.suwiki.global.exception.ExceptionType.PARAM_VALID_ERROR;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import usw.suwiki.global.exception.errortype.BaseException;
@@ -53,6 +56,25 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, exceptionType.getStatus());
     }
+
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class, TypeMismatchException.class,
+        MissingServletRequestParameterException.class})
+    public ResponseEntity<ErrorResponse> handleRequestValidationException(Exception e) {
+        ExceptionType exception = PARAM_VALID_ERROR;
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .exception(exception.name())
+            .code(exception.getCode())
+            .message(exception.getMessage())
+            .status(exception.getStatus().value())
+            .error(exception.getStatus().getReasonPhrase())
+            .build();
+
+        log.error("code : {}, message : {}", errorResponse.getCode(), errorResponse.getMessage());
+
+        return new ResponseEntity<>(errorResponse, exception.getStatus());
+    }
+
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class, BindException.class})
     public ResponseEntity<ErrorResponse> handleBindValidationException(Exception e) {

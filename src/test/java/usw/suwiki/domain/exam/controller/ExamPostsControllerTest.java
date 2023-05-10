@@ -16,6 +16,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.web.servlet.ResultActions;
 
 import usw.suwiki.BaseIntegrationTest;
+import usw.suwiki.domain.exam.controller.dto.ExamPostsSaveDto;
 import usw.suwiki.global.jwt.JwtResolver;
 import usw.suwiki.global.jwt.JwtValidator;
 
@@ -100,4 +101,27 @@ class ExamPostsControllerTest extends BaseIntegrationTest {
 		resultActions
 			.andExpect(status().isBadRequest());
 	}
+
+	@Test
+	void 시험정보_존재하지않을때_정상동작_테스트() throws Exception {
+		//given
+		String authorization = "authorization";
+		when(jwtResolver.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
+		when(jwtResolver.getId(authorization)).thenReturn(2L);
+
+		//when
+		ResultActions resultActions = mvc.perform(
+				get("/exam-posts/?lectureId=2")
+					.header("Authorization", authorization)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON))
+			.andDo(print());
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data").isEmpty())
+			.andExpect(jsonPath("$.examDataExist").value(Boolean.FALSE));
+	}
+
 }
