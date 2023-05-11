@@ -2,8 +2,8 @@ package usw.suwiki.domain.user.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.UserInformationResponseForm;
 import usw.suwiki.domain.user.user.service.UserBusinessService;
+import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 
 import javax.servlet.http.Cookie;
@@ -27,10 +27,10 @@ public class UserControllerV2 {
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/check-loginId")
-    public Map<String, Boolean> overlapId(
+    public ResponseForm overlapId(
             @Valid @RequestBody CheckLoginIdForm checkLoginIdForm
     ) {
-        return userBusinessService.executeCheckId(checkLoginIdForm.getLoginId());
+        return ResponseForm.success(userBusinessService.executeCheckId(checkLoginIdForm.getLoginId()));
     }
 
     //이메일 중복 확인
@@ -143,8 +143,8 @@ public class UserControllerV2 {
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping
-    public UserInformationResponseForm myPage(@Valid @RequestHeader String Authorization) {
-        return userBusinessService.executeLoadMyPage(Authorization);
+    public ResponseForm myPage(@Valid @RequestHeader String Authorization) {
+        return ResponseForm.success(userBusinessService.executeLoadMyPage(Authorization));
     }
 
     // 회원 탈퇴

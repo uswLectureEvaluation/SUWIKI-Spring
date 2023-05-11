@@ -3,8 +3,11 @@ package usw.suwiki.domain.user.user.controller.dto;
 import lombok.Builder;
 import lombok.Getter;
 import usw.suwiki.domain.user.user.User;
+import usw.suwiki.global.ResponseForm;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserResponseDto {
 
