@@ -23,7 +23,6 @@ public class JwtInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
-        System.out.println("인터셉터 들어옴");
         JWTVerify annotation = AnnotationUtils.findAnnotation(method, JWTVerify.class);
         if (annotation != null) {
             String token = request.getHeader("Authorization");
