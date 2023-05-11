@@ -8,8 +8,8 @@ import usw.suwiki.domain.admin.dto.UserAdminResponseDto.LoadAllReportedPostForm;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
-import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
-import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
+import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
+import usw.suwiki.domain.evaluation.service.EvaluatePostService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.exam.service.ExamPostService;
 import usw.suwiki.domain.postreport.EvaluatePostReport;
@@ -36,7 +36,7 @@ public class UserAdminBusinessService {
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final UserCRUDService userCRUDService;
     private final ReportPostService reportPostService;
-    private final EvaluatePostsService evaluatePostsService;
+    private final EvaluatePostService evaluatePostService;
     private final ExamPostService examPostService;
     private final RestrictingUserService restrictingUserService;
     private final JwtAgent jwtAgent;
@@ -119,7 +119,7 @@ public class UserAdminBusinessService {
             UserAdminRequestDto.EvaluatePostBlacklistForm evaluatePostBlacklistForm
     ) {
         validateAdmin(accessToken);
-        Long userIdx = evaluatePostsService
+        Long userIdx = evaluatePostService
                 .loadEvaluatePostsFromEvaluatePostsIdx(evaluatePostBlacklistForm.getEvaluateIdx())
                 .getUser()
                 .getId();
@@ -157,10 +157,10 @@ public class UserAdminBusinessService {
     }
 
     private Long deleteReportedEvaluatePostFromEvaluateIdx(Long evaluateIdx) {
-        if (evaluatePostsService.loadEvaluatePostsFromEvaluatePostsIdx(evaluateIdx) != null) {
-            EvaluatePosts evaluatePost = evaluatePostsService.loadEvaluatePostsFromEvaluatePostsIdx(evaluateIdx);
+        if (evaluatePostService.loadEvaluatePostsFromEvaluatePostsIdx(evaluateIdx) != null) {
+            EvaluatePosts evaluatePost = evaluatePostService.loadEvaluatePostsFromEvaluatePostsIdx(evaluateIdx);
             reportPostService.deleteByEvaluateIdx(evaluateIdx);
-            evaluatePostsService.executeDeleteEvaluatePost(
+            evaluatePostService.executeDeleteEvaluatePost(
                     evaluatePost.getId(),
                     evaluatePost.getUser().getId()
             );
@@ -174,7 +174,7 @@ public class UserAdminBusinessService {
         if (examPostService.loadExamPostsFromExamPostsIdx(examPostIdx) != null) {
             ExamPosts examPost = examPostService.loadExamPostsFromExamPostsIdx(examPostIdx);
             reportPostService.deleteByEvaluateIdx(examPostIdx);
-            evaluatePostsService.executeDeleteEvaluatePost(
+            evaluatePostService.executeDeleteEvaluatePost(
                     examPost.getId(),
                     examPost.getUser().getId()
             );

@@ -4,14 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
+import usw.suwiki.domain.evaluation.service.dto.EvaluatePostsToLecture;
 import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
 import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
-import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,21 +41,6 @@ public class LectureService {
     public LectureDetailResponseDto readLectureDetail(Long id) {
         Lecture lecture = lectureCRUDService.loadLectureFromId(id);
         return new LectureDetailResponseDto(lecture);
-    }
-
-    public void updateLectureEvaluationIfCreateNewPost(EvaluatePostsToLecture post) {
-        Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(post.getLectureId());
-        lecture.handleLectureEvaluationIfNewPost(post);
-    }
-
-    public void updateLectureEvaluationIfUpdatePost(EvaluatePostsToLecture beforeUpdatePost, EvaluatePostsToLecture post) {
-        Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(post.getLectureId());
-        lecture.handleLectureEvaluationIfUpdatePost(beforeUpdatePost, post);
-    }
-
-    public void updateLectureEvaluationIfDeletePost(EvaluatePostsToLecture post) {
-        Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(post.getLectureId());
-        lecture.handleLectureEvaluationIfDeletePost(post);
     }
 
     private LectureAndCountResponseForm readLectureByKeywordAndOption(String keyword, LectureFindOption option) {

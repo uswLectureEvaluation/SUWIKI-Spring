@@ -1,8 +1,8 @@
-package usw.suwiki.domain.evaluation;
+package usw.suwiki.domain.evaluation.domain.repository;
 
 import org.springframework.stereotype.Repository;
-import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
-import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
+import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
+import usw.suwiki.domain.evaluation.domain.repository.EvaluatePostsRepository;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.global.PageOption;

@@ -1,9 +1,9 @@
-package usw.suwiki.domain.evaluation;
+package usw.suwiki.domain.evaluation.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
+import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
 
 @Getter
 @NoArgsConstructor

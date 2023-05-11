@@ -1,7 +1,7 @@
 package usw.suwiki.domain.postreport;
 
 import lombok.*;
-import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
+import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.EvaluateReportForm;
 
 import javax.persistence.*;

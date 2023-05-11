@@ -5,12 +5,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.evaluation.FindByLectureToJson;
-import usw.suwiki.domain.evaluation.dto.EvaluatePostsSaveDto;
-import usw.suwiki.domain.evaluation.dto.EvaluatePostsUpdateDto;
-import usw.suwiki.domain.evaluation.dto.EvaluateResponseByLectureIdDto;
-import usw.suwiki.domain.evaluation.dto.EvaluateResponseByUserIdxDto;
-import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
+import usw.suwiki.domain.evaluation.service.dto.FindByLectureToJson;
+import usw.suwiki.domain.evaluation.controller.dto.EvaluatePostsSaveDto;
+import usw.suwiki.domain.evaluation.controller.dto.EvaluatePostsUpdateDto;
+import usw.suwiki.domain.evaluation.controller.dto.EvaluateResponseByLectureIdDto;
+import usw.suwiki.domain.evaluation.controller.dto.EvaluateResponseByUserIdxDto;
+import usw.suwiki.domain.evaluation.service.EvaluatePostService;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
@@ -31,7 +31,7 @@ import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
 @RequestMapping(value = "/evaluate-posts")
 public class EvaluateController {
 
-    private final EvaluatePostsService evaluatePostsService;
+    private final EvaluatePostService evaluatePostService;
     private final JwtAgent jwtAgent;
 
     @ApiLogger(option = "evaluatePosts")
@@ -47,12 +47,12 @@ public class EvaluateController {
             throw new AccountException(USER_RESTRICTED);
         }
         List<EvaluateResponseByLectureIdDto> list =
-                evaluatePostsService.findEvaluatePostsByLectureId(
+                evaluatePostService.findEvaluatePostsByLectureId(
                         new PageOption(page),
                         lectureId
                 );
         FindByLectureToJson data = new FindByLectureToJson(list);
-        if (evaluatePostsService.verifyIsUserWriteEvaluatePost(
+        if (evaluatePostService.verifyIsUserWriteEvaluatePost(
                 jwtAgent.getId(Authorization), lectureId)) {
             data.setWritten(false);
         }
@@ -72,7 +72,7 @@ public class EvaluateController {
         if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
-        evaluatePostsService.update(evaluateIdx, dto);
+        evaluatePostService.update(evaluateIdx, dto);
         return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
     }
 
@@ -91,8 +91,8 @@ public class EvaluateController {
             throw new AccountException(USER_RESTRICTED);
         }
         Long userIdx = jwtAgent.getId(Authorization);
-        if (evaluatePostsService.verifyIsUserWriteEvaluatePost(userIdx, lectureId)) {
-            evaluatePostsService.save(dto, userIdx, lectureId);
+        if (evaluatePostService.verifyIsUserWriteEvaluatePost(userIdx, lectureId)) {
+            evaluatePostService.save(dto, userIdx, lectureId);
             return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
         } else {
             throw new AccountException(POSTS_WRITE_OVERLAP);
@@ -112,7 +112,7 @@ public class EvaluateController {
             throw new AccountException(USER_RESTRICTED);
         }
 
-        List<EvaluateResponseByUserIdxDto> list = evaluatePostsService.findEvaluatePostsByUserId(
+        List<EvaluateResponseByUserIdxDto> list = evaluatePostService.findEvaluatePostsByUserId(
                 new PageOption(page),
                 jwtAgent.getId(Authorization)
         );
@@ -133,7 +133,7 @@ public class EvaluateController {
             throw new AccountException(USER_RESTRICTED);
         }
         Long userIdx = jwtAgent.getId(Authorization);
-        evaluatePostsService.executeDeleteEvaluatePost(evaluateIdx, userIdx);
+        evaluatePostService.executeDeleteEvaluatePost(evaluateIdx, userIdx);
         return "success";
     }
 }

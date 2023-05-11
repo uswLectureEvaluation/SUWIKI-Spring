@@ -5,7 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
-import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
+import usw.suwiki.domain.evaluation.service.EvaluatePostService;
 import usw.suwiki.domain.exam.service.ExamPostsService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
@@ -37,7 +37,7 @@ public class UserIsolationBusinessService {
     private final BuildSoonDormantTargetForm buildSoonDormantTargetForm;
     private final UserAutoDeletedWarningForm userAutoDeletedWarningForm;
     private final EmailSender emailSender;
-    private final EvaluatePostsService evaluatePostsService;
+    private final EvaluatePostService evaluatePostService;
     private final ExamPostsService examPostsService;
     private final ViewExamService viewExamService;
 
@@ -78,7 +78,7 @@ public class UserIsolationBusinessService {
             viewExamService.deleteFromUserIdx(userIdx);
             refreshTokenCRUDService.deleteFromUserIdx(userIdx);
             reportPostService.deleteFromUserIdx(userIdx);
-            evaluatePostsService.deleteFromUserIdx(userIdx);
+            evaluatePostService.deleteFromUserIdx(userIdx);
             examPostsService.deleteFromUserIdx(userIdx);
             favoriteMajorService.deleteFromUserIdx(userIdx);
             restrictingUserService.deleteFromUserIdx(userIdx);

@@ -1,4 +1,4 @@
-package usw.suwiki.domain.evaluation;
+package usw.suwiki.domain.evaluation.service.dto;
 
 import lombok.Getter;
 

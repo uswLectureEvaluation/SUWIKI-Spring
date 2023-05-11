@@ -1,13 +1,17 @@
-package usw.suwiki.domain.evaluation.dto;
+package usw.suwiki.domain.evaluation.controller.dto;
 
-import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import lombok.Getter;
+import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
 
 @Getter
-public class EvaluateResponseByLectureIdDto {
+public class EvaluateResponseByUserIdxDto {
 
     private Long id;
+    private String lectureName;
+    private String professor;
+    private String majorType;
     private String selectedSemester;
+    private String semesterList;
     private float totalAvg;   // 평균지수
     private float satisfaction;    //수업 만족도
     private float learning; //배움지수
@@ -19,8 +23,15 @@ public class EvaluateResponseByLectureIdDto {
 
     private String content;    //주관적인 강의평가 입력내용
 
-    public EvaluateResponseByLectureIdDto(EvaluatePosts entity) {
+    public void setSemesterList(String semesterList) {
+        this.semesterList = semesterList;
+    }
+
+    public EvaluateResponseByUserIdxDto(EvaluatePosts entity) {
         this.id = entity.getId();
+        this.lectureName = entity.getLectureName();
+        this.professor = entity.getProfessor();
+        this.majorType = entity.getLecture().getMajorType();
         this.selectedSemester = entity.getSelectedSemester();
         this.totalAvg = entity.getTotalAvg();
         this.satisfaction = entity.getSatisfaction();

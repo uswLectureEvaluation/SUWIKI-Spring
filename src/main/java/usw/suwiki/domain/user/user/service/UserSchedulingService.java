@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.restrictinguser.repository.RestrictingUserRepository;
 import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
-import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
+import usw.suwiki.domain.evaluation.service.EvaluatePostService;
 import usw.suwiki.domain.exam.service.ExamPostService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
@@ -35,7 +35,7 @@ public class UserSchedulingService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserIsolationRepository userIsolationRepository;
     private final ViewExamCRUDService viewExamCRUDService;
-    private final EvaluatePostsService evaluatePostsService;
+    private final EvaluatePostService evaluatePostService;
     private final ExamPostService examPostService;
     private final RestrictingUserRepository restrictingUserRepository;
     private final ReportPostService reportPostService;
@@ -68,7 +68,7 @@ public class UserSchedulingService {
                 // 신고된 게시글 삭제
                 reportPostService.deleteFromUserIdx(userId);
                 // 삭제 예정 유저의 강의평가 삭제
-                evaluatePostsService.deleteFromUserIdx(userId);
+                evaluatePostService.deleteFromUserIdx(userId);
                 // 삭제 예정 유저의 시험정보 삭제
                 examPostService.deleteFromUserIdx(userId);
                 // 즐겨찾기 게시글 삭제
@@ -89,7 +89,7 @@ public class UserSchedulingService {
                 refreshTokenRepository.deleteByUserIdx(userIdx);
                 reportPostService.deleteFromUserIdx(userIdx);
                 // 삭제 예정 유저의 강의평가 삭제
-                evaluatePostsService.deleteFromUserIdx(userIdx);
+                evaluatePostService.deleteFromUserIdx(userIdx);
                 // 삭제 예정 유저의 시험정보 삭제
                 examPostService.deleteFromUserIdx(userIdx);
                 // 즐겨찾기 게시글 삭제

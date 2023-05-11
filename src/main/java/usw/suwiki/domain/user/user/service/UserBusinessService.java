@@ -8,8 +8,8 @@ import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainService;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
-import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
-import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
+import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
+import usw.suwiki.domain.evaluation.service.EvaluatePostService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.exam.service.ExamPostCRUDService;
 import usw.suwiki.domain.exam.service.ViewExamCRUDService;
@@ -36,7 +36,7 @@ import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
 import usw.suwiki.global.util.mailsender.EmailSender;
 
 import javax.servlet.http.Cookie;
-import java.time.LocalDateTime;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +68,7 @@ public class UserBusinessService {
     private final JwtAgent jwtAgent;
     private final FavoriteMajorService favoriteMajorService;
     private final ViewExamCRUDService viewExamCRUDService;
-    private final EvaluatePostsService evaluatePostsService;
+    private final EvaluatePostService evaluatePostService;
     private final ExamPostCRUDService examPostCRUDService;
     private final ReportPostService reportPostService;
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
@@ -234,7 +234,7 @@ public class UserBusinessService {
         favoriteMajorService.deleteFromUserIdx(user.getId());
         viewExamCRUDService.deleteAllFromUserIdx(user.getId());
         examPostCRUDService.deleteFromUserIdx(user.getId());
-        evaluatePostsService.deleteFromUserIdx(user.getId());
+        evaluatePostService.deleteFromUserIdx(user.getId());
         user.waitQuit();
         return successFlag();
     }
@@ -246,7 +246,7 @@ public class UserBusinessService {
         jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUserIdx = jwtAgent.getId(Authorization);
-        EvaluatePosts evaluatePost = evaluatePostsService.loadEvaluatePostsFromEvaluatePostsIdx(
+        EvaluatePosts evaluatePost = evaluatePostService.loadEvaluatePostsFromEvaluatePostsIdx(
                 evaluateReportForm.getEvaluateIdx());
         Long reportedUserIdx = evaluatePost.getUser().getId();
 

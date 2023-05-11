@@ -42,11 +42,10 @@ public enum ExceptionType {
     POSTS_WRITE_OVERLAP("POSTS001", "이미 작성한 정보입니다.", HttpStatus.BAD_REQUEST),
     EXAM_POST_NOT_FOUND("EXAM_POST001", "해당 시험정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
-
     /**
      * Domain : EvaluatePost
      */
-
+    EVALUATE_POST_NOT_FOUND("EVALUATE_POST001", "해당 강의평가를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
     /**
      * Domain : BlackListDomain

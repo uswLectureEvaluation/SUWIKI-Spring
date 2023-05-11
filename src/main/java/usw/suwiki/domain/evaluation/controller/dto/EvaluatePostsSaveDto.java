@@ -1,4 +1,4 @@
-package usw.suwiki.domain.evaluation.dto;
+package usw.suwiki.domain.evaluation.controller.dto;
 
 import lombok.Builder;
 import lombok.Getter;
