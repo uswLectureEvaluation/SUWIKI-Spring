@@ -1,4 +1,4 @@
-package usw.suwiki.global;
+package usw.suwiki.global.version;
 
 import lombok.Getter;
 

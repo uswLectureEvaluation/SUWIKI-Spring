@@ -1,9 +1,9 @@
-package usw.suwiki.domain.viewExam.repository;
+package usw.suwiki.domain.exam.domain.viewexam.repository;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import usw.suwiki.domain.viewExam.ViewExam;
+import usw.suwiki.domain.exam.domain.viewexam.ViewExam;
 
 import java.util.List;
 

@@ -11,7 +11,7 @@ import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
-import usw.suwiki.domain.exam.service.ExamPostsService;
+import usw.suwiki.domain.exam.service.ExamPostService;
 import usw.suwiki.domain.postreport.EvaluatePostReport;
 import usw.suwiki.domain.postreport.ExamPostReport;
 import usw.suwiki.domain.postreport.service.ReportPostService;
@@ -37,7 +37,7 @@ public class UserAdminBusinessService {
     private final UserCRUDService userCRUDService;
     private final ReportPostService reportPostService;
     private final EvaluatePostsService evaluatePostsService;
-    private final ExamPostsService examPostsService;
+    private final ExamPostService examPostService;
     private final RestrictingUserService restrictingUserService;
     private final JwtAgent jwtAgent;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -142,7 +142,7 @@ public class UserAdminBusinessService {
             UserAdminRequestDto.ExamPostBlacklistForm examPostBlacklistForm
     ) {
         validateAdmin(accessToken);
-        Long userIdx = examPostsService.loadExamPostsFromExamPostsIdx(examPostBlacklistForm.getExamIdx()).getUser().getId();
+        Long userIdx = examPostService.loadExamPostsFromExamPostsIdx(examPostBlacklistForm.getExamIdx()).getUser().getId();
 
         deleteReportedExamPostFromEvaluateIdx(examPostBlacklistForm.getExamIdx());
         blacklistDomainCRUDService.saveBlackListDomain(
@@ -171,8 +171,8 @@ public class UserAdminBusinessService {
     }
 
     private Long deleteReportedExamPostFromEvaluateIdx(Long examPostIdx) {
-        if (examPostsService.loadExamPostsFromExamPostsIdx(examPostIdx) != null) {
-            ExamPosts examPost = examPostsService.loadExamPostsFromExamPostsIdx(examPostIdx);
+        if (examPostService.loadExamPostsFromExamPostsIdx(examPostIdx) != null) {
+            ExamPosts examPost = examPostService.loadExamPostsFromExamPostsIdx(examPostIdx);
             reportPostService.deleteByEvaluateIdx(examPostIdx);
             evaluatePostsService.executeDeleteEvaluatePost(
                     examPost.getId(),

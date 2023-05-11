@@ -1,4 +1,4 @@
-package usw.suwiki.domain.viewExam;
+package usw.suwiki.domain.exam.domain.viewexam;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

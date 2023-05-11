@@ -1,4 +1,4 @@
-package usw.suwiki.domain.viewExam.dto;
+package usw.suwiki.domain.exam.controller.dto.viewexam;
 
 import lombok.Builder;
 import lombok.Getter;

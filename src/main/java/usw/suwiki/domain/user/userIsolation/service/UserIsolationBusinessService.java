@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
-import usw.suwiki.domain.exam.service.ExamPostsService;
+import usw.suwiki.domain.exam.service.ExamPostService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.refreshToken.service.RefreshTokenCRUDService;
@@ -15,7 +15,7 @@ import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserBusinessService;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
-import usw.suwiki.domain.viewExam.service.ViewExamService;
+import usw.suwiki.domain.exam.service.ViewExamCRUDService;
 import usw.suwiki.global.util.mailsender.EmailSender;
 import usw.suwiki.global.util.emailBuild.BuildSoonDormantTargetForm;
 import usw.suwiki.global.util.emailBuild.UserAutoDeletedWarningForm;
@@ -39,8 +39,8 @@ public class UserIsolationBusinessService {
     private final UserAutoDeletedWarningForm userAutoDeletedWarningForm;
     private final EmailSender emailSender;
     private final EvaluatePostsService evaluatePostsService;
-    private final ExamPostsService examPostsService;
-    private final ViewExamService viewExamService;
+    private final ExamPostService examPostService;
+    private final ViewExamCRUDService viewExamCRUDService;
 
     @Scheduled(cron = "2 0 0 * * *")
     public void sendEmailAboutSleeping() {
@@ -76,11 +76,11 @@ public class UserIsolationBusinessService {
         List<UserIsolation> users = userIsolationRepository.findByLastLoginBefore(targetTime);
         for (UserIsolation user : users) {
             Long userIdx = user.getUserIdx();
-            viewExamService.deleteFromUserIdx(userIdx);
+            viewExamCRUDService.deleteFromUserIdx(userIdx);
             refreshTokenCRUDService.deleteFromUserIdx(userIdx);
             reportPostService.deleteFromUserIdx(userIdx);
             evaluatePostsService.deleteFromUserIdx(userIdx);
-            examPostsService.deleteFromUserIdx(userIdx);
+            examPostService.deleteFromUserIdx(userIdx);
             favoriteMajorService.deleteFromUserIdx(userIdx);
             restrictingUserService.deleteFromUserIdx(userIdx);
             confirmationTokenCRUDService.deleteFromUserIdx(userIdx);

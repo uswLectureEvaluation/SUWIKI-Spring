@@ -12,7 +12,7 @@ import usw.suwiki.domain.restrictinguser.repository.RestrictingUserRepository;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
-import usw.suwiki.domain.exam.service.ExamPostsService;
+import usw.suwiki.domain.exam.service.ExamPostService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 
@@ -30,7 +30,7 @@ public class RestrictingUserService {
 
     private final UserCRUDService userCRUDService;
     private final EvaluatePostsService evaluatePostsService;
-    private final ExamPostsService examPostsService;
+    private final ExamPostService examPostService;
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final RestrictingUserRepository restrictingUserRepository;
 
@@ -64,7 +64,7 @@ public class RestrictingUserService {
     }
 
     public void executeRestrictUserFromExamPost(ExamPostRestrictForm examPostRestrictForm) {
-        ExamPosts examPost = examPostsService
+        ExamPosts examPost = examPostService
                 .loadExamPostsFromExamPostsIdx(examPostRestrictForm.getExamIdx());
         User user = userCRUDService.loadUserFromUserIdx(examPost.getUser().getId());
 

@@ -1,4 +1,4 @@
-package usw.suwiki.global;
+package usw.suwiki.global.version;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.SuwikiVersion;
+
+import usw.suwiki.domain.lecture.service.LectureCRUDService;
+import usw.suwiki.global.ResponseForm;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.global.annotation.ApiLogger;
 
@@ -17,7 +19,7 @@ import usw.suwiki.global.annotation.ApiLogger;
 @RestController
 public class VersionController {
 
-    private final LectureService lectureService;
+    private final LectureCRUDService lectureCRUDService;
 
     @ApiLogger(option = "version")
     @GetMapping("/version")
@@ -32,7 +34,7 @@ public class VersionController {
     @GetMapping("/majorType")
     public ResponseEntity<ResponseForm> findAllMajorType() {
         HttpHeaders header = new HttpHeaders();
-        List<String> list = lectureService.findAllMajorType();
+        List<String> list = lectureCRUDService.loadMajorTypes();
         ResponseForm data = new ResponseForm(list);
         return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
     }

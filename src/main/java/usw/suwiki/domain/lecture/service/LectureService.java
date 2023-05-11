@@ -44,11 +44,6 @@ public class LectureService {
         return new LectureDetailResponseDto(lecture);
     }
 
-    @Transactional(readOnly = true)
-    public List<String> readMajorTypes() {
-        return lectureCRUDService.loadMajorTypes();
-    }
-
     public void updateLectureEvaluationIfCreateNewPost(EvaluatePostsToLecture post) {
         Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(post.getLectureId());
         lecture.handleLectureEvaluationIfNewPost(post);

@@ -47,6 +47,12 @@ public enum ExceptionType {
     //Post 400 error
     POSTS_WRITE_OVERLAP("POSTS001", "이미 작성한 정보입니다.", HttpStatus.BAD_REQUEST),
 
+    //Post 400 error
+    EXAM_POST_ALREADY_PURCHASE("POSTS002", "이미 구매한 정보입니다.", HttpStatus.BAD_REQUEST),
+
+    //ExamPost 404 error
+    EXAM_POST_NOT_FOUND("EXAM_POST001", "해당 시험정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+
     //NOTICE 404
     NOTICE_NOT_FOUND("NOTICE001", "해당 공지사항을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
