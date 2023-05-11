@@ -22,12 +22,12 @@ public class ConfirmationTokenCRUDService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<ConfirmationToken> readConfirmationTokenFromUserIdx(Long userIdx) {
+    public Optional<ConfirmationToken> loadConfirmationTokenFromUserIdx(Long userIdx) {
         return confirmationTokenRepository.findByUserIdx(userIdx);
     }
 
     @Transactional(readOnly = true)
-    public Optional<ConfirmationToken> readConfirmationTokenFromPayload(String payload) {
+    public Optional<ConfirmationToken> loadConfirmationTokenFromPayload(String payload) {
         return confirmationTokenRepository.findByToken(payload);
     }
 

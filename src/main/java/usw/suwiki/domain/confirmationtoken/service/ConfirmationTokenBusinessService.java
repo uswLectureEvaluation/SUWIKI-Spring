@@ -26,7 +26,7 @@ public class ConfirmationTokenBusinessService {
 
     public String confirmToken(String token) {
         Optional<ConfirmationToken> wrappedConfirmationToken =
-                confirmationTokenCRUDService.readConfirmationTokenFromPayload(token);
+                confirmationTokenCRUDService.loadConfirmationTokenFromPayload(token);
         if (wrappedConfirmationToken.isPresent()) {
             ConfirmationToken confirmationToken = wrappedConfirmationToken.get();
             if (confirmationToken.isTokenExpired()) {
