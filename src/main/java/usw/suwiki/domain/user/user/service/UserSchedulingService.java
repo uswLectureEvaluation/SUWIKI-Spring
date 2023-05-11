@@ -16,7 +16,7 @@ import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
-import usw.suwiki.global.mailsender.EmailSendService;
+import usw.suwiki.global.util.mailsender.EmailSendService;
 import usw.suwiki.global.util.emailBuild.BuildPersonalInformationUsingNotifyForm;
 
 import java.time.LocalDateTime;

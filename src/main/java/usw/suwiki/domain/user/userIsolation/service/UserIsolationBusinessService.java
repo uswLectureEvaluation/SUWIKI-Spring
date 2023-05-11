@@ -16,7 +16,7 @@ import usw.suwiki.domain.user.user.service.UserBusinessService;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.domain.viewExam.service.ViewExamService;
-import usw.suwiki.global.mailsender.EmailSender;
+import usw.suwiki.global.util.mailsender.EmailSender;
 import usw.suwiki.global.util.emailBuild.BuildSoonDormantTargetForm;
 import usw.suwiki.global.util.emailBuild.UserAutoDeletedWarningForm;
 

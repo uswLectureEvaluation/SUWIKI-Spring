@@ -31,7 +31,7 @@ import usw.suwiki.domain.viewExam.service.ViewExamService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
-import usw.suwiki.global.mailsender.EmailSender;
+import usw.suwiki.global.util.mailsender.EmailSender;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
 import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
 import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;

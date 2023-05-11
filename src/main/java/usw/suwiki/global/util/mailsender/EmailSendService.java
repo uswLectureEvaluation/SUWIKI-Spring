@@ -1,4 +1,4 @@
-package usw.suwiki.global.mailsender;
+package usw.suwiki.global.util.mailsender;
 
 import lombok.AllArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
