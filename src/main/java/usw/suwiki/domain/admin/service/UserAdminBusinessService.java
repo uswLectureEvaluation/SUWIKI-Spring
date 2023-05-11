@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto;
 import usw.suwiki.domain.admin.dto.UserAdminResponseDto.LoadAllReportedPostForm;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
-import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
-import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
+import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
+import usw.suwiki.domain.evaluation.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.exam.service.ExamPostCRUDService;
 import usw.suwiki.domain.postreport.EvaluatePostReport;
@@ -36,7 +36,7 @@ public class UserAdminBusinessService {
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final UserCRUDService userCRUDService;
     private final ReportPostService reportPostService;
-    private final EvaluatePostsService evaluatePostsService;
+    private final EvaluatePostCRUDService evaluatePostCRUDService;
     private final ExamPostCRUDService examPostCRUDService;
     private final RestrictingUserService restrictingUserService;
     private final JwtAgent jwtAgent;
@@ -137,10 +137,10 @@ public class UserAdminBusinessService {
             UserAdminRequestDto.EvaluatePostBlacklistForm evaluatePostBlacklistForm
     ) {
         validateAdmin(accessToken);
-        Long userIdx = evaluatePostsService
-                .loadEvaluatePostsFromEvaluatePostsIdx(evaluatePostBlacklistForm.getEvaluateIdx())
-                .getUser()
-                .getId();
+        Long userIdx = evaluatePostCRUDService
+            .loadEvaluatePostFromEvaluatePostIdx(evaluatePostBlacklistForm.getEvaluateIdx())
+            .getUser()
+            .getId();
 
         deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostBlacklistForm.getEvaluateIdx());
         blacklistDomainCRUDService.saveBlackListDomain(
@@ -177,12 +177,15 @@ public class UserAdminBusinessService {
     }
 
     private Long deleteReportedEvaluatePostFromEvaluateIdx(Long evaluateIdx) {
-        if (evaluatePostsService.loadEvaluatePostsFromEvaluatePostsIdx(evaluateIdx) != null) {
-            EvaluatePosts evaluatePost = evaluatePostsService.loadEvaluatePostsFromEvaluatePostsIdx(evaluateIdx);
+        if (evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx) != null) {
+            EvaluatePosts evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
             reportPostService.deleteByEvaluateIdx(evaluateIdx);
-            evaluatePostsService.executeDeleteEvaluatePost(
-                    evaluatePost.getId(),
-                    evaluatePost.getUser().getId()
+
+            /**
+             * 여기부터는 조심해주세요.
+             */
+            evaluatePostCRUDService.executeDeleteEvaluatePost(evaluatePost.getId(),
+                evaluatePost.getUser().getId()
             );
             return evaluatePost.getUser().getId();
         }

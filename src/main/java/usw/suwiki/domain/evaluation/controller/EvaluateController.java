@@ -46,12 +46,10 @@ public class EvaluateController {
         if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
-        List<EvaluateResponseByLectureIdDto> list =
-                evaluatePostService.findEvaluatePostsByLectureId(
-                        new PageOption(page),
-                        lectureId
-                );
-        FindByLectureToJson data = new FindByLectureToJson(list);
+        List<EvaluateResponseByLectureIdDto> response =
+            evaluatePostService.readEvaluatePostsByLectureId(new PageOption(page), lectureId);
+
+        FindByLectureToJson data = new FindByLectureToJson(response);
         if (evaluatePostService.verifyIsUserWriteEvaluatePost(
                 jwtAgent.getId(Authorization), lectureId)) {
             data.setWritten(false);
@@ -112,9 +110,9 @@ public class EvaluateController {
             throw new AccountException(USER_RESTRICTED);
         }
 
-        List<EvaluateResponseByUserIdxDto> list = evaluatePostService.findEvaluatePostsByUserId(
-                new PageOption(page),
-                jwtAgent.getId(Authorization)
+        List<EvaluateResponseByUserIdxDto> list = evaluatePostService.readEvaluatePostsByUserId(
+            new PageOption(page),
+            jwtAgent.getId(Authorization)
         );
 
         ResponseForm data = new ResponseForm(list);

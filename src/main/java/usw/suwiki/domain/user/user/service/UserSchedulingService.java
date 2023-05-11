@@ -5,7 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
-import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
+import usw.suwiki.domain.evaluation.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.exam.service.ExamPostCRUDService;
 import usw.suwiki.domain.exam.service.ViewExamCRUDService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
@@ -35,7 +35,7 @@ public class UserSchedulingService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserIsolationRepository userIsolationRepository;
     private final ViewExamCRUDService viewExamCRUDService;
-    private final EvaluatePostsService evaluatePostsService;
+    private final EvaluatePostCRUDService evaluatePostCRUDService;
     private final ExamPostCRUDService examPostCRUDService;
     private final RestrictingUserRepository restrictingUserRepository;
     private final ReportPostService reportPostService;
@@ -68,7 +68,7 @@ public class UserSchedulingService {
                 // 신고된 게시글 삭제
                 reportPostService.deleteFromUserIdx(userId);
                 // 삭제 예정 유저의 강의평가 삭제
-                evaluatePostsService.deleteFromUserIdx(userId);
+                evaluatePostCRUDService.deleteFromUserIdx(userId);
                 // 삭제 예정 유저의 시험정보 삭제
                 examPostCRUDService.deleteFromUserIdx(userId);
                 // 즐겨찾기 게시글 삭제
@@ -89,7 +89,7 @@ public class UserSchedulingService {
                 refreshTokenRepository.deleteByUserIdx(userIdx);
                 reportPostService.deleteFromUserIdx(userIdx);
                 // 삭제 예정 유저의 강의평가 삭제
-                evaluatePostsService.deleteFromUserIdx(userIdx);
+                evaluatePostCRUDService.deleteFromUserIdx(userIdx);
                 // 삭제 예정 유저의 시험정보 삭제
                 examPostCRUDService.deleteFromUserIdx(userIdx);
                 // 즐겨찾기 게시글 삭제
