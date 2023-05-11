@@ -2,9 +2,9 @@ package usw.suwiki.global.exception.errortype;
 
 import usw.suwiki.global.exception.ExceptionType;
 
-public class NoticeExcpetion extends BaseException {
+public class LectureException extends BaseException {
 
-    public NoticeExcpetion(ExceptionType exceptionType) {
+    public LectureException(ExceptionType exceptionType) {
         super(exceptionType);
     }
 }

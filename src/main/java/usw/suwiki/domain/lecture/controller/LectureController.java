@@ -33,7 +33,7 @@ public class LectureController {
             @RequestParam(required = false) String majorType
     ) {
         LectureFindOption findOption = new LectureFindOption(option, page, majorType);
-        LectureAndCountResponseForm response = lectureService.findLectureByKeyword(
+        LectureAndCountResponseForm response = lectureService.readLectureByKeyword(
                 searchValue, findOption);
 
         return ResponseEntity.ok(response);
@@ -47,7 +47,7 @@ public class LectureController {
             @RequestParam(required = false) String majorType) {
 
         LectureFindOption findOption = new LectureFindOption(option, page, majorType);
-        LectureAndCountResponseForm response = lectureService.findAllLecture(findOption);
+        LectureAndCountResponseForm response = lectureService.readAllLecture(findOption);
         return ResponseEntity.ok(response);
     }
 
@@ -60,7 +60,7 @@ public class LectureController {
         if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
-        LectureDetailResponseDto lecture = lectureService.findByIdDetail(lectureId);
+        LectureDetailResponseDto lecture = lectureService.readLectureDetail(lectureId);
         ResponseForm response = new ResponseForm(lecture);
         return ResponseEntity.ok(response);
     }

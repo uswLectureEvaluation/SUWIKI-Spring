@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
 import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
-import usw.suwiki.domain.lecture.controller.dto.LecturesAndCountDto;
+import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
 import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
 import usw.suwiki.domain.lecture.domain.Lecture;
@@ -20,80 +20,71 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LectureService {
 
-    private final LectureRepository lectureRepository;
+    private final LectureCRUDService lectureCRUDService;
 
     @Transactional(readOnly = true)
-    public LectureAndCountResponseForm findLectureByKeyword(String keyword, LectureFindOption option) {
-        if (keyword == null) {
-            return findAllLecture(option);
+    public LectureAndCountResponseForm readLectureByKeyword(String keyword, LectureFindOption option) {
+        if (option.passMajorFiltering()) {
+            return readLectureByKeywordAndOption(keyword, option);
         }
-        if (option.majorTypeFiltering()) {
-            return findLectureByKeywordAndMajorType(keyword, option);
-        }
-        return findLectureByKeywordAndOption(keyword, option);
+        return readLectureByKeywordAndMajor(keyword, option);
     }
 
     @Transactional(readOnly = true)
-    public LectureAndCountResponseForm findAllLecture(LectureFindOption option) {
-        if (option.majorTypeFiltering()) {
-            return findAllLectureByMajorType(option);
+    public LectureAndCountResponseForm readAllLecture(LectureFindOption option) {
+        if (option.passMajorFiltering()) {
+            return readAllLectureByOption(option);
         }
-        return findAllLectureByFindOption(option);
+        return readAllLectureByMajorType(option);
     }
 
     @Transactional(readOnly = true)
-    public LectureDetailResponseDto findByIdDetail(Long id) {
-        Lecture lecture = lectureRepository.findById(id);
-        LectureDetailResponseDto response = new LectureDetailResponseDto(lecture);
-        return response;
+    public LectureDetailResponseDto readLectureDetail(Long id) {
+        Lecture lecture = lectureCRUDService.loadLectureFromId(id);
+        return new LectureDetailResponseDto(lecture);
     }
 
     @Transactional(readOnly = true)
-    public List<String> findAllMajorType() {
-        List<String> resultList = lectureRepository.findAllMajorType();
-        return resultList;
+    public List<String> readMajorTypes() {
+        return lectureCRUDService.loadMajorTypes();
     }
 
     public void updateLectureEvaluationIfCreateNewPost(EvaluatePostsToLecture post) {
-        Lecture lecture = lectureRepository.findByIdPessimisticLock(post.getLectureId());
+        Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(post.getLectureId());
         lecture.handleLectureEvaluationIfNewPost(post);
     }
 
     public void updateLectureEvaluationIfUpdatePost(EvaluatePostsToLecture beforeUpdatePost, EvaluatePostsToLecture post) {
-        Lecture lecture = lectureRepository.findByIdPessimisticLock(post.getLectureId());
+        Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(post.getLectureId());
         lecture.handleLectureEvaluationIfUpdatePost(beforeUpdatePost, post);
     }
 
     public void updateLectureEvaluationIfDeletePost(EvaluatePostsToLecture post) {
-        Lecture lecture = lectureRepository.findByIdPessimisticLock(post.getLectureId());
+        Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(post.getLectureId());
         lecture.handleLectureEvaluationIfDeletePost(post);
     }
 
-    public Lecture findById(Long id) {
-        return lectureRepository.findById(id);
-    }
-
-    private LectureAndCountResponseForm findLectureByKeywordAndOption(String keyword, LectureFindOption option) {
-        LecturesAndCountDto lectureInfo = lectureRepository.findLectureByFindOption(keyword, option);
+    private LectureAndCountResponseForm readLectureByKeywordAndOption(String keyword, LectureFindOption option) {
+        LecturesAndCountDao lectureInfo = lectureCRUDService.loadLectureByKeywordAndOption(keyword, option);
         return createLectureResponseForm(lectureInfo);
     }
 
-    private LectureAndCountResponseForm findLectureByKeywordAndMajorType(String searchValue, LectureFindOption lectureFindOption) {
-        LecturesAndCountDto lectureInfo = lectureRepository.findLectureByMajorType(searchValue, lectureFindOption);
+    private LectureAndCountResponseForm readLectureByKeywordAndMajor(String searchValue, LectureFindOption option) {
+        LecturesAndCountDao lectureInfo = lectureCRUDService.loadLectureByKeywordAndMajor(searchValue, option);
         return createLectureResponseForm(lectureInfo);
     }
 
-    private LectureAndCountResponseForm findAllLectureByFindOption(LectureFindOption lectureFindOption) {
-        LecturesAndCountDto lectureInfo = lectureRepository.findAllLectureByFindOption(lectureFindOption);
+    private LectureAndCountResponseForm readAllLectureByOption(LectureFindOption option) {
+        LecturesAndCountDao lectureInfo = lectureCRUDService.loadLecturesByOption(option);
         return createLectureResponseForm(lectureInfo);
     }
 
-    private LectureAndCountResponseForm findAllLectureByMajorType(LectureFindOption lectureFindOption) {
-        LecturesAndCountDto lectureInfo = lectureRepository.findAllLectureByMajorType(lectureFindOption);
+    private LectureAndCountResponseForm readAllLectureByMajorType(LectureFindOption option) {
+        LecturesAndCountDao lectureInfo = lectureCRUDService.loadLecturesByMajor(option);
         return createLectureResponseForm(lectureInfo);
     }
 
-    private LectureAndCountResponseForm createLectureResponseForm(LecturesAndCountDto lectureInfo) {
+    private LectureAndCountResponseForm createLectureResponseForm(LecturesAndCountDao lectureInfo) {
         List<LectureResponseDto> dtoList = new ArrayList<>();
         for (Lecture lecture : lectureInfo.getLectureList()) {
             dtoList.add(new LectureResponseDto(lecture));

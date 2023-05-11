@@ -48,7 +48,11 @@ public enum ExceptionType {
     POSTS_WRITE_OVERLAP("POSTS001", "이미 작성한 정보입니다.", HttpStatus.BAD_REQUEST),
 
     //NOTICE 404
-    NOTICE_NOT_FOUND("NOTICE001", "해당 이메일에 대한 유저를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    NOTICE_NOT_FOUND("NOTICE001", "해당 공지사항을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+
+
+    //LECTURE 404
+    LECTURE_NOT_FOUND("LECTURE001", "해당 강의에 대한 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
     //Buy User Point error
     USER_POINT_LACK("POINTS001", "유저 포인트가 부족합니다.", HttpStatus.BAD_REQUEST),
