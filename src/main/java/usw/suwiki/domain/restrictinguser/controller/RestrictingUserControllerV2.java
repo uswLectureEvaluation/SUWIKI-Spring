@@ -1,13 +1,13 @@
 package usw.suwiki.domain.restrictinguser.controller;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
 import usw.suwiki.domain.user.user.service.UserBusinessService;
+import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 
 import javax.validation.Valid;
-import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -19,13 +19,16 @@ public class RestrictingUserControllerV2 {
 
     private final UserBusinessService userBusinessService;
 
-    // 정지 사유 불러오기
+    @ApiOperation(
+            value = "정지 사유 불러오기",
+            notes = "토큰 정보를 바탕으로 정지 사유를 불러온다."
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("/restricted-reason")
-    public List<LoadMyRestrictedReasonResponseForm> loadRestrictedReason(
+    public ResponseForm loadRestrictedReason(
             @Valid @RequestHeader String Authorization
     ) {
-        return userBusinessService.executeLoadRestrictedReason(Authorization);
+        return ResponseForm.success(userBusinessService.executeLoadRestrictedReason(Authorization));
     }
 }

@@ -1,5 +1,6 @@
 package usw.suwiki.domain.user.user.controller;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.user.user.service.UserBusinessService;
@@ -23,7 +24,10 @@ public class UserControllerV2 {
 
     private final UserBusinessService userBusinessService;
 
-    //아이디 중복확인
+    @ApiOperation(
+            value = "아이디 중복 확인",
+            notes = "Request Body에 담긴 LoginId 중복 확인 수행"
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/check-loginId")
@@ -33,81 +37,105 @@ public class UserControllerV2 {
         return ResponseForm.success(userBusinessService.executeCheckId(checkLoginIdForm.getLoginId()));
     }
 
-    //이메일 중복 확인
+    @ApiOperation(
+            value = "이메일 중복 확인",
+            notes = "Request Body에 담긴 Email 중복 확인 수행"
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/check-email")
-    public Map<String, Boolean> overlapEmail(
+    public ResponseForm overlapEmail(
             @Valid @RequestBody CheckEmailForm checkEmailForm
     ) {
-        return userBusinessService.executeCheckEmail(checkEmailForm.getEmail());
+        return ResponseForm.success(userBusinessService.executeCheckEmail(checkEmailForm.getEmail()));
     }
 
-    //회원가입 버튼 클릭 시 -> 유저 저장, 인증 이메일 발송
+    @ApiOperation(
+            value = "회원가입",
+            notes = "Request Body에 담긴 정보를 바탕으로 재학생 인증 메일 발송"
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping
-    public Map<String, Boolean> join(
+    public ResponseForm join(
             @Valid @RequestBody JoinForm joinForm
     ) {
-        return userBusinessService.executeJoin(
+        return ResponseForm.success(userBusinessService.executeJoin(
                 joinForm.getLoginId(),
                 joinForm.getPassword(),
                 joinForm.getEmail()
-        );
+        ));
     }
 
-    //아이디 찾기 요청 시
+    @ApiOperation(
+            value = "아이디 찾기",
+            notes = "Request Body에 담긴 정보를 바탕으로 아이디 찾기 결과를 메일로 발송한다."
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("inquiry-loginId")
-    public Map<String, Boolean> findId(@Valid @RequestBody FindIdForm findIdForm) {
-        return userBusinessService.executeFindId(findIdForm.getEmail());
+    public ResponseForm findId(@Valid @RequestBody FindIdForm findIdForm) {
+        return ResponseForm.success(userBusinessService.executeFindId(findIdForm.getEmail()));
     }
 
-    //비밀번호 찾기 요청 시
+    @ApiOperation(
+            value = "비밀번호 찾기",
+            notes = "Request Body에 담긴 정보를 바탕으로 재생성된 비밀번호 찾기 결과를 메일로 발송한다."
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("inquiry-password")
-    public Map<String, Boolean> findPw(
-            @Valid @RequestBody FindPasswordForm findPasswordForm) {
-        return userBusinessService.executeFindPw(
+    public ResponseForm findPw(
+            @Valid @RequestBody FindPasswordForm findPasswordForm
+    ) {
+        return ResponseForm.success(userBusinessService.executeFindPw(
                 findPasswordForm.getLoginId(),
-                findPasswordForm.getEmail()
+                findPasswordForm.getEmail())
         );
     }
 
-    //비밀번호 재설정 요청 시
+    @ApiOperation(
+            value = "비밀번호 재설정",
+            notes = "Request Body에 담긴 정보를 바탕으로 비밀번호를 재설정한다."
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PatchMapping("password")
-    public Map<String, Boolean> resetPw(
+    public ResponseForm resetPw(
             @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
-            @RequestHeader String Authorization) {
-        return userBusinessService.executeEditPassword(
+            @RequestHeader String Authorization
+    ) {
+        return ResponseForm.success(userBusinessService.executeEditPassword(
                 Authorization,
                 editMyPasswordForm.getPrePassword(),
-                editMyPasswordForm.getNewPassword()
+                editMyPasswordForm.getNewPassword())
         );
     }
 
-    // 안드, IOS 로그인 요청 시
+    @ApiOperation(
+            value = "Mobile Client 로그인",
+            notes = "Request Body에 담긴 정보를 바탕으로 로그인 성공 시 토큰을 발급한다."
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("mobile-login")
-    public Map<String, String> mobileLogin(
-            @Valid @RequestBody LoginForm loginForm) {
-        return userBusinessService.executeLogin(
+    public ResponseForm mobileLogin(
+            @Valid @RequestBody LoginForm loginForm
+    ) {
+        return ResponseForm.success(userBusinessService.executeLogin(
                 loginForm.getLoginId(),
-                loginForm.getPassword()
+                loginForm.getPassword())
         );
     }
 
-    // 프론트 로그인 요청 시 --> RefreshToken, AccessToken 쿠키로 셋팅
+    @ApiOperation(
+            value = "Web Client 로그인",
+            notes = "Request Body에 담긴 정보를 바탕으로 로그인 성공 시 쿠키에 토큰을 발급한다."
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
-    @PostMapping("client-login")
-    public Map<String, String> clientLogin(
+    @PostMapping("web-login")
+    public ResponseForm webLogin(
             @Valid @RequestBody LoginForm loginForm,
             HttpServletResponse response
     ) {
@@ -121,25 +149,31 @@ public class UserControllerV2 {
         refreshCookie.setHttpOnly(true);
         response.addCookie(refreshCookie);
 
-        return new HashMap<>() {{
+        return ResponseForm.success(new HashMap<>() {{
             put("AccessToken", tokenPair.get("AccessToken"));
-        }};
+        }});
     }
 
-    // 프론트 로그아웃
+    @ApiOperation(
+            value = "로그아웃",
+            notes = "쿠키 무효화"
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("client-logout")
-    public Map<String, Boolean> clientLogout(HttpServletResponse response) {
+    public ResponseForm clientLogout(HttpServletResponse response) {
         Cookie refreshCookie = new Cookie("refreshToken", "");
         refreshCookie.setMaxAge(0);
         response.addCookie(refreshCookie);
-        return new HashMap<>() {{
+        return ResponseForm.success(new HashMap<>() {{
             put("Success", true);
-        }};
+        }});
     }
 
-    // 유저 정보
+    @ApiOperation(
+            value = "유저 기본 정보를 불러온다.",
+            notes = "토큰에 담긴 정보를 바탕으로 해당 유저의 기본 정보를 불러온다."
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping
@@ -147,15 +181,18 @@ public class UserControllerV2 {
         return ResponseForm.success(userBusinessService.executeLoadMyPage(Authorization));
     }
 
-    // 회원 탈퇴
+    @ApiOperation(
+            value = "회원탈퇴",
+            notes = "토큰에 담긴 내용과 Request Body를 검증하여 회원탈퇴 처리를 수행한다."
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @DeleteMapping
-    public Map<String, Boolean> userQuit(
+    public ResponseForm userQuit(
             @Valid @RequestBody UserQuitForm userQuitForm,
             @Valid @RequestHeader String Authorization
     ) {
-        return userBusinessService.executeQuit(Authorization, userQuitForm.getPassword());
+        return ResponseForm.success(userBusinessService.executeQuit(Authorization, userQuitForm.getPassword()));
     }
 }
 

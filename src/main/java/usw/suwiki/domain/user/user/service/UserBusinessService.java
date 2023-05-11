@@ -7,11 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainService;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
-import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
+import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
-import usw.suwiki.domain.exam.service.ExamPostService;
+import usw.suwiki.domain.exam.service.ExamPostsService;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
@@ -24,10 +24,9 @@ import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.ExamReportForm;
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.UserInformationResponseForm;
-import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
-import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
-import usw.suwiki.domain.exam.service.ViewExamCRUDService;
+import usw.suwiki.domain.user.userIsolation.service.UserIsolationCRUDService;
+import usw.suwiki.domain.viewExam.service.ViewExamService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
@@ -57,9 +56,8 @@ public class UserBusinessService {
     private static final String BASE_LINK = "https://api.suwiki.kr/user/verify-email/?token=";
     private static final String MAIL_FORM = "@suwon.ac.kr";
     private final UserCRUDService userCRUDService;
-    private final UserRepository userRepository;
-    private final UserIsolationRepository userIsolationRepository;
-    private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final UserIsolationCRUDService userIsolationCRUDService;
+    private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
     private final EmailSender emailSender;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RefreshTokenCRUDService refreshTokenCRUDService;
@@ -69,17 +67,17 @@ public class UserBusinessService {
     private final BlacklistDomainService blacklistDomainService;
     private final JwtAgent jwtAgent;
     private final FavoriteMajorService favoriteMajorService;
-    private final ViewExamCRUDService viewExamCRUDService;
+    private final ViewExamService viewExamService;
     private final EvaluatePostsService evaluatePostsService;
-    private final ExamPostService examPostService;
+    private final ExamPostsService examPostsService;
     private final ReportPostService reportPostService;
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final RestrictingUserCRUDService restrictingUserCRUDService;
 
     @Transactional(readOnly = true)
     public Map<String, Boolean> executeCheckId(String loginId) {
-        if (userRepository.findByLoginId(loginId).isPresent() ||
-                userIsolationRepository.findByLoginId(loginId).isPresent()) {
+        if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
+                userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).isPresent()) {
             return overlapTrueFlag();
         }
         return overlapFalseFlag();
@@ -87,8 +85,8 @@ public class UserBusinessService {
 
     @Transactional(readOnly = true)
     public Map<String, Boolean> executeCheckEmail(String email) {
-        if (userRepository.findByEmail(email).isPresent() ||
-                userIsolationRepository.findByEmail(email).isPresent()) {
+        if (userCRUDService.loadWrappedUserFromEmail(email).isPresent() ||
+                userIsolationCRUDService.loadWrappedUserFromEmail(email).isPresent()) {
             return overlapTrueFlag();
         }
         return overlapFalseFlag();
@@ -98,19 +96,19 @@ public class UserBusinessService {
     public Map<String, Boolean> executeJoin(String loginId, String password, String email) {
         blacklistDomainService.isUserInBlackListThatRequestJoin(email);
 
-        if (userRepository.findByLoginId(loginId).isPresent() ||
-                userIsolationRepository.findByLoginId(loginId).isPresent() ||
-                userRepository.findByEmail(email).isPresent() ||
-                userIsolationRepository.findByEmail(email).isPresent())
-            throw new AccountException(USER_AND_EMAIL_OVERLAP);
+        if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
+                userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
+                userCRUDService.loadWrappedUserFromEmail(email).isPresent() ||
+                userIsolationCRUDService.loadWrappedUserFromEmail(email).isPresent())
+            throw new AccountException(LOGIN_ID_OR_EMAIL_OVERLAP);
 
         if (!email.contains(MAIL_FORM)) throw new AccountException(IS_NOT_EMAIL_FORM);
 
         User user = User.makeUser(loginId, bCryptPasswordEncoder.encode(password), email);
-        userRepository.save(user);
+        userCRUDService.saveUser(user);
 
         ConfirmationToken confirmationToken = ConfirmationToken.makeToken(user);
-        confirmationTokenRepository.save(confirmationToken);
+        confirmationTokenCRUDService.saveConfirmationToken(confirmationToken);
 
         emailSender.send(
                 email,
@@ -120,8 +118,8 @@ public class UserBusinessService {
     }
 
     public Map<String, Boolean> executeFindId(String email) {
-        Optional<User> requestUser = userRepository.findByEmail(email);
-        Optional<UserIsolation> requestIsolationUser = userIsolationRepository.findByEmail(email);
+        Optional<User> requestUser = userCRUDService.loadWrappedUserFromEmail(email);
+        Optional<UserIsolation> requestIsolationUser = userIsolationCRUDService.loadWrappedUserFromEmail(email);
         if (requestUser.isPresent()) {
             emailSender.send(
                     email,
@@ -139,33 +137,30 @@ public class UserBusinessService {
     }
 
     public Map<String, Boolean> executeFindPw(String loginId, String email) {
-        Optional<User> userByLoginId = userRepository.findByLoginId(loginId);
-        Optional<User> userByEmail = userRepository.findByEmail(email);
+        Optional<User> userByLoginId = userCRUDService.loadWrappedUserFromLoginId(loginId);
+        Optional<User> userByEmail = userCRUDService.loadWrappedUserFromEmail(email);
 
         Optional<UserIsolation> isolationUserByLoginId =
-                userIsolationRepository.findByLoginId(loginId);
+                userIsolationCRUDService.loadWrappedUserFromLoginId(loginId);
         Optional<UserIsolation> isolationUserByEmail =
-                userIsolationRepository.findByEmail(email);
-
-        User user;
-        UserIsolation userIsolation;
+                userIsolationCRUDService.loadWrappedUserFromEmail(email);
 
         if (userByLoginId.equals(userByEmail) &&
                 userByLoginId.isPresent() &&
                 userByEmail.isPresent()) {
-            user = userByLoginId.get();
-            emailSender.send(email, BuildFindPasswordForm.buildEmail(
-                            user.updateRandomPassword(bCryptPasswordEncoder)
-                    )
+            User user = userByLoginId.get();
+            emailSender.send(
+                    email,
+                    BuildFindPasswordForm.buildEmail(user.updateRandomPassword(bCryptPasswordEncoder))
             );
             return successFlag();
         } else if (isolationUserByLoginId.equals(isolationUserByEmail) &&
                 isolationUserByLoginId.isPresent() && isolationUserByEmail.isPresent()
         ) {
-            userIsolation = isolationUserByEmail.get();
-            emailSender.send(email, BuildFindPasswordForm.buildEmail(
-                            userIsolation.updateRandomPassword(bCryptPasswordEncoder)
-                    )
+            UserIsolation userIsolation = isolationUserByEmail.get();
+            emailSender.send(
+                    email,
+                    BuildFindPasswordForm.buildEmail(userIsolation.updateRandomPassword(bCryptPasswordEncoder))
             );
             return successFlag();
         }
@@ -173,22 +168,22 @@ public class UserBusinessService {
     }
 
     public Map<String, String> executeLogin(String loginId, String inputPassword) {
-        if (userRepository.findByLoginId(loginId).isPresent() &&
-                userIsolationRepository.findByLoginId(loginId).isEmpty()
+        if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() &&
+                userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).isEmpty()
         ) {
             User user = userCRUDService.loadUserFromLoginId(loginId);
-            user.isUserEmailAuthed(confirmationTokenRepository.findByUserIdx(user.getId()));
-            if (bCryptPasswordEncoder.matches(inputPassword, user.getPassword())) {
+            user.isUserEmailAuthed(confirmationTokenCRUDService.loadConfirmationTokenFromUserIdx(user.getId()));
+            if (user.validatePassword(bCryptPasswordEncoder, inputPassword)) {
                 user.updateLastLoginDate();
                 return generateUserJWT(user);
             }
-        } else if (userIsolationRepository.findByLoginId(loginId).isPresent() &&
-                userRepository.findByLoginId(loginId).isEmpty()
+        } else if (userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() &&
+                userCRUDService.loadWrappedUserFromLoginId(loginId).isEmpty()
         ) {
-            UserIsolation userIsolation = userIsolationRepository.findByLoginId(loginId).get();
-            if (bCryptPasswordEncoder.matches(inputPassword, userIsolationRepository.findByLoginId(loginId).get().getPassword())) {
+            UserIsolation userIsolation = userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).get();
+            if (userIsolation.validatePassword(bCryptPasswordEncoder, inputPassword)) {
                 rollBackSoftDeletedForIsolation(userIsolation.getUserIdx());
-                userIsolationRepository.deleteByLoginId(loginId);
+                userIsolationCRUDService.deleteByLoginId(loginId);
             }
             User user = userCRUDService.loadUserFromLoginId(loginId);
             user.updateLastLoginDate();
@@ -201,7 +196,7 @@ public class UserBusinessService {
             String Authorization, String prePassword, String newPassword
     ) {
         User user = userCRUDService.loadUserFromUserIdx(jwtAgent.getId(Authorization));
-        if (!bCryptPasswordEncoder.matches(user.getPassword(), prePassword)) {
+        if (!bCryptPasswordEncoder.matches(prePassword, user.getPassword())) {
             throw new AccountException(PASSWORD_ERROR);
         } else if (prePassword.equals(newPassword)) {
             throw new AccountException(PASSWORD_NOT_CHANGED);
@@ -233,12 +228,12 @@ public class UserBusinessService {
         jwtAgent.validateJwt(Authorization);
         User user = userCRUDService.loadUserFromUserIdx(jwtAgent.getId(Authorization));
         if (user.validatePassword(bCryptPasswordEncoder, inputPassword)) {
-            throw new AccountException(USER_NOT_EXISTS);
+            throw new AccountException(PASSWORD_ERROR);
         }
         reportPostService.deleteFromUserIdx(user.getId());
         favoriteMajorService.deleteFromUserIdx(user.getId());
-        viewExamCRUDService.deleteFromUserIdx(user.getId());
-        examPostService.deleteFromUserIdx(user.getId());
+        viewExamService.deleteFromUserIdx(user.getId());
+        examPostsService.deleteFromUserIdx(user.getId());
         evaluatePostsService.deleteFromUserIdx(user.getId());
         user.waitQuit();
         return successFlag();
@@ -272,7 +267,7 @@ public class UserBusinessService {
         jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUserIdx = jwtAgent.getId(Authorization);
-        ExamPosts examPost = examPostService.loadExamPostsFromExamPostsIdx(
+        ExamPosts examPost = examPostsService.loadExamPostsFromExamPostsIdx(
                 examReportForm.getExamIdx());
         Long reportedUserIdx = examPost.getUser().getId();
         reportPostService.saveExamPostReport(
@@ -326,22 +321,9 @@ public class UserBusinessService {
         return new ResponseForm(list);
     }
 
-    public void deleteFromUserIdx(Long userIdx) {
-        userRepository.deleteById(userIdx);
-    }
-
-    public void softDeleteForIsolation(Long userIdx) {
-        User user = userCRUDService.loadUserFromUserIdx(userIdx);
-        user.sleep();
-    }
-
     public void rollBackSoftDeletedForIsolation(Long userIdx) {
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         user.sleep();
-    }
-
-    public List<User> loadUsersLastLoginBeforeTargetTime(LocalDateTime targetTime) {
-        return userRepository.findByLastLoginBefore(targetTime);
     }
 
     private Map<String, String> generateUserJWT(User user) {

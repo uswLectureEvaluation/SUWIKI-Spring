@@ -38,10 +38,9 @@ public class UserIsolation {
     private LocalDateTime lastLogin;
 
     public boolean validatePassword(
-        BCryptPasswordEncoder bCryptPasswordEncoder,
-        String inputPassword
+            BCryptPasswordEncoder bCryptPasswordEncoder, String inputPassword
     ) {
-        return this.password.equals(inputPassword);
+        return bCryptPasswordEncoder.encode(inputPassword).matches(password);
     }
 
     public String updateRandomPassword(BCryptPasswordEncoder bCryptPasswordEncoder) {

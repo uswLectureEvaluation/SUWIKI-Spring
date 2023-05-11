@@ -1,8 +1,10 @@
-package usw.suwiki.global.jwt;
+package usw.suwiki.domain.refreshToken.controller;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.user.user.service.UserBusinessService;
+import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 
 import javax.servlet.http.Cookie;
@@ -14,18 +16,21 @@ import java.util.Map;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/v2/token")
+@RequestMapping("/v2/refreshtoken")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class JwtController {
+public class RefreshTokenControllerV2 {
 
     private final UserBusinessService userBusinessService;
 
-    // Web 토큰 갱신
+    @ApiOperation(
+            value = "Web Client 토큰 갱신",
+            notes = "토큰을 갱신한다."
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
-    @PostMapping("/client-refresh")
-    public Map<String, String> clientTokenRefresh(
+    @PostMapping("/web-client/refresh")
+    public ResponseForm clientTokenRefresh(
             @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
             HttpServletResponse response
     ) {
@@ -37,18 +42,21 @@ public class JwtController {
         refreshCookie.setSecure(true);
         refreshCookie.setHttpOnly(true);
         response.addCookie(refreshCookie);
-        return new HashMap<>() {{
+        return ResponseForm.success(new HashMap<>() {{
             put("AccessToken", tokenPair.get("AccessToken"));
-        }};
+        }});
     }
 
-    // Mobile 토큰 갱신
+    @ApiOperation(
+            value = "Mobile Client 토큰 갱신",
+            notes = "토큰을 갱신한다."
+    )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
-    @PostMapping("/mobile-refresh")
-    public Map<String, String> tokenRefresh(
+    @PostMapping("/mobile-client/refresh")
+    public ResponseForm tokenRefresh(
             @Valid @RequestHeader String Authorization
     ) {
-        return userBusinessService.executeJWTRefreshForMobileClient(Authorization);
+        return ResponseForm.success(userBusinessService.executeJWTRefreshForMobileClient(Authorization));
     }
 }

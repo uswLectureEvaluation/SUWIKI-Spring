@@ -150,7 +150,7 @@ public class UserBusinessServiceTest {
                     joinForm.getEmail());
         });
         // Then
-        assertEquals(USER_AND_EMAIL_OVERLAP.getMessage(), exception.getMessage());
+        assertEquals(LOGIN_ID_OR_EMAIL_OVERLAP.getMessage(), exception.getMessage());
     }
 
     @DisplayName("회원 가입 테스트 - 아이디 중복일 시(휴면 유저 테이블)")
@@ -173,7 +173,7 @@ public class UserBusinessServiceTest {
                     joinForm.getEmail());
         });
         // Then
-        assertEquals(USER_AND_EMAIL_OVERLAP.getMessage(), exception.getMessage());
+        assertEquals(LOGIN_ID_OR_EMAIL_OVERLAP.getMessage(), exception.getMessage());
     }
 
     @DisplayName("회원 가입 테스트 - 이메일 중복일 시(일반 유저 테이블)")
@@ -196,7 +196,7 @@ public class UserBusinessServiceTest {
                     joinForm.getEmail());
         });
         // Then
-        assertEquals(USER_AND_EMAIL_OVERLAP.getMessage(), exception.getMessage());
+        assertEquals(LOGIN_ID_OR_EMAIL_OVERLAP.getMessage(), exception.getMessage());
     }
 
     @DisplayName("회원 가입 테스트 - 이메일 중복일 시(휴면 유저 테이블)")
@@ -219,7 +219,7 @@ public class UserBusinessServiceTest {
                     joinForm.getEmail());
         });
         // Then
-        assertEquals(USER_AND_EMAIL_OVERLAP.getMessage(), exception.getMessage());
+        assertEquals(LOGIN_ID_OR_EMAIL_OVERLAP.getMessage(), exception.getMessage());
     }
 
     @DisplayName("회원 가입 테스트 - 회원가입 성공")

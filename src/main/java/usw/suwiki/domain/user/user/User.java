@@ -12,7 +12,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EMAIL_AUTHED;
+import static usw.suwiki.global.exception.ExceptionType.EMAIL_NOT_AUTHED;
 import static usw.suwiki.global.exception.ExceptionType.USER_POINT_LACK;
 import static usw.suwiki.global.util.passwordfactory.PasswordRandomizer.randomizePassword;
 
@@ -179,9 +179,9 @@ public class User {
             if (confirmationToken.get().isVerified()) {
                 return true;
             }
-            throw new AccountException(USER_NOT_EMAIL_AUTHED);
+            throw new AccountException(EMAIL_NOT_AUTHED);
         }
-        throw new AccountException(USER_NOT_EMAIL_AUTHED);
+        throw new AccountException(EMAIL_NOT_AUTHED);
     }
 
     public void updateLastLoginDate() {
