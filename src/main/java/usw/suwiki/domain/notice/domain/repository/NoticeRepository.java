@@ -1,6 +1,6 @@
-package usw.suwiki.domain.notice.repository;
+package usw.suwiki.domain.notice.domain.repository;
 
-import usw.suwiki.domain.notice.Notice;
+import usw.suwiki.domain.notice.domain.Notice;
 import usw.suwiki.global.PageOption;
 
 import java.util.List;

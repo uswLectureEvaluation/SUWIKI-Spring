@@ -1,13 +1,15 @@
 package usw.suwiki.domain.notice.controller;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.notice.dto.NoticeDetailResponseDto;
-import usw.suwiki.domain.notice.dto.NoticeResponseDto;
-import usw.suwiki.domain.notice.dto.NoticeSaveOrUpdateDto;
+
+import usw.suwiki.domain.notice.controller.dto.NoticeDetailResponseDto;
+import usw.suwiki.domain.notice.controller.dto.NoticeResponseDto;
+import usw.suwiki.domain.notice.controller.dto.NoticeSaveOrUpdateDto;
 import usw.suwiki.domain.notice.service.NoticeService;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.ResponseForm;
@@ -25,77 +27,71 @@ import java.util.Optional;
 @RequestMapping(value = "/notice")
 public class NoticeController {
 
-    private final NoticeService noticeService;
-    private final JwtAgent jwtAgent;
+	private final NoticeService noticeService;
+	private final JwtAgent jwtAgent;
 
-    @ApiLogger(option = "notice")
-    @GetMapping("/all")
-    public ResponseEntity<ResponseForm> findNoticeList(
-            @RequestParam(required = false) Optional<Integer> page
-    ) {
-        HttpHeaders header = new HttpHeaders();
-        List<NoticeResponseDto> list = noticeService.findNoticeList(new PageOption(page));
-        ResponseForm data = new ResponseForm(list);
-        return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
-    }
+	@ApiLogger(option = "notice")
+	@GetMapping("/all")
+	public ResponseForm findNoticesApi(
+		@RequestParam(required = false) Optional<Integer> page) {
 
-    @ApiLogger(option = "notice")
-    @GetMapping("/")
-    public ResponseEntity<ResponseForm> findNoticeByNoticeId(
-            @RequestParam Long noticeId
-    ) {
-        HttpHeaders header = new HttpHeaders();
-        NoticeDetailResponseDto dto = noticeService.findNoticeDetail(noticeId);
-        ResponseForm data = new ResponseForm(dto);
-        return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
-    }
+		PageOption option = new PageOption(page);
+		List<NoticeResponseDto> response = noticeService.readAllNotice(option);
+		return new ResponseForm(response);
+	}
 
-    @ApiLogger(option = "notice")
-    @PostMapping("/")
-    public ResponseEntity<String> saveNotice(
-            @RequestBody NoticeSaveOrUpdateDto dto,
-            @RequestHeader String Authorization
-    ) {
-        HttpHeaders header = new HttpHeaders();
-        jwtAgent.validateJwt(Authorization);
-        if (jwtAgent.getUserRole(Authorization).equals("ADMIN")) {
-            noticeService.save(dto);
-            return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
-        } else {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
-        }
-    }
+	@ApiLogger(option = "notice")
+	@GetMapping("/")
+	public ResponseForm findNoticeApi(
+		@RequestParam Long noticeId) {
 
-    @ApiLogger(option = "notice")
-    @PutMapping("/")
-    public ResponseEntity<String> updateNotice(
-            @RequestParam Long noticeId,
-            @RequestBody NoticeSaveOrUpdateDto dto,
-            @RequestHeader String Authorization
-    ) {
-        HttpHeaders header = new HttpHeaders();
-        jwtAgent.validateJwt(Authorization);
-        if (jwtAgent.getUserRole(Authorization).equals("ADMIN")) {
-            noticeService.update(dto, noticeId);
-            return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
-        } else {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
-        }
-    }
+		NoticeDetailResponseDto response = noticeService.readNotice(noticeId);
+		return new ResponseForm(response);
+	}
 
-    @ApiLogger(option = "notice")
-    @DeleteMapping("/")
-    public ResponseEntity<String> deleteNotice(@RequestParam Long noticeId,
-                                               @RequestHeader String Authorization) {
-        HttpHeaders header = new HttpHeaders();
-        jwtAgent.validateJwt(Authorization);
-        if (jwtAgent.getUserRole(Authorization).equals("ADMIN")) {
-            noticeService.delete(noticeId);
-            return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
-        } else {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
-        }
-    }
+	@ApiLogger(option = "notice")
+	@PostMapping("/")
+	public String writeNoticeApi(
+		@RequestBody NoticeSaveOrUpdateDto requestBody,
+		@RequestHeader String Authorization) {
+
+		jwtAgent.validateJwt(Authorization);
+		validateAdmin(Authorization);
+		noticeService.write(requestBody);
+
+		return "success";
+	}
+
+	@ApiLogger(option = "notice")
+	@PutMapping("/")
+	public String updateNotice(
+		@RequestParam Long noticeId,
+		@RequestBody NoticeSaveOrUpdateDto dto,
+		@RequestHeader String Authorization
+	) {
+		jwtAgent.validateJwt(Authorization);
+		validateAdmin(Authorization);
+		noticeService.update(dto, noticeId);
+
+		return "success";
+	}
+
+	@ApiLogger(option = "notice")
+	@DeleteMapping("/")
+	public String deleteNotice(@RequestParam Long noticeId,
+		@RequestHeader String Authorization) {
+		jwtAgent.validateJwt(Authorization);
+		validateAdmin(Authorization);
+		noticeService.delete(noticeId);
+
+		return "success";
+	}
+
+	private void validateAdmin(String authorization) {
+		if (!(jwtAgent.getUserRole(authorization).equals("ADMIN"))) {
+			throw new AccountException(ExceptionType.USER_RESTRICTED);
+		}
+	}
 }
 
 

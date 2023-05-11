@@ -1,4 +1,4 @@
-package usw.suwiki.domain.notice.dto;
+package usw.suwiki.domain.notice.controller.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
