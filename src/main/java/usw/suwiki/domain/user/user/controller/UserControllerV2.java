@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.user.user.service.UserBusinessService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
+import usw.suwiki.global.annotation.JWTVerify;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -154,6 +155,7 @@ public class UserControllerV2 {
         }});
     }
 
+    @JWTVerify
     @ApiOperation(
             value = "로그아웃",
             notes = "쿠키 무효화"
@@ -170,6 +172,7 @@ public class UserControllerV2 {
         }});
     }
 
+    @JWTVerify
     @ApiOperation(
             value = "유저 기본 정보를 불러온다.",
             notes = "토큰에 담긴 정보를 바탕으로 해당 유저의 기본 정보를 불러온다."
@@ -181,6 +184,7 @@ public class UserControllerV2 {
         return ResponseForm.success(userBusinessService.executeLoadMyPage(Authorization));
     }
 
+    @JWTVerify
     @ApiOperation(
             value = "회원탈퇴",
             notes = "토큰에 담긴 내용과 Request Body를 검증하여 회원탈퇴 처리를 수행한다."

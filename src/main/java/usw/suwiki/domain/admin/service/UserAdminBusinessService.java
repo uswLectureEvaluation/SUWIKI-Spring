@@ -4,19 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.admin.dto.UserAdminResponseDto.LoadAllReportedPostForm;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto;
+import usw.suwiki.domain.admin.dto.UserAdminResponseDto.LoadAllReportedPostForm;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
-import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
-import usw.suwiki.domain.exam.service.ExamPostService;
+import usw.suwiki.domain.exam.service.ExamPostCRUDService;
 import usw.suwiki.domain.postreport.EvaluatePostReport;
 import usw.suwiki.domain.postreport.ExamPostReport;
 import usw.suwiki.domain.postreport.service.ReportPostService;
-import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
+import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.user.user.User;
+import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
@@ -37,12 +37,14 @@ public class UserAdminBusinessService {
     private final UserCRUDService userCRUDService;
     private final ReportPostService reportPostService;
     private final EvaluatePostsService evaluatePostsService;
-    private final ExamPostService examPostService;
+    private final ExamPostCRUDService examPostCRUDService;
     private final RestrictingUserService restrictingUserService;
     private final JwtAgent jwtAgent;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    /** 관리자 로그인 */
+    /**
+     * 관리자 로그인
+     */
     public Map<String, String> executeAdminLogin(LoginForm loginForm) {
         User user = userCRUDService.loadUserFromLoginId(loginForm.getLoginId());
         if (bCryptPasswordEncoder.matches(loginForm.getPassword(), user.getPassword())) {
@@ -54,7 +56,9 @@ public class UserAdminBusinessService {
         throw new AccountException(PASSWORD_ERROR);
     }
 
-    /** 신고된 모든 게시글 조회 */
+    /**
+     * 신고된 모든 게시글 조회
+     */
     public LoadAllReportedPostForm executeLoadAllReportedPosts(String accessToken) {
         validateAdmin(accessToken);
         List<EvaluatePostReport> evaluatePostReports = reportPostService.loadAllEvaluateReports();
@@ -67,33 +71,43 @@ public class UserAdminBusinessService {
                 .build();
     }
 
-    /** 신고된 강의평가 게시물 자세히 보기 */
+    /**
+     * 신고된 강의평가 게시물 자세히 보기
+     */
     public EvaluatePostReport executeLoadDetailReportedEvaluatePost(String accessToken, Long evaluatePostReportId) {
         validateAdmin(accessToken);
         return reportPostService.loadDetailEvaluateReportFromReportingEvaluatePostId(evaluatePostReportId);
     }
 
-    /** 신고된 시험정보 게시물 자세히 보기 */
+    /**
+     * 신고된 시험정보 게시물 자세히 보기
+     */
     public ExamPostReport executeLoadDetailReportedExamPost(String accessToken, Long examPostReportId) {
         validateAdmin(accessToken);
         return reportPostService.loadDetailEvaluateReportFromReportingExamPostId(examPostReportId);
     }
 
-    /** 신고된 강의평가 게시물 삭제 */
+    /**
+     * 신고된 강의평가 게시물 삭제
+     */
     public Map<String, Boolean> executeNoProblemEvaluatePost(String accessToken, UserAdminRequestDto.EvaluatePostNoProblemForm evaluatePostNoProblemForm) {
         validateAdmin(accessToken);
         reportPostService.deleteByEvaluateIdx(evaluatePostNoProblemForm.getEvaluateIdx());
         return successCapitalFlag();
     }
 
-    /** 신고된 시험정보 게시물 삭제 */
+    /**
+     * 신고된 시험정보 게시물 삭제
+     */
     public Map<String, Boolean> executeNoProblemExamPost(String accessToken, UserAdminRequestDto.ExamPostNoProblemForm examPostRestrictForm) {
         validateAdmin(accessToken);
         reportPostService.deleteByExamIdx(examPostRestrictForm.getExamIdx());
         return successCapitalFlag();
     }
 
-    /** 신고된 강의평가 게시물 작성자 이용 정지 처리 */
+    /**
+     * 신고된 강의평가 게시물 작성자 이용 정지 처리
+     */
     public Map<String, Boolean> executeRestrictEvaluatePost(String accessToken, UserAdminRequestDto.EvaluatePostRestrictForm evaluatePostRestrictForm) {
         validateAdmin(accessToken);
         restrictingUserService.executeRestrictUserFromEvaluatePost(evaluatePostRestrictForm);
@@ -103,7 +117,9 @@ public class UserAdminBusinessService {
         return successCapitalFlag();
     }
 
-    /** 신고된 시험정보 게시물 작성자 이용 정지 처리 */
+    /**
+     * 신고된 시험정보 게시물 작성자 이용 정지 처리
+     */
     public Map<String, Boolean> executeRestrictExamPost(String accessToken, UserAdminRequestDto.ExamPostRestrictForm examPostRestrictForm) {
         validateAdmin(accessToken);
         restrictingUserService.executeRestrictUserFromExamPost(examPostRestrictForm);
@@ -113,7 +129,9 @@ public class UserAdminBusinessService {
         return successCapitalFlag();
     }
 
-    /** 신고된 강의평가 게시물 작성자 블랙리스트 처리 */
+    /**
+     * 신고된 강의평가 게시물 작성자 블랙리스트 처리
+     */
     public Map<String, Boolean> executeBlackListEvaluatePost(
             String accessToken,
             UserAdminRequestDto.EvaluatePostBlacklistForm evaluatePostBlacklistForm
@@ -136,13 +154,15 @@ public class UserAdminBusinessService {
         return successCapitalFlag();
     }
 
-    /** 신고된 시험정보 게시물 작성자 블랙리스트 처리 */
+    /**
+     * 신고된 시험정보 게시물 작성자 블랙리스트 처리
+     */
     public Map<String, Boolean> executeBlackListExamPost(
             String accessToken,
             UserAdminRequestDto.ExamPostBlacklistForm examPostBlacklistForm
     ) {
         validateAdmin(accessToken);
-        Long userIdx = examPostService.loadExamPostsFromExamPostsIdx(examPostBlacklistForm.getExamIdx()).getUser().getId();
+        Long userIdx = examPostCRUDService.loadExamPostFromExamPostIdx(examPostBlacklistForm.getExamIdx()).getUser().getId();
 
         deleteReportedExamPostFromEvaluateIdx(examPostBlacklistForm.getExamIdx());
         blacklistDomainCRUDService.saveBlackListDomain(
@@ -171,8 +191,8 @@ public class UserAdminBusinessService {
     }
 
     private Long deleteReportedExamPostFromEvaluateIdx(Long examPostIdx) {
-        if (examPostService.loadExamPostsFromExamPostsIdx(examPostIdx) != null) {
-            ExamPosts examPost = examPostService.loadExamPostsFromExamPostsIdx(examPostIdx);
+        if (examPostCRUDService.loadExamPostFromExamPostIdx(examPostIdx) != null) {
+            ExamPosts examPost = examPostCRUDService.loadExamPostFromExamPostIdx(examPostIdx);
             reportPostService.deleteByEvaluateIdx(examPostIdx);
             evaluatePostsService.executeDeleteEvaluatePost(
                     examPost.getId(),
@@ -193,7 +213,9 @@ public class UserAdminBusinessService {
         user.increasePointByReporting();
     }
 
-    /** 관리자 권한 검증 */
+    /**
+     * 관리자 권한 검증
+     */
     private void validateAdmin(String authorization) {
         jwtAgent.validateJwt(authorization);
         if (!jwtAgent.getUserRole(authorization).equals("ADMIN")) {

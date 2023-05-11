@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.ExamPostRestrictForm;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
+import usw.suwiki.domain.exam.service.ExamPostCRUDService;
 import usw.suwiki.domain.restrictinguser.RestrictingUser;
 import usw.suwiki.domain.restrictinguser.repository.RestrictingUserRepository;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
@@ -30,7 +31,7 @@ public class RestrictingUserService {
 
     private final UserCRUDService userCRUDService;
     private final EvaluatePostsService evaluatePostsService;
-    private final ExamPostService examPostService;
+    private final ExamPostCRUDService examPostCRUDService;
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final RestrictingUserRepository restrictingUserRepository;
 
@@ -64,8 +65,8 @@ public class RestrictingUserService {
     }
 
     public void executeRestrictUserFromExamPost(ExamPostRestrictForm examPostRestrictForm) {
-        ExamPosts examPost = examPostService
-                .loadExamPostsFromExamPostsIdx(examPostRestrictForm.getExamIdx());
+        ExamPosts examPost = examPostCRUDService
+                .loadExamPostFromExamPostIdx(examPostRestrictForm.getExamIdx());
         User user = userCRUDService.loadUserFromUserIdx(examPost.getUser().getId());
 
         if (user.getRestrictedCount() >= 2) {

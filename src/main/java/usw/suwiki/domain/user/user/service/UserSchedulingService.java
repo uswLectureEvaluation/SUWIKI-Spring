@@ -4,20 +4,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.restrictinguser.repository.RestrictingUserRepository;
 import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
-import usw.suwiki.domain.exam.service.ExamPostService;
+import usw.suwiki.domain.exam.service.ExamPostCRUDService;
+import usw.suwiki.domain.exam.service.ViewExamCRUDService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
+import usw.suwiki.domain.restrictinguser.repository.RestrictingUserRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
-import usw.suwiki.domain.exam.service.ViewExamCRUDService;
-import usw.suwiki.global.util.mailsender.EmailSendService;
 import usw.suwiki.global.util.emailBuild.BuildPersonalInformationUsingNotifyForm;
+import usw.suwiki.global.util.mailsender.EmailSendService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,7 +36,7 @@ public class UserSchedulingService {
     private final UserIsolationRepository userIsolationRepository;
     private final ViewExamCRUDService viewExamCRUDService;
     private final EvaluatePostsService evaluatePostsService;
-    private final ExamPostService examPostService;
+    private final ExamPostCRUDService examPostCRUDService;
     private final RestrictingUserRepository restrictingUserRepository;
     private final ReportPostService reportPostService;
 
@@ -62,7 +62,7 @@ public class UserSchedulingService {
             for (int index = 0; index < targetUser.toArray().length; index++) {
                 Long userId = targetUser.get(index).getId();
                 // 삭제 예정 유저의 구매한 시험 정보 삭제
-                viewExamCRUDService.deleteFromUserIdx(userId);
+                viewExamCRUDService.deleteAllFromUserIdx(userId);
                 // 리프레시 토큰 삭제
                 refreshTokenRepository.deleteByUserIdx(userId);
                 // 신고된 게시글 삭제
@@ -70,7 +70,7 @@ public class UserSchedulingService {
                 // 삭제 예정 유저의 강의평가 삭제
                 evaluatePostsService.deleteFromUserIdx(userId);
                 // 삭제 예정 유저의 시험정보 삭제
-                examPostService.deleteFromUserIdx(userId);
+                examPostCRUDService.deleteFromUserIdx(userId);
                 // 즐겨찾기 게시글 삭제
                 favoriteMajorService.deleteFromUserIdx(userId);
                 // 제한 테이블에서 삭제
@@ -84,14 +84,14 @@ public class UserSchedulingService {
             for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
                 Long userIdx = targetUserIsolation.get(i).getUserIdx();
                 // 삭제 예정 유저의 구매한 시험 정보 삭제
-                viewExamCRUDService.deleteFromUserIdx(userIdx);
+                viewExamCRUDService.deleteAllFromUserIdx(userIdx);
                 // 리프레시 토큰 삭제
                 refreshTokenRepository.deleteByUserIdx(userIdx);
                 reportPostService.deleteFromUserIdx(userIdx);
                 // 삭제 예정 유저의 강의평가 삭제
                 evaluatePostsService.deleteFromUserIdx(userIdx);
                 // 삭제 예정 유저의 시험정보 삭제
-                examPostService.deleteFromUserIdx(userIdx);
+                examPostCRUDService.deleteFromUserIdx(userIdx);
                 // 즐겨찾기 게시글 삭제
                 favoriteMajorService.deleteFromUserIdx(userIdx);
                 // 제한 테이블에서 삭제

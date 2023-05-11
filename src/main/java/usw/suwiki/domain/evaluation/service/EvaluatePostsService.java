@@ -11,6 +11,7 @@ import usw.suwiki.domain.evaluation.dto.EvaluateResponseByUserIdxDto;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.repository.EvaluatePostsRepository;
 import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.domain.lecture.service.LectureCRUDService;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
@@ -29,12 +30,13 @@ import static usw.suwiki.global.exception.ExceptionType.USER_POINT_LACK;
 public class EvaluatePostsService {
 
     private final EvaluatePostsRepository evaluatePostsRepository;
+    private final LectureCRUDService lectureCRUDService;
     private final LectureService lectureService;
     private final UserCRUDService userCRUDService;
 
     public void save(EvaluatePostsSaveDto evaluatePostsSaveDto, Long userIdx, Long lectureId) {
         EvaluatePosts posts = new EvaluatePosts(evaluatePostsSaveDto);
-        Lecture lecture = lectureService.findById(lectureId);
+        Lecture lecture = lectureCRUDService.loadLectureFromId(lectureId);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
 
         if (lecture == null) {
@@ -89,7 +91,7 @@ public class EvaluatePostsService {
     }
 
     public boolean verifyIsUserWriteEvaluatePost(Long userIdx, Long lectureId) {
-        Lecture lecture = lectureService.findById(lectureId);
+        Lecture lecture = lectureCRUDService.loadLectureFromId(lectureId);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         return evaluatePostsRepository.verifyPostsByIdx(user, lecture);
     }

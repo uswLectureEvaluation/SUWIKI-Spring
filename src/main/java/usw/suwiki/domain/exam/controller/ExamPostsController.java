@@ -61,7 +61,8 @@ public class ExamPostsController {
     @PostMapping("/purchase")
     public ResponseEntity<String> buyExamInfoApi(
             @RequestHeader String Authorization,
-            @RequestParam Long lectureId) {
+            @RequestParam Long lectureId
+    ) {
         validateAuth(Authorization);
         Long userId = jwtAgent.getId(Authorization);
 
