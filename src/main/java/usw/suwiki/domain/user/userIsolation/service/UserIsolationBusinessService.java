@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.admin.restrictinguser.service.RestrictingUserService;
+import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.service.ExamPostsService;

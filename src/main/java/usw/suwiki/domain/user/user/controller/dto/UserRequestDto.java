@@ -1,9 +1,11 @@
 package usw.suwiki.domain.user.user.controller.dto;
 
-import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 public class UserRequestDto {
 
@@ -42,8 +44,9 @@ public class UserRequestDto {
     @AllArgsConstructor
     public static class FindPasswordForm {
 
-        @NotEmpty
+        @NotBlank
         private String loginId;
+        @NotBlank
         private String email;
     }
 
@@ -51,15 +54,22 @@ public class UserRequestDto {
     @NoArgsConstructor
     public static class EditMyPasswordForm {
 
-        @NotEmpty
+        @NotBlank
         private String prePassword;
+        @NotBlank
         private String newPassword;
+
+        public EditMyPasswordForm(String prePassword, String newPassword) {
+            this.prePassword = prePassword;
+            this.newPassword = newPassword;
+        }
     }
 
     @Getter
     @NoArgsConstructor
     public static class CheckLoginIdForm {
 
+        @NotBlank
         private String loginId;
 
         public CheckLoginIdForm(String loginId) {
@@ -70,7 +80,7 @@ public class UserRequestDto {
     @Getter
     @NoArgsConstructor
     public static class CheckEmailForm {
-
+        @NotBlank
         private String email;
 
         public CheckEmailForm(String email) {
@@ -82,7 +92,9 @@ public class UserRequestDto {
     @NoArgsConstructor
     public static class UserQuitForm {
 
+        @NotBlank
         private String loginId;
+        @NotBlank
         private String password;
     }
 
@@ -90,6 +102,7 @@ public class UserRequestDto {
     @NoArgsConstructor
     public static class EvaluateReportForm {
 
+        @NotEmpty
         private Long evaluateIdx;
     }
 
@@ -97,6 +110,7 @@ public class UserRequestDto {
     @NoArgsConstructor
     public static class ExamReportForm {
 
+        @NotEmpty
         private Long examIdx;
     }
 }
