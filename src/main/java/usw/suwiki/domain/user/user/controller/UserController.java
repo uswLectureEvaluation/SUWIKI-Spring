@@ -6,7 +6,7 @@ import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenBusinessServ
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
-import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.MyPageResponseForm;
+import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.UserInformationResponseForm;
 import usw.suwiki.domain.user.user.service.UserBusinessService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
@@ -154,7 +154,7 @@ public class UserController {
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("/my-page")
-    public MyPageResponseForm myPage(@Valid @RequestHeader String Authorization) {
+    public UserInformationResponseForm myPage(@Valid @RequestHeader String Authorization) {
         return userBusinessService.executeLoadMyPage(Authorization);
     }
 

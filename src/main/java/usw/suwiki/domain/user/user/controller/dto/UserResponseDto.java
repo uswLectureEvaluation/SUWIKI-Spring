@@ -3,14 +3,17 @@ package usw.suwiki.domain.user.user.controller.dto;
 import lombok.Builder;
 import lombok.Getter;
 import usw.suwiki.domain.user.user.User;
+import usw.suwiki.global.ResponseForm;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserResponseDto {
 
     @Getter
     @Builder
-    public static class MyPageResponseForm {
+    public static class UserInformationResponseForm {
         private String loginId;
         private String email;
         private Integer point;
@@ -18,8 +21,8 @@ public class UserResponseDto {
         private Integer writtenExam;
         private Integer viewExam;
 
-        public static MyPageResponseForm buildMyPageResponseForm(User user) {
-            return MyPageResponseForm.builder()
+        public static UserInformationResponseForm buildMyPageResponseForm(User user) {
+            return UserInformationResponseForm.builder()
                     .loginId(user.getLoginId())
                     .email(user.getEmail())
                     .point(user.getPoint())

@@ -4,9 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.admin.blacklistdomain.service.BlacklistDomainCRUDService;
-import usw.suwiki.domain.admin.blacklistdomain.service.BlacklistDomainService;
-import usw.suwiki.domain.admin.restrictinguser.service.RestrictingUserCRUDService;
+import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
+import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainService;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
@@ -18,12 +17,13 @@ import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.refreshToken.RefreshToken;
 import usw.suwiki.domain.refreshToken.service.RefreshTokenCRUDService;
+import usw.suwiki.domain.restrictinguser.service.RestrictingUserCRUDService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.EvaluateReportForm;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.ExamReportForm;
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
-import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.MyPageResponseForm;
+import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.UserInformationResponseForm;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
@@ -31,10 +31,10 @@ import usw.suwiki.domain.viewExam.service.ViewExamService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
-import usw.suwiki.global.mailsender.EmailSender;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
 import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
 import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
+import usw.suwiki.global.util.mailsender.EmailSender;
 
 import javax.servlet.http.Cookie;
 import java.time.LocalDateTime;
@@ -45,7 +45,7 @@ import java.util.Optional;
 
 import static usw.suwiki.domain.postreport.EvaluatePostReport.buildEvaluatePostReport;
 import static usw.suwiki.domain.postreport.ExamPostReport.buildExamPostReport;
-import static usw.suwiki.domain.user.user.controller.dto.UserResponseDto.MyPageResponseForm.buildMyPageResponseForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserResponseDto.UserInformationResponseForm.buildMyPageResponseForm;
 import static usw.suwiki.global.exception.ExceptionType.*;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.*;
 
@@ -210,7 +210,7 @@ public class UserBusinessService {
         return successFlag();
     }
 
-    public MyPageResponseForm executeLoadMyPage(String Authorization) {
+    public UserInformationResponseForm executeLoadMyPage(String Authorization) {
         Long userIdx = jwtAgent.getId(Authorization);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         return buildMyPageResponseForm(user);
