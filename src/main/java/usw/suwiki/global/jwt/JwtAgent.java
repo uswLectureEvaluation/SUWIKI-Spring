@@ -3,7 +3,6 @@ package usw.suwiki.global.jwt;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.refreshToken.RefreshToken;
@@ -18,6 +17,7 @@ import java.util.Base64;
 import java.util.Date;
 
 import static io.jsonwebtoken.Jwts.parser;
+import static usw.suwiki.global.exception.ExceptionType.LOGIN_REQUIRED;
 import static usw.suwiki.global.exception.ExceptionType.TOKEN_IS_NOT_FOUND;
 
 @Component
@@ -49,7 +49,7 @@ public class JwtAgent {
                  MalformedJwtException |
                  IllegalArgumentException ex
         ) {
-            throw new BadCredentialsException("잘못된 토큰 정보입니다.", ex);
+            throw new AccountException(LOGIN_REQUIRED);
         } catch (ExpiredJwtException exception) {
             throw new AccountException(TOKEN_IS_NOT_FOUND);
         }

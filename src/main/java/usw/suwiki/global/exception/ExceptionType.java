@@ -32,15 +32,16 @@ public enum ExceptionType {
      * Domain : ConfirmationToken
      */
     EMAIL_NOT_AUTHED("CONFIRMATION_TOKEN001", "이메일 인증을 받지 않은 사용자 입니다.", UNAUTHORIZED),
-    EMAIL_VALIDATED_ERROR("CONFIRMATION_TOKEN002", "이메일 인증에 실패했습니다.", HttpStatus.BAD_REQUEST),
+    EMAIL_VALIDATED_ERROR("CONFIRMATION_TOKEN002", "이메일 인증에 실패했습니다.", BAD_REQUEST),
     EMAIL_VALIDATED_ERROR_RETRY("CONFIRMATION_TOKEN003", "이메일 인증 만료기간이 지나거나, 예기치 못한 오류로 이메일 인증에 실패했습니다. 회원가입을 다시 진행해주세요", HttpStatus.BAD_REQUEST),
-    EMAIL_AUTH_TOKEN_ALREADY_USED("CONFIRMATION_TOKEN004", "이미 사용된 인증 토큰 입니다.", HttpStatus.BAD_REQUEST),
+    EMAIL_AUTH_TOKEN_ALREADY_USED("CONFIRMATION_TOKEN004", "이미 사용된 인증 토큰 입니다.", BAD_REQUEST),
 
     /**
      * Domain : ExamPost
      */
-    POSTS_WRITE_OVERLAP("POSTS001", "이미 작성한 정보입니다.", HttpStatus.BAD_REQUEST),
+    POSTS_WRITE_OVERLAP("POSTS001", "이미 작성한 정보입니다.", BAD_REQUEST),
     EXAM_POST_NOT_FOUND("EXAM_POST001", "해당 시험정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    EXAM_POST_ALREADY_PURCHASE("EXAM_POST002", "이미 구매한 시험정보 입니다.", BAD_REQUEST),
 
     /**
      * Domain : EvaluatePost
