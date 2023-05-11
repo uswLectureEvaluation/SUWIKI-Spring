@@ -37,9 +37,15 @@ public enum ExceptionType {
     EMAIL_AUTH_TOKEN_ALREADY_USED("CONFIRMATION_TOKEN004", "이미 사용된 인증 토큰 입니다.", HttpStatus.BAD_REQUEST),
 
     /**
-     * Domain : *Post
+     * Domain : ExamPost
      */
     POSTS_WRITE_OVERLAP("POSTS001", "이미 작성한 정보입니다.", HttpStatus.BAD_REQUEST),
+    EXAM_POST_NOT_FOUND("EXAM_POST001", "해당 시험정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+
+
+    /**
+     * Domain : EvaluatePost
+     */
 
 
     /**
@@ -57,25 +63,20 @@ public enum ExceptionType {
     /**
      * Domain : Lecture
      */
+    //400
     INVALID_ORDER_OPTION("OPTION001", "ORDER OPTION을 확인해주세요.", HttpStatus.BAD_REQUEST),
     INVALID_MAJOR_OPTION("OPTION002", "MAJOR OPTION을 확인해주세요.", HttpStatus.BAD_REQUEST),
     NOT_EXISTS_LECTURE_NAME("LECTURE001", "강의 제목을 입력해주세요", HttpStatus.BAD_REQUEST),
     NOT_EXISTS_PROFESSOR_NAME("LECTURE002", "교수 이름을 입력해주세요", HttpStatus.BAD_REQUEST),
     NOT_EXISTS_LECTURE("LECTURE003", "해당 강의가 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
-
-
-    //Post 400 error
-    EXAM_POST_ALREADY_PURCHASE("POSTS002", "이미 구매한 정보입니다.", HttpStatus.BAD_REQUEST),
-
-    //ExamPost 404 error
-    EXAM_POST_NOT_FOUND("EXAM_POST001", "해당 시험정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-
-    //NOTICE 404
-    NOTICE_NOT_FOUND("NOTICE001", "해당 공지사항을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-
-
-    //LECTURE 404
+    //404
     LECTURE_NOT_FOUND("LECTURE001", "해당 강의에 대한 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+
+
+    /**
+     * Domain : Notice
+     */
+    NOTICE_NOT_FOUND("NOTICE001", "해당 공지사항을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
 
     /**

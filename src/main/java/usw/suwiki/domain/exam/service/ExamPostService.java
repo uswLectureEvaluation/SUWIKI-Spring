@@ -120,13 +120,6 @@ public class ExamPostService {
         examPostCRUDService.delete(post);
     }
 
-    public void deleteFromUserIdx(Long userIdx) {
-        List<ExamPosts> examPosts = examPostCRUDService.loadExamPostsFromUserIdx(userIdx);
-        for (ExamPosts examPost : examPosts) {
-            examPostCRUDService.delete(examPost);
-        }
-    }
-
     private ExamPosts createExamPost(ExamPostsSaveDto examData, User user, Lecture lecture) {
         ExamPosts examPost = new ExamPosts(examData);
         examPost.setLecture(lecture);

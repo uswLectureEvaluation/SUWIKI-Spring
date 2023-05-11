@@ -41,6 +41,13 @@ public class ExamPostCRUDService {
         return examPost;
     }
 
+    public void deleteFromUserIdx(Long userIdx) {
+        List<ExamPosts> examPosts = loadExamPostsFromUserIdx(userIdx);
+        for (ExamPosts examPost : examPosts) {
+            delete(examPost);
+        }
+    }
+
     public void update(Long examIdx, ExamPostsUpdateDto dto) {
         ExamPosts posts = examPostsRepository.findById(examIdx);
         posts.update(dto);

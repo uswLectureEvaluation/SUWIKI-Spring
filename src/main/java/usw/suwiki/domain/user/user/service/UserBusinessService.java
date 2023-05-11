@@ -11,7 +11,8 @@ import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
 import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
-import usw.suwiki.domain.exam.service.ExamPostsService;
+import usw.suwiki.domain.exam.service.ExamPostCRUDService;
+import usw.suwiki.domain.exam.service.ViewExamCRUDService;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
@@ -26,7 +27,6 @@ import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyRestrict
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.UserInformationResponseForm;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.service.UserIsolationCRUDService;
-import usw.suwiki.domain.viewExam.service.ViewExamService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
@@ -67,9 +67,9 @@ public class UserBusinessService {
     private final BlacklistDomainService blacklistDomainService;
     private final JwtAgent jwtAgent;
     private final FavoriteMajorService favoriteMajorService;
-    private final ViewExamService viewExamService;
+    private final ViewExamCRUDService viewExamCRUDService;
     private final EvaluatePostsService evaluatePostsService;
-    private final ExamPostsService examPostsService;
+    private final ExamPostCRUDService examPostCRUDService;
     private final ReportPostService reportPostService;
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final RestrictingUserCRUDService restrictingUserCRUDService;
@@ -232,8 +232,8 @@ public class UserBusinessService {
         }
         reportPostService.deleteFromUserIdx(user.getId());
         favoriteMajorService.deleteFromUserIdx(user.getId());
-        viewExamService.deleteFromUserIdx(user.getId());
-        examPostsService.deleteFromUserIdx(user.getId());
+        viewExamCRUDService.deleteAllFromUserIdx(user.getId());
+        examPostCRUDService.deleteFromUserIdx(user.getId());
         evaluatePostsService.deleteFromUserIdx(user.getId());
         user.waitQuit();
         return successFlag();
@@ -267,7 +267,7 @@ public class UserBusinessService {
         jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUserIdx = jwtAgent.getId(Authorization);
-        ExamPosts examPost = examPostsService.loadExamPostsFromExamPostsIdx(
+        ExamPosts examPost = examPostCRUDService.loadExamPostFromExamPostIdx(
                 examReportForm.getExamIdx());
         Long reportedUserIdx = examPost.getUser().getId();
         reportPostService.saveExamPostReport(

@@ -24,16 +24,6 @@ public class ViewExamCRUDService {
         viewExamRepository.save(viewExam);
     }
 
-    public boolean verifyAuth(Long lectureId, Long userIdx) {
-        List<ViewExam> list = viewExamRepository.findByUserId(userIdx);
-        for (ViewExam viewExam : list) {
-            if (viewExam.getLecture().getId().equals(lectureId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public List<ViewExam> loadViewExamsFromUserIdx(Long userIdx) {
         return viewExamRepository.findByUserId(userIdx);
     }
