@@ -10,6 +10,7 @@ import java.util.List;
 
 import static usw.suwiki.domain.confirmationtoken.QConfirmationToken.confirmationToken;
 
+
 @Repository
 @RequiredArgsConstructor
 public class ConfirmationTokenQueryDslRepositoryImpl implements ConfirmationTokenQueryDslRepository {

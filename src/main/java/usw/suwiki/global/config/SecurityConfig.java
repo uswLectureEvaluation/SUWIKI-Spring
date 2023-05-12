@@ -7,15 +7,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import usw.suwiki.global.interceptor.JwtInterceptor;
-
 
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
-
-    private final JwtInterceptor interceptor;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

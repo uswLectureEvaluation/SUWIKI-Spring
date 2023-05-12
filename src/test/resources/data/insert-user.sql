@@ -4,8 +4,8 @@ INSERT INTO user(
                  written_evaluation, written_exam, view_exam_count, point,
                  last_login, requested_quit_date, created_at, updated_at)
 VALUES
-    ('testuser01', 'password1234', 'testuser01@example.com',
-     0, 0, 'USER',
+    ('user1', 'qwer1234!', 'user1@example.com',
+     0, 0, 'ADMIN',
      0, 0, 0, 100,
      now(), null, now(), now());
 
@@ -15,7 +15,7 @@ INSERT INTO user(
     written_evaluation, written_exam, view_exam_count, point,
     last_login, requested_quit_date, created_at, updated_at)
 VALUES
-    ('testuser02', 'password1234', 'testuser02@example.com',
+    ('user2', 'qwer1234!', 'user2@example.com',
      0, 0, 'USER',
      0, 0, 0, 100,
      now(), null, now(), now());

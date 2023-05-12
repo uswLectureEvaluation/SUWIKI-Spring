@@ -1,5 +1,6 @@
 package usw.suwiki.domain.admin.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +16,7 @@ public class UserAdminRequestDto {
         private Long examIdx;
     }
 
-    @Getter @NoArgsConstructor
+    @Getter @NoArgsConstructor @AllArgsConstructor
     public static class EvaluatePostRestrictForm {
         private Long evaluateIdx;
         private Long restrictingDate;

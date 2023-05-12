@@ -1,8 +1,8 @@
 package usw.suwiki.global.jwt;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.refreshToken.RefreshToken;
@@ -10,13 +10,12 @@ import usw.suwiki.domain.refreshToken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.global.exception.errortype.AccountException;
 
-import javax.annotation.PostConstruct;
+import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
-import static io.jsonwebtoken.Jwts.parser;
 import static usw.suwiki.global.exception.ExceptionType.LOGIN_REQUIRED;
 import static usw.suwiki.global.exception.ExceptionType.TOKEN_IS_NOT_FOUND;
 
@@ -24,8 +23,10 @@ import static usw.suwiki.global.exception.ExceptionType.TOKEN_IS_NOT_FOUND;
 @RequiredArgsConstructor
 public class JwtAgent {
 
-    @Value("${spring.jwt.secret-key}")
-    private String secretKey;
+//    @Value("${spring.jwt.secret-key}")
+//    private String secretKey;
+
+    private Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     private static final Long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; // 30분
     private static final Long REFRESH_TOKEN_EXPIRE_TIME = 270 * 24 * 60 * 60 * 1000L; // 270일 -> 9개월
@@ -34,21 +35,18 @@ public class JwtAgent {
 
     private final RefreshTokenCRUDService refreshTokenCRUDService;
 
-    @PostConstruct
-    protected void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-    }
+//    @PostConstruct
+//    protected void init() {
+//        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+//    }
 
-    public void validateJwt(String accessToken) {
+    public void validateJwt(String token) {
         try {
-            Jwts
-                    .parser()
-                    .setSigningKey(secretKey.getBytes())
-                    .parseClaimsJws(accessToken);
-        } catch (SignatureException |
-                 MalformedJwtException |
-                 IllegalArgumentException ex
-        ) {
+            Jwts.parserBuilder()
+                    .setSigningKey(key).build()
+                    .parseClaimsJws(token);
+        } catch (MalformedJwtException | IllegalArgumentException ex) {
+            System.out.println(ex.getMessage());
             throw new AccountException(LOGIN_REQUIRED);
         } catch (ExpiredJwtException exception) {
             throw new AccountException(TOKEN_IS_NOT_FOUND);
@@ -89,25 +87,25 @@ public class JwtAgent {
 
     private String buildAccessToken(Claims claims, Date accessTokenExpireIn) {
         return Jwts.builder()
+                .signWith(key)
                 .setHeaderParam("type", "JWT")
                 .setClaims(claims)
                 .setExpiration(accessTokenExpireIn)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
     }
 
     private String buildRefreshToken(Date refreshTokenExpireIn) {
         return Jwts.builder()
+                .signWith(key)
                 .setHeaderParam("type", "JWT")
                 .setExpiration(refreshTokenExpireIn)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
     }
 
     public Long getId(String token) {
         validateJwt(token);
-        Object id = parser()
-                .setSigningKey(secretKey.getBytes())
+        Object id = Jwts.parserBuilder()
+                .setSigningKey(key).build()
                 .parseClaimsJws(token)
                 .getBody().get("id");
         return Long.valueOf(String.valueOf(id));
@@ -115,16 +113,16 @@ public class JwtAgent {
 
     public String getUserRole(String token) {
         validateJwt(token);
-        return (String) parser()
-                .setSigningKey(secretKey.getBytes())
-                .parseClaimsJws(token).getBody()
-                .get("role");
+        return (String) Jwts.parserBuilder()
+                .setSigningKey(key).build()
+                .parseClaimsJws(token)
+                .getBody().get("role");
     }
 
     public Boolean getUserIsRestricted(String token) {
         validateJwt(token);
-        return (Boolean) parser()
-                .setSigningKey(secretKey.getBytes())
+        return (Boolean) Jwts.parserBuilder()
+                .setSigningKey(key).build()
                 .parseClaimsJws(token)
                 .getBody().get("restricted");
     }
@@ -134,25 +132,27 @@ public class JwtAgent {
      */
     @Transactional
     public String judgementRefreshTokenCreateOrUpdateInLogin(User user) {
-        RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromUserIdx(user.getId());
+        Optional<RefreshToken> wrappedRefreshToken =
+                refreshTokenCRUDService.loadRefreshTokenFromUserIdx(user.getId());
+        if (wrappedRefreshToken.isEmpty()) {
+            return createRefreshToken(user);
+        }
+        RefreshToken refreshToken = wrappedRefreshToken.get();
         if (isNeedToUpdateRefreshTokenInLogin(refreshToken)) {
             String payload = reIssueRefreshToken(refreshToken);
-            refreshToken.updatePayload(payload);
+            wrappedRefreshToken.get().updatePayload(payload);
             return payload;
-        } else if (!isNeedToUpdateRefreshTokenInLogin(refreshToken)) {
-            return refreshToken.getPayload();
         }
-        return createRefreshToken(user);
+        return refreshToken.getPayload();
     }
 
     private Boolean isNeedToUpdateRefreshTokenInLogin(RefreshToken refreshToken) {
         Date claims;
         try {
-            claims = Jwts.parser()
-                    .setSigningKey(secretKey.getBytes())
+            claims = Jwts.parserBuilder()
+                    .setSigningKey(key).build()
                     .parseClaimsJws(refreshToken.getPayload())
-                    .getBody()
-                    .getExpiration();
+                    .getBody().getExpiration();
         } catch (ExpiredJwtException expiredJwtException) {
             return true;
         }

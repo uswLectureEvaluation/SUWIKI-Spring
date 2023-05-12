@@ -25,7 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static usw.suwiki.global.exception.ExceptionType.*;
+import static usw.suwiki.global.exception.ExceptionType.PASSWORD_ERROR;
+import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successCapitalFlag;
 
 @Service
@@ -48,10 +49,13 @@ public class UserAdminBusinessService {
     public Map<String, String> executeAdminLogin(LoginForm loginForm) {
         User user = userCRUDService.loadUserFromLoginId(loginForm.getLoginId());
         if (bCryptPasswordEncoder.matches(loginForm.getPassword(), user.getPassword())) {
-            return new HashMap<>() {{
-                put("AccessToken", jwtAgent.createAccessToken(user));
-                put("UserCount", String.valueOf(userCRUDService.findAllUsersSize()));
-            }};
+            if (user.getRole().getKey().equals("ADMIN")) {
+                return new HashMap<>() {{
+                    put("AccessToken", jwtAgent.createAccessToken(user));
+                    put("UserCount", String.valueOf(userCRUDService.findAllUsersSize()));
+                }};
+            }
+            throw new AccountException(USER_RESTRICTED);
         }
         throw new AccountException(PASSWORD_ERROR);
     }
@@ -138,9 +142,9 @@ public class UserAdminBusinessService {
     ) {
         validateAdmin(accessToken);
         Long userIdx = evaluatePostCRUDService
-            .loadEvaluatePostFromEvaluatePostIdx(evaluatePostBlacklistForm.getEvaluateIdx())
-            .getUser()
-            .getId();
+                .loadEvaluatePostFromEvaluatePostIdx(evaluatePostBlacklistForm.getEvaluateIdx())
+                .getUser()
+                .getId();
 
         deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostBlacklistForm.getEvaluateIdx());
         blacklistDomainCRUDService.saveBlackListDomain(
@@ -177,33 +181,17 @@ public class UserAdminBusinessService {
     }
 
     private Long deleteReportedEvaluatePostFromEvaluateIdx(Long evaluateIdx) {
-        if (evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx) != null) {
-            EvaluatePosts evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
-            reportPostService.deleteByEvaluateIdx(evaluateIdx);
-
-            /**
-             * 여기부터는 조심해주세요.
-             */
-            evaluatePostCRUDService.executeDeleteEvaluatePost(evaluatePost.getId(),
-                evaluatePost.getUser().getId()
-            );
-            return evaluatePost.getUser().getId();
-        }
-
-        throw new AccountException(SERVER_ERROR);
+        EvaluatePosts evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
+        reportPostService.deleteByEvaluateIdx(evaluateIdx);
+        evaluatePostCRUDService.delete(evaluatePost);
+        return evaluatePost.getUser().getId();
     }
 
     private Long deleteReportedExamPostFromEvaluateIdx(Long examPostIdx) {
-        if (examPostCRUDService.loadExamPostFromExamPostIdx(examPostIdx) != null) {
-            ExamPosts examPost = examPostCRUDService.loadExamPostFromExamPostIdx(examPostIdx);
-            reportPostService.deleteByEvaluateIdx(examPostIdx);
-            evaluatePostsService.executeDeleteEvaluatePost(
-                    examPost.getId(),
-                    examPost.getUser().getId()
-            );
-            return examPost.getUser().getId();
-        }
-        throw new AccountException(SERVER_ERROR);
+        ExamPosts examPost = examPostCRUDService.loadExamPostFromExamPostIdx(examPostIdx);
+        reportPostService.deleteByEvaluateIdx(examPostIdx);
+        examPostCRUDService.delete(examPost);
+        return examPost.getUser().getId();
     }
 
     private void plusRestrictCount(Long userIdx) {

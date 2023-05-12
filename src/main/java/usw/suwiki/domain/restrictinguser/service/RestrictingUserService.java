@@ -7,13 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.ExamPostRestrictForm;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
+import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
+import usw.suwiki.domain.evaluation.service.EvaluatePostCRUDService;
+import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.exam.service.ExamPostCRUDService;
 import usw.suwiki.domain.restrictinguser.RestrictingUser;
 import usw.suwiki.domain.restrictinguser.repository.RestrictingUserRepository;
-import usw.suwiki.domain.evaluation.entity.EvaluatePosts;
-import usw.suwiki.domain.evaluation.service.EvaluatePostsService;
-import usw.suwiki.domain.exam.domain.ExamPosts;
-import usw.suwiki.domain.exam.service.ExamPostService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 
@@ -30,7 +29,7 @@ public class RestrictingUserService {
     private final static Long BANNED_PERIOD = 90L;
 
     private final UserCRUDService userCRUDService;
-    private final EvaluatePostsService evaluatePostsService;
+    private final EvaluatePostCRUDService evaluatePostCRUDService;
     private final ExamPostCRUDService examPostCRUDService;
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final RestrictingUserRepository restrictingUserRepository;
@@ -38,8 +37,8 @@ public class RestrictingUserService {
     public void executeRestrictUserFromEvaluatePost(
             EvaluatePostRestrictForm evaluatePostRestrictForm
     ) {
-        EvaluatePosts evaluatePost = evaluatePostsService
-                .loadEvaluatePostsFromEvaluatePostsIdx(evaluatePostRestrictForm.getEvaluateIdx());
+        EvaluatePosts evaluatePost = evaluatePostCRUDService
+                .loadEvaluatePostFromEvaluatePostIdx(evaluatePostRestrictForm.getEvaluateIdx());
         User user = userCRUDService.loadUserFromUserIdx(evaluatePost.getUser().getId());
 
         if (user.getRestrictedCount() >= 2) {

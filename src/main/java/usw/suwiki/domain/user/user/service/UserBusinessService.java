@@ -9,6 +9,7 @@ import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainService;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
 import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
+import usw.suwiki.domain.evaluation.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.evaluation.service.EvaluatePostService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.exam.service.ExamPostCRUDService;
@@ -54,6 +55,7 @@ import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.*;
 public class UserBusinessService {
 
     private static final String BASE_LINK = "https://api.suwiki.kr/user/verify-email/?token=";
+    private static final String LOCAL_BASE_LINK = "http://localhost:8080/user/verify-email/?token=";
     private static final String MAIL_FORM = "@suwon.ac.kr";
     private final UserCRUDService userCRUDService;
     private final UserIsolationCRUDService userIsolationCRUDService;
@@ -68,7 +70,7 @@ public class UserBusinessService {
     private final JwtAgent jwtAgent;
     private final FavoriteMajorService favoriteMajorService;
     private final ViewExamCRUDService viewExamCRUDService;
-    private final EvaluatePostService evaluatePostService;
+    private final EvaluatePostCRUDService evaluatePostCRUDService;
     private final ExamPostCRUDService examPostCRUDService;
     private final ReportPostService reportPostService;
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
@@ -112,7 +114,7 @@ public class UserBusinessService {
 
         emailSender.send(
                 email,
-                buildEmailAuthForm.buildEmail(BASE_LINK + confirmationToken.getToken())
+                buildEmailAuthForm.buildEmail(LOCAL_BASE_LINK + confirmationToken.getToken())
         );
         return successFlag();
     }
@@ -213,13 +215,13 @@ public class UserBusinessService {
 
     public Map<String, String> executeJWTRefreshForWebClient(Cookie requestRefreshCookie) {
         String payload = requestRefreshCookie.getValue();
-        RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
+        RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload).get();
         User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
         return generateUserJWT(user);
     }
 
     public Map<String, String> executeJWTRefreshForMobileClient(String Authorization) {
-        RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(Authorization);
+        RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(Authorization).get();
         User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
         return generateUserJWT(user);
     }
@@ -234,7 +236,7 @@ public class UserBusinessService {
         favoriteMajorService.deleteFromUserIdx(user.getId());
         viewExamCRUDService.deleteAllFromUserIdx(user.getId());
         examPostCRUDService.deleteFromUserIdx(user.getId());
-        evaluatePostService.deleteFromUserIdx(user.getId());
+        evaluatePostCRUDService.deleteFromUserIdx(user.getId());
         user.waitQuit();
         return successFlag();
     }
@@ -246,7 +248,7 @@ public class UserBusinessService {
         jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUserIdx = jwtAgent.getId(Authorization);
-        EvaluatePosts evaluatePost = evaluatePostService.loadEvaluatePostsFromEvaluatePostsIdx(
+        EvaluatePosts evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(
                 evaluateReportForm.getEvaluateIdx());
         Long reportedUserIdx = evaluatePost.getUser().getId();
 

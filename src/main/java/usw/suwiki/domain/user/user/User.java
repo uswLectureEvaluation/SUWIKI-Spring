@@ -164,7 +164,7 @@ public class User {
     public boolean validatePassword(
             BCryptPasswordEncoder bCryptPasswordEncoder, String inputPassword
     ) {
-        return bCryptPasswordEncoder.encode(inputPassword).matches(password);
+        return bCryptPasswordEncoder.matches(inputPassword, password);
     }
 
     public void activateUser() {

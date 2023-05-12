@@ -2,13 +2,15 @@ package usw.suwiki.domain.admin.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.admin.service.UserAdminBusinessService;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto;
+import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
 import usw.suwiki.domain.admin.dto.UserAdminResponseDto;
+import usw.suwiki.domain.admin.service.UserAdminBusinessService;
 import usw.suwiki.domain.postreport.EvaluatePostReport;
 import usw.suwiki.domain.postreport.ExamPostReport;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
 import usw.suwiki.global.annotation.ApiLogger;
+import usw.suwiki.global.annotation.JWTVerify;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -24,7 +26,6 @@ public class UserAdminController {
 
     private final UserAdminBusinessService userAdminBusinessService;
 
-    // 관리자 전용 로그인 API
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @PostMapping("/login")
@@ -34,18 +35,18 @@ public class UserAdminController {
         return userAdminBusinessService.executeAdminLogin(loginForm);
     }
 
-    // 강의평가 게시물 정지 먹이기
+    @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @PostMapping("/evaluate-posts/restrict")
     public Map<String, Boolean> restrictEvaluatePost(
             @Valid @RequestHeader String Authorization,
-            @Valid @RequestBody UserAdminRequestDto.EvaluatePostRestrictForm evaluatePostRestrictForm
+            @Valid @RequestBody EvaluatePostRestrictForm evaluatePostRestrictForm
     ) {
         return userAdminBusinessService.executeRestrictEvaluatePost(Authorization, evaluatePostRestrictForm);
     }
 
-    // 시험정보 게시물 정지 먹이기
+    @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @PostMapping("/exam-post/restrict")
@@ -57,7 +58,7 @@ public class UserAdminController {
     }
 
 
-    // 강의평가 게시물 블랙리스트 먹이기
+    @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @PostMapping("/evaluate-post/blacklist")
@@ -68,7 +69,7 @@ public class UserAdminController {
         return userAdminBusinessService.executeBlackListEvaluatePost(Authorization, evaluatePostBlacklistForm);
     }
 
-    // 시험정보 게시물 블랙리스트 먹이기
+    @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @PostMapping("/exam-post/blacklist")
@@ -79,7 +80,7 @@ public class UserAdminController {
         return userAdminBusinessService.executeBlackListExamPost(Authorization, examPostBlacklistForm);
     }
 
-    // 이상 없는 신고 강의평가 게시글이면 지워주기
+    @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @DeleteMapping("/evaluate-post")
@@ -90,7 +91,7 @@ public class UserAdminController {
         return userAdminBusinessService.executeNoProblemEvaluatePost(Authorization, evaluatePostNoProblemForm);
     }
 
-    // 이상 없는 신고 시험정보 게시글이면 지워주기
+    @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @DeleteMapping("/exam-post")
@@ -101,7 +102,7 @@ public class UserAdminController {
         return userAdminBusinessService.executeNoProblemExamPost(Authorization, examPostNoProblemForm);
     }
 
-    // 신고받은 게시글 리스트 불러오기
+    @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @GetMapping("/reported-posts")
@@ -112,7 +113,7 @@ public class UserAdminController {
     }
 
 
-    // 강의평가에 관련된 신고 게시글 자세히 보기
+    @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @GetMapping("/reported-evaluate/")
