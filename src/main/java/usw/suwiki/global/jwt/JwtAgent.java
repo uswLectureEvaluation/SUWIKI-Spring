@@ -16,17 +16,12 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
 
-import static usw.suwiki.global.exception.ExceptionType.LOGIN_REQUIRED;
-import static usw.suwiki.global.exception.ExceptionType.TOKEN_IS_NOT_FOUND;
+import static usw.suwiki.global.exception.ExceptionType.*;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAgent {
-
-//    @Value("${spring.jwt.secret-key}")
-//    private String secretKey;
-
-    private Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     private static final Long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; // 30분
     private static final Long REFRESH_TOKEN_EXPIRE_TIME = 270 * 24 * 60 * 60 * 1000L; // 270일 -> 9개월
@@ -34,11 +29,6 @@ public class JwtAgent {
 //    private static final Long REFRESH_TOKEN_EXPIRE_TIME = 5 * 60 * 1000L; // 5분
 
     private final RefreshTokenCRUDService refreshTokenCRUDService;
-
-//    @PostConstruct
-//    protected void init() {
-//        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-//    }
 
     public void validateJwt(String token) {
         try {
@@ -49,7 +39,7 @@ public class JwtAgent {
             System.out.println(ex.getMessage());
             throw new AccountException(LOGIN_REQUIRED);
         } catch (ExpiredJwtException exception) {
-            throw new AccountException(TOKEN_IS_NOT_FOUND);
+            throw new AccountException(TOKEN_IS_EXPIRED);
         }
     }
 
@@ -127,18 +117,18 @@ public class JwtAgent {
                 .getBody().get("restricted");
     }
 
-    /**
-     * 로그인 요청 시 리프레시 토큰을 갱신해 줘야 할지 판단한다.
-     */
     @Transactional
-    public String judgementRefreshTokenCreateOrUpdateInLogin(User user) {
+    public String provideRefreshTokenInLogin(User user) {
         Optional<RefreshToken> wrappedRefreshToken =
                 refreshTokenCRUDService.loadRefreshTokenFromUserIdx(user.getId());
+        // 생애 첫 로그인 시 리프레시 토큰 신규 발급
         if (wrappedRefreshToken.isEmpty()) {
             return createRefreshToken(user);
         }
+
+        // 그렇지 않으면 DB에서 꺼내기
         RefreshToken refreshToken = wrappedRefreshToken.get();
-        if (isNeedToUpdateRefreshTokenInLogin(refreshToken)) {
+        if (isRefreshTokenExpired(refreshToken.getPayload())) {
             String payload = reIssueRefreshToken(refreshToken);
             wrappedRefreshToken.get().updatePayload(payload);
             return payload;
@@ -146,12 +136,28 @@ public class JwtAgent {
         return refreshToken.getPayload();
     }
 
-    private Boolean isNeedToUpdateRefreshTokenInLogin(RefreshToken refreshToken) {
+    @Transactional
+    public String refreshTokenRefresh(String payload) {
+        Optional<RefreshToken> refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
+        if (refreshToken.isPresent()) {
+            if (refreshToken.get().getPayload().equals(payload)) {
+                if (!isRefreshTokenExpired(payload)) {
+                    String newPayload = reIssueRefreshToken(refreshToken.get());
+                    refreshToken.get().updatePayload(newPayload);
+                    return newPayload;
+                }
+                throw new AccountException(TOKEN_IS_EXPIRED);
+            }
+        }
+        throw new AccountException(TOKEN_IS_BROKEN);
+    }
+
+    private Boolean isRefreshTokenExpired(String refreshToken) {
         Date claims;
         try {
             claims = Jwts.parserBuilder()
                     .setSigningKey(key).build()
-                    .parseClaimsJws(refreshToken.getPayload())
+                    .parseClaimsJws(refreshToken)
                     .getBody().getExpiration();
         } catch (ExpiredJwtException expiredJwtException) {
             return true;
