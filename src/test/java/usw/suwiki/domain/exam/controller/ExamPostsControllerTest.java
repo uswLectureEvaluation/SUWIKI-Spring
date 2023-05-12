@@ -78,7 +78,8 @@ class ExamPostsControllerTest extends BaseIntegrationTest {
 		resultActions
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.canRead").value(Boolean.FALSE))
-			.andExpect(jsonPath("$.examDataExist").value(Boolean.TRUE));
+			.andExpect(jsonPath("$.examDataExist").value(Boolean.TRUE))
+			.andExpect(jsonPath("$.data").isEmpty());
 	}
 
 	@Test

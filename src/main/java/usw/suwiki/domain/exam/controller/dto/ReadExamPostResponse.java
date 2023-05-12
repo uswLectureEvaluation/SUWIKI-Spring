@@ -37,6 +37,7 @@ public class ReadExamPostResponse {
     }
 
     public void  forbiddenToRead() {
+        this.data = new ArrayList<>();
         this.canRead = Boolean.FALSE;
     }
 }
