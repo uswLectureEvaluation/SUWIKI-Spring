@@ -65,15 +65,15 @@ public class JpaEvaluatePostsRepository implements EvaluatePostsRepository {
     }
 
     @Override
-    public boolean verifyPostsByIdx(User user, Lecture lecture) {
+    public boolean isExistPostsByIdx(User user, Lecture lecture) {
         List resultList = em.createQuery(
             "SELECT p from EvaluatePosts p WHERE p.user = :user AND p.lecture = :lecture")
                 .setParameter("user", user)
                 .setParameter("lecture", lecture)
                 .getResultList();
         if (resultList.isEmpty()) {
-            return true;
-        } else return false;
+            return false;
+        } else return true;
     }
 
     @Override

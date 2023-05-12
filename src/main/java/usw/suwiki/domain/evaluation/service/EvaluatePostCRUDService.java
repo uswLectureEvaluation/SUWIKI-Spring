@@ -57,8 +57,8 @@ public class EvaluatePostCRUDService {
         evaluatePostsRepository.delete(evaluatePost);
     }
 
-    public boolean verifyIsUserWriteEvaluatePost(User user, Lecture lecture) {
-        return evaluatePostsRepository.verifyPostsByIdx(user, lecture);
+    public boolean verifyIsUserCanWriteEvaluatePost(User user, Lecture lecture) {
+        return !(evaluatePostsRepository.isExistPostsByIdx(user, lecture));
     }
 
     public void validateNotNull(EvaluatePosts evaluatePost) {

@@ -17,7 +17,7 @@ public interface EvaluatePostsRepository {
 
     List<EvaluatePosts> findByUserId(PageOption option, Long userId);
 
-    boolean verifyPostsByIdx(User user, Lecture lecture);
+    boolean isExistPostsByIdx(User user, Lecture lecture);
 
     void delete(EvaluatePosts evaluatePosts);
 

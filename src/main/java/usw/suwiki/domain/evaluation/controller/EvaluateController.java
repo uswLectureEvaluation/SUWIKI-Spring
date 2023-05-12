@@ -15,6 +15,7 @@ import usw.suwiki.global.PageOption;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.global.exception.errortype.EvaluatePostException;
 import usw.suwiki.global.jwt.JwtAgent;
 
 import java.util.List;
@@ -36,75 +37,64 @@ public class EvaluateController {
 
     @ApiLogger(option = "evaluatePosts")
     @GetMapping
-    public ResponseEntity<FindByLectureToJson> findByLecture(
-            @RequestHeader String Authorization,
-            @RequestParam Long lectureId,
-            @RequestParam(required = false) Optional<Integer> page
-    ) {
-        HttpHeaders header = new HttpHeaders();
-        jwtAgent.validateJwt(Authorization);
-        if (jwtAgent.getUserIsRestricted(Authorization)) {
-            throw new AccountException(USER_RESTRICTED);
-        }
-        List<EvaluateResponseByLectureIdDto> response =
-            evaluatePostService.readEvaluatePostsByLectureId(new PageOption(page), lectureId);
-
-        FindByLectureToJson data = new FindByLectureToJson(response);
-        if (evaluatePostService.verifyIsUserWriteEvaluatePost(
-                jwtAgent.getId(Authorization), lectureId)) {
-            data.setWritten(false);
-        }
-        return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
-    }
-
-    @ApiLogger(option = "evaluatePosts")
-    @PutMapping
-    public ResponseEntity<String> updateEvaluatePosts(
-            @RequestParam Long evaluateIdx,
-            @RequestHeader String Authorization,
-            @RequestBody EvaluatePostsUpdateDto dto
-    ) {
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(APPLICATION_JSON);
-        jwtAgent.validateJwt(Authorization);
-        if (jwtAgent.getUserIsRestricted(Authorization)) {
-            throw new AccountException(USER_RESTRICTED);
-        }
-        evaluatePostService.update(evaluateIdx, dto);
-        return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
-    }
-
-    @ApiLogger(option = "evaluatePosts")
-    @PostMapping
-    public ResponseEntity<String> saveEvaluatePosts(
-            @RequestParam Long lectureId,
-            @RequestHeader String Authorization,
-            @RequestBody EvaluatePostsSaveDto dto
-    ) {
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(APPLICATION_JSON);
+    public FindByLectureToJson readEvaluatePostsByLectureApi(
+        @RequestHeader String Authorization,
+        @RequestParam Long lectureId,
+        @RequestParam(required = false) Optional<Integer> page) {
 
         jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
         Long userIdx = jwtAgent.getId(Authorization);
-        if (evaluatePostService.verifyIsUserWriteEvaluatePost(userIdx, lectureId)) {
-            evaluatePostService.save(dto, userIdx, lectureId);
-            return new ResponseEntity<>("success", header, HttpStatus.valueOf(200));
-        } else {
-            throw new AccountException(POSTS_WRITE_OVERLAP);
+
+        FindByLectureToJson response = evaluatePostService.readEvaluatePostsByLectureId(new PageOption(page),
+            userIdx, lectureId);
+
+        return response;
+    }
+
+    @ApiLogger(option = "evaluatePosts")
+    @PutMapping
+    public String updateEvaluatePosts(
+            @RequestParam Long evaluateIdx,
+            @RequestHeader String Authorization,
+            @RequestBody EvaluatePostsUpdateDto requestBody
+    ) {
+        jwtAgent.validateJwt(Authorization);
+        if (jwtAgent.getUserIsRestricted(Authorization)) {
+            throw new AccountException(USER_RESTRICTED);
         }
+
+        evaluatePostService.update(evaluateIdx, requestBody);
+        return "success";
+    }
+
+    @ApiLogger(option = "evaluatePosts")
+    @PostMapping
+    public String writeEvaluatePostApi(
+        @RequestParam Long lectureId,
+        @RequestHeader String Authorization,
+        @RequestBody EvaluatePostsSaveDto requestBody) {
+
+        jwtAgent.validateJwt(Authorization);
+        if (jwtAgent.getUserIsRestricted(Authorization)) {
+            throw new AccountException(USER_RESTRICTED);
+        }
+
+        Long userIdx = jwtAgent.getId(Authorization);
+        evaluatePostService.write(requestBody, userIdx, lectureId);
+
+        return "success";
     }
 
     @ApiLogger(option = "evaluatePosts")
     @ResponseStatus(OK)
     @GetMapping("/written")
-    public ResponseEntity<ResponseForm> findByUser(
+    public ResponseForm findByUser(
             @RequestHeader String Authorization,
             @RequestParam(required = false) Optional<Integer> page
     ) {
-        HttpHeaders header = new HttpHeaders();
         jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
@@ -115,8 +105,8 @@ public class EvaluateController {
             jwtAgent.getId(Authorization)
         );
 
-        ResponseForm data = new ResponseForm(list);
-        return new ResponseEntity<>(data, header, HttpStatus.valueOf(200));
+        ResponseForm response = new ResponseForm(list);
+        return response;
     }
 
     @ApiLogger(option = "evaluatePosts")

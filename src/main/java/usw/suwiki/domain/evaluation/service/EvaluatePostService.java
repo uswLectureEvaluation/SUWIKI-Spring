@@ -1,5 +1,7 @@
 package usw.suwiki.domain.evaluation.service;
 
+import static usw.suwiki.global.exception.ExceptionType.*;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +12,7 @@ import usw.suwiki.domain.evaluation.controller.dto.EvaluateResponseByLectureIdDt
 import usw.suwiki.domain.evaluation.controller.dto.EvaluateResponseByUserIdxDto;
 import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
 import usw.suwiki.domain.evaluation.domain.repository.EvaluatePostsRepository;
+import usw.suwiki.domain.evaluation.service.dto.FindByLectureToJson;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureCRUDService;
 import usw.suwiki.domain.user.user.User;
@@ -22,8 +25,6 @@ import usw.suwiki.global.exception.errortype.EvaluatePostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static usw.suwiki.global.exception.ExceptionType.USER_POINT_LACK;
-
 @Service
 @RequiredArgsConstructor
 public class EvaluatePostService {
@@ -33,7 +34,8 @@ public class EvaluatePostService {
     private final UserCRUDService userCRUDService;
 
     @Transactional
-    public void save(EvaluatePostsSaveDto evaluatePostData, Long userIdx, Long lectureId) {
+    public void write(EvaluatePostsSaveDto evaluatePostData, Long userIdx, Long lectureId) {
+        checkAlreadyWrite(userIdx, lectureId);
         Lecture lecture = lectureCRUDService.loadLectureFromId(lectureId);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         EvaluatePosts evaluatePost = createEvaluatePost(evaluatePostData, user, lecture);
@@ -56,20 +58,29 @@ public class EvaluatePostService {
     }
 
     @Transactional(readOnly = true)
-    public List<EvaluateResponseByLectureIdDto> readEvaluatePostsByLectureId(
-            PageOption option, Long lectureId) {
-        List<EvaluateResponseByLectureIdDto> response = new ArrayList<>();
+    public FindByLectureToJson readEvaluatePostsByLectureId(
+            PageOption option, Long userIdx, Long lectureId) {
+        List<EvaluateResponseByLectureIdDto> data = new ArrayList<>();
         List<EvaluatePosts> evaluatePosts = evaluatePostCRUDService.loadEvaluatePostsFromLectureIdx(option, lectureId);
         for (EvaluatePosts post : evaluatePosts) {
-            response.add(new EvaluateResponseByLectureIdDto(post));
+            data.add(new EvaluateResponseByLectureIdDto(post));
+        }
+
+        FindByLectureToJson response = setWrittenInformation(data, userIdx, lectureId);
+        return response;
+    }
+
+    private FindByLectureToJson setWrittenInformation(List<EvaluateResponseByLectureIdDto> data, Long userIdx,
+        Long lectureId) {
+        FindByLectureToJson response = new FindByLectureToJson(data);
+        if (verifyIsUserCanWriteEvaluatePost(userIdx, lectureId)) {
+            response.setWritten(Boolean.FALSE);
         }
         return response;
     }
 
     @Transactional(readOnly = true)
-    public List<EvaluateResponseByUserIdxDto> readEvaluatePostsByUserId(
-        PageOption option, Long userId) {
-
+    public List<EvaluateResponseByUserIdxDto> readEvaluatePostsByUserId(PageOption option, Long userId) {
         List<EvaluateResponseByUserIdxDto> response = new ArrayList<>();
         List<EvaluatePosts> evaluatePosts = evaluatePostCRUDService.loadEvaluatePostsFromUserIdxAndOption(option, userId);
         for (EvaluatePosts post : evaluatePosts) {
@@ -80,10 +91,10 @@ public class EvaluatePostService {
         return response;
     }
 
-    public boolean verifyIsUserWriteEvaluatePost(Long userIdx, Long lectureId) {
+    public boolean verifyIsUserCanWriteEvaluatePost(Long userIdx, Long lectureId) {
         Lecture lecture = lectureCRUDService.loadLectureFromId(lectureId);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
-        return evaluatePostCRUDService.verifyIsUserWriteEvaluatePost(user, lecture);
+        return evaluatePostCRUDService.verifyIsUserCanWriteEvaluatePost(user, lecture);
     }
 
     public void executeDeleteEvaluatePost(Long evaluateIdx, Long userIdx) {
@@ -107,6 +118,12 @@ public class EvaluatePostService {
     public void updateLectureEvaluationIfDeletePost(EvaluatePostsToLecture post) {
         Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(post.getLectureId());
         lecture.handleLectureEvaluationIfDeletePost(post);
+    }
+
+    private void checkAlreadyWrite(Long userIdx, Long lectureIdx) {
+        if (!(verifyIsUserCanWriteEvaluatePost(userIdx, lectureIdx))) {
+            throw new EvaluatePostException(POSTS_WRITE_OVERLAP);
+        }
     }
 
     private EvaluatePosts createEvaluatePost(EvaluatePostsSaveDto evaluatePostData, User user, Lecture lecture) {
