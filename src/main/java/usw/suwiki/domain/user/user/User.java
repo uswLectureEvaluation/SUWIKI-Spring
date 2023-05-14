@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.global.exception.errortype.AccountException;
@@ -63,9 +65,11 @@ public class User {
     @Column
     private LocalDateTime requestedQuitDate;
 
+    @CreatedDate
     @Column
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column
     private LocalDateTime updatedAt;
 

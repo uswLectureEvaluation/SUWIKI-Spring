@@ -53,7 +53,7 @@ import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.*;
 public class UserBusinessService {
 
     private static final String BASE_LINK = "https://api.suwiki.kr/user/verify-email/?token=";
-    private static final String LOCAL_BASE_LINK = "http://localhost:8080/user/verify-email/?token=";
+    private static final String LOCAL_BASE_LINK = "http://localhost:8080/v2/confirmation-token/verify-email/?token=";
     private static final String MAIL_FORM = "@suwon.ac.kr";
     private final UserCRUDService userCRUDService;
     private final UserIsolationCRUDService userIsolationCRUDService;
