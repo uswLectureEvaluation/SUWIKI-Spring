@@ -58,7 +58,8 @@ public enum ExceptionType {
     /**
      * Domain : Token
      */
-    TOKEN_IS_NOT_FOUND("TOKEN001", "토큰이 만료되었거나, 유효하지 않습니다. 다시 로그인 해주세요", UNAUTHORIZED),
+    TOKEN_IS_EXPIRED("TOKEN001", "토큰이 만료되었습니다 다시 로그인 해주세요", UNAUTHORIZED),
+    TOKEN_IS_BROKEN("TOKEN002", "토큰이 유효하지 않습니다.", BAD_REQUEST),
 
     /**
      * Domain : Lecture
@@ -82,7 +83,7 @@ public enum ExceptionType {
     /**
      * 공통
      */
-    PARAM_VALID_ERROR("PARAM001", "Exception Message", HttpStatus.BAD_REQUEST),
+    PARAM_VALID_ERROR("PARAM001", "파라미터가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
     SEND_MAIL_FAILED("MAIL001", "메일 전송에 실패했습니다.", INTERNAL_SERVER_ERROR), //500
     METHOD_NOT_ALLOWED("METHOD001", "Exception Message", HttpStatus.METHOD_NOT_ALLOWED),
     ;

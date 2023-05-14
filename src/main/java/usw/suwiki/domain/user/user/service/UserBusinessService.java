@@ -10,7 +10,6 @@ import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
 import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostCRUDService;
-import usw.suwiki.domain.evaluation.service.EvaluatePostService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.exam.service.ExamPostCRUDService;
 import usw.suwiki.domain.exam.service.ViewExamCRUDService;
@@ -37,7 +36,6 @@ import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
 import usw.suwiki.global.util.mailsender.EmailSender;
 
 import javax.servlet.http.Cookie;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -217,13 +215,13 @@ public class UserBusinessService {
         String payload = requestRefreshCookie.getValue();
         RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload).get();
         User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
-        return generateUserJWT(user);
+        return refreshUserJWT(user, payload);
     }
 
     public Map<String, String> executeJWTRefreshForMobileClient(String Authorization) {
         RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(Authorization).get();
         User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
-        return generateUserJWT(user);
+        return refreshUserJWT(user, refreshToken.getPayload());
     }
 
     public Map<String, Boolean> executeQuit(String Authorization, String inputPassword) {
@@ -323,7 +321,7 @@ public class UserBusinessService {
         return new ResponseForm(list);
     }
 
-    public void rollBackSoftDeletedForIsolation(Long userIdx) {
+    private void rollBackSoftDeletedForIsolation(Long userIdx) {
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         user.sleep();
     }
@@ -331,7 +329,14 @@ public class UserBusinessService {
     private Map<String, String> generateUserJWT(User user) {
         return new HashMap<>() {{
             put("AccessToken", jwtAgent.createAccessToken(user));
-            put("RefreshToken", jwtAgent.judgementRefreshTokenCreateOrUpdateInLogin(user));
+            put("RefreshToken", jwtAgent.provideRefreshTokenInLogin(user));
+        }};
+    }
+
+    private Map<String, String> refreshUserJWT(User user, String refreshTokenPayload) {
+        return new HashMap<>() {{
+            put("AccessToken", jwtAgent.createAccessToken(user));
+            put("RefreshToken", jwtAgent.refreshTokenRefresh(refreshTokenPayload));
         }};
     }
 }
