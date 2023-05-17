@@ -32,7 +32,7 @@ import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successCapit
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserAdminBusinessService {
+public class AdminBusinessService {
 
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final UserCRUDService userCRUDService;

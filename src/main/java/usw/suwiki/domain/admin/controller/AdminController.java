@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
 import usw.suwiki.domain.admin.dto.UserAdminResponseDto;
-import usw.suwiki.domain.admin.service.UserAdminBusinessService;
+import usw.suwiki.domain.admin.service.AdminBusinessService;
 import usw.suwiki.domain.postreport.EvaluatePostReport;
 import usw.suwiki.domain.postreport.ExamPostReport;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
@@ -22,9 +22,9 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 @RequestMapping("/admin")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class UserAdminController {
+public class AdminController {
 
-    private final UserAdminBusinessService userAdminBusinessService;
+    private final AdminBusinessService adminBusinessService;
 
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
@@ -32,7 +32,7 @@ public class UserAdminController {
     public Map<String, String> administratorLogin(
             @Valid @RequestBody LoginForm loginForm
     ) {
-        return userAdminBusinessService.executeAdminLogin(loginForm);
+        return adminBusinessService.executeAdminLogin(loginForm);
     }
 
     @JWTVerify(option = "ADMIN")
@@ -43,7 +43,7 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody EvaluatePostRestrictForm evaluatePostRestrictForm
     ) {
-        return userAdminBusinessService.executeRestrictEvaluatePost(Authorization, evaluatePostRestrictForm);
+        return adminBusinessService.executeRestrictEvaluatePost(Authorization, evaluatePostRestrictForm);
     }
 
     @JWTVerify(option = "ADMIN")
@@ -54,7 +54,7 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody UserAdminRequestDto.ExamPostRestrictForm examPostRestrictForm
     ) {
-        return userAdminBusinessService.executeRestrictExamPost(Authorization, examPostRestrictForm);
+        return adminBusinessService.executeRestrictExamPost(Authorization, examPostRestrictForm);
     }
 
 
@@ -66,7 +66,7 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody UserAdminRequestDto.EvaluatePostBlacklistForm evaluatePostBlacklistForm
     ) {
-        return userAdminBusinessService.executeBlackListEvaluatePost(Authorization, evaluatePostBlacklistForm);
+        return adminBusinessService.executeBlackListEvaluatePost(Authorization, evaluatePostBlacklistForm);
     }
 
     @JWTVerify(option = "ADMIN")
@@ -77,7 +77,7 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody UserAdminRequestDto.ExamPostBlacklistForm examPostBlacklistForm
     ) {
-        return userAdminBusinessService.executeBlackListExamPost(Authorization, examPostBlacklistForm);
+        return adminBusinessService.executeBlackListExamPost(Authorization, examPostBlacklistForm);
     }
 
     @JWTVerify(option = "ADMIN")
@@ -88,7 +88,7 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody UserAdminRequestDto.EvaluatePostNoProblemForm evaluatePostNoProblemForm
     ) {
-        return userAdminBusinessService.executeNoProblemEvaluatePost(Authorization, evaluatePostNoProblemForm);
+        return adminBusinessService.executeNoProblemEvaluatePost(Authorization, evaluatePostNoProblemForm);
     }
 
     @JWTVerify(option = "ADMIN")
@@ -99,7 +99,7 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody UserAdminRequestDto.ExamPostNoProblemForm examPostNoProblemForm
     ) {
-        return userAdminBusinessService.executeNoProblemExamPost(Authorization, examPostNoProblemForm);
+        return adminBusinessService.executeNoProblemExamPost(Authorization, examPostNoProblemForm);
     }
 
     @JWTVerify(option = "ADMIN")
@@ -109,7 +109,7 @@ public class UserAdminController {
     public UserAdminResponseDto.LoadAllReportedPostForm loadReportedPost(
             @Valid @RequestHeader String Authorization
     ) {
-        return userAdminBusinessService.executeLoadAllReportedPosts(Authorization);
+        return adminBusinessService.executeLoadAllReportedPosts(Authorization);
     }
 
 
@@ -121,7 +121,7 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestParam Long target
     ) {
-        return userAdminBusinessService.executeLoadDetailReportedEvaluatePost(Authorization, target);
+        return adminBusinessService.executeLoadDetailReportedEvaluatePost(Authorization, target);
     }
 
     // 시험정보에 관련된 신고 게시글 자세히 보기
@@ -132,6 +132,6 @@ public class UserAdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestParam Long target
     ) {
-        return userAdminBusinessService.executeLoadDetailReportedExamPost(Authorization, target);
+        return adminBusinessService.executeLoadDetailReportedExamPost(Authorization, target);
     }
 }
