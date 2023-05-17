@@ -84,6 +84,39 @@ class EvaluateControllerTest extends BaseIntegrationTest {
 	}
 
 	@Test
+	void 강의평가_중첩_작성하기_예외_테스트() throws Exception {
+		//given
+		String authorization = "authorization";
+		when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
+		when(jwtAgent.getId(authorization)).thenReturn(1L);
+		EvaluatePostsSaveDto requestBody = EvaluatePostsSaveDto.builder()
+			.lectureName("testLecture")
+			.selectedSemester("2022-1")
+			.professor("testProfessor")
+			.content("testContent")
+			.satisfaction(5.0f)
+			.honey(5.0f)
+			.learning(5.0f)
+			.homework(0)
+			.team(0)
+			.difficulty(0)
+			.build();
+
+		//when
+		ResultActions resultActions = mvc.perform(
+				post("/evaluate-posts/?lectureId=1")
+					.header("Authorization", authorization)
+					.content(objectMapper.writeValueAsString(requestBody))
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON))
+			.andDo(print());
+
+		//then
+		resultActions
+			.andExpect(status().isBadRequest());
+	}
+
+	@Test
 	void 강의평가_작성하기() throws Exception {
 		//given
 		String authorization = "authorization";
