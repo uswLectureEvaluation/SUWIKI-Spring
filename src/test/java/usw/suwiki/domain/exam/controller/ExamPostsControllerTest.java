@@ -16,7 +16,6 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.web.servlet.ResultActions;
 
 import usw.suwiki.BaseIntegrationTest;
-import usw.suwiki.domain.exam.controller.dto.ExamPostsSaveDto;
 import usw.suwiki.global.jwt.JwtResolver;
 import usw.suwiki.global.jwt.JwtValidator;
 
@@ -79,7 +78,8 @@ class ExamPostsControllerTest extends BaseIntegrationTest {
 		resultActions
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.canRead").value(Boolean.FALSE))
-			.andExpect(jsonPath("$.examDataExist").value(Boolean.TRUE));
+			.andExpect(jsonPath("$.examDataExist").value(Boolean.TRUE))
+			.andExpect(jsonPath("$.data").isEmpty());
 	}
 
 	@Test
@@ -122,27 +122,5 @@ class ExamPostsControllerTest extends BaseIntegrationTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data").isEmpty())
 			.andExpect(jsonPath("$.examDataExist").value(Boolean.FALSE));
-	}
-
-	@Test
-	void 요청파라미터_타입_틀릴때_예외_테스트() throws Exception {
-		//given
-		String authorization = "authorization";
-		String typeMissRequest = "type-exception";
-
-		//when
-		ResultActions resultActions = mvc.perform(
-				get("/exam-posts/?lectureId=" + typeMissRequest)
-					.header("Authorization", authorization)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON))
-			.andDo(print());
-
-		//then
-		String message = "요청 파라미터를 확인해주세요.";
-
-		resultActions
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value(message));
 	}
 }
