@@ -63,7 +63,7 @@ public enum ExceptionType {
     UNAUTHENTICATED("SECURITY001", "로그인이 필요한 기능입니다.", HttpStatus.UNAUTHORIZED), //401
     LOGIN_FAILED("SECURITY003", "로그인에 실패했습니다. ID, PASSWORD 를 확인해주세요.", HttpStatus.UNAUTHORIZED),
     // Param
-    PARAM_VALID_ERROR("PARAM001", "Exception Message", HttpStatus.BAD_REQUEST),
+    PARAM_VALID_ERROR("PARAM001", "요청 파라미터를 확인해주세요.", HttpStatus.BAD_REQUEST),
 
     // Mail
     SEND_MAIL_FAILED("MAIL001", "메일 전송에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR), //500
