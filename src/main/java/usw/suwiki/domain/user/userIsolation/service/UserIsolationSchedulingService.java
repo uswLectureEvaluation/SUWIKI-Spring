@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserIsolationBusinessService {
+public class UserIsolationSchedulingService {
 
     private final UserCRUDService userCRUDService;
     private final RestrictingUserService restrictingUserService;
@@ -43,8 +43,9 @@ public class UserIsolationBusinessService {
 
     @Scheduled(cron = "2 0 0 * * *")
     public void sendEmailAboutSleeping() {
-        LocalDateTime targetTime = LocalDateTime.now().minusMonths(11);
-        List<User> users = userCRUDService.loadUsersLastLoginBeforeTargetTime(targetTime);
+        LocalDateTime startTime = LocalDateTime.now().minusMonths(12);
+        LocalDateTime endTime = LocalDateTime.now().minusMonths(11);
+        List<User> users = userCRUDService.loadUsersLastLoginBetweenStartEnd(startTime, endTime);
         for (User user : users) {
             emailSender.send(user.getEmail(), buildSoonDormantTargetForm.buildEmail());
         }
@@ -52,17 +53,28 @@ public class UserIsolationBusinessService {
 
     @Scheduled(cron = "4 0 0 * * *")
     public void convertSleepingTable() {
-        LocalDateTime targetTime = LocalDateTime.now().minusMonths(12);
-        List<User> users = userCRUDService.loadUsersLastLoginBeforeTargetTime(targetTime);
+        LocalDateTime startTime = LocalDateTime.now().minusMonths(35);
+        LocalDateTime endTime = LocalDateTime.now().minusMonths(12);
+        List<User> users = userCRUDService.loadUsersLastLoginBetweenStartEnd(startTime, endTime);
         for (User user : users) {
-            convertToIsolationUser(user);
+            UserIsolation userIsolation = UserIsolation.builder()
+                    .userIdx(user.getId())
+                    .loginId(user.getLoginId())
+                    .password(user.getPassword())
+                    .email(user.getEmail())
+                    .lastLogin(user.getLastLogin())
+                    .requestedQuitDate(user.getRequestedQuitDate())
+                    .build();
+            userIsolationCRUDService.saveUserIsolation(userIsolation);
+            userCRUDService.softDeleteForIsolation(user.getId());
         }
     }
 
     @Scheduled(cron = "6 0 0 * * *")
     public void sendEmailAutoDeleteTargeted() {
-        LocalDateTime targetTime = LocalDateTime.now().minusYears(3).plusDays(30);
-        List<User> users = userCRUDService.loadUsersLastLoginBeforeTargetTime(targetTime);
+        LocalDateTime startTime = LocalDateTime.now().minusMonths(36);
+        LocalDateTime endTime = LocalDateTime.now().minusMonths(35);
+        List<User> users = userCRUDService.loadUsersLastLoginBetweenStartEnd(startTime, endTime);
         for (User user : users) {
             emailSender.send(user.getEmail(), userAutoDeletedWarningForm.buildEmail());
         }
@@ -71,10 +83,11 @@ public class UserIsolationBusinessService {
     // 3년간 로그인 하지 않으면 계정 자동 삭제
     @Scheduled(cron = "8 0 0 * * *")
     public void autoDeleteTargetIsThreeYears() {
-        LocalDateTime targetTime = LocalDateTime.now().minusYears(3);
-        List<UserIsolation> users = userIsolationCRUDService.loadIsolationUsersLastLoginBeforeTargetTime(targetTime);
-        for (UserIsolation user : users) {
-            Long userIdx = user.getUserIdx();
+        LocalDateTime startTime = LocalDateTime.now().minusMonths(100);
+        LocalDateTime endTime = LocalDateTime.now().minusMonths(36);
+        List<User> users = userCRUDService.loadUsersLastLoginBetweenStartEnd(startTime, endTime);
+        for (User user : users) {
+            Long userIdx = user.getId();
             viewExamCRUDService.deleteAllFromUserIdx(userIdx);
             refreshTokenCRUDService.deleteFromUserIdx(userIdx);
             reportPostService.deleteFromUserIdx(userIdx);
@@ -83,21 +96,8 @@ public class UserIsolationBusinessService {
             favoriteMajorService.deleteFromUserIdx(userIdx);
             restrictingUserService.deleteFromUserIdx(userIdx);
             confirmationTokenCRUDService.deleteFromUserIdx(userIdx);
-            userIsolationCRUDService.deleteByUserIdx(user.getUserIdx());
+            userIsolationCRUDService.deleteByUserIdx(userIdx);
             userCRUDService.deleteFromUserIdx(userIdx);
         }
-    }
-
-    private void convertToIsolationUser(User user) {
-        UserIsolation userIsolation = UserIsolation.builder()
-                .userIdx(user.getId())
-                .loginId(user.getLoginId())
-                .password(user.getPassword())
-                .email(user.getEmail())
-                .lastLogin(user.getLastLogin())
-                .requestedQuitDate(user.getRequestedQuitDate())
-                .build();
-        userIsolationCRUDService.saveUserIsolation(userIsolation);
-        userCRUDService.softDeleteForIsolation(user.getId());
     }
 }

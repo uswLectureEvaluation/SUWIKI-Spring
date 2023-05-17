@@ -24,8 +24,8 @@ public class UserCRUDService {
         userRepository.save(user);
     }
 
-    public List<User> loadUsersLastLoginBeforeTargetTime(LocalDateTime targetTime) {
-        return userRepository.findByLastLoginBefore(targetTime);
+    public List<User> loadUsersLastLoginBetweenStartEnd(LocalDateTime startTime, LocalDateTime endTime) {
+        return userRepository.findByLastLoginBetween(startTime, endTime);
     }
 
     @Transactional(readOnly = true)

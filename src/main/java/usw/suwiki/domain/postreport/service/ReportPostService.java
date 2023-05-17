@@ -3,6 +3,8 @@ package usw.suwiki.domain.postreport.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.evaluation.service.EvaluatePostCRUDService;
+import usw.suwiki.domain.exam.service.ExamPostCRUDService;
 import usw.suwiki.domain.postreport.EvaluatePostReport;
 import usw.suwiki.domain.postreport.ExamPostReport;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
