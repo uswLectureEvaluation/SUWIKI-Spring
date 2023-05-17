@@ -31,7 +31,7 @@ public class UserControllerV2 {
     )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
-    @PostMapping("/check-loginId")
+    @PostMapping("/loginId/check")
     public ResponseForm overlapId(
             @Valid @RequestBody CheckLoginIdForm checkLoginIdForm
     ) {
@@ -44,7 +44,7 @@ public class UserControllerV2 {
     )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
-    @PostMapping("/check-email")
+    @PostMapping("/email/check")
     public ResponseForm overlapEmail(
             @Valid @RequestBody CheckEmailForm checkEmailForm
     ) {

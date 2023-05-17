@@ -18,7 +18,7 @@ public class ConfirmationTokenControllerV2 {
     // 이메일 인증 링크를 눌렀을 때
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
-    @PostMapping("verify")
+    @GetMapping("verify")
     public String confirmEmail(@RequestParam("token") String token) {
         return confirmationTokenBusinessService.confirmToken(token);
     }

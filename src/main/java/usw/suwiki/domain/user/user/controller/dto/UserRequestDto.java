@@ -96,6 +96,11 @@ public class UserRequestDto {
         private String loginId;
         @NotBlank
         private String password;
+
+        public UserQuitForm(String loginId, String password) {
+            this.loginId = loginId;
+            this.password = password;
+        }
     }
 
     @Getter
