@@ -40,7 +40,7 @@ public class UserIsolation {
     public boolean validatePassword(
             BCryptPasswordEncoder bCryptPasswordEncoder, String inputPassword
     ) {
-        return bCryptPasswordEncoder.encode(inputPassword).matches(password);
+        return bCryptPasswordEncoder.matches(inputPassword, password);
     }
 
     public String updateRandomPassword(BCryptPasswordEncoder bCryptPasswordEncoder) {

@@ -19,7 +19,6 @@ public class BlacklistDomainControllerV2 {
 
     private final UserBusinessService userBusinessService;
 
-    // 블랙리스트 사유 불러오기
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("/logs")

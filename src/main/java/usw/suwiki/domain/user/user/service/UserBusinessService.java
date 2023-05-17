@@ -168,29 +168,31 @@ public class UserBusinessService {
     }
 
     public Map<String, String> executeLogin(String loginId, String inputPassword) {
-        if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() &&
-                userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).isEmpty()
-        ) {
+        if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent()) {
             User user = userCRUDService.loadUserFromLoginId(loginId);
             user.isUserEmailAuthed(confirmationTokenCRUDService.loadConfirmationTokenFromUserIdx(user.getId()));
             if (user.validatePassword(bCryptPasswordEncoder, inputPassword)) {
                 user.updateLastLoginDate();
                 return generateUserJWT(user);
             }
-        } else if (userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() &&
-                userCRUDService.loadWrappedUserFromLoginId(loginId).isEmpty()
-        ) {
+        } else if (userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).isPresent()) {
             UserIsolation userIsolation = userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).get();
             if (userIsolation.validatePassword(bCryptPasswordEncoder, inputPassword)) {
-                rollBackSoftDeletedForIsolation(userIsolation.getUserIdx());
+                rollBackUserFromSleeping(
+                        userIsolation.getUserIdx(),
+                        userIsolation.getLoginId(),
+                        userIsolation.getPassword(),
+                        userIsolation.getEmail()
+                );
                 userIsolationCRUDService.deleteByLoginId(loginId);
+                User user = userCRUDService.loadUserFromLoginId(loginId);
+                user.updateLastLoginDate();
+                return generateUserJWT(user);
             }
-            User user = userCRUDService.loadUserFromLoginId(loginId);
-            user.updateLastLoginDate();
-            return generateUserJWT(user);
         }
         throw new AccountException(PASSWORD_ERROR);
     }
+
 
     public Map<String, Boolean> executeEditPassword(
             String Authorization, String prePassword, String newPassword
@@ -321,9 +323,14 @@ public class UserBusinessService {
         return new ResponseForm(list);
     }
 
-    private void rollBackSoftDeletedForIsolation(Long userIdx) {
+    private void rollBackUserFromSleeping(
+            Long userIdx,
+            String loginId,
+            String password,
+            String email
+    ) {
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
-        user.sleep();
+        user.awake(loginId, password, email);
     }
 
     private Map<String, String> generateUserJWT(User user) {

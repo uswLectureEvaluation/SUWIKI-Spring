@@ -190,6 +190,23 @@ public class UserControllerTest extends BaseIntegrationTest {
 
     @SneakyThrows(Exception.class)
     @Test
+    @DisplayName("웹 로그인(휴면 유저) - 성공")
+    void 웹_로그인_휴면_유저_성공() {
+        LoginForm loginForm = new LoginForm(
+                "자고있던 유저",
+                "qwer1234!"
+        );
+
+        buildPostRequestResultActions(
+                "/v2/user/web-login",
+                loginForm
+        )
+                .andExpect(status().isOk());
+        //.andExpect(jsonPath("$.data.*").value(new HashMap<>()));
+    }
+
+    @SneakyThrows(Exception.class)
+    @Test
     @DisplayName("유저 정보 로드 - 성공")
     void 유저_정보_로드_성공() {
 
