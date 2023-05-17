@@ -25,10 +25,10 @@ public class UserControllerV2 {
 
     private final UserBusinessService userBusinessService;
 
-    @ApiOperation(
-            value = "아이디 중복 확인",
-            notes = "Request Body에 담긴 LoginId 중복 확인 수행"
-    )
+    // @ApiOperation(
+    //         value = "아이디 중복 확인",
+    //         notes = "Request Body에 담긴 LoginId 중복 확인 수행"
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/loginId/check")
@@ -38,10 +38,10 @@ public class UserControllerV2 {
         return ResponseForm.success(userBusinessService.executeCheckId(checkLoginIdForm.getLoginId()));
     }
 
-    @ApiOperation(
-            value = "이메일 중복 확인",
-            notes = "Request Body에 담긴 Email 중복 확인 수행"
-    )
+    // @ApiOperation(
+    //         value = "이메일 중복 확인",
+    //         notes = "Request Body에 담긴 Email 중복 확인 수행"
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/email/check")
@@ -51,10 +51,10 @@ public class UserControllerV2 {
         return ResponseForm.success(userBusinessService.executeCheckEmail(checkEmailForm.getEmail()));
     }
 
-    @ApiOperation(
-            value = "회원가입",
-            notes = "Request Body에 담긴 정보를 바탕으로 재학생 인증 메일 발송"
-    )
+    // @ApiOperation(
+    //         value = "회원가입",
+    //         notes = "Request Body에 담긴 정보를 바탕으로 재학생 인증 메일 발송"
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping
@@ -68,10 +68,10 @@ public class UserControllerV2 {
         ));
     }
 
-    @ApiOperation(
-            value = "아이디 찾기",
-            notes = "Request Body에 담긴 정보를 바탕으로 아이디 찾기 결과를 메일로 발송한다."
-    )
+    // @ApiOperation(
+    //         value = "아이디 찾기",
+    //         notes = "Request Body에 담긴 정보를 바탕으로 아이디 찾기 결과를 메일로 발송한다."
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("inquiry-loginId")
@@ -79,10 +79,10 @@ public class UserControllerV2 {
         return ResponseForm.success(userBusinessService.executeFindId(findIdForm.getEmail()));
     }
 
-    @ApiOperation(
-            value = "비밀번호 찾기",
-            notes = "Request Body에 담긴 정보를 바탕으로 재생성된 비밀번호 찾기 결과를 메일로 발송한다."
-    )
+    // @ApiOperation(
+    //         value = "비밀번호 찾기",
+    //         notes = "Request Body에 담긴 정보를 바탕으로 재생성된 비밀번호 찾기 결과를 메일로 발송한다."
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("inquiry-password")
@@ -95,10 +95,10 @@ public class UserControllerV2 {
         );
     }
 
-    @ApiOperation(
-            value = "비밀번호 재설정",
-            notes = "Request Body에 담긴 정보를 바탕으로 비밀번호를 재설정한다."
-    )
+    // @ApiOperation(
+    //         value = "비밀번호 재설정",
+    //         notes = "Request Body에 담긴 정보를 바탕으로 비밀번호를 재설정한다."
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PatchMapping("password")
@@ -113,10 +113,10 @@ public class UserControllerV2 {
         );
     }
 
-    @ApiOperation(
-            value = "Mobile Client 로그인",
-            notes = "Request Body에 담긴 정보를 바탕으로 로그인 성공 시 토큰을 발급한다."
-    )
+    // @ApiOperation(
+    //         value = "Mobile Client 로그인",
+    //         notes = "Request Body에 담긴 정보를 바탕으로 로그인 성공 시 토큰을 발급한다."
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("mobile-login")
@@ -129,10 +129,10 @@ public class UserControllerV2 {
         );
     }
 
-    @ApiOperation(
-            value = "Web Client 로그인",
-            notes = "Request Body에 담긴 정보를 바탕으로 로그인 성공 시 쿠키에 토큰을 발급한다."
-    )
+    // @ApiOperation(
+    //         value = "Web Client 로그인",
+    //         notes = "Request Body에 담긴 정보를 바탕으로 로그인 성공 시 쿠키에 토큰을 발급한다."
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("web-login")
@@ -156,10 +156,10 @@ public class UserControllerV2 {
     }
 
     @JWTVerify
-    @ApiOperation(
-            value = "로그아웃",
-            notes = "쿠키 무효화"
-    )
+    // @ApiOperation(
+    //         value = "로그아웃",
+    //         notes = "쿠키 무효화"
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("client-logout")
@@ -173,10 +173,10 @@ public class UserControllerV2 {
     }
 
     @JWTVerify
-    @ApiOperation(
-            value = "유저 기본 정보를 불러온다.",
-            notes = "토큰에 담긴 정보를 바탕으로 해당 유저의 기본 정보를 불러온다."
-    )
+    // @ApiOperation(
+    //         value = "유저 기본 정보를 불러온다.",
+    //         notes = "토큰에 담긴 정보를 바탕으로 해당 유저의 기본 정보를 불러온다."
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping
@@ -185,10 +185,10 @@ public class UserControllerV2 {
     }
 
     @JWTVerify
-    @ApiOperation(
-            value = "회원탈퇴",
-            notes = "토큰에 담긴 내용과 Request Body를 검증하여 회원탈퇴 처리를 수행한다."
-    )
+    // @ApiOperation(
+    //         value = "회원탈퇴",
+    //         notes = "토큰에 담긴 내용과 Request Body를 검증하여 회원탈퇴 처리를 수행한다."
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @DeleteMapping

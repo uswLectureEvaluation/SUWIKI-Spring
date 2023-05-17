@@ -19,10 +19,10 @@ public class RestrictingUserControllerV2 {
 
     private final UserBusinessService userBusinessService;
 
-    @ApiOperation(
-            value = "정지 사유 불러오기",
-            notes = "토큰 정보를 바탕으로 정지 사유를 불러온다."
-    )
+    // @ApiOperation(
+    //         value = "정지 사유 불러오기",
+    //         notes = "토큰 정보를 바탕으로 정지 사유를 불러온다."
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("/restricted-reason")
