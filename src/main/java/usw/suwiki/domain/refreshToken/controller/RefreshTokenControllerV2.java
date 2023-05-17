@@ -23,10 +23,10 @@ public class RefreshTokenControllerV2 {
 
     private final UserBusinessService userBusinessService;
 
-    @ApiOperation(
-            value = "Web Client 토큰 갱신",
-            notes = "토큰을 갱신한다."
-    )
+    // @ApiOperation(
+    //         value = "Web Client 토큰 갱신",
+    //         notes = "토큰을 갱신한다."
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/web-client/refresh")
@@ -47,10 +47,10 @@ public class RefreshTokenControllerV2 {
         }});
     }
 
-    @ApiOperation(
-            value = "Mobile Client 토큰 갱신",
-            notes = "토큰을 갱신한다."
-    )
+    // @ApiOperation(
+    //         value = "Mobile Client 토큰 갱신",
+    //         notes = "토큰을 갱신한다."
+    // )
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/mobile-client/refresh")

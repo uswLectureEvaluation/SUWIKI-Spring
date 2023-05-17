@@ -89,6 +89,11 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.release = 17 // Java 17을 사용할 경우 release 17로 설정
+}
+
 // Querydsl 추가 설정.
 def querydslDir = "$buildDir/generated/querydsl"
 // JPA 사용 여부와 사용할 경로를 설정
@@ -111,5 +116,3 @@ configurations {
     }
     querydsl.extendsFrom compileClasspath
 }
-
-def void id(String s) {}
