@@ -48,7 +48,7 @@ public class AdminBusinessService {
      */
     public Map<String, String> executeAdminLogin(LoginForm loginForm) {
         User user = userCRUDService.loadUserFromLoginId(loginForm.getLoginId());
-        if (bCryptPasswordEncoder.matches(loginForm.getPassword(), user.getPassword())) {
+        if (user.validatePassword(bCryptPasswordEncoder, loginForm.getPassword())) {
             if (user.getRole().getKey().equals("ADMIN")) {
                 return new HashMap<>() {{
                     put("AccessToken", jwtAgent.createAccessToken(user));
