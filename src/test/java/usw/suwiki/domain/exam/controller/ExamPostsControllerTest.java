@@ -16,16 +16,12 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.web.servlet.ResultActions;
 
 import usw.suwiki.BaseIntegrationTest;
-import usw.suwiki.global.jwt.JwtResolver;
-import usw.suwiki.global.jwt.JwtValidator;
+import usw.suwiki.global.jwt.JwtAgent;
 
 class ExamPostsControllerTest extends BaseIntegrationTest {
 
 	@MockBean
-	JwtResolver jwtResolver;
-
-	@MockBean
-	JwtValidator jwtValidator;
+	JwtAgent jwtAgent;
 
 	@BeforeAll
 	public void init() throws Exception {
@@ -41,8 +37,8 @@ class ExamPostsControllerTest extends BaseIntegrationTest {
 	void 시험정보_불러오기_권한_있는사람() throws Exception {
 		//given
 		String authorization = "authorization";
-		when(jwtResolver.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
-		when(jwtResolver.getId(authorization)).thenReturn(1L);
+		when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
+		when(jwtAgent.getId(authorization)).thenReturn(1L);
 
 		//when
 		ResultActions resultActions = mvc.perform(
@@ -63,8 +59,8 @@ class ExamPostsControllerTest extends BaseIntegrationTest {
 	void 시험정보_불러오기_권한_없는사람() throws Exception {
 		//given
 		String authorization = "authorization";
-		when(jwtResolver.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
-		when(jwtResolver.getId(authorization)).thenReturn(2L);
+		when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
+		when(jwtAgent.getId(authorization)).thenReturn(2L);
 
 		//when
 		ResultActions resultActions = mvc.perform(
@@ -86,8 +82,8 @@ class ExamPostsControllerTest extends BaseIntegrationTest {
 	void 시험정보_중복구매_예외_테스트() throws Exception {
 		//given
 		String authorization = "authorization";
-		when(jwtResolver.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
-		when(jwtResolver.getId(authorization)).thenReturn(1L);
+		when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
+		when(jwtAgent.getId(authorization)).thenReturn(1L);
 
 		//when
 		ResultActions resultActions = mvc.perform(
@@ -106,8 +102,8 @@ class ExamPostsControllerTest extends BaseIntegrationTest {
 	void 시험정보_존재하지않을때_정상동작_테스트() throws Exception {
 		//given
 		String authorization = "authorization";
-		when(jwtResolver.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
-		when(jwtResolver.getId(authorization)).thenReturn(2L);
+		when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
+		when(jwtAgent.getId(authorization)).thenReturn(2L);
 
 		//when
 		ResultActions resultActions = mvc.perform(
