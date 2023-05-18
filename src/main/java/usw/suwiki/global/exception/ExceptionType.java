@@ -73,6 +73,9 @@ public enum ExceptionType {
     //404
     LECTURE_NOT_FOUND("LECTURE001", "해당 강의에 대한 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
+    // Security 401 Error
+    UNAUTHENTICATED("SECURITY001", "로그인이 필요한 기능입니다.", HttpStatus.UNAUTHORIZED), //401
+    LOGIN_FAILED("SECURITY003", "로그인에 실패했습니다. ID, PASSWORD 를 확인해주세요.", HttpStatus.UNAUTHORIZED),
 
     /**
      * Domain : Notice

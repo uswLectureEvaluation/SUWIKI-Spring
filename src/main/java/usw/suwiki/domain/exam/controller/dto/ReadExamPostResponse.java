@@ -36,11 +36,8 @@ public class ReadExamPostResponse {
         return response;
     }
 
-    public static ReadExamPostResponse ForbiddenToRead(boolean isWrite) {
-        ReadExamPostResponse response = new ReadExamPostResponse(new ArrayList<>());
-        response.isExamDataExist = Boolean.TRUE;
-        response.canRead = Boolean.FALSE;
-        response.isWritten = isWrite;
-        return response;
+    public void  forbiddenToRead() {
+        this.data = new ArrayList<>();
+        this.canRead = Boolean.FALSE;
     }
 }
