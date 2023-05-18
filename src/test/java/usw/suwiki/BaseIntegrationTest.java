@@ -14,6 +14,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import usw.suwiki.global.exception.GlobalExceptionHandler;
+
 @SpringBootTest
 @Disabled
 @ActiveProfiles("test")

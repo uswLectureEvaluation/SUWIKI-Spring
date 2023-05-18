@@ -4,12 +4,17 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static usw.suwiki.global.exception.ExceptionType.PARAM_VALID_ERROR;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
 import usw.suwiki.global.exception.errortype.BaseException;
 
 @Slf4j
@@ -54,31 +59,23 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, exceptionType.getStatus());
     }
 
-    @ExceptionHandler(value = {MethodArgumentNotValidException.class, BindException.class})
-    public ResponseEntity<ErrorResponse> handleBindValidationException(Exception e) {
-        String className = e.getClass().getName();
-        ExceptionType exceptionType = PARAM_VALID_ERROR;
-        String message = "";
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class, MethodArgumentTypeMismatchException.class,
+        TypeMismatchException.class,
+        MissingServletRequestParameterException.class})
+    public ResponseEntity<ErrorResponse> handleRequestValidationException(Exception e) {
 
-        if (e instanceof MethodArgumentNotValidException) {
-            message = ((MethodArgumentNotValidException) e).getBindingResult().getAllErrors().get(0)
-                .getDefaultMessage();
-        } else if (e instanceof BindException) {
-            message = ((BindException) e).getBindingResult().getAllErrors().get(0)
-                .getDefaultMessage();
-        }
+        ExceptionType exception = PARAM_VALID_ERROR;
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-            .exception(className.substring(className.lastIndexOf(".") + 1))
-            .code(exceptionType.getCode())
-            .message(message)
-            .status(exceptionType.getStatus().value())
-            .error(exceptionType.getStatus().getReasonPhrase())
+            .exception(exception.name())
+            .code(exception.getCode())
+            .message(exception.getMessage())
+            .status(HttpStatus.BAD_REQUEST.value())
+            .error(exception.getStatus().getReasonPhrase())
             .build();
 
         log.error("code : {}, message : {}", errorResponse.getCode(), errorResponse.getMessage());
 
-        return new ResponseEntity<>(errorResponse, exceptionType.getStatus());
+        return new ResponseEntity<>(errorResponse, exception.getStatus());
     }
-
 }
