@@ -27,8 +27,7 @@ public class JpaEvaluatePostsRepository implements EvaluatePostsRepository {
 
     @Override
     public EvaluatePosts findById(Long id) {
-        EvaluatePosts posts = em.find(EvaluatePosts.class, id);
-        return posts;
+        return em.find(EvaluatePosts.class, id);
     }
 
     @Override

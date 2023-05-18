@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto;
+import usw.suwiki.domain.admin.dto.UserAdminRequestDto.*;
 import usw.suwiki.domain.admin.dto.UserAdminResponseDto.LoadAllReportedPostForm;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
 import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
@@ -63,8 +64,7 @@ public class AdminBusinessService {
     /**
      * 신고된 모든 게시글 조회
      */
-    public LoadAllReportedPostForm executeLoadAllReportedPosts(String accessToken) {
-        validateAdmin(accessToken);
+    public LoadAllReportedPostForm executeLoadAllReportedPosts() {
         List<EvaluatePostReport> evaluatePostReports = reportPostService.loadAllEvaluateReports();
         List<ExamPostReport> examPostReports = reportPostService.loadAllExamReports();
 
@@ -78,24 +78,21 @@ public class AdminBusinessService {
     /**
      * 신고된 강의평가 게시물 자세히 보기
      */
-    public EvaluatePostReport executeLoadDetailReportedEvaluatePost(String accessToken, Long evaluatePostReportId) {
-        validateAdmin(accessToken);
+    public EvaluatePostReport executeLoadDetailReportedEvaluatePost(Long evaluatePostReportId) {
         return reportPostService.loadDetailEvaluateReportFromReportingEvaluatePostId(evaluatePostReportId);
     }
 
     /**
      * 신고된 시험정보 게시물 자세히 보기
      */
-    public ExamPostReport executeLoadDetailReportedExamPost(String accessToken, Long examPostReportId) {
-        validateAdmin(accessToken);
+    public ExamPostReport executeLoadDetailReportedExamPost(Long examPostReportId) {
         return reportPostService.loadDetailEvaluateReportFromReportingExamPostId(examPostReportId);
     }
 
     /**
      * 신고된 강의평가 게시물 삭제
      */
-    public Map<String, Boolean> executeNoProblemEvaluatePost(String accessToken, UserAdminRequestDto.EvaluatePostNoProblemForm evaluatePostNoProblemForm) {
-        validateAdmin(accessToken);
+    public Map<String, Boolean> executeNoProblemEvaluatePost(EvaluatePostNoProblemForm evaluatePostNoProblemForm) {
         reportPostService.deleteByEvaluateIdx(evaluatePostNoProblemForm.getEvaluateIdx());
         return successCapitalFlag();
     }
@@ -103,8 +100,7 @@ public class AdminBusinessService {
     /**
      * 신고된 시험정보 게시물 삭제
      */
-    public Map<String, Boolean> executeNoProblemExamPost(String accessToken, UserAdminRequestDto.ExamPostNoProblemForm examPostRestrictForm) {
-        validateAdmin(accessToken);
+    public Map<String, Boolean> executeNoProblemExamPost(ExamPostNoProblemForm examPostRestrictForm) {
         reportPostService.deleteByExamIdx(examPostRestrictForm.getExamIdx());
         return successCapitalFlag();
     }
@@ -112,11 +108,10 @@ public class AdminBusinessService {
     /**
      * 신고된 강의평가 게시물 작성자 이용 정지 처리
      */
-    public Map<String, Boolean> executeRestrictEvaluatePost(String accessToken, UserAdminRequestDto.EvaluatePostRestrictForm evaluatePostRestrictForm) {
-        validateAdmin(accessToken);
-        restrictingUserService.executeRestrictUserFromEvaluatePost(evaluatePostRestrictForm);
-        plusRestrictCount(deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostRestrictForm.getEvaluateIdx()));
+    public Map<String, Boolean> executeRestrictEvaluatePost(EvaluatePostRestrictForm evaluatePostRestrictForm) {
         plusReportingUserPoint(reportPostService.whoIsEvaluateReporting(evaluatePostRestrictForm.getEvaluateIdx()));
+        plusRestrictCount(deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostRestrictForm.getEvaluateIdx()));
+        restrictingUserService.executeRestrictUserFromEvaluatePost(evaluatePostRestrictForm);
 
         return successCapitalFlag();
     }
@@ -124,11 +119,10 @@ public class AdminBusinessService {
     /**
      * 신고된 시험정보 게시물 작성자 이용 정지 처리
      */
-    public Map<String, Boolean> executeRestrictExamPost(String accessToken, UserAdminRequestDto.ExamPostRestrictForm examPostRestrictForm) {
-        validateAdmin(accessToken);
-        restrictingUserService.executeRestrictUserFromExamPost(examPostRestrictForm);
-        plusRestrictCount(deleteReportedExamPostFromEvaluateIdx(examPostRestrictForm.getExamIdx()));
+    public Map<String, Boolean> executeRestrictExamPost(UserAdminRequestDto.ExamPostRestrictForm examPostRestrictForm) {
         plusReportingUserPoint(reportPostService.whoIsExamReporting(examPostRestrictForm.getExamIdx()));
+        plusRestrictCount(deleteReportedExamPostFromEvaluateIdx(examPostRestrictForm.getExamIdx()));
+        restrictingUserService.executeRestrictUserFromExamPost(examPostRestrictForm);
 
         return successCapitalFlag();
     }
@@ -136,11 +130,7 @@ public class AdminBusinessService {
     /**
      * 신고된 강의평가 게시물 작성자 블랙리스트 처리
      */
-    public Map<String, Boolean> executeBlackListEvaluatePost(
-            String accessToken,
-            UserAdminRequestDto.EvaluatePostBlacklistForm evaluatePostBlacklistForm
-    ) {
-        validateAdmin(accessToken);
+    public Map<String, Boolean> executeBlackListEvaluatePost(EvaluatePostBlacklistForm evaluatePostBlacklistForm) {
         Long userIdx = evaluatePostCRUDService
                 .loadEvaluatePostFromEvaluatePostIdx(evaluatePostBlacklistForm.getEvaluateIdx())
                 .getUser()
@@ -161,11 +151,7 @@ public class AdminBusinessService {
     /**
      * 신고된 시험정보 게시물 작성자 블랙리스트 처리
      */
-    public Map<String, Boolean> executeBlackListExamPost(
-            String accessToken,
-            UserAdminRequestDto.ExamPostBlacklistForm examPostBlacklistForm
-    ) {
-        validateAdmin(accessToken);
+    public Map<String, Boolean> executeBlackListExamPost(ExamPostBlacklistForm examPostBlacklistForm) {
         Long userIdx = examPostCRUDService.loadExamPostFromExamPostIdx(examPostBlacklistForm.getExamIdx()).getUser().getId();
 
         deleteReportedExamPostFromEvaluateIdx(examPostBlacklistForm.getExamIdx());
@@ -202,15 +188,5 @@ public class AdminBusinessService {
     private void plusReportingUserPoint(Long reportingUserIdx) {
         User user = userCRUDService.loadUserFromUserIdx(reportingUserIdx);
         user.increasePointByReporting();
-    }
-
-    /**
-     * 관리자 권한 검증
-     */
-    private void validateAdmin(String authorization) {
-        jwtAgent.validateJwt(authorization);
-        if (!jwtAgent.getUserRole(authorization).equals("ADMIN")) {
-            throw new AccountException(USER_RESTRICTED);
-        }
     }
 }

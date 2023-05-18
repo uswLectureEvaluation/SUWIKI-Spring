@@ -4,30 +4,19 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
-import org.springframework.test.web.servlet.ResultActions;
 import usw.suwiki.BaseIntegrationTest;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.*;
-import usw.suwiki.global.jwt.JwtAgent;
-import usw.suwiki.global.util.BuildResultActionsException;
 
 import java.sql.Connection;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UserControllerTest extends BaseIntegrationTest {
-
-    @MockBean
-    JwtAgent jwtAgent;
 
     @BeforeAll
     public void init() throws Exception {
@@ -248,119 +237,6 @@ public class UserControllerTest extends BaseIntegrationTest {
                 userQuitForm
         )
                 .andExpect(status().isOk());
-    }
-
-    private ResultActions buildGetRequestWithAuthorizationResultActions(
-            final String url
-    ) {
-        String authorization = "authorization";
-        when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
-        when(jwtAgent.getId(authorization)).thenReturn(3L);
-        try {
-            return mvc.perform(
-                            get(url)
-                                    .header("Authorization", authorization)
-                                    .contentType(APPLICATION_JSON)
-                                    .accept(APPLICATION_JSON))
-                    .andDo(print());
-        } catch (Exception e) {
-            throw new BuildResultActionsException(e.getCause());
-        }
-    }
-
-
-    private ResultActions buildPostRequestResultActions(
-            final String url,
-            final Object dto
-    ) {
-
-        try {
-            return mvc.perform(
-                            post(url)
-                                    .content(objectMapper.writeValueAsString(dto))
-                                    .contentType(APPLICATION_JSON)
-                                    .accept(APPLICATION_JSON))
-                    .andDo(print());
-        } catch (Exception e) {
-            throw new BuildResultActionsException(e.getCause());
-        }
-    }
-
-    private ResultActions buildPostRequestWithAuthorizationResultActions(
-            final String url,
-            final Object dto
-    ) {
-        String authorization = "authorization";
-        when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
-        when(jwtAgent.getId(authorization)).thenReturn(3L);
-        try {
-            return mvc.perform(
-                            post(url)
-                                    .header("Authorization", authorization)
-                                    .content(objectMapper.writeValueAsString(dto))
-                                    .contentType(APPLICATION_JSON)
-                                    .accept(APPLICATION_JSON))
-                    .andDo(print());
-        } catch (Exception e) {
-            throw new BuildResultActionsException(e.getCause());
-        }
-    }
-
-    private ResultActions buildPatchRequestWithAuthorizationResultActions(
-            final String url,
-            final Object dto
-    ) {
-        String authorization = "authorization";
-        when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
-        when(jwtAgent.getId(authorization)).thenReturn(3L);
-        try {
-            return mvc.perform(
-                            patch(url)
-                                    .header("Authorization", authorization)
-                                    .content(objectMapper.writeValueAsString(dto))
-                                    .contentType(APPLICATION_JSON)
-                                    .accept(APPLICATION_JSON))
-                    .andDo(print());
-        } catch (Exception e) {
-            throw new BuildResultActionsException(e.getCause());
-        }
-    }
-
-    private ResultActions buildGetRequestWithParameterResultActions(
-            final String url,
-            final String parameterName,
-            final String value
-    ) {
-        try {
-            return mvc.perform(
-                            get(url)
-                                    .param(parameterName, value)
-                                    .contentType(APPLICATION_JSON)
-                                    .accept(APPLICATION_JSON))
-                    .andDo(print());
-        } catch (Exception e) {
-            throw new BuildResultActionsException(e.getCause());
-        }
-    }
-
-    private ResultActions buildDeleteRequestWithAuthorizationResultActions(
-            final String url,
-            final Object dto
-    ) {
-        String authorization = "authorization";
-        when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
-        when(jwtAgent.getId(authorization)).thenReturn(3L);
-
-        try {
-            return mvc.perform(
-                            post(url)
-                                    .content(objectMapper.writeValueAsString(dto))
-                                    .contentType(APPLICATION_JSON)
-                                    .accept(APPLICATION_JSON))
-                    .andDo(print());
-        } catch (Exception e) {
-            throw new BuildResultActionsException(e.getCause());
-        }
     }
 }
 

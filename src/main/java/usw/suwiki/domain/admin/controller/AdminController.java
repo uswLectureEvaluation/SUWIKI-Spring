@@ -2,9 +2,8 @@ package usw.suwiki.domain.admin.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.admin.dto.UserAdminRequestDto;
-import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
-import usw.suwiki.domain.admin.dto.UserAdminResponseDto;
+import usw.suwiki.domain.admin.dto.UserAdminRequestDto.*;
+import usw.suwiki.domain.admin.dto.UserAdminResponseDto.LoadAllReportedPostForm;
 import usw.suwiki.domain.admin.service.AdminBusinessService;
 import usw.suwiki.domain.postreport.EvaluatePostReport;
 import usw.suwiki.domain.postreport.ExamPostReport;
@@ -20,7 +19,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin")
+@RequestMapping("/v2/admin")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AdminController {
 
@@ -43,7 +42,7 @@ public class AdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody EvaluatePostRestrictForm evaluatePostRestrictForm
     ) {
-        return adminBusinessService.executeRestrictEvaluatePost(Authorization, evaluatePostRestrictForm);
+        return adminBusinessService.executeRestrictEvaluatePost(evaluatePostRestrictForm);
     }
 
     @JWTVerify(option = "ADMIN")
@@ -52,9 +51,9 @@ public class AdminController {
     @PostMapping("/exam-post/restrict")
     public Map<String, Boolean> restrictExamPost(
             @Valid @RequestHeader String Authorization,
-            @Valid @RequestBody UserAdminRequestDto.ExamPostRestrictForm examPostRestrictForm
+            @Valid @RequestBody ExamPostRestrictForm examPostRestrictForm
     ) {
-        return adminBusinessService.executeRestrictExamPost(Authorization, examPostRestrictForm);
+        return adminBusinessService.executeRestrictExamPost(examPostRestrictForm);
     }
 
 
@@ -64,9 +63,9 @@ public class AdminController {
     @PostMapping("/evaluate-post/blacklist")
     public Map<String, Boolean> banEvaluatePost(
             @Valid @RequestHeader String Authorization,
-            @Valid @RequestBody UserAdminRequestDto.EvaluatePostBlacklistForm evaluatePostBlacklistForm
+            @Valid @RequestBody EvaluatePostBlacklistForm evaluatePostBlacklistForm
     ) {
-        return adminBusinessService.executeBlackListEvaluatePost(Authorization, evaluatePostBlacklistForm);
+        return adminBusinessService.executeBlackListEvaluatePost(evaluatePostBlacklistForm);
     }
 
     @JWTVerify(option = "ADMIN")
@@ -75,9 +74,9 @@ public class AdminController {
     @PostMapping("/exam-post/blacklist")
     public Map<String, Boolean> banExamPost(
             @Valid @RequestHeader String Authorization,
-            @Valid @RequestBody UserAdminRequestDto.ExamPostBlacklistForm examPostBlacklistForm
+            @Valid @RequestBody ExamPostBlacklistForm examPostBlacklistForm
     ) {
-        return adminBusinessService.executeBlackListExamPost(Authorization, examPostBlacklistForm);
+        return adminBusinessService.executeBlackListExamPost(examPostBlacklistForm);
     }
 
     @JWTVerify(option = "ADMIN")
@@ -86,9 +85,9 @@ public class AdminController {
     @DeleteMapping("/evaluate-post")
     public Map<String, Boolean> noProblemEvaluatePost(
             @Valid @RequestHeader String Authorization,
-            @Valid @RequestBody UserAdminRequestDto.EvaluatePostNoProblemForm evaluatePostNoProblemForm
+            @Valid @RequestBody EvaluatePostNoProblemForm evaluatePostNoProblemForm
     ) {
-        return adminBusinessService.executeNoProblemEvaluatePost(Authorization, evaluatePostNoProblemForm);
+        return adminBusinessService.executeNoProblemEvaluatePost(evaluatePostNoProblemForm);
     }
 
     @JWTVerify(option = "ADMIN")
@@ -97,19 +96,19 @@ public class AdminController {
     @DeleteMapping("/exam-post")
     public Map<String, Boolean> noProblemExamPost(
             @Valid @RequestHeader String Authorization,
-            @Valid @RequestBody UserAdminRequestDto.ExamPostNoProblemForm examPostNoProblemForm
+            @Valid @RequestBody ExamPostNoProblemForm examPostNoProblemForm
     ) {
-        return adminBusinessService.executeNoProblemExamPost(Authorization, examPostNoProblemForm);
+        return adminBusinessService.executeNoProblemExamPost(examPostNoProblemForm);
     }
 
     @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @GetMapping("/reported-posts")
-    public UserAdminResponseDto.LoadAllReportedPostForm loadReportedPost(
+    public LoadAllReportedPostForm loadReportedPost(
             @Valid @RequestHeader String Authorization
     ) {
-        return adminBusinessService.executeLoadAllReportedPosts(Authorization);
+        return adminBusinessService.executeLoadAllReportedPosts();
     }
 
 
@@ -121,7 +120,7 @@ public class AdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestParam Long target
     ) {
-        return adminBusinessService.executeLoadDetailReportedEvaluatePost(Authorization, target);
+        return adminBusinessService.executeLoadDetailReportedEvaluatePost(target);
     }
 
     // 시험정보에 관련된 신고 게시글 자세히 보기
@@ -132,6 +131,6 @@ public class AdminController {
             @Valid @RequestHeader String Authorization,
             @Valid @RequestParam Long target
     ) {
-        return adminBusinessService.executeLoadDetailReportedExamPost(Authorization, target);
+        return adminBusinessService.executeLoadDetailReportedExamPost(target);
     }
 }

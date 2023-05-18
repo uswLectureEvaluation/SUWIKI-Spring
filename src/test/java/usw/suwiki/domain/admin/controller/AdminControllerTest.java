@@ -4,27 +4,17 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
-import org.springframework.test.web.servlet.ResultActions;
 import usw.suwiki.BaseIntegrationTest;
 import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
-import usw.suwiki.global.jwt.JwtAgent;
-import usw.suwiki.global.util.BuildResultActionsException;
+import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
 
 import java.sql.Connection;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class AdminControllerTest extends BaseIntegrationTest {
-
-    @MockBean
-    JwtAgent jwtAgent;
 
     @BeforeAll
     public void init() throws Exception {
@@ -32,13 +22,29 @@ class AdminControllerTest extends BaseIntegrationTest {
             ScriptUtils.executeSqlScript(conn, new ClassPathResource("/data/insert-user.sql"));
             ScriptUtils.executeSqlScript(conn, new ClassPathResource("/data/insert-lecture.sql"));
             ScriptUtils.executeSqlScript(conn, new ClassPathResource("/data/insert-exampost.sql"));
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/data/insert-evaluatepost.sql"));
             ScriptUtils.executeSqlScript(conn, new ClassPathResource("/data/insert-viewexam.sql"));
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("/data/insert-evaluatepostreport.sql"));
         }
     }
 
     @SneakyThrows(Exception.class)
     @Test
-    @DisplayName("아이디 중복확인 - 중복일 시")
+    @DisplayName("관리자 로그인")
+    void 관리자_로그인() {
+        LoginForm loginForm = new LoginForm(
+                "adminUser",
+                "qwer1234!"
+        );
+        buildPostRequestResultActions(
+                "/v2/admin/login",
+                loginForm
+        ).andExpect(status().isOk());
+    }
+
+    @SneakyThrows(Exception.class)
+    @Test
+    @DisplayName("강의평가 정지")
     void 강의평가_정지() {
         EvaluatePostRestrictForm evaluatePostRestrictForm = new EvaluatePostRestrictForm(
                 1L,
@@ -47,28 +53,8 @@ class AdminControllerTest extends BaseIntegrationTest {
                 "90일정지"
         );
         buildPostRequestWithAuthorizationResultActions(
-                "/admin/evaluate-posts/restrict",
+                "/v2/admin/evaluate-posts/restrict",
                 evaluatePostRestrictForm
         ).andExpect(status().isOk());
-    }
-
-    private ResultActions buildPostRequestWithAuthorizationResultActions(
-            final String url,
-            final Object dto
-    ) {
-        String authorization = "authorization";
-        when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
-        when(jwtAgent.getId(authorization)).thenReturn(1L);
-        try {
-            return mvc.perform(
-                            post(url)
-                                    .header("Authorization", authorization)
-                                    .content(objectMapper.writeValueAsString(dto))
-                                    .contentType(APPLICATION_JSON)
-                                    .accept(APPLICATION_JSON))
-                    .andDo(print());
-        } catch (Exception e) {
-            throw new BuildResultActionsException(e.getCause());
-        }
     }
 }

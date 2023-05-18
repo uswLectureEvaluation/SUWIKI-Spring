@@ -1,19 +1,17 @@
 package usw.suwiki.domain.evaluation.service;
 
-import static usw.suwiki.global.exception.ExceptionType.*;
-
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
 import usw.suwiki.domain.evaluation.domain.repository.EvaluatePostsRepository;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.global.PageOption;
-import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.exception.errortype.EvaluatePostException;
+
+import java.util.List;
+
+import static usw.suwiki.global.exception.ExceptionType.EVALUATE_POST_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

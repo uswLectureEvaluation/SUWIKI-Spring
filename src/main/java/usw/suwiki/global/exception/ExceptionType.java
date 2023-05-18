@@ -83,6 +83,8 @@ public enum ExceptionType {
     NOTICE_NOT_FOUND("NOTICE001", "해당 공지사항을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
 
+    REPORTED_POST_NOT_FOUND("REPORTED_POST001", "해당 신고된 게시글을 찾을 수 없습니다.", NOT_FOUND),
+
     /**
      * 공통
      */
