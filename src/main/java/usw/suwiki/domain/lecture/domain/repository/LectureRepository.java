@@ -2,7 +2,7 @@ package usw.suwiki.domain.lecture.domain.repository;
 
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
-import usw.suwiki.domain.lecture.controller.dto.LecturesAndCountDto;
+import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 
 import java.util.List;
 
@@ -16,13 +16,13 @@ public interface LectureRepository {
 
     Lecture findByIdPessimisticLock(Long id);
 
-    LecturesAndCountDto findLectureByFindOption(String searchValue, LectureFindOption lectureFindOption);
+    LecturesAndCountDao findLectureByFindOption(String searchValue, LectureFindOption lectureFindOption);
 
-    LecturesAndCountDto findLectureByMajorType(String searchValue, LectureFindOption lectureFindOption);
+    LecturesAndCountDao findLectureByMajorType(String searchValue, LectureFindOption lectureFindOption);
 
-    LecturesAndCountDto findAllLectureByFindOption(LectureFindOption lectureFindOption);
+    LecturesAndCountDao findAllLectureByFindOption(LectureFindOption lectureFindOption);
 
-    LecturesAndCountDto findAllLectureByMajorType(LectureFindOption lectureFindOption);
+    LecturesAndCountDao findAllLectureByMajorType(LectureFindOption lectureFindOption);
 
     List<String> findAllMajorType();
 }

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.postreport.entity.EvaluatePostReport;
+import usw.suwiki.domain.postreport.EvaluatePostReport;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +18,6 @@ public interface EvaluateReportRepository extends JpaRepository<EvaluatePostRepo
     @Query(value = "SELECT * FROM evaluate_post_report", nativeQuery = true)
     List<EvaluatePostReport> loadAllReportedPosts();
 
-    @Modifying(clearAutomatically = true)
     void deleteByEvaluateIdx(Long evaluateIdx);
 
     @Modifying(clearAutomatically = true)
@@ -30,5 +29,4 @@ public interface EvaluateReportRepository extends JpaRepository<EvaluatePostRepo
     void deleteByReportedUserIdx(@Param ("userIdx") Long userIdx);
 
     Optional<EvaluatePostReport> findByEvaluateIdx(Long evaluateIdx);
-
 }

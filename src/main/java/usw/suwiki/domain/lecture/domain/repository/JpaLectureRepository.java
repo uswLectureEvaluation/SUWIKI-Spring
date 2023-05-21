@@ -2,7 +2,7 @@ package usw.suwiki.domain.lecture.domain.repository;
 
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
-import usw.suwiki.domain.lecture.controller.dto.LecturesAndCountDto;
+import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -58,7 +58,7 @@ public class JpaLectureRepository implements LectureRepository {
     }
 
     @Override
-    public LecturesAndCountDto findLectureByFindOption(String searchValue, LectureFindOption option) {
+    public LecturesAndCountDao findLectureByFindOption(String searchValue, LectureFindOption option) {
         String orderOption = initializeOrderOption(option.getOrderOption());
         Integer page = initializePageNumber(option.getPageNumber());
 
@@ -84,13 +84,13 @@ public class JpaLectureRepository implements LectureRepository {
             .getResultList();
         Long count = (Long) lectures.get(0);
 
-        return LecturesAndCountDto.builder()
+        return LecturesAndCountDao.builder()
             .lectureList(results).count(count)
             .build();
     }
 
     @Override
-    public LecturesAndCountDto findAllLectureByFindOption(LectureFindOption option) {
+    public LecturesAndCountDao findAllLectureByFindOption(LectureFindOption option) {
         String orderOption = initializeOrderOption(option.getOrderOption());
         Integer page = initializePageNumber(option.getPageNumber());
 
@@ -110,11 +110,11 @@ public class JpaLectureRepository implements LectureRepository {
                 .getResultList();
         Long count = (Long) lectures.get(0);
 
-        return LecturesAndCountDto.builder().lectureList(results).count(count).build();
+        return LecturesAndCountDao.builder().lectureList(results).count(count).build();
     }
 
     @Override
-    public LecturesAndCountDto findLectureByMajorType(String searchValue, LectureFindOption option) {
+    public LecturesAndCountDao findLectureByMajorType(String searchValue, LectureFindOption option) {
         String orderOption = initializeOrderOption(option.getOrderOption());
         Integer page = initializePageNumber(option.getPageNumber());
 
@@ -144,11 +144,11 @@ public class JpaLectureRepository implements LectureRepository {
             .getResultList();
         Long count = (Long) lectures.get(0);
 
-        return LecturesAndCountDto.builder().lectureList(results).count(count).build();
+        return LecturesAndCountDao.builder().lectureList(results).count(count).build();
     }
 
     @Override
-    public LecturesAndCountDto findAllLectureByMajorType(LectureFindOption option) {
+    public LecturesAndCountDao findAllLectureByMajorType(LectureFindOption option) {
         String orderOption = initializeOrderOption(option.getOrderOption());
         Integer page = initializePageNumber(option.getPageNumber());
 
@@ -173,7 +173,7 @@ public class JpaLectureRepository implements LectureRepository {
                 .getResultList();
         Long count = (Long) lectures.get(0);
 
-        return LecturesAndCountDto.builder().lectureList(results).count(count).build();
+        return LecturesAndCountDao.builder().lectureList(results).count(count).build();
     }
 
     @Override

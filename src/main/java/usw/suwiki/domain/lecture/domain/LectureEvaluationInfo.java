@@ -3,10 +3,8 @@ package usw.suwiki.domain.lecture.domain;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
-import javax.persistence.Transient;
 
-import lombok.NoArgsConstructor;
-import usw.suwiki.domain.evaluation.EvaluatePostsToLecture;
+import usw.suwiki.domain.evaluation.service.dto.EvaluatePostsToLecture;
 
 @Embeddable
 @Access(AccessType.FIELD)

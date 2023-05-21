@@ -2,51 +2,55 @@ package usw.suwiki.domain.notice.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import usw.suwiki.domain.notice.dto.NoticeDetailResponseDto;
-import usw.suwiki.domain.notice.dto.NoticeResponseDto;
-import usw.suwiki.domain.notice.dto.NoticeSaveOrUpdateDto;
-import usw.suwiki.domain.notice.entity.Notice;
-import usw.suwiki.domain.notice.repository.NoticeRepository;
+import org.springframework.transaction.annotation.Transactional;
+
+import usw.suwiki.domain.notice.controller.dto.NoticeDetailResponseDto;
+import usw.suwiki.domain.notice.controller.dto.NoticeResponseDto;
+import usw.suwiki.domain.notice.controller.dto.NoticeSaveOrUpdateDto;
+import usw.suwiki.domain.notice.domain.Notice;
 import usw.suwiki.global.PageOption;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Transactional
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class NoticeService {
-    private final NoticeRepository noticeRepository;
+    private final NoticeCRUDService noticeCRUDService;
 
-    public void save(NoticeSaveOrUpdateDto dto) {
+    @Transactional
+    public void write(NoticeSaveOrUpdateDto dto) {
         Notice notice = new Notice(dto);
-        noticeRepository.save(notice);
+        noticeCRUDService.save(notice);
     }
 
-    public List<NoticeResponseDto> findNoticeList(PageOption page) {
-        List<NoticeResponseDto> dtoList = new ArrayList<>();
-        List<Notice> list = noticeRepository.findByNoticeList(page);
-        for (Notice notice : list) {
-            dtoList.add(new NoticeResponseDto(notice));
+    @Transactional(readOnly = true)
+    public List<NoticeResponseDto> readAllNotice(PageOption option) {
+        List<NoticeResponseDto> response = new ArrayList<>();
+        List<Notice> notices = noticeCRUDService.loadNotices(option);
+        for (Notice notice : notices) {
+            response.add(new NoticeResponseDto(notice));
         }
-        return dtoList;
+        return response;
     }
 
-    public NoticeDetailResponseDto findNoticeDetail(Long noticeId) {
-        Notice notice = noticeRepository.findById(noticeId);
-        NoticeDetailResponseDto dto = new NoticeDetailResponseDto(notice);
-        return dto;
+    @Transactional(readOnly = true)
+    public NoticeDetailResponseDto readNotice(Long noticeId) {
+        Notice notice = noticeCRUDService.loadNoticeFromId(noticeId);
+        NoticeDetailResponseDto response = new NoticeDetailResponseDto(notice);
+        return response;
     }
 
+    @Transactional
     public void update(NoticeSaveOrUpdateDto dto, Long noticeId) {
-        Notice notice = noticeRepository.findById(noticeId);
+        Notice notice = noticeCRUDService.loadNoticeFromId(noticeId);
         notice.update(dto);
     }
 
-    public void delete(Long noticeId) {
-        Notice notice = noticeRepository.findById(noticeId);
-        noticeRepository.delete(notice);
-    }
 
+    @Transactional
+    public void delete(Long noticeId) {
+        Notice notice = noticeCRUDService.loadNoticeFromId(noticeId);
+        noticeCRUDService.deleteNotice(notice);
+    }
 }

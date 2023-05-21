@@ -1,0 +1,87 @@
+package usw.suwiki.global.interceptor;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+import usw.suwiki.domain.apilogger.service.ApiLoggerService;
+import usw.suwiki.global.annotation.ApiLogger;
+import usw.suwiki.global.annotation.JWTVerify;
+import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.global.jwt.JwtAgent;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
+
+@Component
+@RequiredArgsConstructor
+public class JwtInterceptor implements HandlerInterceptor {
+
+    private final ApiLoggerService apiLoggerService;
+    private final JwtAgent jwtAgent;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+
+    private String apiLoggerOption = "";
+
+    @Override
+    public boolean preHandle(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Object handler
+    ) {
+
+
+        if (handler instanceof HandlerMethod handlerMethod) {
+            Method method = handlerMethod.getMethod();
+            ApiLogger apiLoggerAnnotation = AnnotationUtils.findAnnotation(method, ApiLogger.class);
+            JWTVerify annotation = AnnotationUtils.findAnnotation(method, JWTVerify.class);
+
+            if (apiLoggerAnnotation != null) {
+                startTime = LocalDateTime.now();
+                apiLoggerOption = apiLoggerAnnotation.option();
+            } else if (annotation != null) {
+                String token = request.getHeader("Authorization");
+                if (annotation.option().equals("ADMIN")) {
+                    if (jwtAgent.getUserRole(token).equals("ADMIN")) {
+                        return true;
+                    }
+                    throw new AccountException(USER_RESTRICTED);
+                }
+                jwtAgent.validateJwt(token);
+            }
+            return true;
+        }
+        return true;
+    }
+
+    @Override
+    public void postHandle(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Object handler,
+            ModelAndView modelAndView
+    ) throws Exception {
+
+    }
+
+    @Override
+    public void afterCompletion(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Object handler, Exception ex
+    ) throws Exception {
+        endTime = LocalDateTime.now();
+        Duration duration = Duration.between(startTime, endTime);
+        Long finalProcessingTime = duration.toMillis();
+        apiLoggerService.logApi(LocalDate.now(), finalProcessingTime, apiLoggerOption);
+    }
+}

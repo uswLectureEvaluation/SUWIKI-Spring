@@ -1,8 +1,5 @@
 package usw.suwiki.domain.apilogger.service;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.time.LocalDate;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,6 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.apilogger.ApiLogger;
 import usw.suwiki.domain.apilogger.repository.ApiLoggerRepository;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -18,7 +18,6 @@ import usw.suwiki.domain.apilogger.repository.ApiLoggerRepository;
 public class ApiLoggerService {
 
     private final ApiLoggerRepository apiLoggerRepository;
-
     private final String lecturePostsOption = "lecture";
     private final String evaluatePostsOption = "evaluatePosts";
     private final String examPostsOption = "examPosts";
@@ -41,36 +40,48 @@ public class ApiLoggerService {
     }
 
     private ApiLogger makeNewApiStatistics(
-        LocalDate today, Long currentProcessTime, String option
+            LocalDate today, Long currentProcessTime, String option
     ) {
         ApiLogger newApiLogger = new ApiLogger();
-        if (option.equals(lecturePostsOption)) {
-            newApiLogger = newApiLogger.saveNewLectureStatistics(today, currentProcessTime);
-        } else if (option.equals(evaluatePostsOption)) {
-            newApiLogger = newApiLogger.saveNewEvaluatePostsStatistics(today, currentProcessTime);
-        } else if (option.equals(examPostsOption)) {
-            newApiLogger = newApiLogger.saveNewExamPostsStatistics(today, currentProcessTime);
-        } else if (option.equals(userOption)) {
-            newApiLogger = newApiLogger.saveNewUserStatistics(today, currentProcessTime);
-        } else if (option.equals(noticeOption)) {
-            newApiLogger = newApiLogger.saveNewNoticeStatistics(today, currentProcessTime);
+        switch (option) {
+            case lecturePostsOption:
+                newApiLogger = newApiLogger.saveNewLectureStatistics(today, currentProcessTime);
+                break;
+            case evaluatePostsOption:
+                newApiLogger = newApiLogger.saveNewEvaluatePostsStatistics(today, currentProcessTime);
+                break;
+            case examPostsOption:
+                newApiLogger = newApiLogger.saveNewExamPostsStatistics(today, currentProcessTime);
+                break;
+            case userOption:
+                newApiLogger = newApiLogger.saveNewUserStatistics(today, currentProcessTime);
+                break;
+            case noticeOption:
+                newApiLogger = newApiLogger.saveNewNoticeStatistics(today, currentProcessTime);
+                break;
         }
         return newApiLogger;
     }
 
     private ApiLogger makeOldApiStatistics(
-        ApiLogger apiLogger, Long currentProcessTime, String option
+            ApiLogger apiLogger, Long currentProcessTime, String option
     ) {
-        if (option.equals(lecturePostsOption)) {
-            apiLogger.calculateLectureApiStatistics(currentProcessTime);
-        } else if (option.equals(evaluatePostsOption)) {
-            apiLogger.calculateEvaluatePostsApiStatistics(currentProcessTime);
-        } else if (option.equals(examPostsOption)) {
-            apiLogger.calculateExamPostsStatistics(currentProcessTime);
-        } else if (option.equals(userOption)) {
-            apiLogger.calculateUserApiStatistics(currentProcessTime);
-        } else if (option.equals(noticeOption)) {
-            apiLogger.calculateNoticeApiStatistics(currentProcessTime);
+        switch (option) {
+            case lecturePostsOption:
+                apiLogger.calculateLectureApiStatistics(currentProcessTime);
+                break;
+            case evaluatePostsOption:
+                apiLogger.calculateEvaluatePostsApiStatistics(currentProcessTime);
+                break;
+            case examPostsOption:
+                apiLogger.calculateExamPostsStatistics(currentProcessTime);
+                break;
+            case userOption:
+                apiLogger.calculateUserApiStatistics(currentProcessTime);
+                break;
+            case noticeOption:
+                apiLogger.calculateNoticeApiStatistics(currentProcessTime);
+                break;
         }
         return apiLogger;
     }
