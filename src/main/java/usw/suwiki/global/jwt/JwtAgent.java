@@ -1,8 +1,13 @@
 package usw.suwiki.global.jwt;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.refreshToken.RefreshToken;
@@ -21,15 +26,21 @@ import static usw.suwiki.global.exception.ExceptionType.*;
 @Component
 @RequiredArgsConstructor
 public class JwtAgent {
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    @Value("${spring.secret-key}")
+    private final String key;
 
     // private static final Long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; // 30분
-    private static final Long ACCESS_TOKEN_EXPIRE_TIME = 1* 10 * 1000L; // 10초
+    private static final Long ACCESS_TOKEN_EXPIRE_TIME = 1 * 10 * 1000L; // 10초
     private static final Long REFRESH_TOKEN_EXPIRE_TIME = 270 * 24 * 60 * 60 * 1000L; // 270일 -> 9개월
 //    private static final Long ACCESS_TOKEN_EXPIRE_TIME = 1 * 1000L; // 1초
 //    private static final Long REFRESH_TOKEN_EXPIRE_TIME = 5 * 60 * 1000L; // 5분
 
     private final RefreshTokenCRUDService refreshTokenCRUDService;
+
+    private Key getSigningKey() {
+        final byte[] keyBytes = Decoders.BASE64.decode(this.key);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
     public void validateJwt(String token) {
         try {
@@ -78,7 +89,7 @@ public class JwtAgent {
 
     private String buildAccessToken(Claims claims, Date accessTokenExpireIn) {
         return Jwts.builder()
-                .signWith(key)
+                .signWith(getSigningKey())
                 .setHeaderParam("type", "JWT")
                 .setClaims(claims)
                 .setExpiration(accessTokenExpireIn)
@@ -87,7 +98,7 @@ public class JwtAgent {
 
     private String buildRefreshToken(Date refreshTokenExpireIn) {
         return Jwts.builder()
-                .signWith(key)
+                .signWith(getSigningKey())
                 .setHeaderParam("type", "JWT")
                 .setExpiration(refreshTokenExpireIn)
                 .compact();
@@ -96,7 +107,8 @@ public class JwtAgent {
     public Long getId(String token) {
         validateJwt(token);
         Object id = Jwts.parserBuilder()
-                .setSigningKey(key).build()
+                .setSigningKey(getSigningKey())
+                .build()
                 .parseClaimsJws(token)
                 .getBody().get("id");
         return Long.valueOf(String.valueOf(id));
@@ -105,7 +117,8 @@ public class JwtAgent {
     public String getUserRole(String token) {
         validateJwt(token);
         return (String) Jwts.parserBuilder()
-                .setSigningKey(key).build()
+                .setSigningKey(getSigningKey())
+                .build()
                 .parseClaimsJws(token)
                 .getBody().get("role");
     }
@@ -113,7 +126,8 @@ public class JwtAgent {
     public Boolean getUserIsRestricted(String token) {
         validateJwt(token);
         return (Boolean) Jwts.parserBuilder()
-                .setSigningKey(key).build()
+                .setSigningKey(getSigningKey())
+                .build()
                 .parseClaimsJws(token)
                 .getBody().get("restricted");
     }
@@ -157,7 +171,8 @@ public class JwtAgent {
         Date claims;
         try {
             claims = Jwts.parserBuilder()
-                    .setSigningKey(key).build()
+                    .setSigningKey(getSigningKey())
+                    .build()
                     .parseClaimsJws(refreshToken)
                     .getBody().getExpiration();
         } catch (ExpiredJwtException expiredJwtException) {
