@@ -27,7 +27,7 @@ import static usw.suwiki.global.exception.ExceptionType.*;
 @RequiredArgsConstructor
 public class JwtAgent {
     @Value("${spring.secret-key}")
-    private final String key;
+    private String key;
 
     // private static final Long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; // 30분
     private static final Long ACCESS_TOKEN_EXPIRE_TIME = 1 * 10 * 1000L; // 10초
