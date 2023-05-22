@@ -14,7 +14,7 @@ import java.sql.Connection;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AdminControllerTest extends BaseIntegrationTest {
+class AdminControllerV2Test extends BaseIntegrationTest {
 
     @BeforeAll
     public void init() throws Exception {

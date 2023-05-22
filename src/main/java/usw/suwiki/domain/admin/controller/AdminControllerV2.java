@@ -19,9 +19,9 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin")
+@RequestMapping("/v2/admin")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class AdminController {
+public class AdminControllerV2 {
 
     private final AdminBusinessService adminBusinessService;
 
@@ -37,7 +37,7 @@ public class AdminController {
     @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
-    @PostMapping("/restrict/evaluate-posts")
+    @PostMapping("/evaluate-posts/restrict")
     public Map<String, Boolean> restrictEvaluatePost(
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody EvaluatePostRestrictForm evaluatePostRestrictForm
@@ -48,7 +48,7 @@ public class AdminController {
     @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
-    @PostMapping("/restrict/exam-post")
+    @PostMapping("/exam-post/restrict")
     public Map<String, Boolean> restrictExamPost(
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody ExamPostRestrictForm examPostRestrictForm
@@ -60,7 +60,7 @@ public class AdminController {
     @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
-    @PostMapping("/blacklist/evaluate-post")
+    @PostMapping("/evaluate-post/blacklist")
     public Map<String, Boolean> banEvaluatePost(
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody EvaluatePostBlacklistForm evaluatePostBlacklistForm
@@ -71,7 +71,7 @@ public class AdminController {
     @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
-    @PostMapping("/blacklist/exam-post")
+    @PostMapping("/exam-post/blacklist")
     public Map<String, Boolean> banExamPost(
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody ExamPostBlacklistForm examPostBlacklistForm
@@ -82,7 +82,7 @@ public class AdminController {
     @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
-    @DeleteMapping("/no-problem/evaluate-post")
+    @DeleteMapping("/evaluate-post")
     public Map<String, Boolean> noProblemEvaluatePost(
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody EvaluatePostNoProblemForm evaluatePostNoProblemForm
@@ -93,7 +93,7 @@ public class AdminController {
     @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
-    @DeleteMapping("/no-problem/exam-post")
+    @DeleteMapping("/exam-post")
     public Map<String, Boolean> noProblemExamPost(
             @Valid @RequestHeader String Authorization,
             @Valid @RequestBody ExamPostNoProblemForm examPostNoProblemForm
@@ -104,7 +104,7 @@ public class AdminController {
     @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
-    @GetMapping("/report/list")
+    @GetMapping("/reported-posts")
     public LoadAllReportedPostForm loadReportedPost(
             @Valid @RequestHeader String Authorization
     ) {
@@ -115,7 +115,7 @@ public class AdminController {
     @JWTVerify(option = "ADMIN")
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
-    @GetMapping("/report/evaluate/")
+    @GetMapping("/reported-evaluate/")
     public EvaluatePostReport loadDetailReportedEvaluatePost(
             @Valid @RequestHeader String Authorization,
             @Valid @RequestParam Long target
@@ -126,7 +126,7 @@ public class AdminController {
     // 시험정보에 관련된 신고 게시글 자세히 보기
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
-    @GetMapping("/report/exam/")
+    @GetMapping("/reported-exam/")
     public ExamPostReport loadDetailReportedExamPost(
             @Valid @RequestHeader String Authorization,
             @Valid @RequestParam Long target
