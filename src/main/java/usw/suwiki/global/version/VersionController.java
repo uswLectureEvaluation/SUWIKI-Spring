@@ -1,6 +1,5 @@
 package usw.suwiki.global.version;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -8,11 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import usw.suwiki.domain.lecture.service.LectureCRUDService;
 import usw.suwiki.global.ResponseForm;
-import usw.suwiki.domain.lecture.service.LectureService;
-import usw.suwiki.global.annotation.ApiLogger;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/suwiki")
