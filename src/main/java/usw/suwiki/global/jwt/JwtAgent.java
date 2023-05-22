@@ -7,6 +7,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import java.util.Optional;
 
 import static usw.suwiki.global.exception.ExceptionType.*;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAgent {
@@ -155,14 +157,17 @@ public class JwtAgent {
         Optional<RefreshToken> refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
         if (refreshToken.isPresent()) {
             if (refreshToken.get().getPayload().equals(payload)) {
-                if (!isRefreshTokenExpired(payload)) {
-                    String newPayload = reIssueRefreshToken(refreshToken.get());
-                    refreshToken.get().updatePayload(newPayload);
-                    return newPayload;
+                // 리프레시 토큰이 만료되지 않았으면
+                if (isRefreshTokenExpired(payload)) {
+                    log.error(LocalDateTime.now() + " - 리프레시 토큰이 만료되었습니다.");
+                    throw new AccountException(TOKEN_IS_EXPIRED);
                 }
-                throw new AccountException(TOKEN_IS_EXPIRED);
+                String newPayload = reIssueRefreshToken(refreshToken.get());
+                refreshToken.get().updatePayload(newPayload);
+                return newPayload;
             }
         }
+        log.error(LocalDateTime.now() + " - 토큰이 DB와 일치하지 않습니다.");
         throw new AccountException(TOKEN_IS_BROKEN);
     }
 
