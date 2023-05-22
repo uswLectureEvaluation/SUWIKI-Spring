@@ -1,6 +1,7 @@
 package usw.suwiki.global.interceptor;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 
 import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtInterceptor implements HandlerInterceptor {
@@ -56,7 +58,6 @@ public class JwtInterceptor implements HandlerInterceptor {
                 }
                 jwtAgent.validateJwt(token);
             }
-            return true;
         }
         return true;
     }
@@ -78,6 +79,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             Object handler, Exception ex
     ) throws Exception {
         LocalDateTime endTime = LocalDateTime.now();
+        log.info("Api Process startTime = " + startTime + "Api Process endTime = " + endTime);
         Duration duration = Duration.between(this.startTime, endTime);
         Long finalProcessingTime = duration.toMillis();
         apiLoggerService.logApi(LocalDate.now(), finalProcessingTime, apiLoggerOption);
