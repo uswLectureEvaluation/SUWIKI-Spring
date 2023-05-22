@@ -21,7 +21,6 @@ public class VersionController {
 
     private final LectureCRUDService lectureCRUDService;
 
-    @ApiLogger(option = "version")
     @GetMapping("/version")
     public ResponseEntity<VersionResponseDto> findVersionSuwiki() {
         HttpHeaders header = new HttpHeaders();
@@ -30,7 +29,6 @@ public class VersionController {
         return new ResponseEntity<>(dto, header, HttpStatus.valueOf(200));
     }
 
-    @ApiLogger(option = "version")
     @GetMapping("/majorType")
     public ResponseEntity<ResponseForm> findAllMajorType() {
         HttpHeaders header = new HttpHeaders();
