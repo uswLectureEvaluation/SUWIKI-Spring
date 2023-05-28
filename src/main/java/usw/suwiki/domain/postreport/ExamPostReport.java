@@ -55,7 +55,7 @@ public class ExamPostReport {
     ) {
         return ExamPostReport
                 .builder()
-                .examIdx(examReportForm.getExamIdx())
+                .examIdx(examReportForm.examIdx())
                 .lectureName(examPost.getLectureName())
                 .professor(examPost.getProfessor())
                 .content(examPost.getContent())

@@ -1,6 +1,7 @@
 package usw.suwiki.domain.user.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenBusinessService;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
@@ -36,7 +37,7 @@ public class UserController {
     @PostMapping("/check-id")
     public Map<String, Boolean> overlapId(
             @Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
-        return userBusinessService.executeCheckId(checkLoginIdForm.getLoginId());
+        return userBusinessService.executeCheckId(checkLoginIdForm.loginId());
     }
 
     //이메일 중복 확인
@@ -45,7 +46,7 @@ public class UserController {
     @PostMapping("/check-email")
     public Map<String, Boolean> overlapEmail(
             @Valid @RequestBody CheckEmailForm checkEmailForm) {
-        return userBusinessService.executeCheckEmail(checkEmailForm.getEmail());
+        return userBusinessService.executeCheckEmail(checkEmailForm.email());
     }
 
     //회원가입 버튼 클릭 시 -> 유저 저장, 인증 이메일 발송
@@ -56,16 +57,16 @@ public class UserController {
             @Valid @RequestBody JoinForm joinForm
     ) {
         return userBusinessService.executeJoin(
-                joinForm.getLoginId(),
-                joinForm.getPassword(),
-                joinForm.getEmail()
+                joinForm.loginId(),
+                joinForm.password(),
+                joinForm.email()
         );
     }
 
     // 이메일 인증 링크를 눌렀을 때
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
-    @GetMapping("verify-email")
+    @GetMapping(value = "verify-email", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
     public String confirmEmail(@RequestParam("token") String token) {
         return confirmationTokenBusinessService.confirmToken(token);
     }
@@ -75,7 +76,7 @@ public class UserController {
     @ApiLogger(option = "user")
     @PostMapping("find-id")
     public Map<String, Boolean> findId(@Valid @RequestBody FindIdForm findIdForm) {
-        return userBusinessService.executeFindId(findIdForm.getEmail());
+        return userBusinessService.executeFindId(findIdForm.email());
     }
 
     //비밀번호 찾기 요청 시
@@ -85,8 +86,8 @@ public class UserController {
     public Map<String, Boolean> findPw(
             @Valid @RequestBody FindPasswordForm findPasswordForm) {
         return userBusinessService.executeFindPw(
-                findPasswordForm.getLoginId(),
-                findPasswordForm.getEmail()
+                findPasswordForm.loginId(),
+                findPasswordForm.email()
         );
     }
 
@@ -99,8 +100,8 @@ public class UserController {
             @RequestHeader String Authorization) {
         return userBusinessService.executeEditPassword(
                 Authorization,
-                editMyPasswordForm.getPrePassword(),
-                editMyPasswordForm.getNewPassword());
+                editMyPasswordForm.prePassword(),
+                editMyPasswordForm.newPassword());
     }
 
     // 안드, IOS 로그인 요청 시
@@ -110,8 +111,8 @@ public class UserController {
     public Map<String, String> mobileLogin(
             @Valid @RequestBody LoginForm loginForm) {
         return userBusinessService.executeLogin(
-                loginForm.getLoginId(),
-                loginForm.getPassword()
+                loginForm.loginId(),
+                loginForm.password()
         );
     }
 
@@ -124,8 +125,8 @@ public class UserController {
             HttpServletResponse response
     ) {
         Map<String, String> tokenPair = userBusinessService.executeLogin(
-                loginForm.getLoginId(),
-                loginForm.getPassword()
+                loginForm.loginId(),
+                loginForm.password()
         );
         Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
         refreshCookie.setMaxAge(270 * 24 * 60 * 60); // expires in 14 days
@@ -197,7 +198,7 @@ public class UserController {
             @Valid @RequestBody UserQuitForm userQuitForm,
             @Valid @RequestHeader String Authorization
     ) {
-        return userBusinessService.executeQuit(Authorization, userQuitForm.getPassword());
+        return userBusinessService.executeQuit(Authorization, userQuitForm.password());
     }
 
     // 강의평가 신고
@@ -255,7 +256,7 @@ public class UserController {
     // 땡큐 영수형
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
-    @GetMapping("/suki")
+    @GetMapping(value = "/suki", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
     public String thanksToSuki() {
         return
                 "<center>\uD83D\uDE00 Thank You Suki! \uD83D\uDE00 <br><br> You gave to me a lot of knowledge <br><br>"

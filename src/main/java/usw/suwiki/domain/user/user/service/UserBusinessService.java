@@ -53,7 +53,7 @@ import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.*;
 public class UserBusinessService {
 
     private static final String BASE_LINK = "https://api.suwiki.kr/user/verify-email/?token=";
-    private static final String LOCAL_BASE_LINK = "http://localhost:8080/v2/confirmation-token/verify-email/?token=";
+    private static final String LOCAL_BASE_LINK = "http://localhost:8080/v2/confirmation-token/verify/?token=";
     private static final String MAIL_FORM = "@suwon.ac.kr";
     private final UserCRUDService userCRUDService;
     private final UserIsolationCRUDService userIsolationCRUDService;
@@ -249,7 +249,7 @@ public class UserBusinessService {
         if (jwtAgent.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUserIdx = jwtAgent.getId(Authorization);
         EvaluatePosts evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(
-                evaluateReportForm.getEvaluateIdx());
+                evaluateReportForm.evaluateIdx());
         Long reportedUserIdx = evaluatePost.getUser().getId();
 
         reportPostService.saveEvaluatePostReport(
@@ -270,7 +270,7 @@ public class UserBusinessService {
         if (jwtAgent.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUserIdx = jwtAgent.getId(Authorization);
         ExamPosts examPost = examPostCRUDService.loadExamPostFromExamPostIdx(
-                examReportForm.getExamIdx());
+                examReportForm.examIdx());
         Long reportedUserIdx = examPost.getUser().getId();
         reportPostService.saveExamPostReport(
                 buildExamPostReport(

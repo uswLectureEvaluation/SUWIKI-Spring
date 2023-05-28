@@ -1,6 +1,7 @@
 package usw.suwiki.domain.confirmationtoken.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenBusinessService;
 import usw.suwiki.global.annotation.ApiLogger;
@@ -18,7 +19,7 @@ public class ConfirmationTokenControllerV2 {
     // 이메일 인증 링크를 눌렀을 때
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
-    @GetMapping("verify")
+    @GetMapping(value = "verify", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
     public String confirmEmail(@RequestParam("token") String token) {
         return confirmationTokenBusinessService.confirmToken(token);
     }

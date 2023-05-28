@@ -38,15 +38,13 @@ public class JwtInterceptor implements HandlerInterceptor {
             HttpServletResponse response,
             Object handler
     ) {
-
-
+        this.startTime = LocalDateTime.now();
         if (handler instanceof HandlerMethod handlerMethod) {
             Method method = handlerMethod.getMethod();
             ApiLogger apiLoggerAnnotation = AnnotationUtils.findAnnotation(method, ApiLogger.class);
             JWTVerify annotation = AnnotationUtils.findAnnotation(method, JWTVerify.class);
 
             if (apiLoggerAnnotation != null) {
-                this.startTime = LocalDateTime.now();
                 apiLoggerOption = apiLoggerAnnotation.option();
             } else if (annotation != null) {
                 String token = request.getHeader("Authorization");
@@ -79,6 +77,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             Object handler, Exception ex
     ) throws Exception {
         LocalDateTime endTime = LocalDateTime.now();
+        log.info("Api Process startTime = " + startTime + " Api Process endTime = " + endTime);
         log.info("Api Process startTime = " + startTime + "Api Process endTime = " + endTime);
         Duration duration = Duration.between(this.startTime, endTime);
         Long finalProcessingTime = duration.toMillis();

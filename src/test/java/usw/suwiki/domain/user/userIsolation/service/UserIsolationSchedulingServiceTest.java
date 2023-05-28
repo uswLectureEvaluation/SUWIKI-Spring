@@ -153,7 +153,7 @@ public class UserIsolationSchedulingServiceTest extends BaseIntegrationTest {
         List<User> users = userCRUDService.loadUsersLastLoginBetweenStartEnd(startTime, endTime);
         int count = 0;
         for (User user : users) {
-            count ++;
+            count++;
             emailSender.send(user.getEmail(), userAutoDeletedWarningForm.buildEmail());
         }
         assertThat(count).isEqualTo(2);
@@ -167,7 +167,7 @@ public class UserIsolationSchedulingServiceTest extends BaseIntegrationTest {
         List<User> users = userCRUDService.loadUsersLastLoginBetweenStartEnd(startTime, endTime);
         int count = 0;
         for (User user : users) {
-            count ++;
+            count++;
             Long userIdx = user.getId();
             viewExamCRUDService.deleteAllFromUserIdx(userIdx);
             refreshTokenCRUDService.deleteFromUserIdx(userIdx);

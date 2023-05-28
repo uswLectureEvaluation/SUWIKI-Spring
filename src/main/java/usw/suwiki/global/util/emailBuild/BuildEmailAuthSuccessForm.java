@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component;
 public class BuildEmailAuthSuccessForm {
 
     public String buildEmail() {
-        return "<center>\n" +
+        return "<html><head><meta charset=utf-8></head>" +
+                "<center>\n" +
                 "\t<img class=\"suwikilogo\"src=\"https://avatars.githubusercontent.com/u/96416159?s=200&v=4\" style=\"display:block; \"alt=\"SUWIKILOGO\">" +
                 "\t<div class=container>\n" +
                 "\t\t안녕하세요. 수원대학교 강의평가 플랫폼 SUWIKI 입니다.\n" +
@@ -16,6 +17,7 @@ public class BuildEmailAuthSuccessForm {
                 "\t\t<p>\n" +
                 "\t\t감사합니다.\n" +
                 "\t</div>\n" +
-                "</center>";
+                "</center> " +
+                "</html>";
     }
 }

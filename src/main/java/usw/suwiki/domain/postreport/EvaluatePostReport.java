@@ -53,7 +53,7 @@ public class EvaluatePostReport {
             Long reportingUserIdx
     ) {
         return EvaluatePostReport.builder()
-                .evaluateIdx(evaluateReportForm.getEvaluateIdx())
+                .evaluateIdx(evaluateReportForm.evaluateIdx())
                 .lectureName(evaluatePost.getLectureName())
                 .professor(evaluatePost.getProfessor())
                 .content(evaluatePost.getContent())

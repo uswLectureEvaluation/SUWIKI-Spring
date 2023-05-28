@@ -2,8 +2,8 @@ package usw.suwiki.domain.admin.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.admin.dto.UserAdminRequestDto.*;
-import usw.suwiki.domain.admin.dto.UserAdminResponseDto.LoadAllReportedPostForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.*;
+import usw.suwiki.domain.admin.controller.dto.UserAdminResponseDto.LoadAllReportedPostForm;
 import usw.suwiki.domain.admin.service.AdminBusinessService;
 import usw.suwiki.domain.postreport.EvaluatePostReport;
 import usw.suwiki.domain.postreport.ExamPostReport;
