@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
-import usw.suwiki.domain.admin.dto.UserAdminRequestDto.ExamPostRestrictForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostRestrictForm;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
 import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostCRUDService;
@@ -38,7 +38,7 @@ public class RestrictingUserService {
             EvaluatePostRestrictForm evaluatePostRestrictForm
     ) {
         EvaluatePosts evaluatePost = evaluatePostCRUDService
-                .loadEvaluatePostFromEvaluatePostIdx(evaluatePostRestrictForm.getEvaluateIdx());
+                .loadEvaluatePostFromEvaluatePostIdx(evaluatePostRestrictForm.evaluateIdx());
         User user = userCRUDService.loadUserFromUserIdx(evaluatePost.getUser().getId());
 
         if (user.getRestrictedCount() >= 2) {
@@ -53,9 +53,9 @@ public class RestrictingUserService {
             restrictingUserRepository.save(
                     RestrictingUser.builder()
                             .userIdx(user.getId())
-                            .restrictingDate(LocalDateTime.now().plusDays(evaluatePostRestrictForm.getRestrictingDate()))
-                            .restrictingReason(evaluatePostRestrictForm.getRestrictingReason())
-                            .judgement(evaluatePostRestrictForm.getJudgement())
+                            .restrictingDate(LocalDateTime.now().plusDays(evaluatePostRestrictForm.restrictingDate()))
+                            .restrictingReason(evaluatePostRestrictForm.restrictingReason())
+                            .judgement(evaluatePostRestrictForm.judgement())
                             .createdAt(LocalDateTime.now())
                             .updatedAt(LocalDateTime.now())
                             .build()
@@ -65,7 +65,7 @@ public class RestrictingUserService {
 
     public void executeRestrictUserFromExamPost(ExamPostRestrictForm examPostRestrictForm) {
         ExamPosts examPost = examPostCRUDService
-                .loadExamPostFromExamPostIdx(examPostRestrictForm.getExamIdx());
+                .loadExamPostFromExamPostIdx(examPostRestrictForm.examIdx());
         User user = userCRUDService.loadUserFromUserIdx(examPost.getUser().getId());
 
         if (user.getRestrictedCount() >= 2) {
@@ -80,9 +80,9 @@ public class RestrictingUserService {
             restrictingUserRepository.save(
                     RestrictingUser.builder()
                             .userIdx(user.getId())
-                            .restrictingDate(LocalDateTime.now().plusDays(examPostRestrictForm.getRestrictingDate()))
-                            .restrictingReason(examPostRestrictForm.getRestrictingReason())
-                            .judgement(examPostRestrictForm.getJudgement())
+                            .restrictingDate(LocalDateTime.now().plusDays(examPostRestrictForm.restrictingDate()))
+                            .restrictingReason(examPostRestrictForm.restrictingReason())
+                            .judgement(examPostRestrictForm.judgement())
                             .createdAt(LocalDateTime.now())
                             .updatedAt(LocalDateTime.now()).build()
             );

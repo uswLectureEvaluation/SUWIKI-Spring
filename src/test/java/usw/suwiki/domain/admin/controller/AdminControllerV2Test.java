@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import usw.suwiki.BaseIntegrationTest;
-import usw.suwiki.domain.admin.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
 
 import java.sql.Connection;

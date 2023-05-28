@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.admin.dto.UserAdminRequestDto;
-import usw.suwiki.domain.admin.dto.UserAdminRequestDto.*;
-import usw.suwiki.domain.admin.dto.UserAdminResponseDto.LoadAllReportedPostForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.*;
+import usw.suwiki.domain.admin.controller.dto.UserAdminResponseDto.LoadAllReportedPostForm;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
 import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostCRUDService;
@@ -93,7 +93,7 @@ public class AdminBusinessService {
      * 신고된 강의평가 게시물 삭제
      */
     public Map<String, Boolean> executeNoProblemEvaluatePost(EvaluatePostNoProblemForm evaluatePostNoProblemForm) {
-        reportPostService.deleteByEvaluateIdx(evaluatePostNoProblemForm.getEvaluateIdx());
+        reportPostService.deleteByEvaluateIdx(evaluatePostNoProblemForm.evaluateIdx());
         return successCapitalFlag();
     }
 
@@ -101,7 +101,7 @@ public class AdminBusinessService {
      * 신고된 시험정보 게시물 삭제
      */
     public Map<String, Boolean> executeNoProblemExamPost(ExamPostNoProblemForm examPostRestrictForm) {
-        reportPostService.deleteByExamIdx(examPostRestrictForm.getExamIdx());
+        reportPostService.deleteByExamIdx(examPostRestrictForm.examIdx());
         return successCapitalFlag();
     }
 
@@ -109,8 +109,8 @@ public class AdminBusinessService {
      * 신고된 강의평가 게시물 작성자 이용 정지 처리
      */
     public Map<String, Boolean> executeRestrictEvaluatePost(EvaluatePostRestrictForm evaluatePostRestrictForm) {
-        plusReportingUserPoint(reportPostService.whoIsEvaluateReporting(evaluatePostRestrictForm.getEvaluateIdx()));
-        plusRestrictCount(deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostRestrictForm.getEvaluateIdx()));
+        plusReportingUserPoint(reportPostService.whoIsEvaluateReporting(evaluatePostRestrictForm.evaluateIdx()));
+        plusRestrictCount(deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostRestrictForm.evaluateIdx()));
         restrictingUserService.executeRestrictUserFromEvaluatePost(evaluatePostRestrictForm);
 
         return successCapitalFlag();
@@ -120,8 +120,8 @@ public class AdminBusinessService {
      * 신고된 시험정보 게시물 작성자 이용 정지 처리
      */
     public Map<String, Boolean> executeRestrictExamPost(UserAdminRequestDto.ExamPostRestrictForm examPostRestrictForm) {
-        plusReportingUserPoint(reportPostService.whoIsExamReporting(examPostRestrictForm.getExamIdx()));
-        plusRestrictCount(deleteReportedExamPostFromEvaluateIdx(examPostRestrictForm.getExamIdx()));
+        plusReportingUserPoint(reportPostService.whoIsExamReporting(examPostRestrictForm.examIdx()));
+        plusRestrictCount(deleteReportedExamPostFromEvaluateIdx(examPostRestrictForm.examIdx()));
         restrictingUserService.executeRestrictUserFromExamPost(examPostRestrictForm);
 
         return successCapitalFlag();
@@ -132,16 +132,16 @@ public class AdminBusinessService {
      */
     public Map<String, Boolean> executeBlackListEvaluatePost(EvaluatePostBlacklistForm evaluatePostBlacklistForm) {
         Long userIdx = evaluatePostCRUDService
-                .loadEvaluatePostFromEvaluatePostIdx(evaluatePostBlacklistForm.getEvaluateIdx())
+                .loadEvaluatePostFromEvaluatePostIdx(evaluatePostBlacklistForm.evaluateIdx())
                 .getUser()
                 .getId();
 
-        deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostBlacklistForm.getEvaluateIdx());
+        deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostBlacklistForm.evaluateIdx());
         blacklistDomainCRUDService.saveBlackListDomain(
                 userIdx,
                 365L,
-                evaluatePostBlacklistForm.getBannedReason(),
-                evaluatePostBlacklistForm.getJudgement()
+                evaluatePostBlacklistForm.bannedReason(),
+                evaluatePostBlacklistForm.judgement()
         );
         plusRestrictCount(userIdx);
 
@@ -152,14 +152,14 @@ public class AdminBusinessService {
      * 신고된 시험정보 게시물 작성자 블랙리스트 처리
      */
     public Map<String, Boolean> executeBlackListExamPost(ExamPostBlacklistForm examPostBlacklistForm) {
-        Long userIdx = examPostCRUDService.loadExamPostFromExamPostIdx(examPostBlacklistForm.getExamIdx()).getUser().getId();
+        Long userIdx = examPostCRUDService.loadExamPostFromExamPostIdx(examPostBlacklistForm.examIdx()).getUser().getId();
 
-        deleteReportedExamPostFromEvaluateIdx(examPostBlacklistForm.getExamIdx());
+        deleteReportedExamPostFromEvaluateIdx(examPostBlacklistForm.examIdx());
         blacklistDomainCRUDService.saveBlackListDomain(
                 userIdx,
                 365L,
-                examPostBlacklistForm.getBannedReason(),
-                examPostBlacklistForm.getJudgement()
+                examPostBlacklistForm.bannedReason(),
+                examPostBlacklistForm.judgement()
         );
         plusRestrictCount(userIdx);
 
