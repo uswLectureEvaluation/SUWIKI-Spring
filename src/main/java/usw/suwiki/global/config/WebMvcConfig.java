@@ -16,6 +16,6 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/swagger-ui.html/**"); // 스웨거 UI 예외 처리
+                .excludePathPatterns("/swagger-ui.html/**");
     }
 }

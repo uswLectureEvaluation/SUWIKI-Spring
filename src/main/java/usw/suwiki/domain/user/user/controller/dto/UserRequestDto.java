@@ -1,121 +1,54 @@
 package usw.suwiki.domain.user.user.controller.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 public class UserRequestDto {
 
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class JoinForm {
-
-        private String loginId;
-        private String password;
-        private String email;
+    public record CheckLoginIdForm(@NotBlank String loginId) {
     }
 
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class LoginForm {
-
-        @NotEmpty
-        private String loginId;
-        @NotEmpty
-        private String password;
+    public record CheckEmailForm(@NotBlank String email) {
     }
 
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class FindIdForm {
-
-        @NotEmpty
-        private String email;
+    public record JoinForm(
+            @NotBlank String loginId,
+            @NotBlank String password,
+            @NotBlank String email
+    ) {
     }
 
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class FindPasswordForm {
-
-        @NotBlank
-        private String loginId;
-        @NotBlank
-        private String email;
+    public record LoginForm(
+            @NotBlank String loginId,
+            @NotBlank String password
+    ) {
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class EditMyPasswordForm {
-
-        @NotBlank
-        private String prePassword;
-        @NotBlank
-        private String newPassword;
-
-        public EditMyPasswordForm(String prePassword, String newPassword) {
-            this.prePassword = prePassword;
-            this.newPassword = newPassword;
-        }
+    public record FindIdForm(@NotBlank String email) {
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class CheckLoginIdForm {
-
-        @NotBlank
-        private String loginId;
-
-        public CheckLoginIdForm(String loginId) {
-            this.loginId = loginId;
-        }
+    public record FindPasswordForm(
+            @NotBlank String loginId,
+            @NotBlank String email
+    ) {
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class CheckEmailForm {
-        @NotBlank
-        private String email;
-
-        public CheckEmailForm(String email) {
-            this.email = email;
-        }
+    public record EditMyPasswordForm(
+            @NotBlank String prePassword,
+            @NotBlank String newPassword
+    ) {
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class UserQuitForm {
-
-        @NotBlank
-        private String loginId;
-        @NotBlank
-        private String password;
-
-        public UserQuitForm(String loginId, String password) {
-            this.loginId = loginId;
-            this.password = password;
-        }
+    public record UserQuitForm(
+            @NotBlank String loginId,
+            @NotBlank
+            String password
+    ) {
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class EvaluateReportForm {
-
-        @NotEmpty
-        private Long evaluateIdx;
+    public record EvaluateReportForm(@NotEmpty Long evaluateIdx) {
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class ExamReportForm {
-
-        @NotEmpty
-        private Long examIdx;
+    public record ExamReportForm(@NotEmpty Long examIdx) {
     }
 }
