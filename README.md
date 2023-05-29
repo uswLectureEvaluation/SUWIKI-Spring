@@ -9,7 +9,7 @@
 |JIWON-JEONG|K-Diger|
 |:---:|:---:|
 |Evaluation API|User API|
-|Exam API|Authorization / Authentication|
+|Exam API|Authentication / Authorization|
 |Lecture API|Admin API|
 |Notice API||
 |인앱 재화 구현 (POINT), XSS(크로스 사이트 스크립팅) 방지 필터||
