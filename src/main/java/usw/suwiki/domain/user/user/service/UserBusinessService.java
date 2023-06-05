@@ -52,7 +52,7 @@ import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.*;
 @Transactional
 public class UserBusinessService {
 
-    private static final String BASE_LINK = "https://api.suwiki.kr/user/verify-email/?token=";
+    private static final String BASE_LINK = "https://api.suwiki.kr/v2/confirmation-token/verify/?token=";
     private static final String LOCAL_BASE_LINK = "http://localhost:8080/v2/confirmation-token/verify/?token=";
     private static final String MAIL_FORM = "@suwon.ac.kr";
     private final UserCRUDService userCRUDService;
@@ -92,7 +92,6 @@ public class UserBusinessService {
         return overlapFalseFlag();
     }
 
-    @Transactional
     public Map<String, Boolean> executeJoin(String loginId, String password, String email) {
         blacklistDomainService.isUserInBlackListThatRequestJoin(email);
 
@@ -112,7 +111,7 @@ public class UserBusinessService {
 
         emailSender.send(
                 email,
-                buildEmailAuthForm.buildEmail(LOCAL_BASE_LINK + confirmationToken.getToken())
+                buildEmailAuthForm.buildEmail(BASE_LINK + confirmationToken.getToken())
         );
         return successFlag();
     }
