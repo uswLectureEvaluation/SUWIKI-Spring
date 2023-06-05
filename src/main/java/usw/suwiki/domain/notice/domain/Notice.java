@@ -20,7 +20,7 @@ public class Notice extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @LastModifiedDate // 조회한 Entity값을 변경할때 ,시간이 자동 저장된다.
+    @LastModifiedDate
     private LocalDateTime modifiedDate;
 
     private String title;

@@ -33,7 +33,7 @@ public class NoticeController {
 	@ApiLogger(option = "notice")
 	@GetMapping("/all")
 	public ResponseForm findNoticesApi(
-		@RequestParam(required = false) Optional<Integer> page) {
+			@RequestParam(required = false) Optional<Integer> page) {
 
 		PageOption option = new PageOption(page);
 		List<NoticeResponseDto> response = noticeService.readAllNotice(option);
@@ -43,6 +43,26 @@ public class NoticeController {
 	@ApiLogger(option = "notice")
 	@GetMapping("/")
 	public ResponseForm findNoticeApi(
+			@RequestParam Long noticeId) {
+
+		NoticeDetailResponseDto response = noticeService.readNotice(noticeId);
+		return new ResponseForm(response);
+	}
+
+
+	@ApiLogger(option = "notice")
+	@GetMapping("/v2/all")
+	public ResponseForm findNoticesApiV2(
+		@RequestParam(required = false) Optional<Integer> page) {
+
+		PageOption option = new PageOption(page);
+		List<NoticeResponseDto> response = noticeService.readAllNotice(option);
+		return new ResponseForm(response);
+	}
+
+	@ApiLogger(option = "notice")
+	@GetMapping("/v2/")
+	public ResponseForm findNoticeApiV2(
 		@RequestParam Long noticeId) {
 
 		NoticeDetailResponseDto response = noticeService.readNotice(noticeId);

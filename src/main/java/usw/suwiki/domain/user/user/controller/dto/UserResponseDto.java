@@ -1,10 +1,12 @@
 package usw.suwiki.domain.user.user.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import usw.suwiki.domain.user.user.User;
 
 import java.time.LocalDateTime;
 
+@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
 public class UserResponseDto {
 
     @Builder
