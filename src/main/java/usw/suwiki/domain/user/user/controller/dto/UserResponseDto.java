@@ -6,7 +6,6 @@ import usw.suwiki.domain.user.user.User;
 
 import java.time.LocalDateTime;
 
-@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
 public class UserResponseDto {
 
     @Builder
@@ -35,7 +34,9 @@ public class UserResponseDto {
     public record LoadMyRestrictedReasonResponseForm(
             String restrictedReason,
             String judgement,
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
             LocalDateTime createdAt,
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
             LocalDateTime restrictingDate
     ) {
 
@@ -45,7 +46,9 @@ public class UserResponseDto {
     public record LoadMyBlackListReasonResponseForm(
             String blackListReason,
             String judgement,
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
             LocalDateTime createdAt,
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
             LocalDateTime expiredAt
     ) {
     }
