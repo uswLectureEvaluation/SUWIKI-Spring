@@ -7,7 +7,8 @@ import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import java.util.Optional;
 
 @Repository
-public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationToken, Long>, ConfirmationTokenQueryDslRepository {
+public interface ConfirmationTokenRepository
+        extends JpaRepository<ConfirmationToken, Long>, ConfirmationTokenQueryDslRepository {
 
     Optional<ConfirmationToken> findByToken(String token);
 

@@ -31,15 +31,16 @@ public class ConfirmationTokenCRUDService {
         return confirmationTokenRepository.findByToken(payload);
     }
 
+    @Transactional(readOnly = true)
+    public List<ConfirmationToken> loadNotConfirmedTokensByExpiredAt(LocalDateTime time) {
+        return confirmationTokenRepository.loadNotConfirmedTokensByExpiredAtIsNull(time);
+    }
+
     public void deleteFromId(Long id) {
         confirmationTokenRepository.deleteById(id);
     }
 
     public void deleteFromUserIdx(Long userIdx) {
         confirmationTokenRepository.deleteByUserIdx(userIdx);
-    }
-
-    public List<ConfirmationToken> loadNotConfirmedTokensByExpiredAt(LocalDateTime time) {
-        return confirmationTokenRepository.loadNotConfirmedTokensByExpiredAt(time);
     }
 }
