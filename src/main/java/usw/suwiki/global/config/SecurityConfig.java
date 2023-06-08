@@ -13,16 +13,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private static final String[] PERMIT_URL_ARRAY = {
-            /* swagger v2 */
-            "/v2/api-docs",
-            "/swagger-resources",
+            "/swagger-ui/**",
             "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
+            "/swagger-ui/**",
+            "/v3/api-docs",
             "/swagger-ui.html",
             "/webjars/**",
-            /* swagger v3 */
-            "/swagger-ui/**"
     };
 
     @Bean

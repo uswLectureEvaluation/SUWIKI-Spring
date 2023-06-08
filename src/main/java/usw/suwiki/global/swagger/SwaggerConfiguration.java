@@ -11,22 +11,23 @@ import springfox.documentation.spring.web.plugins.Docket;
 
 @Configuration
 public class SwaggerConfiguration {
+
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.OAS_30)
+                .useDefaultResponseMessages(true)
+                .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
-                .build()
-                .apiInfo(apiInfo())
-                .useDefaultResponseMessages(false);
+                .build();
     }
 
-    private ApiInfo apiInfo() {
+    public ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("SUWIKI")
-                .version("1.0.0")
-                .description("2023-05-11")
+                .title("SUWIKI API Docs")
+                .description("Description by Richard and Diger")
+                .version("2.0")
                 .build();
     }
 }

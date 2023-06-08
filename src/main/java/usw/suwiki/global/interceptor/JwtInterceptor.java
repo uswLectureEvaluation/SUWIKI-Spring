@@ -77,8 +77,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             Object handler, Exception ex
     ) throws Exception {
         LocalDateTime endTime = LocalDateTime.now();
-        log.info("Api Process startTime = " + startTime + " Api Process endTime = " + endTime);
-        log.info("Api Process startTime = " + startTime + "Api Process endTime = " + endTime);
+        log.info("{} Api Call startTime = {}, endTime = {}", request.getRequestURI(), startTime, endTime);
         Duration duration = Duration.between(this.startTime, endTime);
         Long finalProcessingTime = duration.toMillis();
         apiLoggerService.logApi(LocalDate.now(), finalProcessingTime, apiLoggerOption);
