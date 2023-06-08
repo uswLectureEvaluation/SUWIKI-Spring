@@ -11,7 +11,7 @@
 ## Role
 
 |JIWON-JEONG|K-Diger|
-|:---:|:---:|
+|---|---|
 |Evaluation API|User API|
 |Exam API|Authentication / Authorization|
 |Lecture API|Admin API|
