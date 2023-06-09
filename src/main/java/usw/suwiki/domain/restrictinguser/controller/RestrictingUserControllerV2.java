@@ -1,6 +1,6 @@
 package usw.suwiki.domain.restrictinguser.controller;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.user.user.service.UserBusinessService;
@@ -19,10 +19,7 @@ public class RestrictingUserControllerV2 {
 
     private final UserBusinessService userBusinessService;
 
-    // @ApiOperation(
-    //         value = "정지 사유 불러오기",
-    //         notes = "토큰 정보를 바탕으로 정지 사유를 불러온다."
-    // )
+    @Operation(summary = "정지 사유 불러오기")
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("/restricted-reason")

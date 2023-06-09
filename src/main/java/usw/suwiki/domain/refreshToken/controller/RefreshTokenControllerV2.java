@@ -1,6 +1,6 @@
 package usw.suwiki.domain.refreshToken.controller;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.user.user.service.UserBusinessService;
@@ -23,10 +23,7 @@ public class RefreshTokenControllerV2 {
 
     private final UserBusinessService userBusinessService;
 
-     @ApiOperation(
-             value = "Web Client 토큰 갱신",
-             notes = "토큰을 갱신한다."
-     )
+    @Operation(summary = "Web Client 토큰 갱신")
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/web-client/refresh")
@@ -47,10 +44,7 @@ public class RefreshTokenControllerV2 {
         }});
     }
 
-     @ApiOperation(
-             value = "Mobile Client 토큰 갱신",
-             notes = "토큰을 갱신한다."
-     )
+    @Operation(summary = "Mobile Client 토큰 갱신")
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/mobile-client/refresh")
