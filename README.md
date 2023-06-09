@@ -3,11 +3,15 @@
 ![image](https://github.com/uswLectureEvaluation/Backend-Remaster/assets/60564431/6f1bb783-aa4d-457d-a6f5-c96a6dcb2aad)
 
 ---
+
+## API DOCS
+
+[SUWIKI Swagger](https://api.suwiki.kr/swagger-ui/index.html#/)
     
 ## Role
 
 |JIWON-JEONG|K-Diger|
-|:---:|:---:|
+|---|---|
 |Evaluation API|User API|
 |Exam API|Authentication / Authorization|
 |Lecture API|Admin API|
