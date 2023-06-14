@@ -42,19 +42,20 @@ public class JwtInterceptor implements HandlerInterceptor {
         if (handler instanceof HandlerMethod handlerMethod) {
             Method method = handlerMethod.getMethod();
             ApiLogger apiLoggerAnnotation = AnnotationUtils.findAnnotation(method, ApiLogger.class);
-            JWTVerify annotation = AnnotationUtils.findAnnotation(method, JWTVerify.class);
+            JWTVerify jwtVerify = AnnotationUtils.findAnnotation(method, JWTVerify.class);
 
             if (apiLoggerAnnotation != null) {
-                apiLoggerOption = apiLoggerAnnotation.option();
-            } else if (annotation != null) {
+                this.apiLoggerOption = apiLoggerAnnotation.option();
+            }
+            else if (jwtVerify != null) {
                 String token = request.getHeader("Authorization");
-                if (annotation.option().equals("ADMIN")) {
+                jwtAgent.validateJwt(token);
+                if (jwtVerify.option().equals("ADMIN")) {
                     if (jwtAgent.getUserRole(token).equals("ADMIN")) {
                         return true;
                     }
                     throw new AccountException(USER_RESTRICTED);
                 }
-                jwtAgent.validateJwt(token);
             }
         }
         return true;

@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfiguration {
     @Bean
     public OpenAPI openApi() {
-
         return new OpenAPI()
                 .addServersItem(new Server().url("/"))
                 .info(new Info()

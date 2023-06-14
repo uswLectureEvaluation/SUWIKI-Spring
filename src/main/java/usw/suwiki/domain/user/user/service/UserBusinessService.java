@@ -226,7 +226,6 @@ public class UserBusinessService {
     }
 
     public Map<String, Boolean> executeQuit(String Authorization, String inputPassword) {
-        jwtAgent.validateJwt(Authorization);
         User user = userCRUDService.loadUserFromUserIdx(jwtAgent.getId(Authorization));
         if (user.validatePassword(bCryptPasswordEncoder, inputPassword)) {
             throw new AccountException(PASSWORD_ERROR);
@@ -244,7 +243,6 @@ public class UserBusinessService {
             EvaluateReportForm evaluateReportForm,
             String Authorization
     ) {
-        jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUserIdx = jwtAgent.getId(Authorization);
         EvaluatePosts evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(
@@ -265,7 +263,6 @@ public class UserBusinessService {
             ExamReportForm examReportForm,
             String Authorization
     ) {
-        jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUserIdx = jwtAgent.getId(Authorization);
         ExamPosts examPost = examPostCRUDService.loadExamPostFromExamPostIdx(
@@ -282,19 +279,16 @@ public class UserBusinessService {
     }
 
     public List<LoadMyBlackListReasonResponseForm> executeLoadBlackListReason(String Authorization) {
-        jwtAgent.validateJwt(Authorization);
         User requestUser = userCRUDService.loadUserFromUserIdx(jwtAgent.getId(Authorization));
         return blacklistDomainCRUDService.loadAllBlacklistLog(requestUser.getId());
     }
 
     public List<LoadMyRestrictedReasonResponseForm> executeLoadRestrictedReason(String Authorization) {
-        jwtAgent.validateJwt(Authorization);
         User requestUser = userCRUDService.loadUserFromUserIdx(jwtAgent.getId(Authorization));
         return restrictingUserCRUDService.loadRestrictedLog(requestUser.getId());
     }
 
     public void executeFavoriteMajorSave(String Authorization, FavoriteSaveDto favoriteSaveDto) {
-        jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
@@ -304,7 +298,6 @@ public class UserBusinessService {
     }
 
     public void executeFavoriteMajorDelete(String Authorization, String majorType) {
-        jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
@@ -313,7 +306,6 @@ public class UserBusinessService {
     }
 
     public ResponseForm executeFavoriteMajorLoad(String Authorization) {
-        jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }

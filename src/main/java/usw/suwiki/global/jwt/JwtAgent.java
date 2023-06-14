@@ -49,7 +49,6 @@ public class JwtAgent {
                     .setSigningKey(getSigningKey()).build()
                     .parseClaimsJws(token);
         } catch (MalformedJwtException | IllegalArgumentException ex) {
-            System.out.println(ex.getMessage());
             throw new AccountException(LOGIN_REQUIRED);
         } catch (ExpiredJwtException exception) {
             throw new AccountException(TOKEN_IS_EXPIRED);
