@@ -43,7 +43,7 @@ public class UserIsolationSchedulingService {
 
     @Scheduled(cron = "2 0 0 * * *")
     public void sendEmailAboutSleeping() {
-        LocalDateTime startTime = LocalDateTime.now().minusMonths(12);
+        LocalDateTime startTime = LocalDateTime.now().minusMonths(11).minusDays(1);
         LocalDateTime endTime = LocalDateTime.now().minusMonths(11);
         List<User> users = userCRUDService.loadUsersLastLoginBetweenStartEnd(startTime, endTime);
         for (User user : users) {
