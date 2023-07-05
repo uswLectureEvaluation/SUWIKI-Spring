@@ -107,3 +107,7 @@ configurations {
     }
     querydsl.extendsFrom compileClasspath
 }
+
+test {
+    exclude '**/*'
+}
