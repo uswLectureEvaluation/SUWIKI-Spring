@@ -30,7 +30,6 @@ repositories {
 dependencies {
 
     // Swagger
-    // implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.6.14'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
 
@@ -40,7 +39,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // JWT
-    // implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
@@ -55,9 +53,6 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
-    // BATCH
-    implementation 'org.springframework.boot:spring-boot-starter-batch'
-
     // Utils
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -66,13 +61,8 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
-    // Encrypt Properties 암호화
-    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
-
     // SMTP
     implementation 'org.springframework.boot:spring-boot-starter-mail'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
