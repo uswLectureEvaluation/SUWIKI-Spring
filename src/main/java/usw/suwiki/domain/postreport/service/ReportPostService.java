@@ -63,12 +63,4 @@ public class ReportPostService {
     public void saveExamPostReport(ExamPostReport examPostReport) {
         examReportRepository.save(examPostReport);
     }
-
-    public Long whoIsEvaluateReporting(Long evaluateIdx) {
-        return loadDetailEvaluateReportFromReportingEvaluatePostId(evaluateIdx).getReportingUserIdx();
-    }
-
-    public Long whoIsExamReporting(Long examPostIdx) {
-        return loadDetailEvaluateReportFromReportingExamPostId(examPostIdx).getReportingUserIdx();
-    }
 }

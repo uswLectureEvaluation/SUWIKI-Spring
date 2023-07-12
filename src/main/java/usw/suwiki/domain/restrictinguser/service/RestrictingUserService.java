@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
 import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostRestrictForm;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
-import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
 import usw.suwiki.domain.evaluation.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.exam.domain.ExamPosts;
 import usw.suwiki.domain.exam.service.ExamPostCRUDService;
@@ -35,11 +34,10 @@ public class RestrictingUserService {
     private final RestrictingUserRepository restrictingUserRepository;
 
     public void executeRestrictUserFromEvaluatePost(
-            EvaluatePostRestrictForm evaluatePostRestrictForm
+            EvaluatePostRestrictForm evaluatePostRestrictForm,
+            Long reportedUserId
     ) {
-        EvaluatePosts evaluatePost = evaluatePostCRUDService
-                .loadEvaluatePostFromEvaluatePostIdx(evaluatePostRestrictForm.evaluateIdx());
-        User user = userCRUDService.loadUserFromUserIdx(evaluatePost.getUser().getId());
+        User user = userCRUDService.loadUserFromUserIdx(reportedUserId);
 
         if (user.getRestrictedCount() >= 2) {
             blacklistDomainCRUDService.saveBlackListDomain(
@@ -63,10 +61,11 @@ public class RestrictingUserService {
         }
     }
 
-    public void executeRestrictUserFromExamPost(ExamPostRestrictForm examPostRestrictForm) {
-        ExamPosts examPost = examPostCRUDService
-                .loadExamPostFromExamPostIdx(examPostRestrictForm.examIdx());
-        User user = userCRUDService.loadUserFromUserIdx(examPost.getUser().getId());
+    public void executeRestrictUserFromExamPost(
+            ExamPostRestrictForm examPostRestrictForm,
+            Long reportedUserId
+    ) {
+        User user = userCRUDService.loadUserFromUserIdx(reportedUserId);
 
         if (user.getRestrictedCount() >= 2) {
             blacklistDomainCRUDService.saveBlackListDomain(

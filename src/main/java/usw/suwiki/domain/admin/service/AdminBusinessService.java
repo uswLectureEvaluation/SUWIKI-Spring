@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto;
 import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.*;
 import usw.suwiki.domain.admin.controller.dto.UserAdminResponseDto.LoadAllReportedPostForm;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
@@ -109,20 +108,27 @@ public class AdminBusinessService {
      * 신고된 강의평가 게시물 작성자 이용 정지 처리
      */
     public Map<String, Boolean> executeRestrictEvaluatePost(EvaluatePostRestrictForm evaluatePostRestrictForm) {
-        plusReportingUserPoint(reportPostService.whoIsEvaluateReporting(evaluatePostRestrictForm.evaluateIdx()));
-        plusRestrictCount(deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostRestrictForm.evaluateIdx()));
-        restrictingUserService.executeRestrictUserFromEvaluatePost(evaluatePostRestrictForm);
-
+        EvaluatePostReport evaluatePostReport = reportPostService.loadDetailEvaluateReportFromReportingEvaluatePostId(evaluatePostRestrictForm.evaluateIdx());
+        plusReportingUserPoint(evaluatePostReport.getReportingUserIdx());
+        plusRestrictCount(evaluatePostReport.getReportedUserIdx());
+        restrictingUserService.executeRestrictUserFromEvaluatePost(
+                evaluatePostRestrictForm, evaluatePostReport.getReportedUserIdx()
+        );
+        deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostReport.getEvaluateIdx());
         return successCapitalFlag();
     }
 
     /**
      * 신고된 시험정보 게시물 작성자 이용 정지 처리
      */
-    public Map<String, Boolean> executeRestrictExamPost(UserAdminRequestDto.ExamPostRestrictForm examPostRestrictForm) {
-        plusReportingUserPoint(reportPostService.whoIsExamReporting(examPostRestrictForm.examIdx()));
-        plusRestrictCount(deleteReportedExamPostFromEvaluateIdx(examPostRestrictForm.examIdx()));
-        restrictingUserService.executeRestrictUserFromExamPost(examPostRestrictForm);
+    public Map<String, Boolean> executeRestrictExamPost(ExamPostRestrictForm examPostRestrictForm) {
+        ExamPostReport examPostReport = reportPostService.loadDetailEvaluateReportFromReportingExamPostId(examPostRestrictForm.examIdx());
+        plusReportingUserPoint(examPostReport.getReportingUserIdx());
+        plusRestrictCount(examPostReport.getReportedUserIdx());
+        restrictingUserService.executeRestrictUserFromExamPost(
+                examPostRestrictForm, examPostReport.getReportedUserIdx()
+        );
+        deleteReportedExamPostFromEvaluateIdx(examPostReport.getExamIdx());
 
         return successCapitalFlag();
     }
@@ -183,6 +189,7 @@ public class AdminBusinessService {
     private void plusRestrictCount(Long userIdx) {
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         user.increaseRestrictedCountByReportedPost();
+        user.editRestricted(true);
     }
 
     private void plusReportingUserPoint(Long reportingUserIdx) {
