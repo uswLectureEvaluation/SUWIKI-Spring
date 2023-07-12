@@ -172,18 +172,16 @@ public class AdminBusinessService {
         return successCapitalFlag();
     }
 
-    private Long deleteReportedEvaluatePostFromEvaluateIdx(Long evaluateIdx) {
+    private void deleteReportedEvaluatePostFromEvaluateIdx(Long evaluateIdx) {
         EvaluatePosts evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
         reportPostService.deleteByEvaluateIdx(evaluateIdx);
         evaluatePostCRUDService.delete(evaluatePost);
-        return evaluatePost.getUser().getId();
     }
 
-    private Long deleteReportedExamPostFromEvaluateIdx(Long examPostIdx) {
+    private void deleteReportedExamPostFromEvaluateIdx(Long examPostIdx) {
         ExamPosts examPost = examPostCRUDService.loadExamPostFromExamPostIdx(examPostIdx);
         reportPostService.deleteByEvaluateIdx(examPostIdx);
         examPostCRUDService.delete(examPost);
-        return examPost.getUser().getId();
     }
 
     private void plusRestrictCount(Long userIdx) {
