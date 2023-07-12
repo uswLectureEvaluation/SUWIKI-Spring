@@ -1,6 +1,7 @@
 package usw.suwiki.domain.confirmationtoken.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 @Transactional
+@Slf4j
 public class ConfirmationTokenBusinessService {
 
     private final UserCRUDService userCRUDService;
@@ -43,8 +45,9 @@ public class ConfirmationTokenBusinessService {
 
     // 이메일 인증 안한 유저는 매 분마다 검사하여 삭제
     @Transactional
-    @Scheduled(cron = "12 * * * * * ")
+    @Scheduled(cron = "0 * * * * * ")
     public void isNotConfirmedEmail() {
+        log.info("{} - 이메일 인증을 수행하지 않은 유저 검증 시작", LocalDateTime.now());
         List<ConfirmationToken> confirmationTokens = confirmationTokenCRUDService.loadNotConfirmedTokens(
                 LocalDateTime.now().minusMinutes(30)
         );
@@ -53,5 +56,6 @@ public class ConfirmationTokenBusinessService {
             confirmationTokenCRUDService.deleteFromId(confirmationToken.getId());
             userCRUDService.deleteFromUserIdx(targetUser.getId());
         }
+        log.info("{} - 이메일 인증을 수행하지 않은 유저 검증 종료", LocalDateTime.now());
     }
 }
