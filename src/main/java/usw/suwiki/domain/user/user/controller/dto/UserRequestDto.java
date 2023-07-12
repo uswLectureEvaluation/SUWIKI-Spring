@@ -46,9 +46,9 @@ public class UserRequestDto {
     ) {
     }
 
-    public record EvaluateReportForm(@NotEmpty Long evaluateIdx) {
+    public record EvaluateReportForm(@NotNull Long evaluateIdx) {
     }
 
-    public record ExamReportForm(@NotEmpty Long examIdx) {
+    public record ExamReportForm(@NotNull Long examIdx) {
     }
 }

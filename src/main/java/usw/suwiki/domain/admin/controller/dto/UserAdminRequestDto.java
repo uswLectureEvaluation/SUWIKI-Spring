@@ -2,44 +2,45 @@ package usw.suwiki.domain.admin.controller.dto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 public class UserAdminRequestDto {
 
     public record EvaluatePostNoProblemForm(
-            @NotEmpty Long evaluateIdx
+            @NotNull Long evaluateIdx
     ) {
     }
 
     public record ExamPostNoProblemForm(
-            @NotEmpty Long examIdx
+            @NotNull Long examIdx
     ) {
     }
 
     public record EvaluatePostRestrictForm(
-            @NotEmpty Long evaluateIdx,
-            @NotEmpty Long restrictingDate,
+            @NotNull Long evaluateIdx,
+            @NotNull Long restrictingDate,
             @NotBlank String restrictingReason,
             @NotBlank String judgement
     ) {
     }
 
     public record ExamPostRestrictForm(
-            @NotEmpty Long examIdx,
-            @NotEmpty Long restrictingDate,
+            @NotNull Long examIdx,
+            @NotNull Long restrictingDate,
             @NotBlank String restrictingReason,
             @NotBlank String judgement
     ) {
     }
 
     public record EvaluatePostBlacklistForm(
-            @NotEmpty Long evaluateIdx,
+            @NotNull Long evaluateIdx,
             @NotBlank String bannedReason,
             @NotBlank String judgement
     ) {
     }
 
     public record ExamPostBlacklistForm(
-            @NotEmpty Long examIdx,
+            @NotNull Long examIdx,
             @NotBlank String bannedReason,
             @NotBlank String judgement
     ) {
