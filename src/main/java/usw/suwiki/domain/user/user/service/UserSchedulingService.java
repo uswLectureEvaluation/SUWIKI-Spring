@@ -52,12 +52,11 @@ public class UserSchedulingService {
 
     // 회원탈퇴 요청 후 30일 뒤 테이블에서 제거
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "14 * * * * *")
     public void deleteRequestQuitUserAfter30Days() {
         LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
         List<User> targetUser = userRepository.findByRequestedQuitDateBefore(targetTime);
-        List<UserIsolation> targetUserIsolation =
-                userIsolationRepository.findByRequestedQuitDateBefore(targetTime);
+        List<UserIsolation> targetUserIsolation = userIsolationRepository.findByRequestedQuitDateBefore(targetTime);
         if (targetUser.size() > 0) {
             for (int index = 0; index < targetUser.toArray().length; index++) {
                 Long userId = targetUser.get(index).getId();

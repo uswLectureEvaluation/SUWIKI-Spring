@@ -43,11 +43,12 @@ public class ConfirmationTokenBusinessService {
 
     // 이메일 인증 안한 유저는 매 분마다 검사하여 삭제
     @Transactional
-    @Scheduled(cron = "0 0 * * * * ")
+    @Scheduled(cron = "12 * * * * * ")
     public void isNotConfirmedEmail() {
-        List<ConfirmationToken> targetTokens =
-                confirmationTokenCRUDService.loadNotConfirmedTokensByExpiredAt(LocalDateTime.now());
-        for (ConfirmationToken confirmationToken : targetTokens) {
+        List<ConfirmationToken> confirmationTokens = confirmationTokenCRUDService.loadNotConfirmedTokens(
+                LocalDateTime.now().minusMinutes(30)
+        );
+        for (ConfirmationToken confirmationToken : confirmationTokens) {
             User targetUser = userCRUDService.loadUserFromUserIdx(confirmationToken.getUserIdx());
             confirmationTokenCRUDService.deleteFromId(confirmationToken.getId());
             userCRUDService.deleteFromUserIdx(targetUser.getId());

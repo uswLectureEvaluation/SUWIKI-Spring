@@ -41,7 +41,7 @@ public class ConfirmationTest extends BaseIntegrationTest {
     @Test
     public void testMethod() {
         List<ConfirmationToken> confirmationTokens =
-                confirmationTokenCRUDService.loadNotConfirmedTokensByExpiredAt(LocalDateTime.now());
+                confirmationTokenCRUDService.loadNotConfirmedTokens(LocalDateTime.now());
 
         System.out.println(confirmationTokens.size());
     }

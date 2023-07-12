@@ -18,12 +18,11 @@ public class ConfirmationTokenQueryDslRepositoryImpl implements ConfirmationToke
     private final JPAQueryFactory query;
 
     @Override
-    public List<ConfirmationToken> loadNotConfirmedTokensByExpiredAtIsNull(LocalDateTime localDateTime) {
+    public List<ConfirmationToken> loadNotConfirmedTokensByExpiresAtIsNull(LocalDateTime localDateTime) {
         return query
                 .selectFrom(confirmationToken)
-                .where(confirmationToken.expiresAt.before(localDateTime)
-                        .and(confirmationToken.confirmedAt.isNull())
-                )
+                .where(confirmationToken.expiresAt.before(localDateTime))
+                .where(confirmationToken.confirmedAt.isNull())
                 .fetch();
     }
 }

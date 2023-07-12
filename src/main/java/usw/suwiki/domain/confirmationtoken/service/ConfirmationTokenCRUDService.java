@@ -32,8 +32,8 @@ public class ConfirmationTokenCRUDService {
     }
 
     @Transactional(readOnly = true)
-    public List<ConfirmationToken> loadNotConfirmedTokensByExpiredAt(LocalDateTime time) {
-        return confirmationTokenRepository.loadNotConfirmedTokensByExpiredAtIsNull(time);
+    public List<ConfirmationToken> loadNotConfirmedTokens(LocalDateTime targetTime) {
+        return confirmationTokenRepository.loadNotConfirmedTokensByExpiresAtIsNull(targetTime);
     }
 
     public void deleteFromId(Long id) {

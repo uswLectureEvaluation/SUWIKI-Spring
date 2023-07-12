@@ -6,5 +6,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ConfirmationTokenQueryDslRepository {
-    List<ConfirmationToken> loadNotConfirmedTokensByExpiredAtIsNull(LocalDateTime localDateTime);
+    List<ConfirmationToken> loadNotConfirmedTokensByExpiresAtIsNull(LocalDateTime localDateTime);
 }
