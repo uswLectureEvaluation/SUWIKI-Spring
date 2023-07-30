@@ -13,6 +13,12 @@ application.properties
 /logs
 .idea
 
+./src/main/resource/USW_2021_2.json
+./src/main/resource/USW_2022_1.json
+./src/main/resource/USW_2022_2.json
+./src/main/resource/USW_2023_1.json
+./src/main/resource/USW_2023_2.json
+
 ### STS ###
 .apt_generated
 .classpath
