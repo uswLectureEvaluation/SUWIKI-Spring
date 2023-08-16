@@ -3,20 +3,17 @@ package usw.suwiki.domain.lecture.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 import usw.suwiki.domain.evaluation.service.dto.EvaluatePostsToLecture;
 import usw.suwiki.domain.lecture.controller.dto.JsonToLectureForm;
 import usw.suwiki.global.BaseTimeEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 public class Lecture extends BaseTimeEntity {
@@ -56,11 +53,12 @@ public class Lecture extends BaseTimeEntity {
 
     public static Lecture toEntity(JsonToLectureForm dto) {
         Lecture entity = Lecture.builder()
-            .name(dto.getLectureName())
-            .professor(dto.getProfessor())
-            .semester(dto.getSelectedSemester())
-            .majorType(dto.getMajorType())
-            .build();
+                .name(dto.getLectureName())
+                .type(dto.getLectureType())
+                .professor(dto.getProfessor())
+                .semester(dto.getSelectedSemester())
+                .majorType(dto.getMajorType())
+                .build();
         entity.createLectureEvaluationInfo();
         entity.createLectureDetail(dto);
 
@@ -82,14 +80,14 @@ public class Lecture extends BaseTimeEntity {
 
     private void createLectureDetail(JsonToLectureForm dto) {
         this.lectureDetail = LectureDetail.builder()
-            .code(dto.getLectureCode())
-            .grade(dto.getGrade())
-            .point(dto.getPoint())
-            .diclNo(dto.getDiclNo())
-            .evaluateType(dto.getEvaluateType())
-            .placeSchedule(dto.getPlaceSchedule())
-            .capprType(dto.getCapprType())
-            .build();
+                .code(dto.getLectureCode())
+                .grade(dto.getGrade())
+                .point(dto.getPoint())
+                .diclNo(dto.getDiclNo())
+                .evaluateType(dto.getEvaluateType())
+                .placeSchedule(dto.getPlaceSchedule())
+                .capprType(dto.getCapprType())
+                .build();
     }
 
     public void handleLectureEvaluationIfNewPost(EvaluatePostsToLecture post) {

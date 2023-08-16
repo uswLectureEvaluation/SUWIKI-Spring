@@ -62,16 +62,18 @@ public class UserIsolationSchedulingService {
         LocalDateTime endTime = LocalDateTime.now().minusMonths(12);
         List<User> users = userCRUDService.loadUsersLastLoginBetweenStartEnd(startTime, endTime);
         for (User user : users) {
-            UserIsolation userIsolation = UserIsolation.builder()
-                    .userIdx(user.getId())
-                    .loginId(user.getLoginId())
-                    .password(user.getPassword())
-                    .email(user.getEmail())
-                    .lastLogin(user.getLastLogin())
-                    .requestedQuitDate(user.getRequestedQuitDate())
-                    .build();
-            userIsolationCRUDService.saveUserIsolation(userIsolation);
-            userCRUDService.softDeleteForIsolation(user.getId());
+            if (userIsolationCRUDService.loadUserFromUserIdx(user.getId()) == null) {
+                UserIsolation userIsolation = UserIsolation.builder()
+                        .userIdx(user.getId())
+                        .loginId(user.getLoginId())
+                        .password(user.getPassword())
+                        .email(user.getEmail())
+                        .lastLogin(user.getLastLogin())
+                        .requestedQuitDate(user.getRequestedQuitDate())
+                        .build();
+                userIsolationCRUDService.saveUserIsolation(userIsolation);
+                userCRUDService.softDeleteForIsolation(user.getId());
+            }
         }
         log.info("{} - 휴면 계정 전환 종료", LocalDateTime.now());
     }

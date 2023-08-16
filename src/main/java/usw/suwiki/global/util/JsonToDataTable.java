@@ -1,9 +1,5 @@
 package usw.suwiki.global.util;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,6 +9,11 @@ import org.springframework.stereotype.Service;
 import usw.suwiki.domain.lecture.controller.dto.JsonToLectureForm;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
+
+import javax.transaction.Transactional;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 
 @Service
 @Transactional
@@ -71,20 +72,20 @@ public class JsonToDataTable {
                 JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
                 JsonToLectureForm dto = JsonToLectureForm.builder()
-                    .capprType((String) jsonObject.get("capprTypeNm"))
-                    .evaluateType((String) jsonObject.get("cretEvalNm"))
-                    .lectureCode((String) jsonObject.get("subjtCd"))
-                    .selectedSemester(jsonObject.get("subjtEstbYear") + "-" + String.valueOf(
-                        jsonObject.get("subjtEstbSmrCd")).substring(0, 1))
-                    .grade(Integer.parseInt(jsonObject.get("trgtGrdeCd").toString()))
-                    .lectureType((String) jsonObject.get("facDvnm"))
-                    .placeSchedule(String.valueOf(jsonObject.get("timtSmryCn")))
-                    .diclNo(String.valueOf(jsonObject.get("diclNo")))
-                    .majorType(String.valueOf(jsonObject.get("estbDpmjNm")))
-                    .point(Double.parseDouble(String.valueOf(jsonObject.get("point"))))
-                    .professor(String.valueOf(jsonObject.get("reprPrfsEnoNm")))
-                    .lectureName(String.valueOf(jsonObject.get("subjtNm")))
-                    .build();
+                        .capprType((String) jsonObject.get("capprTypeNm"))
+                        .evaluateType((String) jsonObject.get("cretEvalNm"))
+                        .lectureCode((String) jsonObject.get("subjtCd"))
+                        .selectedSemester(jsonObject.get("subjtEstbYear") + "-" + String.valueOf(
+                                jsonObject.get("subjtEstbSmrCd")).substring(0, 1))
+                        .grade(Integer.parseInt(jsonObject.get("trgtGrdeCd").toString()))
+                        .lectureType((String) jsonObject.get("facDvnm"))
+                        .placeSchedule(String.valueOf(jsonObject.get("timtSmryCn")))
+                        .diclNo(String.valueOf(jsonObject.get("diclNo")))
+                        .majorType(String.valueOf(jsonObject.get("estbDpmjNm")))
+                        .point(Double.parseDouble(String.valueOf(jsonObject.get("point"))))
+                        .professor(String.valueOf(jsonObject.get("reprPrfsEnoNm")))
+                        .lectureName(String.valueOf(jsonObject.get("subjtNm")))
+                        .build();
 
                 //professor 없으면 "-" 로 채움 (null 값 들어가지 않게)
                 if (dto.getProfessor().isEmpty() || dto.getProfessor() == null) {
@@ -102,12 +103,16 @@ public class JsonToDataTable {
                 }
 
                 Lecture lecture = lectureRepository.verifyJsonLecture(dto.getLectureName(),
-                    dto.getProfessor(), dto.getMajorType());
+                        dto.getProfessor(), dto.getMajorType());
+
+                if (lecture.getType() == null || lecture.getType().isEmpty()) {
+                    lecture.setType(dto.getLectureType());
+                }
 
                 if (lecture != null) {
                     if (!lecture.getSemester().contains(dto.getSelectedSemester())) {
                         String updateString =
-                            lecture.getSemester() + ", " + dto.getSelectedSemester();
+                                lecture.getSemester() + ", " + dto.getSelectedSemester();
                         lecture.setSemester(updateString);  //refactoring 필요
                         lectureRepository.save(lecture);
                     }
