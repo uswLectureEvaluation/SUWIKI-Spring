@@ -1,6 +1,7 @@
 package usw.suwiki.domain.lecture.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
@@ -39,6 +40,7 @@ public class LectureController {
         return ResponseEntity.ok(response);
     }
 
+    @Cacheable(cacheNames = "lecture")
     @ApiLogger(option = "lecture")
     @GetMapping("/all")
     public ResponseEntity<LectureAndCountResponseForm> findAllLectureApi(
