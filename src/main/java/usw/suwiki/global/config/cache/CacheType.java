@@ -12,7 +12,7 @@ public enum CacheType {
         this.maximumSize = maximumSize;
     }
 
-    private String cacheName;
-    private int expiredAfterWrite;
-    private int maximumSize;
+    private final String cacheName;
+    private final int expiredAfterWrite;
+    private final int maximumSize;
 }
