@@ -1,81 +1,69 @@
 package usw.suwiki.domain.exam.service;
 
-import static usw.suwiki.global.exception.ExceptionType.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
-import usw.suwiki.domain.exam.controller.dto.ExamPostsSaveDto;
-import usw.suwiki.domain.exam.controller.dto.ExamPostsUpdateDto;
-import usw.suwiki.domain.exam.controller.dto.ExamResponseByLectureIdDto;
-import usw.suwiki.domain.exam.controller.dto.ExamResponseByUserIdxDto;
-import usw.suwiki.domain.exam.controller.dto.ReadExamPostResponse;
-import usw.suwiki.domain.exam.domain.ExamPosts;
-import usw.suwiki.domain.exam.domain.repository.ExamPostsRepository;
+import org.springframework.stereotype.Service;
+import usw.suwiki.domain.exam.domain.ExamPost;
+import usw.suwiki.domain.exam.domain.repository.ExamPostRepository;
 import usw.suwiki.domain.lecture.domain.Lecture;
-import usw.suwiki.domain.lecture.service.LectureCRUDService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.exception.errortype.ExamPostException;
-import usw.suwiki.global.exception.errortype.LectureException;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ExamPostCRUDService {
-    private final ExamPostsRepository examPostsRepository;
 
-    public void save(ExamPosts examPost) {
-        examPostsRepository.save(examPost);
+    private static final int LIMIT_PAGE_SIZE = 10;
+
+    private final ExamPostRepository examPostRepository;
+    private final UserCRUDService userCRUDService;
+
+    public void save(ExamPost examPost) {
+        examPostRepository.save(examPost);
     }
 
-    public ExamPosts loadExamPostFromExamPostIdx(Long examIdx) {
-        ExamPosts examPost = examPostsRepository.findById(examIdx);
-        validateNotNull(examPost);
-
-        return examPost;
+    public ExamPost loadExamPostFromExamPostIdx(Long examIdx) {
+        Optional<ExamPost> examPost = examPostRepository.findById(examIdx);
+        if (examPost.isPresent()) {
+            return examPost.get();
+        }
+        throw new ExamPostException(ExceptionType.EXAM_POST_NOT_FOUND);
     }
 
     public void deleteFromUserIdx(Long userIdx) {
-        List<ExamPosts> examPosts = loadExamPostsFromUserIdx(userIdx);
-        for (ExamPosts examPost : examPosts) {
-            delete(examPost);
-        }
+        examPostRepository.deleteAll(loadExamPostListFromUserIdx(userIdx));
     }
 
-    public void update(Long examIdx, ExamPostsUpdateDto dto) {
-        ExamPosts posts = examPostsRepository.findById(examIdx);
-        posts.update(dto);
+    public List<ExamPost> loadExamPostsFromLectureIdx(Long lectureIdx, PageOption option) {
+        return examPostRepository.findAllByLectureId(
+                lectureIdx,
+                option.getPageNumber().get(),
+                LIMIT_PAGE_SIZE
+        );
     }
 
-    public  List<ExamPosts> loadExamPostsFromLectureIdx(Long lectureIdx, PageOption option) {
-        return examPostsRepository.findByLectureId(option, lectureIdx);
-    }
-
-    public List<ExamPosts> loadExamPostsFromUserIdxAndPageOption(Long userIdx, PageOption option) {
-        return examPostsRepository.findByUserId(option, userIdx);
+    public List<ExamPost> loadExamPostsFromUserIdxAndPageOption(Long userIdx, PageOption option) {
+        return examPostRepository.findByUserIdxAndPagePotion(
+                userIdx,
+                option.getPageNumber().get(),
+                LIMIT_PAGE_SIZE
+        );
     }
 
     public boolean isWrite(User user, Lecture lecture) {
-        return examPostsRepository.isWrite(user, lecture);
+        return examPostRepository.findByUserAndLecture(user, lecture).isPresent();
     }
 
-    public List<ExamPosts> loadExamPostsFromUserIdx(Long userIdx) {
-       return examPostsRepository.findAllByUserId(userIdx);
+    public List<ExamPost> loadExamPostListFromUserIdx(Long userIdx) {
+        return examPostRepository.findAllByUser(userCRUDService.loadUserFromUserIdx(userIdx));
     }
 
-    public void delete(ExamPosts examPost) {
-        examPostsRepository.delete(examPost);
-    }
-
-    public void validateNotNull(ExamPosts examPost) {
-        if (examPost == null) {
-            throw new ExamPostException(EXAM_POST_NOT_FOUND);
-        }
+    public void delete(ExamPost examPost) {
+        examPostRepository.delete(examPost);
     }
 }

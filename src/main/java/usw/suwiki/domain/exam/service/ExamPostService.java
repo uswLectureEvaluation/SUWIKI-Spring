@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import usw.suwiki.domain.exam.controller.dto.*;
 import usw.suwiki.domain.exam.controller.dto.viewexam.PurchaseHistoryDto;
-import usw.suwiki.domain.exam.domain.ExamPosts;
+import usw.suwiki.domain.exam.domain.ExamPost;
 import usw.suwiki.domain.exam.domain.viewexam.ViewExam;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureCRUDService;
@@ -31,7 +31,7 @@ public class ExamPostService {
         Lecture lecture = lectureCRUDService.loadLectureFromId(lectureId);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
 
-        ExamPosts examPost = createExamPost(examData, user, lecture);
+        ExamPost examPost = createExamPost(examData, user, lecture);
         user.increasePointByWritingExamPost();
 
         examPostCRUDService.save(examPost);
@@ -73,17 +73,17 @@ public class ExamPostService {
     }
 
     @Transactional
-    public void update(Long examIdx, ExamPostsUpdateDto examUpdateData) {
-        ExamPosts examPost = examPostCRUDService.loadExamPostFromExamPostIdx(examIdx);
+    public void update(Long examIdx, ExamPostUpdateDto examUpdateData) {
+        ExamPost examPost = examPostCRUDService.loadExamPostFromExamPostIdx(examIdx);
         examPost.update(examUpdateData);
     }
 
     @Transactional(readOnly = true)
     public ReadExamPostResponse readExamPost(Long userId, Long lectureId, PageOption option) {
         List<ExamResponseByLectureIdDto> response = new ArrayList<>();
-        List<ExamPosts> examPosts = examPostCRUDService.loadExamPostsFromLectureIdx(lectureId, option);
+        List<ExamPost> examPosts = examPostCRUDService.loadExamPostsFromLectureIdx(lectureId, option);
         boolean isWrite = isWrite(userId, lectureId);
-        for (ExamPosts post : examPosts) {
+        for (ExamPost post : examPosts) {
             response.add(new ExamResponseByLectureIdDto(post));
         }
         if (response.isEmpty()) {
@@ -96,8 +96,8 @@ public class ExamPostService {
     @Transactional(readOnly = true)
     public List<ExamResponseByUserIdxDto> readExamPostByUserIdAndOption(PageOption option, Long userId) {
         List<ExamResponseByUserIdxDto> response = new ArrayList<>();
-        List<ExamPosts> examPosts = examPostCRUDService.loadExamPostsFromUserIdxAndPageOption(userId, option);
-        for (ExamPosts examPost : examPosts) {
+        List<ExamPost> examPosts = examPostCRUDService.loadExamPostsFromUserIdxAndPageOption(userId, option);
+        for (ExamPost examPost : examPosts) {
             ExamResponseByUserIdxDto data = new ExamResponseByUserIdxDto(examPost);
             data.setSemesterList(examPost.getLecture().getSemester());
             response.add(data);
@@ -114,14 +114,14 @@ public class ExamPostService {
 
     @Transactional
     public void executeDeleteExamPosts(Long userIdx, Long examIdx) {
-        ExamPosts post = examPostCRUDService.loadExamPostFromExamPostIdx(examIdx);
+        ExamPost post = examPostCRUDService.loadExamPostFromExamPostIdx(examIdx);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         user.decreasePointAndWrittenExamByDeleteExamPosts();
         examPostCRUDService.delete(post);
     }
 
-    private ExamPosts createExamPost(ExamPostsSaveDto examData, User user, Lecture lecture) {
-        ExamPosts examPost = new ExamPosts(examData);
+    private ExamPost createExamPost(ExamPostsSaveDto examData, User user, Lecture lecture) {
+        ExamPost examPost = new ExamPost(examData);
         examPost.setLecture(lecture);
         examPost.setUser(user);
 

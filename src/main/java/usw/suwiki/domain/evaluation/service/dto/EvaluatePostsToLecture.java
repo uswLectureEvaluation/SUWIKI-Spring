@@ -3,7 +3,7 @@ package usw.suwiki.domain.evaluation.service.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
+import usw.suwiki.domain.evaluation.domain.EvaluatePost;
 
 @Getter
 @NoArgsConstructor
@@ -19,7 +19,7 @@ public class EvaluatePostsToLecture {
     private float lectureDifficulty;
     private float lectureHomework;
 
-    public EvaluatePostsToLecture(EvaluatePosts posts) {
+    public EvaluatePostsToLecture(EvaluatePost posts) {
         this.lectureId = posts.getLecture().getId();
         this.lectureTotal = posts.getTotalAvg();
         this.lectureSatisfaction = posts.getSatisfaction();

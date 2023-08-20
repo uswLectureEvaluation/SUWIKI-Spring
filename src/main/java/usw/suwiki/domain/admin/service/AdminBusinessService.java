@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.*;
 import usw.suwiki.domain.admin.controller.dto.UserAdminResponseDto.LoadAllReportedPostForm;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
-import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
+import usw.suwiki.domain.evaluation.domain.EvaluatePost;
 import usw.suwiki.domain.evaluation.service.EvaluatePostCRUDService;
-import usw.suwiki.domain.exam.domain.ExamPosts;
+import usw.suwiki.domain.exam.domain.ExamPost;
 import usw.suwiki.domain.exam.service.ExamPostCRUDService;
 import usw.suwiki.domain.postreport.EvaluatePostReport;
 import usw.suwiki.domain.postreport.ExamPostReport;
@@ -173,13 +173,13 @@ public class AdminBusinessService {
     }
 
     private void deleteReportedEvaluatePostFromEvaluateIdx(Long evaluateIdx) {
-        EvaluatePosts evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
+        EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
         reportPostService.deleteByEvaluateIdx(evaluateIdx);
         evaluatePostCRUDService.delete(evaluatePost);
     }
 
     private void deleteReportedExamPostFromEvaluateIdx(Long examPostIdx) {
-        ExamPosts examPost = examPostCRUDService.loadExamPostFromExamPostIdx(examPostIdx);
+        ExamPost examPost = examPostCRUDService.loadExamPostFromExamPostIdx(examPostIdx);
         reportPostService.deleteByEvaluateIdx(examPostIdx);
         examPostCRUDService.delete(examPost);
     }

@@ -1,11 +1,12 @@
 package usw.suwiki.domain.exam.domain;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
 import usw.suwiki.domain.exam.controller.dto.ExamPostsSaveDto;
-import usw.suwiki.domain.exam.controller.dto.ExamPostsUpdateDto;
+import usw.suwiki.domain.exam.controller.dto.ExamPostUpdateDto;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.global.BaseTimeEntity;
@@ -14,9 +15,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class ExamPosts extends BaseTimeEntity {
+public class ExamPost extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,7 +30,7 @@ public class ExamPosts extends BaseTimeEntity {
     private String examInfo;    //시험방식
     private String examDifficulty;    //난이도
 
-    @LastModifiedDate // 조회한 Entity값을 변경할때 ,시간이 자동 저장된다.
+    @LastModifiedDate
     private LocalDateTime modifiedDate;
 
     @Column(columnDefinition = "TEXT", nullable = false)
@@ -52,7 +53,7 @@ public class ExamPosts extends BaseTimeEntity {
     }
 
     @Builder
-    public ExamPosts(ExamPostsSaveDto dto) {
+    public ExamPost(ExamPostsSaveDto dto) {
         this.lectureName = dto.getLectureName();
         this.selectedSemester = dto.getSelectedSemester();
         this.professor = dto.getProfessor();
@@ -62,7 +63,7 @@ public class ExamPosts extends BaseTimeEntity {
         this.content = dto.getContent();
     }
 
-    public void update(ExamPostsUpdateDto dto) {
+    public void update(ExamPostUpdateDto dto) {
         this.selectedSemester = dto.getSelectedSemester();
         this.examType = dto.getExamType();
         this.examInfo = dto.getExamInfo();

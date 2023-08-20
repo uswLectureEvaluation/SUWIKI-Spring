@@ -1,7 +1,7 @@
 package usw.suwiki.domain.exam.controller.dto;
 
 import lombok.Getter;
-import usw.suwiki.domain.exam.domain.ExamPosts;
+import usw.suwiki.domain.exam.domain.ExamPost;
 
 @Getter
 public class ExamResponseByUserIdxDto {
@@ -22,7 +22,7 @@ public class ExamResponseByUserIdxDto {
         this.semesterList = semesterList;
     }
 
-    public ExamResponseByUserIdxDto(ExamPosts entity) {
+    public ExamResponseByUserIdxDto(ExamPost entity) {
         this.id = entity.getId();
         this.lectureName = entity.getLectureName();
         this.majorType = entity.getLecture().getMajorType();

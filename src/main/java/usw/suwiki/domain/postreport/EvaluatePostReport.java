@@ -1,7 +1,7 @@
 package usw.suwiki.domain.postreport;
 
 import lombok.*;
-import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
+import usw.suwiki.domain.evaluation.domain.EvaluatePost;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.EvaluateReportForm;
 
 import javax.persistence.*;
@@ -48,7 +48,7 @@ public class EvaluatePostReport {
 
     public static EvaluatePostReport buildEvaluatePostReport(
             EvaluateReportForm evaluateReportForm,
-            EvaluatePosts evaluatePost,
+            EvaluatePost evaluatePost,
             Long reportedUserIdx,
             Long reportingUserIdx
     ) {
