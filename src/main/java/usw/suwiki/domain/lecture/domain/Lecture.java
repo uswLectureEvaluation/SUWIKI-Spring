@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
-import usw.suwiki.domain.evaluation.service.dto.EvaluatePostsToLecture;
+import usw.suwiki.domain.evaluatepost.service.dto.EvaluatePostsToLecture;
 import usw.suwiki.domain.lecture.controller.dto.JsonToLectureForm;
 import usw.suwiki.global.BaseTimeEntity;
 

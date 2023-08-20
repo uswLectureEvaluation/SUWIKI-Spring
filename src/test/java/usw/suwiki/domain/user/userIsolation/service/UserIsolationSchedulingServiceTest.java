@@ -11,11 +11,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.BaseIntegrationTest;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
-import usw.suwiki.domain.evaluation.controller.dto.EvaluatePostsSaveDto;
-import usw.suwiki.domain.evaluation.service.EvaluatePostCRUDService;
-import usw.suwiki.domain.evaluation.service.EvaluatePostService;
-import usw.suwiki.domain.exam.service.ExamPostCRUDService;
-import usw.suwiki.domain.exam.service.ViewExamCRUDService;
+import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostSaveDto;
+import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
+import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
+import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
+import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 import usw.suwiki.domain.postreport.service.ReportPostService;
@@ -88,7 +88,7 @@ public class UserIsolationSchedulingServiceTest extends BaseIntegrationTest {
             );
         }
 
-        EvaluatePostsSaveDto evaluatePostsSaveDto = EvaluatePostsSaveDto.builder()
+        EvaluatePostSaveDto evaluatePostSaveDto = EvaluatePostSaveDto.builder()
                 .lectureName("테스트 과목입니다.")
                 .selectedSemester("테스트 학기")
                 .professor("테스트 교수")
@@ -101,8 +101,8 @@ public class UserIsolationSchedulingServiceTest extends BaseIntegrationTest {
                 .content("테스트 게시글 내용")
                 .build();
 
-        evaluatePostService.write(evaluatePostsSaveDto, 5L, 1L);
-        evaluatePostService.write(evaluatePostsSaveDto, 6L, 1L);
+        evaluatePostService.write(evaluatePostSaveDto, 5L, 1L);
+        evaluatePostService.write(evaluatePostSaveDto, 6L, 1L);
 
     }
 

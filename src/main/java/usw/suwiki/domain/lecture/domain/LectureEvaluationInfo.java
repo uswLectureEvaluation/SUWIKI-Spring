@@ -4,7 +4,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
 
-import usw.suwiki.domain.evaluation.service.dto.EvaluatePostsToLecture;
+import usw.suwiki.domain.evaluatepost.service.dto.EvaluatePostsToLecture;
 
 @Embeddable
 @Access(AccessType.FIELD)

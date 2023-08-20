@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import usw.suwiki.domain.evaluation.service.dto.EvaluatePostsToLecture;
 import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;

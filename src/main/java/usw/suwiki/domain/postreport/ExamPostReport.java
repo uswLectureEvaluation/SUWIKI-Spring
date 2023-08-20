@@ -1,7 +1,7 @@
 package usw.suwiki.domain.postreport;
 
 import lombok.*;
-import usw.suwiki.domain.exam.domain.ExamPost;
+import usw.suwiki.domain.exampost.domain.ExamPost;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.ExamReportForm;
 
 import javax.persistence.*;
