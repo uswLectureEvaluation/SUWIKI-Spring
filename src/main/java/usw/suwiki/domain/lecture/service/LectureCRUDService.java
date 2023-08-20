@@ -3,6 +3,7 @@ package usw.suwiki.domain.lecture.service;
 import static usw.suwiki.global.exception.ExceptionType.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -20,10 +21,8 @@ public class LectureCRUDService {
     private final LectureRepository lectureRepository;
 
     public Lecture loadLectureFromId(Long id) {
-        Lecture lecture = lectureRepository.findById(id);
-        validateNotNull(lecture);
-
-        return lecture;
+        Optional<Lecture> lecture = lectureRepository.findById(id);
+        return validateOptional(lecture);
     }
 
     public List<String> loadMajorTypes() {
@@ -58,5 +57,12 @@ public class LectureCRUDService {
         if (lecture == null) {
             throw new LectureException(LECTURE_NOT_FOUND);
         }
+    }
+
+    public Lecture validateOptional(Optional<Lecture> lecture) {
+        if (lecture.isEmpty()) {
+            throw new LectureException(LECTURE_NOT_FOUND);
+        }
+        return lecture.get();
     }
 }

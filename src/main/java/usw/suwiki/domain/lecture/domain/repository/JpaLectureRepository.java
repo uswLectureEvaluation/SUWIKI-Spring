@@ -1,18 +1,15 @@
 package usw.suwiki.domain.lecture.domain.repository;
 
-import usw.suwiki.domain.lecture.domain.Lecture;
+import org.springframework.stereotype.Repository;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
+import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-
 import java.util.List;
 
-import org.springframework.stereotype.Repository;
-
 @Repository
-public class JpaLectureRepository implements LectureRepository {
+public class JpaLectureRepository implements LectureQueryRepository {
     private final EntityManager em;
     private final String DEFAULT_ORDER = "modifiedDate";
     private final Integer DEFAULT_PAGE = 1;
@@ -25,23 +22,6 @@ public class JpaLectureRepository implements LectureRepository {
 
     public JpaLectureRepository(EntityManager em) {
         this.em = em;
-    }
-
-    @Override
-    public void save(Lecture lecture) {
-        em.persist(lecture);
-    }
-
-    @Override
-    public Lecture findByIdPessimisticLock(Long id) {
-        Lecture lecture = em.find(Lecture.class, id, LockModeType.PESSIMISTIC_WRITE);
-        return lecture;
-    }
-
-    @Override
-    public Lecture findById(Long id) {
-        Lecture lecture = em.find(Lecture.class, id);
-        return lecture;
     }
 
     @Override
