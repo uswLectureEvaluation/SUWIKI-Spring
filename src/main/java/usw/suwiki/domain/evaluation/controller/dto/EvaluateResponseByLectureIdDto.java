@@ -1,6 +1,6 @@
 package usw.suwiki.domain.evaluation.controller.dto;
 
-import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
+import usw.suwiki.domain.evaluation.domain.EvaluatePost;
 import lombok.Getter;
 
 @Getter
@@ -19,7 +19,7 @@ public class EvaluateResponseByLectureIdDto {
 
     private String content;    //주관적인 강의평가 입력내용
 
-    public EvaluateResponseByLectureIdDto(EvaluatePosts entity) {
+    public EvaluateResponseByLectureIdDto(EvaluatePost entity) {
         this.id = entity.getId();
         this.selectedSemester = entity.getSelectedSemester();
         this.totalAvg = entity.getTotalAvg();

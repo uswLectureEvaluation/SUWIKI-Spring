@@ -1,7 +1,7 @@
 package usw.suwiki.domain.exam.controller.dto;
 
 import lombok.Getter;
-import usw.suwiki.domain.exam.domain.ExamPosts;
+import usw.suwiki.domain.exam.domain.ExamPost;
 
 @Getter
 public class ExamResponseByLectureIdDto {
@@ -15,7 +15,7 @@ public class ExamResponseByLectureIdDto {
 
     private String content;    //주관적인 강의평가 입력내용
 
-    public ExamResponseByLectureIdDto(ExamPosts entity) {
+    public ExamResponseByLectureIdDto(ExamPost entity) {
         this.id = entity.getId();
         this.selectedSemester = entity.getSelectedSemester();
         this.examType = entity.getExamType();

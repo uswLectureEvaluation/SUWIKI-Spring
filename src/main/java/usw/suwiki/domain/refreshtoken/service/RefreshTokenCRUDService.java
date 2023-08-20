@@ -1,10 +1,10 @@
-package usw.suwiki.domain.refreshToken.service;
+package usw.suwiki.domain.refreshtoken.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.refreshToken.RefreshToken;
-import usw.suwiki.domain.refreshToken.repository.RefreshTokenRepository;
+import usw.suwiki.domain.refreshtoken.RefreshToken;
+import usw.suwiki.domain.refreshtoken.repository.RefreshTokenRepository;
 
 import java.util.Optional;
 

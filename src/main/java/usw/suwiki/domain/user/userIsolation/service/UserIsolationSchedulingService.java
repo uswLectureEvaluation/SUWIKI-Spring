@@ -11,7 +11,7 @@ import usw.suwiki.domain.exam.service.ExamPostCRUDService;
 import usw.suwiki.domain.exam.service.ViewExamCRUDService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
-import usw.suwiki.domain.refreshToken.service.RefreshTokenCRUDService;
+import usw.suwiki.domain.refreshtoken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;

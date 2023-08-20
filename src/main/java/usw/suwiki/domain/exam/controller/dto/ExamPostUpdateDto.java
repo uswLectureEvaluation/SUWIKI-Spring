@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 //ExamInfo Column은 EvaluatePosts 에 있다.
 @Getter
 @NoArgsConstructor
-public class ExamPostsUpdateDto {
+public class ExamPostUpdateDto {
 
     private String selectedSemester;
     private String examType;    //시험방식
@@ -15,7 +15,7 @@ public class ExamPostsUpdateDto {
 
     private String content;
 
-    public ExamPostsUpdateDto(String selectedSemester, String examType, String examInfo, String examDifficulty, String content) {
+    public ExamPostUpdateDto(String selectedSemester, String examType, String examInfo, String examDifficulty, String content) {
         this.selectedSemester = selectedSemester;
         this.examType = examType;
         this.examInfo = examInfo;

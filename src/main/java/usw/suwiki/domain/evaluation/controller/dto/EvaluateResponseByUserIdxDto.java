@@ -1,7 +1,7 @@
 package usw.suwiki.domain.evaluation.controller.dto;
 
 import lombok.Getter;
-import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
+import usw.suwiki.domain.evaluation.domain.EvaluatePost;
 
 @Getter
 public class EvaluateResponseByUserIdxDto {
@@ -27,7 +27,7 @@ public class EvaluateResponseByUserIdxDto {
         this.semesterList = semesterList;
     }
 
-    public EvaluateResponseByUserIdxDto(EvaluatePosts entity) {
+    public EvaluateResponseByUserIdxDto(EvaluatePost entity) {
         this.id = entity.getId();
         this.lectureName = entity.getLectureName();
         this.professor = entity.getProfessor();

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity
-public class EvaluatePosts extends BaseTimeEntity {
+public class EvaluatePost extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //autoIncrement
@@ -56,7 +56,7 @@ public class EvaluatePosts extends BaseTimeEntity {
         this.user = user;
     }
 
-    public EvaluatePosts(EvaluatePostsSaveDto dto) {
+    public EvaluatePost(EvaluatePostsSaveDto dto) {
         this.lectureName = dto.getLectureName();
         this.selectedSemester = dto.getSelectedSemester();
         this.professor = dto.getProfessor();

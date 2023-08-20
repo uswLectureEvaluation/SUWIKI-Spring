@@ -8,16 +8,16 @@ import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainService;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
-import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
+import usw.suwiki.domain.evaluation.domain.EvaluatePost;
 import usw.suwiki.domain.evaluation.service.EvaluatePostCRUDService;
-import usw.suwiki.domain.exam.domain.ExamPosts;
+import usw.suwiki.domain.exam.domain.ExamPost;
 import usw.suwiki.domain.exam.service.ExamPostCRUDService;
 import usw.suwiki.domain.exam.service.ViewExamCRUDService;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
-import usw.suwiki.domain.refreshToken.RefreshToken;
-import usw.suwiki.domain.refreshToken.service.RefreshTokenCRUDService;
+import usw.suwiki.domain.refreshtoken.RefreshToken;
+import usw.suwiki.domain.refreshtoken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserCRUDService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.EvaluateReportForm;
@@ -245,7 +245,7 @@ public class UserBusinessService {
     ) {
         if (jwtAgent.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUserIdx = jwtAgent.getId(Authorization);
-        EvaluatePosts evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(
+        EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(
                 evaluateReportForm.evaluateIdx());
         Long reportedUserIdx = evaluatePost.getUser().getId();
 
@@ -265,7 +265,7 @@ public class UserBusinessService {
     ) {
         if (jwtAgent.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
         Long reportingUserIdx = jwtAgent.getId(Authorization);
-        ExamPosts examPost = examPostCRUDService.loadExamPostFromExamPostIdx(
+        ExamPost examPost = examPostCRUDService.loadExamPostFromExamPostIdx(
                 examReportForm.examIdx());
         Long reportedUserIdx = examPost.getUser().getId();
         reportPostService.saveExamPostReport(

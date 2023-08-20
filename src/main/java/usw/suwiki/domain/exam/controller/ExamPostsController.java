@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.exam.controller.dto.ExamPostsSaveDto;
-import usw.suwiki.domain.exam.controller.dto.ExamPostsUpdateDto;
+import usw.suwiki.domain.exam.controller.dto.ExamPostUpdateDto;
 import usw.suwiki.domain.exam.controller.dto.ExamResponseByUserIdxDto;
 import usw.suwiki.domain.exam.controller.dto.ReadExamPostResponse;
 import usw.suwiki.domain.exam.service.ExamPostService;
@@ -100,7 +100,7 @@ public class ExamPostsController {
     public ResponseEntity<String> updateExamPostsApi(
             @RequestParam Long examIdx,
             @RequestHeader String Authorization,
-            @RequestBody ExamPostsUpdateDto dto
+            @RequestBody ExamPostUpdateDto dto
     ) {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);

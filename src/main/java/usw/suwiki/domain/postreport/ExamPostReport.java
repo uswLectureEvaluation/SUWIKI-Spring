@@ -1,7 +1,7 @@
 package usw.suwiki.domain.postreport;
 
 import lombok.*;
-import usw.suwiki.domain.exam.domain.ExamPosts;
+import usw.suwiki.domain.exam.domain.ExamPost;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.ExamReportForm;
 
 import javax.persistence.*;
@@ -49,7 +49,7 @@ public class ExamPostReport {
 
     public static ExamPostReport buildExamPostReport(
             ExamReportForm examReportForm,
-            ExamPosts examPost,
+            ExamPost examPost,
             Long reportedUserIdx,
             Long reportingUserIdx
     ) {

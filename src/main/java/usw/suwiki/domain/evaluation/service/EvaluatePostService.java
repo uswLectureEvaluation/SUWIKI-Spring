@@ -10,16 +10,13 @@ import usw.suwiki.domain.evaluation.controller.dto.EvaluatePostsSaveDto;
 import usw.suwiki.domain.evaluation.controller.dto.EvaluatePostsUpdateDto;
 import usw.suwiki.domain.evaluation.controller.dto.EvaluateResponseByLectureIdDto;
 import usw.suwiki.domain.evaluation.controller.dto.EvaluateResponseByUserIdxDto;
-import usw.suwiki.domain.evaluation.domain.EvaluatePosts;
-import usw.suwiki.domain.evaluation.domain.repository.EvaluatePostsRepository;
+import usw.suwiki.domain.evaluation.domain.EvaluatePost;
 import usw.suwiki.domain.evaluation.service.dto.FindByLectureToJson;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureCRUDService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.PageOption;
-import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.exception.errortype.EvaluatePostException;
 
 import java.util.ArrayList;
@@ -38,7 +35,7 @@ public class EvaluatePostService {
         checkAlreadyWrite(userIdx, lectureId);
         Lecture lecture = lectureCRUDService.loadLectureFromId(lectureId);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
-        EvaluatePosts evaluatePost = createEvaluatePost(evaluatePostData, user, lecture);
+        EvaluatePost evaluatePost = createEvaluatePost(evaluatePostData, user, lecture);
 
         user.updateWritingEvaluatePost();
         EvaluatePostsToLecture lectureEvaluation = new EvaluatePostsToLecture(evaluatePost);
@@ -49,7 +46,7 @@ public class EvaluatePostService {
 
     @Transactional
     public void update(Long evaluateIdx, EvaluatePostsUpdateDto evaluatePostUpdateData) {
-        EvaluatePosts post = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
+        EvaluatePost post = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
         EvaluatePostsToLecture beforeUpdated = new EvaluatePostsToLecture(post);
         post.update(evaluatePostUpdateData);
 
@@ -61,8 +58,8 @@ public class EvaluatePostService {
     public FindByLectureToJson readEvaluatePostsByLectureId(
             PageOption option, Long userIdx, Long lectureId) {
         List<EvaluateResponseByLectureIdDto> data = new ArrayList<>();
-        List<EvaluatePosts> evaluatePosts = evaluatePostCRUDService.loadEvaluatePostsFromLectureIdx(option, lectureId);
-        for (EvaluatePosts post : evaluatePosts) {
+        List<EvaluatePost> evaluatePosts = evaluatePostCRUDService.loadEvaluatePostsFromLectureIdx(option, lectureId);
+        for (EvaluatePost post : evaluatePosts) {
             data.add(new EvaluateResponseByLectureIdDto(post));
         }
 
@@ -82,8 +79,8 @@ public class EvaluatePostService {
     @Transactional(readOnly = true)
     public List<EvaluateResponseByUserIdxDto> readEvaluatePostsByUserId(PageOption option, Long userId) {
         List<EvaluateResponseByUserIdxDto> response = new ArrayList<>();
-        List<EvaluatePosts> evaluatePosts = evaluatePostCRUDService.loadEvaluatePostsFromUserIdxAndOption(option, userId);
-        for (EvaluatePosts post : evaluatePosts) {
+        List<EvaluatePost> evaluatePosts = evaluatePostCRUDService.loadEvaluatePostsFromUserIdxAndOption(option, userId);
+        for (EvaluatePost post : evaluatePosts) {
             EvaluateResponseByUserIdxDto data = new EvaluateResponseByUserIdxDto(post);
             data.setSemesterList(post.getLecture().getSemester());
             response.add(data);
@@ -94,11 +91,11 @@ public class EvaluatePostService {
     public boolean verifyIsUserCanWriteEvaluatePost(Long userIdx, Long lectureId) {
         Lecture lecture = lectureCRUDService.loadLectureFromId(lectureId);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
-        return evaluatePostCRUDService.verifyIsUserCanWriteEvaluatePost(user, lecture);
+        return evaluatePostCRUDService.isAlreadyWritten(user, lecture);
     }
 
     public void executeDeleteEvaluatePost(Long evaluateIdx, Long userIdx) {
-        EvaluatePosts evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
+        EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         user.decreasePointAndWrittenEvaluationByDeleteEvaluatePosts();
 
@@ -126,8 +123,8 @@ public class EvaluatePostService {
         }
     }
 
-    private EvaluatePosts createEvaluatePost(EvaluatePostsSaveDto evaluatePostData, User user, Lecture lecture) {
-        EvaluatePosts evaluatePost = new EvaluatePosts(evaluatePostData);
+    private EvaluatePost createEvaluatePost(EvaluatePostsSaveDto evaluatePostData, User user, Lecture lecture) {
+        EvaluatePost evaluatePost = new EvaluatePost(evaluatePostData);
         evaluatePost.setUser(user);
         evaluatePost.setLecture(lecture);
 
