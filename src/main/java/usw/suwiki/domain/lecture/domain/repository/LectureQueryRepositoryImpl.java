@@ -3,6 +3,7 @@ package usw.suwiki.domain.lecture.domain.repository;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -147,14 +148,17 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
         String majorType = option.getMajorType();
 
         BooleanExpression searchCondition = lecture.majorType.eq(majorType);
-
         OrderSpecifier<?> orderSpecifier = getOrderSpecifier(orderOption);
+        OrderSpecifier<Integer> customOrderSpecifier = new CaseBuilder()
+                .when(lecture.postsCount.gt(0)).then(1)
+                .otherwise(2)
+                .desc();
 
         QueryResults<Lecture> queryResults = queryFactory
                 .selectFrom(lecture)
                 .where(searchCondition)
                 .orderBy(
-                        lecture.postsCount.gt(0).desc(),
+                        customOrderSpecifier,
                         orderSpecifier
                 )
                 .offset((page - 1) * DEFAULT_LIMIT)
