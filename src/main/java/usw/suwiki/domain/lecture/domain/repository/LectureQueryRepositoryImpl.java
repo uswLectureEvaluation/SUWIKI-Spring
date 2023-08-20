@@ -201,7 +201,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
         return new CaseBuilder()
                 .when(lecture.postsCount.gt(0)).then(1)
                 .otherwise(2)
-                .desc();
+                .asc();
     }
 
     private String initializeOrderOption(String option) {
