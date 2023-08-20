@@ -16,6 +16,10 @@ public class PageOption {
         initPageNumber(pageNumber);
     }
 
+    public Optional<Integer> getPageNumber() {
+        return Optional.of(pageNumber.get() - 1);
+    }
+
     private void initPageNumber(Optional<Integer> pageNumber) {
         if (pageNumber.isEmpty()) {
             this.pageNumber = Optional.of(1);
@@ -23,5 +27,4 @@ public class PageOption {
         }
         this.pageNumber = pageNumber;
     }
-
 }
