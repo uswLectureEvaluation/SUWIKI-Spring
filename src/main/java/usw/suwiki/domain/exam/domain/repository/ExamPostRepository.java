@@ -21,7 +21,7 @@ public interface ExamPostRepository extends JpaRepository<ExamPost, Long> {
     List<ExamPost> findByUserIdxAndPagePotion(
             @Param("userIdx") Long userIdx,
             @Param("page") int page,
-            @Param("limit") int defaultLimit
+            @Param("defaultLimit") int defaultLimit
     );
 
     @Query(
@@ -31,7 +31,7 @@ public interface ExamPostRepository extends JpaRepository<ExamPost, Long> {
     List<ExamPost> findAllByLectureId(
             @Param("lectureId") Long lectureId,
             @Param("page") int page,
-            @Param("limit") int defaultLimit
+            @Param("defaultLimit") int defaultLimit
     );
 
     Optional<ExamPost> findByUserAndLecture(

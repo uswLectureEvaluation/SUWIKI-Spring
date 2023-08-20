@@ -23,7 +23,7 @@ public interface EvaluatePostRepository extends JpaRepository<EvaluatePost, Long
     List<EvaluatePost> findByUserIdxAndPagePotion(
             @Param("userIdx") Long userIdx,
             @Param("page") int page,
-            @Param("limit") int defaultLimit
+            @Param("defaultLimit") int defaultLimit
     );
 
     @Query(value =
@@ -33,20 +33,11 @@ public interface EvaluatePostRepository extends JpaRepository<EvaluatePost, Long
     List<EvaluatePost> findAllByLectureIdAndPageOption(
             @Param("lectureId") Long lectureId,
             @Param("page") int page,
-            @Param("limit") int defaultLimit
+            @Param("defaultLimit") int defaultLimit
     );
 
     Optional<EvaluatePost> findByUserAndLecture(
             User user,
             Lecture lecture
     );
-
-//    List resultList = em.createQuery(
-//                    "SELECT p from EvaluatePost p WHERE p.user = :user AND p.lecture = :lecture")
-//            .setParameter("user", user)
-//            .setParameter("lecture", lecture)
-//            .getResultList();
-//        if (resultList.isEmpty()) {
-//        return false;
-//    } else return true;
 }
