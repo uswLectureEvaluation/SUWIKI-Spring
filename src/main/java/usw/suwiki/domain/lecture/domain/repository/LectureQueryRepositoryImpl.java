@@ -43,6 +43,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
 
 
 
+
     /**
      * if (!Arrays.asList(orderOptions).contains(orderOption)) {
      *     throw new AccountException(ExceptionType.INVALID_ORDER_OPTION);
@@ -57,6 +58,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
                 .likeIgnoreCase("%" + searchValue + "%")
                 .or(lecture.professor.likeIgnoreCase("%" + searchValue + "%"));
 
+
         OrderSpecifier<?> orderSpecifier = getOrderSpecifier(orderOption);
 
         Pageable pageable = PageRequest.of(page - 1, DEFAULT_LIMIT);
@@ -64,7 +66,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
                 .selectFrom(lecture)
                 .where(searchCondition)
                 .orderBy(
-                        lecture.postsCount.gt(0).desc(),
+                        createPostCountOption(),
                         orderSpecifier
                 )
                 .offset(pageable.getOffset())
@@ -95,7 +97,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
                 .selectFrom(lecture)
                 .where(searchCondition)
                 .orderBy(
-                        lecture.postsCount.gt(0).desc(),
+                        createPostCountOption(),
                         orderSpecifier
                 )
                 .offset((page - 1) * DEFAULT_LIMIT)
@@ -124,7 +126,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
         QueryResults<Lecture> queryResults = queryFactory
                 .selectFrom(lecture)
                 .orderBy(
-                        lecture.postsCount.gt(0).desc(),
+                        createPostCountOption(),
                         orderSpecifier
                 )
                 .offset((page - 1) * DEFAULT_LIMIT)
@@ -149,16 +151,12 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
 
         BooleanExpression searchCondition = lecture.majorType.eq(majorType);
         OrderSpecifier<?> orderSpecifier = getOrderSpecifier(orderOption);
-        OrderSpecifier<Integer> customOrderSpecifier = new CaseBuilder()
-                .when(lecture.postsCount.gt(0)).then(1)
-                .otherwise(2)
-                .desc();
 
         QueryResults<Lecture> queryResults = queryFactory
                 .selectFrom(lecture)
                 .where(searchCondition)
                 .orderBy(
-                        customOrderSpecifier,
+                        createPostCountOption(),
                         orderSpecifier
                 )
                 .offset((page - 1) * DEFAULT_LIMIT)
@@ -197,6 +195,13 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
             default:
                 return lecture.modifiedDate.desc(); // Default order
         }
+    }
+
+    private OrderSpecifier<Integer> createPostCountOption() {
+        return new CaseBuilder()
+                .when(lecture.postsCount.gt(0)).then(1)
+                .otherwise(2)
+                .desc();
     }
 
     private String initializeOrderOption(String option) {
