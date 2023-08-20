@@ -7,12 +7,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
-import usw.suwiki.domain.lecture.domain.QLecture;
+import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
-
-import javax.persistence.EntityManager;
 
 import java.util.List;
 
@@ -41,10 +38,9 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
     }
 
 
-
     /**
      * if (!Arrays.asList(orderOptions).contains(orderOption)) {
-     *     throw new AccountException(ExceptionType.INVALID_ORDER_OPTION);
+     * throw new AccountException(ExceptionType.INVALID_ORDER_OPTION);
      * }
      */
     @Override
@@ -62,10 +58,8 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
         QueryResults<Lecture> queryResults = queryFactory
                 .selectFrom(lecture)
                 .where(searchCondition)
-                .orderBy(
-                        lecture.postsCount.gt(0).desc(),
-                        orderSpecifier
-                )
+                .where(lecture.postsCount.gt(0))
+                .orderBy(orderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
@@ -93,10 +87,8 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
         QueryResults<Lecture> queryResults = queryFactory
                 .selectFrom(lecture)
                 .where(searchCondition)
-                .orderBy(
-                        lecture.postsCount.gt(0).desc(),
-                        orderSpecifier
-                )
+                .where(lecture.postsCount.gt(0))
+                .orderBy(orderSpecifier)
                 .offset((page - 1) * DEFAULT_LIMIT)
                 .limit(DEFAULT_LIMIT)
                 .fetchResults();
@@ -122,10 +114,8 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
 
         QueryResults<Lecture> queryResults = queryFactory
                 .selectFrom(lecture)
-                .orderBy(
-                        lecture.postsCount.gt(0).desc(),
-                        orderSpecifier
-                )
+                .where(lecture.postsCount.gt(0))
+                .orderBy(orderSpecifier)
                 .offset((page - 1) * DEFAULT_LIMIT)
                 .limit(DEFAULT_LIMIT)
                 .fetchResults();
@@ -153,10 +143,8 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
         QueryResults<Lecture> queryResults = queryFactory
                 .selectFrom(lecture)
                 .where(searchCondition)
-                .orderBy(
-                        lecture.postsCount.gt(0).desc(),
-                        orderSpecifier
-                )
+                .where(lecture.postsCount.gt(0))
+                .orderBy(orderSpecifier)
                 .offset((page - 1) * DEFAULT_LIMIT)
                 .limit(DEFAULT_LIMIT)
                 .fetchResults();
