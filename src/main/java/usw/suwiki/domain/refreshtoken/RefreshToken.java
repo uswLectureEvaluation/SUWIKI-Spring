@@ -1,4 +1,4 @@
-package usw.suwiki.domain.refreshToken;
+package usw.suwiki.domain.refreshtoken;
 
 import lombok.*;
 

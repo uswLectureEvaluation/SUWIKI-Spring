@@ -11,8 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.refreshToken.RefreshToken;
-import usw.suwiki.domain.refreshToken.service.RefreshTokenCRUDService;
+import usw.suwiki.domain.refreshtoken.RefreshToken;
+import usw.suwiki.domain.refreshtoken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.global.exception.errortype.AccountException;
 
