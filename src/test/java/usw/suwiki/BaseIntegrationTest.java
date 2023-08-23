@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.global.jwt.JwtAgent;
-import usw.suwiki.global.util.BuildResultActionsException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

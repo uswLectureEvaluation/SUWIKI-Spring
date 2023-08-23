@@ -1,4 +1,4 @@
-package usw.suwiki.domain.user.userIsolation.service;
+package usw.suwiki.controller.user;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +15,7 @@ import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostSaveDto;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
+import usw.suwiki.domain.user.userIsolation.service.UserIsolationCRUDService;
 import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;

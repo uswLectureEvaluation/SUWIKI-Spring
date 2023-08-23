@@ -1,4 +1,4 @@
-package usw.suwiki.domain.confirmationtoken;
+package usw.suwiki.controller.confirmationtoken;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +9,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.BaseIntegrationTest;
+import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
 
 import java.sql.Connection;
@@ -19,7 +20,7 @@ import java.util.List;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-public class ConfirmationTest extends BaseIntegrationTest {
+public class ConfirmationTokenControllerTest extends BaseIntegrationTest {
 
     @Autowired
     ConfirmationTokenCRUDService confirmationTokenCRUDService;

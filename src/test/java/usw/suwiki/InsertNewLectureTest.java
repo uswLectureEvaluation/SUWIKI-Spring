@@ -1,10 +1,11 @@
-package usw.suwiki.global.util;
+package usw.suwiki;
 
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
+import usw.suwiki.global.util.JsonToDataTable;
 
 import java.io.IOException;
 

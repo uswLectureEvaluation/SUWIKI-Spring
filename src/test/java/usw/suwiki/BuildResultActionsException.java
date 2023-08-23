@@ -1,4 +1,4 @@
-package usw.suwiki.global.util;
+package usw.suwiki;
 
 public class BuildResultActionsException extends RuntimeException {
     public BuildResultActionsException(Throwable cause) {

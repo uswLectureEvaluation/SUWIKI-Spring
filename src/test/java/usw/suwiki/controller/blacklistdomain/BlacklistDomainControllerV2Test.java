@@ -1,4 +1,4 @@
-package usw.suwiki.domain.blacklistdomain.controller;
+package usw.suwiki.controller.blacklistdomain;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;

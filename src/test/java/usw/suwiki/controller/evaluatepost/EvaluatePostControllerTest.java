@@ -1,4 +1,4 @@
-package usw.suwiki.domain.exampost.controller;
+package usw.suwiki.controller.evaluatepost;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -16,9 +16,10 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.web.servlet.ResultActions;
 
 import usw.suwiki.BaseIntegrationTest;
+import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostSaveDto;
 import usw.suwiki.global.jwt.JwtAgent;
 
-class ExamPostControllerTest extends BaseIntegrationTest {
+class EvaluatePostControllerTest extends BaseIntegrationTest {
 
 	@MockBean
 	JwtAgent jwtAgent;
@@ -28,13 +29,12 @@ class ExamPostControllerTest extends BaseIntegrationTest {
 		try (Connection conn = dataSource.getConnection()) {
 			ScriptUtils.executeSqlScript(conn, new ClassPathResource("/data/insert-user.sql"));
 			ScriptUtils.executeSqlScript(conn, new ClassPathResource("/data/insert-lecture.sql"));
-			ScriptUtils.executeSqlScript(conn, new ClassPathResource("/data/insert-exampost.sql"));
-			ScriptUtils.executeSqlScript(conn, new ClassPathResource("/data/insert-viewexam.sql"));
+			ScriptUtils.executeSqlScript(conn, new ClassPathResource("/data/insert-evaluatepost.sql"));
 		}
 	}
 
 	@Test
-	void 시험정보_불러오기_권한_있는사람() throws Exception {
+	void 이미_작성한유저_강의평가_불러오기() throws Exception {
 		//given
 		String authorization = "authorization";
 		when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
@@ -42,21 +42,24 @@ class ExamPostControllerTest extends BaseIntegrationTest {
 
 		//when
 		ResultActions resultActions = mvc.perform(
-				get("/exam-posts/?lectureId=1")
+				get("/evaluate-posts/?lectureId=1")
 					.header("Authorization", authorization)
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON))
 			.andDo(print());
 
 		//then
+		final Long postId = 1L;
+
 		resultActions
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.canRead").value(Boolean.TRUE))
-			.andExpect(jsonPath("$.examDataExist").value(Boolean.TRUE));
+			.andExpect(jsonPath("$.data[0].id").value(postId))
+			.andExpect(jsonPath("$.written").value(Boolean.TRUE));
+
 	}
 
 	@Test
-	void 시험정보_불러오기_권한_없는사람() throws Exception {
+	void 작성하지않은유저_강의평가_불러오기() throws Exception {
 		//given
 		String authorization = "authorization";
 		when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
@@ -64,31 +67,45 @@ class ExamPostControllerTest extends BaseIntegrationTest {
 
 		//when
 		ResultActions resultActions = mvc.perform(
-				get("/exam-posts/?lectureId=1")
+				get("/evaluate-posts/?lectureId=1")
 					.header("Authorization", authorization)
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON))
 			.andDo(print());
 
 		//then
+		final Long postId = 1L;
+
 		resultActions
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.canRead").value(Boolean.FALSE))
-			.andExpect(jsonPath("$.examDataExist").value(Boolean.TRUE))
-			.andExpect(jsonPath("$.data").isEmpty());
+			.andExpect(jsonPath("$.data[0].id").value(postId))
+			.andExpect(jsonPath("$.written").value(Boolean.FALSE));
 	}
 
 	@Test
-	void 시험정보_중복구매_예외_테스트() throws Exception {
+	void 강의평가_중첩_작성하기_예외_테스트() throws Exception {
 		//given
 		String authorization = "authorization";
 		when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
 		when(jwtAgent.getId(authorization)).thenReturn(1L);
+		EvaluatePostSaveDto requestBody = EvaluatePostSaveDto.builder()
+			.lectureName("testLecture")
+			.selectedSemester("2022-1")
+			.professor("testProfessor")
+			.content("testContent")
+			.satisfaction(5.0f)
+			.honey(5.0f)
+			.learning(5.0f)
+			.homework(0)
+			.team(0)
+			.difficulty(0)
+			.build();
 
 		//when
 		ResultActions resultActions = mvc.perform(
-				post("/exam-posts/purchase/?lectureId=1")
+				post("/evaluate-posts/?lectureId=1")
 					.header("Authorization", authorization)
+					.content(objectMapper.writeValueAsString(requestBody))
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON))
 			.andDo(print());
@@ -99,15 +116,48 @@ class ExamPostControllerTest extends BaseIntegrationTest {
 	}
 
 	@Test
-	void 시험정보_존재하지않을때_정상동작_테스트() throws Exception {
+	void 강의평가_작성하기() throws Exception {
 		//given
 		String authorization = "authorization";
 		when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
-		when(jwtAgent.getId(authorization)).thenReturn(2L);
+		when(jwtAgent.getId(authorization)).thenReturn(1L);
+		EvaluatePostSaveDto requestBody = EvaluatePostSaveDto.builder()
+			.lectureName("testLecture")
+			.selectedSemester("2022-1")
+			.professor("testProfessor")
+			.content("testContent")
+			.satisfaction(5.0f)
+			.honey(5.0f)
+			.learning(5.0f)
+			.homework(0)
+			.team(0)
+			.difficulty(0)
+			.build();
 
 		//when
 		ResultActions resultActions = mvc.perform(
-				get("/exam-posts/?lectureId=2")
+				post("/evaluate-posts/?lectureId=2")
+					.header("Authorization", authorization)
+					.content(objectMapper.writeValueAsString(requestBody))
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON))
+			.andDo(print());
+
+		//then
+		resultActions
+			.andExpect(status().isOk());
+	}
+
+	@Test
+	void 내가작성한_강의평가_조회하기() throws Exception {
+		//given
+		String authorization = "authorization";
+		when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
+		when(jwtAgent.getId(authorization)).thenReturn(1L);
+
+		//when
+		ResultActions resultActions = mvc.perform(
+				get("/evaluate-posts/written")
 					.header("Authorization", authorization)
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON))
@@ -115,8 +165,8 @@ class ExamPostControllerTest extends BaseIntegrationTest {
 
 		//then
 		resultActions
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.data").isEmpty())
-			.andExpect(jsonPath("$.examDataExist").value(Boolean.FALSE));
+			.andExpect(status().isOk());
+
 	}
+
 }

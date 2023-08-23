@@ -1,4 +1,4 @@
-package usw.suwiki.domain.user.user.controller;
+package usw.suwiki.controller.user;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
