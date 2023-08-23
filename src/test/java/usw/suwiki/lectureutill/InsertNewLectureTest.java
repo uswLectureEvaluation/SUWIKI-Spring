@@ -1,4 +1,4 @@
-package usw.suwiki;
+package usw.suwiki.lectureutill;
 
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
