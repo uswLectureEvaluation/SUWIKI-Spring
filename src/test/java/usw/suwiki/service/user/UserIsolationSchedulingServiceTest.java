@@ -15,8 +15,6 @@ import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostSaveDto;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
-import usw.suwiki.domain.user.userIsolation.service.UserIsolationCRUDService;
-import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 import usw.suwiki.domain.postreport.service.ReportPostService;
@@ -26,6 +24,8 @@ import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
+import usw.suwiki.domain.user.userIsolation.service.UserIsolationCRUDService;
+import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.global.util.emailBuild.BuildSoonDormantTargetForm;
 import usw.suwiki.global.util.emailBuild.UserAutoDeletedWarningForm;
 import usw.suwiki.global.util.mailsender.EmailSender;
@@ -102,8 +102,8 @@ public class UserIsolationSchedulingServiceTest extends BaseIntegrationTest {
                 .content("테스트 게시글 내용")
                 .build();
 
-        evaluatePostService.write(evaluatePostSaveDto, 5L, 1L);
-        evaluatePostService.write(evaluatePostSaveDto, 6L, 1L);
+        evaluatePostService.write(evaluatePostSaveDto, Long.valueOf(5L), Long.valueOf(1L));
+        evaluatePostService.write(evaluatePostSaveDto, Long.valueOf(6L), Long.valueOf(1L));
 
     }
 
@@ -142,8 +142,8 @@ public class UserIsolationSchedulingServiceTest extends BaseIntegrationTest {
         }
 
         assertThat(userIsolationRepository.findAll().size()).isEqualTo(2);
-        assertThat(userCRUDService.loadUserFromUserIdx(7L).getEmail()).isNull();
-        assertThat(userCRUDService.loadUserFromUserIdx(8L).getEmail()).isNull();
+        assertThat(userCRUDService.loadUserFromUserIdx(Long.valueOf(7L)).getEmail()).isNull();
+        assertThat(userCRUDService.loadUserFromUserIdx(Long.valueOf(8L)).getEmail()).isNull();
     }
 
     @DisplayName("계정 자동 삭제 안내 기간은 (3년 - 1달), 그리고 2명이 그 대상이다.")

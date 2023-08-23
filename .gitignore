@@ -6,12 +6,12 @@ build/
 !**/src/test/**/build/
 ./java/usw/suwiki/config/MailAuthConfig.java
 !src/test/test/**/build/
-application.yml
-application.properties
-*.yml
 .idea/workspace.xml
 /logs
 .idea
+
+/src/main/resources/*.yml
+/src/test/resources/*.yml
 
 *.json
 *.DS_Store
