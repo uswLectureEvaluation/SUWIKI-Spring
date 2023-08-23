@@ -1,4 +1,4 @@
-package usw.suwiki.global.config.cache;
+package usw.suwiki.global;
 
 import lombok.Getter;
 
