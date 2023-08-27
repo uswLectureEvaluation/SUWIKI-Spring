@@ -31,106 +31,13 @@ public class JwtAgent {
     @Value("${spring.secret-key}")
     private String key;
 
-     private static final Long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; // 30분
+    private static final Long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; // 30분
     private static final Long REFRESH_TOKEN_EXPIRE_TIME = 270 * 24 * 60 * 60 * 1000L; // 270일 -> 9개월
 //    private static final Long ACCESS_TOKEN_EXPIRE_TIME = 1 * 1000L; // 1초
 //    private static final Long REFRESH_TOKEN_EXPIRE_TIME = 5 * 60 * 1000L; // 5분
 
     private final RefreshTokenCRUDService refreshTokenCRUDService;
 
-    private Key getSigningKey() {
-        final byte[] keyBytes = Decoders.BASE64.decode(this.key);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    public void validateJwt(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey()).build()
-                    .parseClaimsJws(token);
-        } catch (MalformedJwtException | IllegalArgumentException ex) {
-            throw new AccountException(LOGIN_REQUIRED);
-        } catch (ExpiredJwtException exception) {
-            throw new AccountException(TOKEN_IS_EXPIRED);
-        }
-    }
-
-    public String createAccessToken(User user) {
-        return buildAccessToken(
-                setAccessTokenClaimsByUser(user),
-                new Date(new Date().getTime() + ACCESS_TOKEN_EXPIRE_TIME)
-        );
-    }
-
-    public String createRefreshToken(User user) {
-        String buildRefreshToken = buildRefreshToken(new Date(new Date().getTime() + REFRESH_TOKEN_EXPIRE_TIME));
-        refreshTokenCRUDService.save(RefreshToken.buildRefreshToken(user.getId(), buildRefreshToken));
-
-        return buildRefreshToken;
-    }
-
-    @Transactional
-    public String reIssueRefreshToken(RefreshToken refreshToken) {
-        refreshToken.updatePayload(
-                buildRefreshToken(new Date(new Date().getTime() + REFRESH_TOKEN_EXPIRE_TIME))
-        );
-        return refreshToken.getPayload();
-    }
-
-    private Claims setAccessTokenClaimsByUser(User user) {
-        Claims claims = Jwts.claims();
-        claims.setSubject(user.getLoginId());
-        claims.put("id", user.getId());
-        claims.put("loginId", user.getLoginId());
-        claims.put("role", user.getRole());
-        claims.put("restricted", user.getRestricted());
-        return claims;
-    }
-
-    private String buildAccessToken(Claims claims, Date accessTokenExpireIn) {
-        return Jwts.builder()
-                .signWith(getSigningKey())
-                .setHeaderParam("type", "JWT")
-                .setClaims(claims)
-                .setExpiration(accessTokenExpireIn)
-                .compact();
-    }
-
-    private String buildRefreshToken(Date refreshTokenExpireIn) {
-        return Jwts.builder()
-                .signWith(getSigningKey())
-                .setHeaderParam("type", "JWT")
-                .setExpiration(refreshTokenExpireIn)
-                .compact();
-    }
-
-    public Long getId(String token) {
-        validateJwt(token);
-        Object id = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody().get("id");
-        return Long.valueOf(String.valueOf(id));
-    }
-
-    public String getUserRole(String token) {
-        validateJwt(token);
-        return (String) Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody().get("role");
-    }
-
-    public Boolean getUserIsRestricted(String token) {
-        validateJwt(token);
-        return (Boolean) Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody().get("restricted");
-    }
 
     @Transactional
     public String provideRefreshTokenInLogin(User user) {
@@ -170,6 +77,68 @@ public class JwtAgent {
         throw new AccountException(TOKEN_IS_BROKEN);
     }
 
+    @Transactional
+    public String reIssueRefreshToken(RefreshToken refreshToken) {
+        refreshToken.updatePayload(
+                buildRefreshToken(new Date(new Date().getTime() + REFRESH_TOKEN_EXPIRE_TIME))
+        );
+        return refreshToken.getPayload();
+    }
+
+    public void validateJwt(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey()).build()
+                    .parseClaimsJws(token);
+        } catch (MalformedJwtException | IllegalArgumentException ex) {
+            throw new AccountException(LOGIN_REQUIRED);
+        } catch (ExpiredJwtException exception) {
+            throw new AccountException(TOKEN_IS_EXPIRED);
+        }
+    }
+
+    public String createAccessToken(User user) {
+        return buildAccessToken(
+                setAccessTokenClaimsByUser(user),
+                new Date(new Date().getTime() + ACCESS_TOKEN_EXPIRE_TIME)
+        );
+    }
+
+    public String createRefreshToken(User user) {
+        String buildRefreshToken = buildRefreshToken(new Date(new Date().getTime() + REFRESH_TOKEN_EXPIRE_TIME));
+        refreshTokenCRUDService.save(RefreshToken.buildRefreshToken(user.getId(), buildRefreshToken));
+
+        return buildRefreshToken;
+    }
+
+    public Long getId(String token) {
+        validateJwt(token);
+        Object id = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody().get("id");
+        return Long.valueOf(String.valueOf(id));
+    }
+
+    public String getUserRole(String token) {
+        validateJwt(token);
+        return (String) Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody().get("role");
+    }
+
+    public Boolean getUserIsRestricted(String token) {
+        validateJwt(token);
+        return (Boolean) Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody().get("restricted");
+    }
+
     private Boolean isRefreshTokenExpired(String refreshToken) {
         Date claims;
         try {
@@ -193,5 +162,37 @@ public class JwtAgent {
 
         // 피연산자 보다 이전 이면 True 반환 및 갱신해줘야함
         return tokenExpiredAt.isBefore(subDetractedDateTime);
+    }
+
+    private Key getSigningKey() {
+        final byte[] keyBytes = Decoders.BASE64.decode(this.key);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    private Claims setAccessTokenClaimsByUser(User user) {
+        Claims claims = Jwts.claims();
+        claims.setSubject(user.getLoginId());
+        claims.put("id", user.getId());
+        claims.put("loginId", user.getLoginId());
+        claims.put("role", user.getRole());
+        claims.put("restricted", user.getRestricted());
+        return claims;
+    }
+
+    private String buildAccessToken(Claims claims, Date accessTokenExpireIn) {
+        return Jwts.builder()
+                .signWith(getSigningKey())
+                .setHeaderParam("type", "JWT")
+                .setClaims(claims)
+                .setExpiration(accessTokenExpireIn)
+                .compact();
+    }
+
+    private String buildRefreshToken(Date refreshTokenExpireIn) {
+        return Jwts.builder()
+                .signWith(getSigningKey())
+                .setHeaderParam("type", "JWT")
+                .setExpiration(refreshTokenExpireIn)
+                .compact();
     }
 }

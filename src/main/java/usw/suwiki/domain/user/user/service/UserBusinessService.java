@@ -227,7 +227,7 @@ public class UserBusinessService {
 
     public Map<String, Boolean> executeQuit(String Authorization, String inputPassword) {
         User user = userCRUDService.loadUserFromUserIdx(jwtAgent.getId(Authorization));
-        if (user.validatePassword(bCryptPasswordEncoder, inputPassword)) {
+        if (!user.validatePassword(bCryptPasswordEncoder, inputPassword)) {
             throw new AccountException(PASSWORD_ERROR);
         }
         reportPostService.deleteFromUserIdx(user.getId());
