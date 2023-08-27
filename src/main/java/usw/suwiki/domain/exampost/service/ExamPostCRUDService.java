@@ -42,7 +42,7 @@ public class ExamPostCRUDService {
     public List<ExamPost> loadExamPostsFromLectureIdx(Long lectureIdx, PageOption option) {
         return examPostRepository.findAllByLectureId(
                 lectureIdx,
-                option.getPageNumber().get(),
+                option.getOffset(),
                 LIMIT_PAGE_SIZE
         );
     }
@@ -50,7 +50,7 @@ public class ExamPostCRUDService {
     public List<ExamPost> loadExamPostsFromUserIdxAndPageOption(Long userIdx, PageOption option) {
         return examPostRepository.findByUserIdxAndPagePotion(
                 userIdx,
-                option.getPageNumber().get(),
+                option.getOffset(),
                 LIMIT_PAGE_SIZE
         );
     }

@@ -40,7 +40,7 @@ public class EvaluatePostCRUDService {
     ) {
         return evaluatePostRepository.findAllByLectureIdAndPageOption(
                 lectureId,
-                option.getPageNumber().get(),
+                option.getOffset(),
                 LIMIT_PAGE_SIZE
         );
     }
@@ -51,7 +51,7 @@ public class EvaluatePostCRUDService {
     ) {
         return evaluatePostRepository.findByUserIdxAndPagePotion(
                 userId,
-                option.getPageNumber().get(),
+                option.getOffset(),
                 LIMIT_PAGE_SIZE
         );
     }

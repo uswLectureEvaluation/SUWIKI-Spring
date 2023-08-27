@@ -20,6 +20,10 @@ public class PageOption {
         return Optional.of(pageNumber.get() - 1);
     }
 
+    public Integer getOffset() {
+        return getPageNumber().get() * 10;
+    }
+
     private void initPageNumber(Optional<Integer> pageNumber) {
         if (pageNumber.isEmpty()) {
             this.pageNumber = Optional.of(1);

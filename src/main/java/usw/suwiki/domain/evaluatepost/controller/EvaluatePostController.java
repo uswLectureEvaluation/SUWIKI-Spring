@@ -2,11 +2,11 @@ package usw.suwiki.domain.evaluatepost.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.evaluatepost.service.dto.FindByLectureToJson;
+import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostResponseByUserIdxDto;
 import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostSaveDto;
 import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostUpdateDto;
-import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostResponseByUserIdxDto;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
+import usw.suwiki.domain.evaluatepost.service.dto.FindByLectureToJson;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
@@ -31,9 +31,9 @@ public class EvaluatePostController {
     @ApiLogger(option = "evaluatePosts")
     @GetMapping
     public FindByLectureToJson readEvaluatePostsByLectureApi(
-        @RequestHeader String Authorization,
-        @RequestParam Long lectureId,
-        @RequestParam(required = false) Optional<Integer> page) {
+            @RequestHeader String Authorization,
+            @RequestParam Long lectureId,
+            @RequestParam(required = false) Optional<Integer> page) {
 
         jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) {
@@ -41,8 +41,11 @@ public class EvaluatePostController {
         }
         Long userIdx = jwtAgent.getId(Authorization);
 
-        FindByLectureToJson response = evaluatePostService.readEvaluatePostsByLectureId(new PageOption(page),
-            userIdx, lectureId);
+        FindByLectureToJson response = evaluatePostService.readEvaluatePostsByLectureId(
+                new PageOption(page),
+                userIdx,
+                lectureId
+        );
 
         return response;
     }
@@ -66,9 +69,9 @@ public class EvaluatePostController {
     @ApiLogger(option = "evaluatePosts")
     @PostMapping
     public String writeEvaluatePostApi(
-        @RequestParam Long lectureId,
-        @RequestHeader String Authorization,
-        @RequestBody EvaluatePostSaveDto requestBody) {
+            @RequestParam Long lectureId,
+            @RequestHeader String Authorization,
+            @RequestBody EvaluatePostSaveDto requestBody) {
 
         jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) {
@@ -95,8 +98,8 @@ public class EvaluatePostController {
         }
 
         List<EvaluatePostResponseByUserIdxDto> list = evaluatePostService.readEvaluatePostsByUserId(
-            new PageOption(page),
-            jwtAgent.getId(Authorization)
+                new PageOption(page),
+                jwtAgent.getId(Authorization)
         );
 
         ResponseForm response = new ResponseForm(list);
