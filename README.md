@@ -18,12 +18,12 @@
 
 ### Role
 
-|                JIWON-JEONG                |            K-Diger             |
-|:-----------------------------------------:|:------------------------------:|
-|              Evaluation API               |            User API            |
-|                 Exam API                  | Authentication / Authorization |
-|                Lecture API                |           Admin API            |
-|                Notice API                 |                                |
+| JIWON-JEONG                               | K-Diger                        |
+|-------------------------------------------|--------------------------------|
+| Evaluation API                            | User API                       |
+| Exam API                                  | Authentication / Authorization |
+| Lecture API                               | Admin API                      |
+| Notice API                                | CI/CD                          |
 | 인앱 재화 구현 (POINT), XSS(크로스 사이트 스크립팅) 방지 필터 |                                |
 
 ---
