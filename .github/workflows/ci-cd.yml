@@ -54,5 +54,6 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
+          script: |
             sudo cd /home/ubuntu
             sudo ./start.sh
