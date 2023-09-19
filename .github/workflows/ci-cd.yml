@@ -43,6 +43,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
+          script: |
+            sudo fuser -k 8080/tcp
           source: "build/libs/suwiki-0.0.1-SNAPSHOT.jar"
           target: "/home/ubuntu"
 
@@ -52,7 +54,5 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
-          script: |
             sudo cd /home/ubuntu
-            sudo fuser -k 8080/tcp
             sudo ./start.sh
