@@ -26,7 +26,7 @@ public class JpaNoticeRepository implements NoticeRepository {
     public List<Notice> findByNoticeList(PageOption page) {
         Optional<Integer> pageNumber = page.getPageNumber();
         List resultList = em.createQuery("SELECT n from Notice n ORDER BY n.modifiedDate DESC")
-                .setFirstResult((pageNumber.get() - 1) * 10)
+                .setFirstResult((pageNumber.get()) * 10)
                 .setMaxResults(10)
                 .getResultList();
         return resultList;
