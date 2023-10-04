@@ -6,7 +6,6 @@ import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import usw.suwiki.global.CacheType;
 
 import java.util.Arrays;
 import java.util.List;

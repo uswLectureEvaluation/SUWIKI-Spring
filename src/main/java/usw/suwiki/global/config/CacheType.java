@@ -1,10 +1,10 @@
-package usw.suwiki.global;
+package usw.suwiki.global.config;
 
 import lombok.Getter;
 
 @Getter
 public enum CacheType {
-    LECTURE("lecture", 60, 1000);
+    LECTURE("lecture", 10 * 60, 1000);
 
     CacheType(String cacheName, int expiredAfterWrite, int maximumSize) {
         this.cacheName = cacheName;
@@ -13,6 +13,6 @@ public enum CacheType {
     }
 
     private final String cacheName;
-    private final int expiredAfterWrite;
-    private final int maximumSize;
+    private final Integer expiredAfterWrite;
+    private final Integer maximumSize;
 }

@@ -10,8 +10,10 @@ import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
+import usw.suwiki.global.annotation.CacheStatics;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
+import usw.suwiki.global.util.CacheStaticsLogger;
 
 import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
 
@@ -24,6 +26,7 @@ public class LectureController {
 
     private final LectureService lectureService;
     private final JwtAgent jwtAgent;
+    private final CacheStaticsLogger cacheStaticsLogger;
 
     @ApiLogger(option = "lecture")
     @GetMapping("/search")
@@ -42,6 +45,7 @@ public class LectureController {
 
     @Cacheable(cacheNames = "lecture")
     @ApiLogger(option = "lecture")
+    @CacheStatics
     @GetMapping("/all")
     public ResponseEntity<LectureAndCountResponseForm> findAllLectureApi(
             @RequestParam(required = false) String option,
