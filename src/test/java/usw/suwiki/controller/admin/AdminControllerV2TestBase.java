@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
-import usw.suwiki.BaseIntegrationTest;
+import usw.suwiki.IntegrationTestBase;
 import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
 
@@ -14,7 +14,7 @@ import java.sql.Connection;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AdminControllerV2Test extends BaseIntegrationTest {
+class AdminControllerV2TestBase extends IntegrationTestBase {
 
     @BeforeAll
     public void init() throws Exception {
@@ -36,7 +36,7 @@ class AdminControllerV2Test extends BaseIntegrationTest {
                 "adminUser",
                 "qwer1234!"
         );
-        buildPostRequestResultActions(
+        executePostRequestResultActions(
                 "/v2/admin/login",
                 loginForm
         ).andExpect(status().isOk());
@@ -52,7 +52,7 @@ class AdminControllerV2Test extends BaseIntegrationTest {
                 "그냥",
                 "90일정지"
         );
-        buildPostRequestWithAuthorizationResultActions(
+        executePostRequestWithAuthorizationResultActions(
                 "/v2/admin/evaluate-posts/restrict",
                 evaluatePostRestrictForm
         ).andExpect(status().isOk());

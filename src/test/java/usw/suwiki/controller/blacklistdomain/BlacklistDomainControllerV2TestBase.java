@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
-import usw.suwiki.BaseIntegrationTest;
+import usw.suwiki.IntegrationTestBase;
 import usw.suwiki.global.jwt.JwtAgent;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import java.sql.Connection;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-public class BlacklistDomainControllerV2Test extends BaseIntegrationTest {
+public class BlacklistDomainControllerV2TestBase extends IntegrationTestBase {
 
     @MockBean
     JwtAgent jwtAgent;
@@ -35,7 +35,7 @@ public class BlacklistDomainControllerV2Test extends BaseIntegrationTest {
     @Test
     @DisplayName("블랙리스트 사유 불러오기")
     void 블랙리스트_사유_불러오기() {
-        buildGetRequestWithAuthorizationResultActions("/v2/blacklist/logs")
+        executeGetRequestWithAuthorizationResultActions("/v2/blacklist/logs")
                 .andExpect(status().isOk());
     }
 }

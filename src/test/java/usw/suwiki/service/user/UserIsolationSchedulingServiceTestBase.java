@@ -9,7 +9,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.BaseIntegrationTest;
+import usw.suwiki.IntegrationTestBase;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
 import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostSaveDto;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-public class UserIsolationSchedulingServiceTest extends BaseIntegrationTest {
+public class UserIsolationSchedulingServiceTestBase extends IntegrationTestBase {
 
     @Autowired
     UserCRUDService userCRUDService;

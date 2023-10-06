@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.global.jwt.JwtAgent;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -28,7 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @Transactional
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class BaseIntegrationTest {
+@Component
+public class IntegrationTestBase {
     @MockBean
     JwtAgent jwtAgent;
     @Autowired
@@ -39,9 +40,8 @@ public class BaseIntegrationTest {
     protected EntityManagerFactory entityManagerFactory;
     @Autowired
     protected DataSource dataSource;
-    protected EntityManager entityManager;
 
-    public ResultActions buildGetRequestWithAuthorizationResultActions(
+    public ResultActions executeGetRequestWithAuthorizationResultActions(
             final String url
     ) {
         String authorization = "authorization";
@@ -60,7 +60,7 @@ public class BaseIntegrationTest {
     }
 
 
-    public ResultActions buildPostRequestResultActions(
+    public ResultActions executePostRequestResultActions(
             final String url,
             final Object dto
     ) {
@@ -77,7 +77,7 @@ public class BaseIntegrationTest {
         }
     }
 
-    public ResultActions buildPostRequestWithAuthorizationResultActions(
+    public ResultActions executePostRequestWithAuthorizationResultActions(
             final String url,
             final Object dto
     ) {
@@ -98,7 +98,26 @@ public class BaseIntegrationTest {
         }
     }
 
-    public ResultActions buildPatchRequestWithAuthorizationResultActions(
+    public ResultActions executePostRequestWithAuthorizationNotContainedBodyResultActions(
+            final String url
+    ) {
+        String authorization = "authorization";
+        when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
+        when(jwtAgent.getId(authorization)).thenReturn(14L);
+        when(jwtAgent.getUserRole(authorization)).thenReturn("ADMIN");
+        try {
+            return mvc.perform(
+                            post(url)
+                                    .header("Authorization", authorization)
+                                    .contentType(APPLICATION_JSON)
+                                    .accept(APPLICATION_JSON))
+                    .andDo(print());
+        } catch (Exception e) {
+            throw new BuildResultActionsException(e.getCause());
+        }
+    }
+
+    public ResultActions executePatchRequestWithAuthorizationResultActions(
             final String url,
             final Object dto
     ) {
@@ -118,7 +137,7 @@ public class BaseIntegrationTest {
         }
     }
 
-    public ResultActions buildGetRequestWithParameterResultActions(
+    public ResultActions executeGetRequestWithParameterResultActions(
             final String url,
             final String parameterName,
             final String value
@@ -135,7 +154,51 @@ public class BaseIntegrationTest {
         }
     }
 
-    public ResultActions buildDeleteRequestWithAuthorizationResultActions(
+    public ResultActions executeGetRequestWithAuthorizationParameterResultActions(
+            final String url,
+            final String parameterName,
+            final String value
+    ) {
+        String authorization = "authorization";
+        when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
+        when(jwtAgent.getId(authorization)).thenReturn(14L);
+        when(jwtAgent.getUserRole(authorization)).thenReturn("ADMIN");
+
+        try {
+            return mvc.perform(
+                            get(url)
+                                    .param(parameterName, value)
+                                    .contentType(APPLICATION_JSON)
+                                    .accept(APPLICATION_JSON))
+                    .andDo(print());
+        } catch (Exception e) {
+            throw new BuildResultActionsException(e.getCause());
+        }
+    }
+
+    public ResultActions executeGetRequestWithNotAuthorizedParameterResultActions(
+            final String url,
+            final String parameterName,
+            final String value
+    ) {
+        String authorization = "authorization";
+        when(jwtAgent.getUserIsRestricted(authorization)).thenReturn(Boolean.FALSE);
+        when(jwtAgent.getId(authorization)).thenReturn(14L);
+        when(jwtAgent.getUserRole(authorization)).thenReturn("NOT_AUTH");
+
+        try {
+            return mvc.perform(
+                            get(url)
+                                    .param(parameterName, value)
+                                    .contentType(APPLICATION_JSON)
+                                    .accept(APPLICATION_JSON))
+                    .andDo(print());
+        } catch (Exception e) {
+            throw new BuildResultActionsException(e.getCause());
+        }
+    }
+
+    public ResultActions executeDeleteRequestWithAuthorizationResultActions(
             final String url,
             final Object dto
     ) {

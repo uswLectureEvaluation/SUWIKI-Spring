@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
-import usw.suwiki.BaseIntegrationTest;
+import usw.suwiki.IntegrationTestBase;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.*;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import static java.lang.Boolean.TRUE;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class UserControllerTest extends BaseIntegrationTest {
+public class UserControllerTestBase extends IntegrationTestBase {
 
     @BeforeAll
     public void init() throws Exception {
@@ -34,7 +34,7 @@ public class UserControllerTest extends BaseIntegrationTest {
     @DisplayName("아이디 중복확인 - 중복일 시")
     void 아이디_중복확인_중복일_시() {
         CheckLoginIdForm checkLoginIdForm = new CheckLoginIdForm("user1");
-        buildPostRequestResultActions("/v2/user/loginId/check", checkLoginIdForm)
+        executePostRequestResultActions("/v2/user/loginId/check", checkLoginIdForm)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.overlap").value(TRUE));
     }
@@ -44,7 +44,7 @@ public class UserControllerTest extends BaseIntegrationTest {
     @DisplayName("아이디 중복확인 - 중복이 아닐 시")
     void 아이디_중복확인_중복이_아닐_시() {
         CheckLoginIdForm checkLoginIdForm = new CheckLoginIdForm("user5");
-        buildPostRequestResultActions("/v2/user/loginId/check", checkLoginIdForm)
+        executePostRequestResultActions("/v2/user/loginId/check", checkLoginIdForm)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.overlap").value(FALSE));
     }
@@ -54,7 +54,7 @@ public class UserControllerTest extends BaseIntegrationTest {
     @DisplayName("이메일 중복확인 - 중복일 시")
     void 이메일_중복확인_중복일_시() {
         CheckEmailForm checkEmailForm = new CheckEmailForm("user1@suwon.ac.kr");
-        buildPostRequestResultActions("/v2/user/email/check", checkEmailForm)
+        executePostRequestResultActions("/v2/user/email/check", checkEmailForm)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.overlap").value(TRUE));
     }
@@ -64,7 +64,7 @@ public class UserControllerTest extends BaseIntegrationTest {
     @DisplayName("이메일 중복확인 - 중복이 아닐 시")
     void 이메일_중복확인_중복이_아닐_시() {
         CheckEmailForm checkEmailForm = new CheckEmailForm("user5@suwon.ac.kr");
-        buildPostRequestResultActions("/v2/user/email/check", checkEmailForm)
+        executePostRequestResultActions("/v2/user/email/check", checkEmailForm)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.overlap").value(FALSE));
     }
@@ -79,7 +79,7 @@ public class UserControllerTest extends BaseIntegrationTest {
                 "18018008@suwon.ac.kr"
         );
 
-        buildPostRequestResultActions("/v2/user", joinForm)
+        executePostRequestResultActions("/v2/user", joinForm)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.success").value(TRUE));
     }
@@ -88,7 +88,7 @@ public class UserControllerTest extends BaseIntegrationTest {
     @Test
     @DisplayName("이메일 인증 - 성공")
     void 이메일_인증_성공() {
-        buildGetRequestWithParameterResultActions(
+        executeGetRequestWithParameterResultActions(
                 "/v2/confirmation-token/verify",
                 "token",
                 "payload"
@@ -101,7 +101,7 @@ public class UserControllerTest extends BaseIntegrationTest {
     @DisplayName("아이디 찾기 요청 - 성공")
     void 아이디_찾기_요청_성공() {
         FindIdForm findIdForm = new FindIdForm("user1@suwon.ac.kr");
-        buildPostRequestResultActions(
+        executePostRequestResultActions(
                 "/v2/user/inquiry-loginId",
                 findIdForm
         )
@@ -118,7 +118,7 @@ public class UserControllerTest extends BaseIntegrationTest {
                 "user1@suwon.ac.kr"
         );
 
-        buildPostRequestResultActions(
+        executePostRequestResultActions(
                 "/v2/user/inquiry-password",
                 findPasswordForm
         )
@@ -135,7 +135,7 @@ public class UserControllerTest extends BaseIntegrationTest {
                 "1q2w3e4r!"
         );
 
-        buildPatchRequestWithAuthorizationResultActions(
+        executePatchRequestWithAuthorizationResultActions(
                 "/v2/user/password",
                 editMyPasswordForm
         )
@@ -152,7 +152,7 @@ public class UserControllerTest extends BaseIntegrationTest {
                 "qwer1234!"
         );
 
-        buildPostRequestResultActions(
+        executePostRequestResultActions(
                 "/v2/user/mobile-login",
                 loginForm
         )
@@ -169,7 +169,7 @@ public class UserControllerTest extends BaseIntegrationTest {
                 "qwer1234!"
         );
 
-        buildPostRequestResultActions(
+        executePostRequestResultActions(
                 "/v2/user/web-login",
                 loginForm
         )
@@ -186,7 +186,7 @@ public class UserControllerTest extends BaseIntegrationTest {
                 "qwer1234!"
         );
 
-        buildPostRequestResultActions(
+        executePostRequestResultActions(
                 "/v2/user/web-login",
                 loginForm
         )
@@ -203,7 +203,7 @@ public class UserControllerTest extends BaseIntegrationTest {
                 "qwer1234!"
         );
 
-        buildPostRequestResultActions(
+        executePostRequestResultActions(
                 "/v2/user/mobile-login",
                 loginForm
         )
@@ -216,7 +216,7 @@ public class UserControllerTest extends BaseIntegrationTest {
     @DisplayName("유저 정보 로드 - 성공")
     void 유저_정보_로드_성공() {
 
-        buildGetRequestWithAuthorizationResultActions(
+        executeGetRequestWithAuthorizationResultActions(
                 "/v2/user"
         )
                 .andExpect(status().isOk());
@@ -232,7 +232,7 @@ public class UserControllerTest extends BaseIntegrationTest {
                 "qwer1234!"
         );
 
-        buildDeleteRequestWithAuthorizationResultActions(
+        executeDeleteRequestWithAuthorizationResultActions(
                 "/v2/user/web-login",
                 userQuitForm
         )

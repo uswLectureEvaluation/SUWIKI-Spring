@@ -1,5 +1,6 @@
 //package usw.suwiki.domain.user.service;
 //
+//import org.junit.jupiter.api.Disabled;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;
 //import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,7 @@
 //import static usw.suwiki.global.exception.ExceptionType.*;
 //import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.*;
 //
+//@Disabled
 //@ExtendWith(MockitoExtension.class)
 //public class UserBusinessServiceTest {
 //
