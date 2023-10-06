@@ -11,7 +11,6 @@ import javax.persistence.LockModeType;
 
 @Repository
 public interface LectureRepository extends JpaRepository<Lecture, Long>, LectureQueryRepository {
-
-    @Query(value = "SELECT * FROM lecture WHERE id = :id", nativeQuery = true)
-    Lecture findByIdPessimisticLock(@Param("id") Long id);
+    @Query(value = "SELECT * FROM lecture WHERE id = :id FOR UPDATE", nativeQuery = true)
+    Lecture findByIdPessimisticWrite(@Param("id") Long id);
 }

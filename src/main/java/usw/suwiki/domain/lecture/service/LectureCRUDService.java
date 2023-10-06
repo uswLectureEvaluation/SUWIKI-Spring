@@ -31,7 +31,7 @@ public class LectureCRUDService {
     }
 
     public Lecture loadLectureFromIdPessimisticLock(Long id) {
-        Lecture lecture = lectureRepository.findByIdPessimisticLock(id);
+        Lecture lecture = lectureRepository.findByIdPessimisticWrite(id);
         validateNotNull(lecture);
 
         return lecture;
