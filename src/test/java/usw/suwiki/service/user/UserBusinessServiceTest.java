@@ -300,7 +300,7 @@ public class UserBusinessServiceTest {
         });
 
         // Then
-        assertEquals(USER_NOT_FOUND.getMessage(), exception.getMessage());
+        assertEquals(USER_NOT_FOUND_BY_EMAIL.getMessage(), exception.getMessage());
     }
 
     @DisplayName("비밀번호 찾기 테스트 - 이메일로 해당 유저를 찾을 수 없을 때")
@@ -322,7 +322,7 @@ public class UserBusinessServiceTest {
         });
 
         // Then
-        assertEquals(USER_NOT_FOUND.getMessage(), exception.getMessage());
+        assertEquals(USER_NOT_FOUND_BY_EMAIL.getMessage(), exception.getMessage());
     }
 
     @DisplayName("비밀번호 찾기 테스트 - 성공 유저 테이블에 존재할 시")

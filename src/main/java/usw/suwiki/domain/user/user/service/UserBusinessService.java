@@ -137,7 +137,10 @@ public class UserBusinessService {
 
     public Map<String, Boolean> executeFindPw(String loginId, String email) {
         Optional<User> userByLoginId = userCRUDService.loadWrappedUserFromLoginId(loginId);
+        if (userByLoginId.isEmpty()) throw new AccountException(USER_NOT_FOUND_BY_LOGINID);
+
         Optional<User> userByEmail = userCRUDService.loadWrappedUserFromEmail(email);
+        if (userByEmail.isEmpty()) throw new AccountException(USER_NOT_FOUND_BY_EMAIL);
 
         Optional<UserIsolation> isolationUserByLoginId =
                 userIsolationCRUDService.loadWrappedUserFromLoginId(loginId);
@@ -163,7 +166,7 @@ public class UserBusinessService {
             );
             return successFlag();
         }
-        throw new AccountException(USER_NOT_FOUND);
+        throw new AccountException(USER_NOT_FOUND_BY_EMAIL);
     }
 
     public Map<String, String> executeLogin(String loginId, String inputPassword) {
