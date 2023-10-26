@@ -1,31 +1,23 @@
-buildscript {
-    ext {
-        queryDslVersion = "5.0.0"
-    }
-}
-
 plugins {
-    id 'org.springframework.boot' version '2.7.11'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id 'java'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
+    id 'com.ewerk.gradle.plugins.querydsl'
 }
 
-group = 'usw.suwiki'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+group = "${projectGroup}"
+version = "${applicationVersion}"
+sourceCompatibility = "${javaVersion}"
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-}
+jar.enabled = false
 
+apply from: 'gradle/lombok.gradle'
+apply from: 'gradle/querydsl.gradle'
+apply from: 'gradle/testsupport.gradle'
 
 repositories {
     mavenCentral()
 }
-
 
 dependencies {
 
@@ -53,30 +45,13 @@ dependencies {
     // JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    // Querydsl
-    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
-
-    // Utils
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    implementation 'org.modelmapper:modelmapper:3.1.1'
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-
     // SMTP
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-    // Test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testCompileOnly 'org.projectlombok:lombok:1.18.22'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
-    implementation 'org.apache.commons:commons-text:1.10.0'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+    // Utils
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.modelmapper:modelmapper:3.1.1'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 }
 
@@ -87,29 +62,6 @@ tasks.named('test') {
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
     options.release = 17 // Java 17을 사용할 경우 release 17로 설정
-}
-
-// Querydsl 추가 설정.
-def querydslDir = "$buildDir/generated/querydsl"
-// JPA 사용 여부와 사용할 경로를 설정
-querydsl {
-    jpa = true
-    querydslSourcesDir = querydslDir
-}
-// build 시 사용할 sourceSet 추가
-sourceSets {
-    main.java.srcDir querydslDir
-}
-// querydsl 컴파일시 사용할 옵션 설정
-compileQuerydsl {
-    options.annotationProcessorPath = configurations.querydsl
-}
-// querydsl 이 compileClassPath 를 상속하도록 설정
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-    querydsl.extendsFrom compileClasspath
 }
 
 test {
