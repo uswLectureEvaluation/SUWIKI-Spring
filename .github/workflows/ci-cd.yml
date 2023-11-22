@@ -37,14 +37,22 @@ jobs:
         run: ./gradlew clean build
         shell: bash
 
+      - name: API EC2 인스턴스 접속 및 실행 중인 애플리케이션 종료
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            echo `sudo fuser 8080/tcp`
+            sudo fuser -k 8080/tcp
+
       - name: API 빌드 파일 복사
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
-          script: |
-            sudo fuser -k 8080/tcp
           source: "build/libs/suwiki-0.0.1-SNAPSHOT.jar"
           target: "/home/ubuntu"
 
