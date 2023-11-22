@@ -66,15 +66,16 @@ public class JwtAgent {
     public String refreshTokenRefresh(String payload) {
         Optional<RefreshToken> refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
         if (refreshToken.isPresent()) {
-            if (refreshToken.get().getPayload().equals(payload)) {
-                // 리프레시 토큰이 만료되지 않았으면
+            String validatedPayload = refreshToken.get().getPayload();
+            if (validatedPayload.equals(payload)) {
                 if (isRefreshTokenExpired(payload)) {
                     log.error(LocalDateTime.now() + " - 리프레시 토큰이 만료되었습니다.");
                     throw new AccountException(TOKEN_IS_EXPIRED);
+                } else if (isTokenNotExpiredButNeededReIssue(payload)) {
+                    String newPayload = reIssueRefreshToken(refreshToken.get());
+                    refreshToken.get().updatePayload(newPayload);
+                    return newPayload;
                 }
-                String newPayload = reIssueRefreshToken(refreshToken.get());
-                refreshToken.get().updatePayload(newPayload);
-                return newPayload;
             }
         }
         log.error(LocalDateTime.now() + " - 토큰이 DB와 일치하지 않습니다.");
@@ -143,20 +144,35 @@ public class JwtAgent {
                 .getBody().get("restricted");
     }
 
-    private Boolean isRefreshTokenExpired(String refreshToken) {
-        Date claims;
+    private Boolean isRefreshTokenExpired(String payload) {
+        Date date;
         try {
-            claims = Jwts.parserBuilder()
+            date = Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
                     .build()
-                    .parseClaimsJws(refreshToken)
+                    .parseClaimsJws(payload)
                     .getBody().getExpiration();
         } catch (ExpiredJwtException expiredJwtException) {
             return true;
         }
+        return false;
+    }
+
+    private boolean isTokenNotExpiredButNeededReIssue(String payload) {
+        Date date;
+        try {
+            date = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(payload)
+                    .getBody().getExpiration();
+        } catch (ExpiredJwtException expiredJwtException) {
+            log.error(LocalDateTime.now() + " - 리프레시 토큰이 만료되었습니다.");
+            throw new AccountException(TOKEN_IS_EXPIRED);
+        }
 
         // Jwt Claims LocalDateTime 으로 형변환
-        LocalDateTime tokenExpiredAt = claims
+        LocalDateTime tokenExpiredAt = date
                 .toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
