@@ -8,7 +8,6 @@ build/
 !src/test/test/**/build/
 .idea/workspace.xml
 /logs
-.idea
 
 ### YML ###
 /src/main/resources/application-prod.yml
