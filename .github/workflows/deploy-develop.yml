@@ -65,9 +65,9 @@ jobs:
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_IP }}
+          host: ${{ secrets.EC2_DEV_IP }}
           username: ubuntu
-          key: ${{ secrets.EC2_PEM_KEY }}
+          key: ${{ secrets.EC2_DEV_PEM_KEY }}
           envs: GITHUB_SHA
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}            
