@@ -42,18 +42,10 @@ jobs:
       ## yml 파일 생성
       - name: Set up yml file
         env:
-          YAML_SECRET: ${{ secrets.APPLICATION_PROD_YML }}
+          YAML_SECRET: ${{ secrets.APPLICATION_DEV_YML }}
           YAML_DIR: src/main/resources
-          YAML_FILE_NAME: application-prod.yml
+          YAML_FILE_NAME: application-dev.yml
         run: echo $YAML_SECRET | base64 --decode > $YAML_DIR/$YAML_FILE_NAME
-        
-      ## FCM 설정 파일 셋업
-      - name: Set up Json file
-        env:
-          JSON_SECRET: ${{ secrets.FIREBASE_PRIVATE_KEY_JSON }}
-          JSON_DIR: src/main/resources
-          JSON_FILE_NAME: buzzzzing-firebase-private-key.json
-        run: echo $JSON_SECRET | base64 --decode > $JSON_DIR/$JSON_FILE_NAME
         
       ## gradlew 권한 부여 및 빌드
       - name: Grant execute permission for gradlew
@@ -65,9 +57,9 @@ jobs:
       - name: Docker build
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/buzzing-server .
-          docker tag ${{ secrets.DOCKER_USERNAME }}/buzzing-server ${{ secrets.DOCKER_USERNAME }}/buzzing-server:${GITHUB_SHA::7}
-          docker push ${{ secrets.DOCKER_USERNAME }}/buzzing-server:${GITHUB_SHA::7}  # Github에서 기본적으로 제공하는 환경변수 commit SHA
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/suwiki .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/suwiki ${{ secrets.DOCKER_USERNAME }}/suwiki:${GITHUB_SHA::7}
+          docker push ${{ secrets.DOCKER_USERNAME }}/suwiki:${GITHUB_SHA::7}  # Github에서 기본적으로 제공하는 환경변수 commit SHA
 
       ## 도커 허브의 이미지를 리눅스 인스턴스에 받아와서 run
       - name: Deploy
@@ -79,10 +71,10 @@ jobs:
           envs: GITHUB_SHA
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}            
-            docker pull ${{ secrets.DOCKER_USERNAME }}/buzzing-server:${GITHUB_SHA::7}
-            docker tag ${{ secrets.DOCKER_USERNAME }}/buzzing-server:${GITHUB_SHA::7} buzzing-server
+            docker pull ${{ secrets.DOCKER_USERNAME }}/suwiki:${GITHUB_SHA::7}
+            docker tag ${{ secrets.DOCKER_USERNAME }}/suwiki:${GITHUB_SHA::7} suwiki-server
             docker rm -f $(docker ps -qa)
-            docker run -d --name server -e TZ=Asia/Seoul -p 8080:8090 buzzing-server
+            docker run -d --name server -e TZ=Asia/Seoul -p 8080:8090 suwiki-server
             
             ## 서버 헬스 체크
             TARGET_URL=localhost PORT=8080
