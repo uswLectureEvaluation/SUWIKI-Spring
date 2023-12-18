@@ -1,0 +1,102 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "develop" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      ## JDK 버전 : 17
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      ## 빌드 시간 단축용 gradle 캐싱
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      
+      ## yml 파일 생성
+      - name: Set up yml file
+        env:
+          YAML_SECRET: ${{ secrets.APPLICATION_PROD_YML }}
+          YAML_DIR: src/main/resources
+          YAML_FILE_NAME: application-prod.yml
+        run: echo $YAML_SECRET | base64 --decode > $YAML_DIR/$YAML_FILE_NAME
+        
+      ## FCM 설정 파일 셋업
+      - name: Set up Json file
+        env:
+          JSON_SECRET: ${{ secrets.FIREBASE_PRIVATE_KEY_JSON }}
+          JSON_DIR: src/main/resources
+          JSON_FILE_NAME: buzzzzing-firebase-private-key.json
+        run: echo $JSON_SECRET | base64 --decode > $JSON_DIR/$JSON_FILE_NAME
+        
+      ## gradlew 권한 부여 및 빌드
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew bootJar
+
+      ## 이미지 생성 -> 도커 허브에 Push
+      - name: Docker build
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/buzzing-server .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/buzzing-server ${{ secrets.DOCKER_USERNAME }}/buzzing-server:${GITHUB_SHA::7}
+          docker push ${{ secrets.DOCKER_USERNAME }}/buzzing-server:${GITHUB_SHA::7}  # Github에서 기본적으로 제공하는 환경변수 commit SHA
+
+      ## 도커 허브의 이미지를 리눅스 인스턴스에 받아와서 run
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_IP }}
+          username: ubuntu
+          key: ${{ secrets.EC2_PEM_KEY }}
+          envs: GITHUB_SHA
+          script: |
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}            
+            docker pull ${{ secrets.DOCKER_USERNAME }}/buzzing-server:${GITHUB_SHA::7}
+            docker tag ${{ secrets.DOCKER_USERNAME }}/buzzing-server:${GITHUB_SHA::7} buzzing-server
+            docker rm -f $(docker ps -qa)
+            docker run -d --name server -e TZ=Asia/Seoul -p 8080:8090 buzzing-server
+            
+            ## 서버 헬스 체크
+            TARGET_URL=localhost PORT=8080
+
+            for RETRY_COUNT in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+              echo "> #${RETRY_COUNT} trying..."
+              RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" $TARGET_URL:$PORT/hello)
+
+              if [ "${RESPONSE_CODE}" -eq 200 ]; then
+                echo "> New WAS successfully running"
+                exit 0
+              elif [ ${RETRY_COUNT} -eq 10 ]; then
+                echo "> Health check failed."
+                exit 1
+              fi
+              sleep 10
+            done
