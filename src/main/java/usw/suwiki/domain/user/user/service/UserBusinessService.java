@@ -234,7 +234,7 @@ public class UserBusinessService {
             throw new AccountException(PASSWORD_ERROR);
         }
         reportPostService.deleteFromUserIdx(user.getId());
-        favoriteMajorService.deleteFromUserIdx(user.getId());
+        favoriteMajorService.deleteAllFromUserIdx(user.getId());
         viewExamCRUDService.deleteAllFromUserIdx(user.getId());
         examPostCRUDService.deleteFromUserIdx(user.getId());
         evaluatePostCRUDService.deleteFromUserIdx(user.getId());
@@ -313,7 +313,7 @@ public class UserBusinessService {
             throw new AccountException(USER_RESTRICTED);
         }
         Long userIdx = jwtAgent.getId(Authorization);
-        List<String> list = favoriteMajorService.findMajorTypeByUser(userIdx);
+        List<String> list = favoriteMajorService.findAllMajorTypeByUser(userIdx);
         return new ResponseForm(list);
     }
 
