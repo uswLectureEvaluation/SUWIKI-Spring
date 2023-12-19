@@ -76,7 +76,7 @@ public class UserSchedulingService {
                 // 삭제 예정 유저의 시험정보 삭제
                 examPostCRUDService.deleteFromUserIdx(userId);
                 // 즐겨찾기 게시글 삭제
-                favoriteMajorService.deleteFromUserIdx(userId);
+                favoriteMajorService.deleteAllFromUserIdx(userId);
                 // 제한 테이블에서 삭제
                 restrictingUserRepository.deleteByUserIdx(userId);
                 // 이메일 인증 토큰 삭제
@@ -97,7 +97,7 @@ public class UserSchedulingService {
                 // 삭제 예정 유저의 시험정보 삭제
                 examPostCRUDService.deleteFromUserIdx(userIdx);
                 // 즐겨찾기 게시글 삭제
-                favoriteMajorService.deleteFromUserIdx(userIdx);
+                favoriteMajorService.deleteAllFromUserIdx(userIdx);
                 // 제한 테이블에서 삭제
                 restrictingUserRepository.deleteByUserIdx(userIdx);
                 // 이메일 인증 토큰 삭제
