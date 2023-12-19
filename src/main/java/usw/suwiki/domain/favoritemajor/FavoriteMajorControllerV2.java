@@ -1,5 +1,6 @@
 package usw.suwiki.domain.favoritemajor;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
@@ -19,6 +20,7 @@ public class FavoriteMajorControllerV2 {
 
     // 전공 즐겨찾기 등록하기
     @ResponseStatus(OK)
+    @Operation(summary = "전공 즐겨찾기 등록")
     @ApiLogger(option = "user")
     @PostMapping
     public String saveFavoriteMajor(
@@ -31,6 +33,7 @@ public class FavoriteMajorControllerV2 {
 
     // 전공 즐겨찾기 삭제하기
     @ResponseStatus(OK)
+    @Operation(summary = "전공 즐겨찾기 삭제")
     @ApiLogger(option = "user")
     @DeleteMapping
     public String deleteFavoriteMajor(
@@ -42,6 +45,7 @@ public class FavoriteMajorControllerV2 {
 
     // 전공 즐겨찾기 불러오기
     @ResponseStatus(OK)
+    @Operation(summary = "전공 즐겨찾기 불러오기")
     @ApiLogger(option = "user")
     @GetMapping
     public ResponseForm loadFavoriteMajor(@RequestHeader String Authorization) {
