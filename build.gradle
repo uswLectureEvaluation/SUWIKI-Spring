@@ -64,6 +64,3 @@ tasks.withType(JavaCompile) {
     options.release = 17 // Java 17을 사용할 경우 release 17로 설정
 }
 
-test {
-    exclude '**/*'
-}
