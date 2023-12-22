@@ -34,7 +34,7 @@ jobs:
         shell: bash
 
       - name: 프로젝트 빌드
-        run: ./gradlew clean build
+        run: ./gradlew bootJar
         shell: bash
 
       - name: API EC2 인스턴스 접속 및 실행 중인 애플리케이션 종료
