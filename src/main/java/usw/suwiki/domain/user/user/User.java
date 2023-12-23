@@ -206,4 +206,14 @@ public class User {
     public void increasePointByReporting() {
         this.point += 1;
     }
+
+    // 시간표 연관관계 메서드
+    public void addTimetable(Timetable timetable) {
+        this.timetableList.add(timetable);
+    }
+
+    public void removeTimetable(Timetable timetable) {
+        this.timetableList.remove(timetable);
+    }
+
 }
