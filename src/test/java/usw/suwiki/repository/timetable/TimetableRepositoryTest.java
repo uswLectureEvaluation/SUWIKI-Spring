@@ -115,4 +115,31 @@ public class TimetableRepositoryTest {
                 .isExactlyInstanceOf(ConstraintViolationException.class);
     }
 
+    @Test
+    @DisplayName("SELECT Timetable id 조회 성공")
+    public void selectTimetableById_success() {
+        // given
+        Long id = dummyTimetable.getId();
+
+        // when
+        Optional<Timetable> optionalTimetable = timetableRepository.findById(id);
+
+        // then
+        assertThat(optionalTimetable.isPresent()).isTrue();
+        assertThat(optionalTimetable.get()).isEqualTo(dummyTimetable);
+    }
+
+    @Test
+    @DisplayName("SELECT Timetable userId 조회 성공")
+    public void selectTimetableByUserId_success() {
+        // given
+        Long userId = dummyUser.getId();
+
+        // when
+        Optional<Timetable> optionalTimetable = timetableRepository.findByUserId(userId);
+
+        // then
+        assertThat(optionalTimetable.isPresent()).isTrue();
+        assertThat(optionalTimetable.get()).isEqualTo(dummyTimetable);
+    }
 }
