@@ -1,5 +1,7 @@
 package usw.suwiki.domain.user.user;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
+import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.global.exception.errortype.AccountException;
 
 import javax.persistence.*;
@@ -64,6 +67,10 @@ public class User {
 
     @Column
     private LocalDateTime requestedQuitDate;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Timetable> timetableList = new ArrayList<>();
 
     @CreatedDate
     @Column
