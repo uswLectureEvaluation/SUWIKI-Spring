@@ -28,7 +28,6 @@ import usw.suwiki.template.user.UserTemplate;
 @DataJpaTest
 @Import(TestJpaConfig.class)
 @TestMethodOrder(MethodOrderer.DisplayName.class)
-@TestPropertySource(locations = "classpath:application.yml")
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class TimetableRepositoryTest {
 
