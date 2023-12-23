@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
-import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
+import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.refreshtoken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
@@ -104,7 +104,7 @@ public class UserIsolationSchedulingService {
             reportPostService.deleteFromUserIdx(userIdx);
             evaluatePostCRUDService.deleteFromUserIdx(userIdx);
             examPostCRUDService.deleteFromUserIdx(userIdx);
-            favoriteMajorService.deleteAllFromUserIdx(userIdx);
+            favoriteMajorService.deleteFromUserIdx(userIdx);
             restrictingUserService.deleteFromUserIdx(userIdx);
             confirmationTokenCRUDService.deleteFromUserIdx(userIdx);
             userIsolationCRUDService.deleteByUserIdx(userIdx);

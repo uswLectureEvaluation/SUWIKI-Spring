@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
+import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
 
 @Service
 @RequiredArgsConstructor

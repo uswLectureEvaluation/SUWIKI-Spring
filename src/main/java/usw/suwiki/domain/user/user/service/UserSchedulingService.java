@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
-import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
+import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.refreshtoken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.restrictinguser.repository.RestrictingUserRepository;
@@ -76,7 +76,7 @@ public class UserSchedulingService {
                 // 삭제 예정 유저의 시험정보 삭제
                 examPostCRUDService.deleteFromUserIdx(userId);
                 // 즐겨찾기 게시글 삭제
-                favoriteMajorService.deleteAllFromUserIdx(userId);
+                favoriteMajorService.deleteFromUserIdx(userId);
                 // 제한 테이블에서 삭제
                 restrictingUserRepository.deleteByUserIdx(userId);
                 // 이메일 인증 토큰 삭제
@@ -97,7 +97,7 @@ public class UserSchedulingService {
                 // 삭제 예정 유저의 시험정보 삭제
                 examPostCRUDService.deleteFromUserIdx(userIdx);
                 // 즐겨찾기 게시글 삭제
-                favoriteMajorService.deleteAllFromUserIdx(userIdx);
+                favoriteMajorService.deleteFromUserIdx(userIdx);
                 // 제한 테이블에서 삭제
                 restrictingUserRepository.deleteByUserIdx(userIdx);
                 // 이메일 인증 토큰 삭제
