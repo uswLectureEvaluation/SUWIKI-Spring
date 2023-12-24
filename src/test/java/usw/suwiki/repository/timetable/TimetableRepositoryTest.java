@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.TestPropertySource;
 import usw.suwiki.config.TestJpaConfig;
 import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
@@ -36,6 +38,9 @@ public class TimetableRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TestEntityManager testEntityManager;
 
     private User dummyUser;
     private Timetable dummyTimetable;
@@ -68,20 +73,34 @@ public class TimetableRepositoryTest {
         assertThatNoException().isThrownBy(() -> timetableRepository.save(validTimetable));
 
         userRepository.delete(dummyUser);
-        System.out.println("=======================================");
+    }
+
+    @Test
+    @DisplayName("INSERT Timetable 성공 - User 연관관계 메서드")
+    public void insertTimetable_success_user_association_method() { // TODO: remove 연관관계 메서드 테스트
+        // given
+        Timetable validTimetable = Timetable.builder()
+                .name("첫 학기")
+                .year(2017)
+                .semester(Semester.FIRST)
+                .build();
+
+        // when
+        dummyUser.addTimetable(validTimetable);
+        testEntityManager.persist(dummyUser);   // 유저 영속화
+        testEntityManager.flush();
+
+        // then
+        Optional<Timetable> byId = timetableRepository.findById(validTimetable.getId());    // persist -> id 생김
+
+        assertThat(byId.isPresent()).isTrue();
+        assertThat(byId.get()).isEqualTo(validTimetable);
     }
 
     @Test
     @DisplayName("INSERT Timetable 실패 - NOT NULL 제약조건 위반")
     public void insertTimetable_fail_notnull_constraint() {
         // given
-        Timetable nullUserTimetable = Timetable.builder()
-                .user(null)
-                .name("첫 학기")
-                .year(2017)
-                .semester(Semester.FIRST)
-                .build();
-
         Timetable nullNameTimetable = Timetable.builder()
                 .user(dummyUser)
                 .name(null)
@@ -104,8 +123,6 @@ public class TimetableRepositoryTest {
                 .build();
 
         // when & then
-        assertThatThrownBy(() -> timetableRepository.save(nullUserTimetable))
-                .isExactlyInstanceOf(ConstraintViolationException.class);
         assertThatThrownBy(() -> timetableRepository.save(nullNameTimetable))
                 .isExactlyInstanceOf(ConstraintViolationException.class);
         assertThatThrownBy(() -> timetableRepository.save(nullYearTimetable))
@@ -141,4 +158,5 @@ public class TimetableRepositoryTest {
         assertThat(optionalTimetable.isPresent()).isTrue();
         assertThat(optionalTimetable.get()).isEqualTo(dummyTimetable);
     }
+
 }

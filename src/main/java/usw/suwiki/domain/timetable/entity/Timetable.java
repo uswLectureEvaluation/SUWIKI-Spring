@@ -1,5 +1,8 @@
 package usw.suwiki.domain.timetable.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -31,7 +35,6 @@ public class Timetable extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -44,9 +47,5 @@ public class Timetable extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @NotNull
     private Semester semester;
-
-    // 연관관계 메서드
-
-    // 비즈니스 메서드
 
 }
