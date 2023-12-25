@@ -51,27 +51,12 @@ public class TimetableRepositoryTest {
         this.dummyUser = userRepository.save(UserTemplate.createDummyUser());
 
         Timetable timetable = Timetable.builder()
-                .user(dummyUser)
                 .name("내 시간표")
                 .year(2023)
                 .semester(Semester.SECOND)
                 .build();
+        timetable.associateUser(dummyUser);
         this.dummyTimetable = timetableRepository.save(timetable);
-    }
-
-    @Test
-    @DisplayName("INSERT Timetable 성공")
-    public void insertTimetable_success() {
-        // given
-        Timetable validTimetable = Timetable.builder()
-                .user(dummyUser)
-                .name("첫 학기")
-                .year(2017)
-                .semester(Semester.FIRST)
-                .build();
-
-        // when & then
-        assertThatNoException().isThrownBy(() -> timetableRepository.save(validTimetable));
     }
 
     @Test
@@ -103,25 +88,25 @@ public class TimetableRepositoryTest {
     public void insertTimetable_fail_notnull_constraint() {
         // given
         Timetable nullNameTimetable = Timetable.builder()
-                .user(dummyUser)
                 .name(null)
                 .year(2017)
                 .semester(Semester.FIRST)
                 .build();
+        nullNameTimetable.associateUser(dummyUser);
 
         Timetable nullYearTimetable = Timetable.builder()
-                .user(dummyUser)
                 .name("첫 학기")
                 .year(null)
                 .semester(Semester.FIRST)
                 .build();
+        nullYearTimetable.associateUser(dummyUser);
 
         Timetable nullSemesterTimetable = Timetable.builder()
-                .user(dummyUser)
                 .name("첫 학기")
                 .year(2017)
                 .semester(null)
                 .build();
+        nullSemesterTimetable.associateUser(dummyUser);
 
         // when & then
         assertThatThrownBy(() -> timetableRepository.save(nullNameTimetable))
