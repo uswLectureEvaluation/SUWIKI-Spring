@@ -21,6 +21,8 @@ import org.springframework.context.annotation.Import;
 import usw.suwiki.config.TestJpaConfig;
 import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
+import usw.suwiki.domain.timetable.entity.TimetableCell;
+import usw.suwiki.domain.timetable.entity.TimetableCellColor;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
@@ -158,4 +160,29 @@ public class TimetableRepositoryTest {
         assertThat(optionalTimetable.get()).isEqualTo(dummyTimetable);
     }
 
+
+    // TimetableCell 테스트
+    @Test
+    @DisplayName("INSERT TimetableCell 성공 - Timetable 연관관계 편의 메서드")
+    public void insertTimetableCell_success() {
+        // given
+        TimetableCell timetableCell = TimetableCell.builder()
+                .lectureName("ICT 개론")
+                .professorName("신호진")
+                .color(TimetableCellColor.BROWN)
+                .build();
+
+        // when
+        timetableCell.associateTimetable(dummyTimetable);   // 연관관계 편의 메서드
+        entityManager.persist(dummyTimetable);
+        entityManager.flush();
+        entityManager.clear();
+
+        Timetable foundTable = entityManager.find(Timetable.class, dummyTimetable.getId());
+        TimetableCell foundCell = entityManager.find(TimetableCell.class, timetableCell.getId());
+
+        // then
+        assertThat(foundCell.getId()).isEqualTo(timetableCell.getId());
+        assertThat(foundCell.getTimetable()).isEqualTo(foundTable);
+    }
 }
