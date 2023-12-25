@@ -17,7 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +25,6 @@ import usw.suwiki.global.BaseTimeEntity;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Timetable extends BaseTimeEntity {
     @Id
@@ -35,7 +32,7 @@ public class Timetable extends BaseTimeEntity {
     @Column(name = "timetable_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -50,13 +47,17 @@ public class Timetable extends BaseTimeEntity {
     private Semester semester;
 
     @OneToMany(mappedBy = "timetable", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private List<TimetableCell> cellList = new ArrayList<>();
 
+    @Builder
+    public Timetable(String name, Integer year, Semester semester) {
+        this.name = name;
+        this.year = year;
+        this.semester = semester;
+    }
 
     // 연관관계 메서드
     public void associateUser(User user) {
-        System.out.println("Objects.nonNull(this.user) = " + Objects.nonNull(this.user));
         if (Objects.nonNull(this.user)) {
             this.user.removeTimetable(this);
         }
