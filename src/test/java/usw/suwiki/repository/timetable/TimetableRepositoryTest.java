@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Optional;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import usw.suwiki.config.TestJpaConfig;
 import usw.suwiki.domain.timetable.entity.Semester;
@@ -39,8 +38,8 @@ public class TimetableRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private TestEntityManager testEntityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private User dummyUser;
     private Timetable dummyTimetable;
@@ -71,12 +70,10 @@ public class TimetableRepositoryTest {
 
         // when & then
         assertThatNoException().isThrownBy(() -> timetableRepository.save(validTimetable));
-
-        userRepository.delete(dummyUser);
     }
 
     @Test
-    @DisplayName("INSERT Timetable 성공 - User 연관관계 메서드")
+    @DisplayName("INSERT Timetable 성공 - User 연관관계 편의 메서드")
     public void insertTimetable_success_user_association_method() { // TODO: remove 연관관계 메서드 테스트
         // given
         Timetable validTimetable = Timetable.builder()
@@ -86,15 +83,17 @@ public class TimetableRepositoryTest {
                 .build();
 
         // when
-        dummyUser.addTimetable(validTimetable);
-        testEntityManager.persist(dummyUser);   // 유저 영속화
-        testEntityManager.flush();
+        validTimetable.associateUser(dummyUser);    // 연관관계 편의 메서드
+        entityManager.persist(dummyUser);   // 유저 영속화
+        entityManager.flush();
+        entityManager.clear();
 
         // then
-        Optional<Timetable> byId = timetableRepository.findById(validTimetable.getId());    // persist -> id 생김
+        User foundUser = entityManager.find(User.class, dummyUser.getId());
+        Timetable foundTable = entityManager.find(Timetable.class, validTimetable.getId());
 
-        assertThat(byId.isPresent()).isTrue();
-        assertThat(byId.get()).isEqualTo(validTimetable);
+        assertThat(foundTable.getName()).isEqualTo(validTimetable.getName());
+        assertThat(foundTable.getUser()).isEqualTo(foundUser);
     }
 
     @Test

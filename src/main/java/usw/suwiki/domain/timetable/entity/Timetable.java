@@ -2,6 +2,7 @@ package usw.suwiki.domain.timetable.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,6 +55,15 @@ public class Timetable extends BaseTimeEntity {
 
 
     // 연관관계 메서드
+    public void associateUser(User user) {
+        System.out.println("Objects.nonNull(this.user) = " + Objects.nonNull(this.user));
+        if (Objects.nonNull(this.user)) {
+            this.user.removeTimetable(this);
+        }
+        this.user = user;
+        user.addTimetable(this);
+    }
+
     public void addCell(TimetableCell cell) {
         this.cellList.add(cell);
     }
