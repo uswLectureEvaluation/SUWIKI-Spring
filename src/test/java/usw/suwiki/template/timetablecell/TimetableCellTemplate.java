@@ -9,6 +9,10 @@ public class TimetableCellTemplate {
     public static final String PROFESSOR_NAME = "더미 교수";
     public static final TimetableCellColor COLOR = TimetableCellColor.GRAY;
 
+    public static TimetableCell createFirstDummy(Timetable timetable) {
+        return createDummy(LECTURE_NAME, PROFESSOR_NAME, COLOR, timetable);
+    }
+
     public static TimetableCell createDummy(
             String lectureName,
             String professorName,

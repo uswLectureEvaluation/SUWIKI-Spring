@@ -54,6 +54,7 @@ public class TimetableRepositoryTest {
 
     private User dummyUser;
     private Timetable dummyTimetable;
+    private TimetableCell dummyTimetableCell;
 
     @BeforeEach
     void setUp() {
@@ -67,6 +68,8 @@ public class TimetableRepositoryTest {
         TimetableTemplate.createDummy("2-1 시간표", 2018, Semester.FIRST, dummyUser);
         userRepository.save(dummyUser);
 
+        TimetableCell timetableCell = TimetableCellTemplate.createFirstDummy(dummyTimetable);
+        this.dummyTimetableCell = timetableCellRepository.save(timetableCell);
         TimetableCellTemplate.createDummy("데이터 구조", "손수국", GRAY, dummyTimetable);
         TimetableCellTemplate.createDummy("컴퓨터 구조", "갓성태", ORANGE, dummyTimetable);
         TimetableCellTemplate.createDummy("이산 구조", "김장영", BROWN, dummyTimetable);
@@ -77,7 +80,7 @@ public class TimetableRepositoryTest {
      * Timetable
      */
     @Test
-    @DisplayName("Timetable 삽입 성공")
+    @DisplayName("Timetable 삽입 성공 - 연관관계 확인")
     public void insertTimetable_success_user_association_method() {
         // given
         Timetable timetable = Timetable.builder()
@@ -91,7 +94,6 @@ public class TimetableRepositoryTest {
         timetableRepository.save(timetable);
         entityManager.clear();
 
-        // then
         User foundUser = entityManager.find(User.class, dummyUser.getId());
         Optional<Timetable> foundTable = timetableRepository.findById(timetable.getId());
 
@@ -169,7 +171,7 @@ public class TimetableRepositoryTest {
      * TimetableCell
      */
     @Test
-    @DisplayName("TimetableCell 삽입 성공 - Timetable 연관관계 편의 메서드")
+    @DisplayName("TimetableCell 삽입 성공 - 연관관계 확인")
     public void insertTimetableCell_success() {
         // given
         TimetableCell timetableCell = TimetableCell.builder()
@@ -180,15 +182,16 @@ public class TimetableRepositoryTest {
         timetableCell.associateTimetable(dummyTimetable);   // 연관관계 편의 메서드
 
         // when
-        timetableRepository.save(dummyTimetable);
+        timetableCellRepository.save(timetableCell);
         entityManager.clear();
 
         Timetable foundTable = entityManager.find(Timetable.class, dummyTimetable.getId());
-        TimetableCell foundCell = foundTable.getCellList().get(0);
+        Optional<TimetableCell> optionalCell = timetableCellRepository.findById(timetableCell.getId());
 
         // then
-        assertThat(foundCell).isNotNull();
-        assertThat(foundCell.getTimetable()).isEqualTo(foundTable);
+        assertThat(optionalCell.isPresent()).isTrue();
+        assertThat(optionalCell.get().getLectureName()).isEqualTo(timetableCell.getLectureName());
+        assertThat(foundTable.getCellList()).contains(optionalCell.get());
     }
 
     @Test
@@ -226,6 +229,20 @@ public class TimetableRepositoryTest {
     }
 
     @Test
+    @DisplayName("TimetableCell 단일 조회 성공")
+    public void selectTimetableCell_success() {
+        // given
+        Long id = dummyTimetableCell.getId();
+
+        // when
+        Optional<TimetableCell> optionalTimetableCell = timetableCellRepository.findById(id);
+
+        // then
+        assertThat(optionalTimetableCell.isPresent()).isTrue();
+        assertThat(optionalTimetableCell.get()).isEqualTo(dummyTimetableCell);
+    }
+
+    @Test
     @DisplayName("TimetableCell 리스트 조회 성공 - Timetable")
     public void selectAllTimetableCellByTimetable_success() {
         // when
@@ -234,9 +251,10 @@ public class TimetableRepositoryTest {
         // then
         assertThat(timetable.isPresent()).isTrue();
         List<TimetableCell> cellList = timetable.get().getCellList();
-        assertThat(cellList.size()).isEqualTo(3);
-        assertThat(cellList.get(0).getLectureName()).isEqualTo("데이터 구조");
-        assertThat(cellList.get(1).getLectureName()).isEqualTo("컴퓨터 구조");
-        assertThat(cellList.get(2).getLectureName()).isEqualTo("이산 구조");
+        assertThat(cellList.size()).isEqualTo(4);
+        assertThat(cellList.get(0).getLectureName()).isEqualTo(TimetableCellTemplate.LECTURE_NAME);
+        assertThat(cellList.get(1).getLectureName()).isEqualTo("데이터 구조");
+        assertThat(cellList.get(2).getLectureName()).isEqualTo("컴퓨터 구조");
+        assertThat(cellList.get(3).getLectureName()).isEqualTo("이산 구조");
     }
 }
