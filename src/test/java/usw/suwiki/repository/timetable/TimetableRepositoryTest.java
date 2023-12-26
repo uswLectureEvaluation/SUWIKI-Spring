@@ -21,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import usw.suwiki.config.TestJpaConfig;
 import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
@@ -29,6 +30,7 @@ import usw.suwiki.domain.timetable.entity.TimetableCellColor;
 import usw.suwiki.domain.timetable.entity.TimetableDay;
 import usw.suwiki.domain.timetable.entity.TimetableElement;
 import usw.suwiki.domain.timetable.repository.TimetableCellRepository;
+import usw.suwiki.domain.timetable.repository.TimetableElementRepository;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
@@ -50,6 +52,9 @@ public class TimetableRepositoryTest {
     private TimetableCellRepository timetableCellRepository;
 
     @Autowired
+    private TimetableElementRepository timetableElementRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @PersistenceContext
@@ -62,9 +67,11 @@ public class TimetableRepositoryTest {
     @BeforeEach
     void setUp() {
         this.dummyUser = userRepository.save(UserTemplate.createDummyUser());
+        System.out.println("dummyUser.getTimetableList() = " + dummyUser.getTimetableList());
 
         Timetable timetable = TimetableTemplate.createFirstDummy(dummyUser);
         this.dummyTimetable = timetableRepository.save(timetable);
+        System.out.println("dummyTimetable.getCellList() = " + dummyTimetable.getCellList());
 
         TimetableTemplate.createDummy("1-1 시간표", 2017, Semester.FIRST, dummyUser);
         TimetableTemplate.createDummy("1-2 시간표", 2017, Semester.SECOND, dummyUser);
@@ -73,6 +80,7 @@ public class TimetableRepositoryTest {
 
         TimetableCell timetableCell = TimetableCellTemplate.createFirstDummy(dummyTimetable);
         this.dummyTimetableCell = timetableCellRepository.save(timetableCell);
+        System.out.println("dummyTimetableCell.getElementList() = " + dummyTimetableCell.getElementList());
         TimetableCellTemplate.createDummy("데이터 구조", "손수국", GRAY, dummyTimetable);
         TimetableCellTemplate.createDummy("컴퓨터 구조", "갓성태", ORANGE, dummyTimetable);
         TimetableCellTemplate.createDummy("이산 구조", "김장영", BROWN, dummyTimetable);
@@ -108,7 +116,7 @@ public class TimetableRepositoryTest {
     }
 
     @Test
-    @DisplayName("Timetable 삽입 실패 - NOT NULL 제약조건을 위반해선 안 된다.")
+    @DisplayName("Timetable 삽입 실패 - NOT NULL 제약조건을 지켜야 한다.")
     public void insertTimetable_fail_notnull_constraint() {
         // given
         Timetable nullNameTimetable = Timetable.builder()
@@ -204,7 +212,7 @@ public class TimetableRepositoryTest {
     }
 
     @Test
-    @DisplayName("TimetableCell 삽입 실패 - NOT NULL 제약조건을 위반해선 안 된다.")
+    @DisplayName("TimetableCell 삽입 실패 - NOT NULL 제약조건을 지켜야 한다.")
     public void insertTimetableCell_fail_notnull_constraint() {
         // given
         TimetableCell nullLectureNameCell = TimetableCell.builder()
@@ -272,7 +280,87 @@ public class TimetableRepositoryTest {
     /**
      * TimetableElement
      */
+    @Test
+    @DisplayName("TimetableElement 삽입 성공 - 연관관계 엔티티에서 조회가 가능해야 한다.")
+    public void insertTimetableElement_success() {
+        // given
+        TimetableElement elementA = TimetableElement.builder()
+                .location("IT 105")
+                .day(TimetableDay.WED)
+                .period(1)
+                .build();
+        elementA.associateTimetableCell(dummyTimetableCell);
 
+        TimetableElement elementB = TimetableElement.builder()
+                .location("IT 204")
+                .day(TimetableDay.WED)
+                .period(2)
+                .build();
+        elementB.associateTimetableCell(dummyTimetableCell);
+        timetableElementRepository.save(elementA);
+        timetableElementRepository.save(elementB);
 
-    // TODO: day, period, timetable을 UNIQUE key로 지정하자 -> 삽입 실패 케이스 만들자
+        // when
+        TimetableCell foundCell = entityManager.find(TimetableCell.class, dummyTimetableCell.getId());
+        Optional<TimetableElement> optionalElementA = timetableElementRepository.findById(elementA.getId());
+        Optional<TimetableElement> optionalElementB = timetableElementRepository.findById(elementB.getId());
+
+        // then
+        assertThat(optionalElementA.isPresent() && optionalElementB.isPresent()).isTrue();
+        assertThat(foundCell.getElementList()).contains(optionalElementA.get(), optionalElementB.get());
+    }
+
+    @Test
+    @DisplayName("TimetableElement 삽입 실패 - NOT NULL 제약조건을 지켜야 한다.")
+    public void insertTimetableElement_fail_notnull_constraint() {
+        // given
+        TimetableElement nullLocationElement = TimetableElement.builder()
+                .location(null)
+                .day(TimetableDay.FRI)
+                .period(9)
+                .build();
+        nullLocationElement.associateTimetableCell(dummyTimetableCell);
+
+        TimetableElement nullDayElement = TimetableElement.builder()
+                .location("")
+                .day(null)
+                .period(9)
+                .build();
+        nullDayElement.associateTimetableCell(dummyTimetableCell);
+
+        // when & then
+        assertThatThrownBy(() -> timetableElementRepository.save(nullLocationElement))
+                .isExactlyInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> timetableElementRepository.save(nullDayElement))
+                .isExactlyInstanceOf(ConstraintViolationException.class);
+    }
+
+    @Test
+    @DisplayName("TimetableElement 삽입 실패 - UNIQUE 제약 조건을 지켜야 한다.")
+    public void insertTimetableElement_fail_unique_constraint() {
+        // given
+        int samePeriod = 1;
+        TimetableDay sameDay = TimetableDay.WED;
+        TimetableCell sameCell = dummyTimetableCell;
+
+        TimetableElement elementA = TimetableElement.builder()
+                .location("IT 105")
+                .day(sameDay)
+                .period(samePeriod)
+                .build();
+        elementA.associateTimetableCell(sameCell);
+
+        TimetableElement elementB = TimetableElement.builder()
+                .location("IT 204")
+                .day(sameDay)
+                .period(samePeriod)
+                .build();
+        elementB.associateTimetableCell(sameCell);
+
+        // when & then
+        assertThatThrownBy(() -> timetableCellRepository.save(dummyTimetableCell))
+                .isExactlyInstanceOf(DataIntegrityViolationException.class)
+                .hasStackTraceContaining("Unique");
+    }
+
 }
