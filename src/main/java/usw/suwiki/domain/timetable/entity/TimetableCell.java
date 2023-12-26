@@ -25,8 +25,6 @@ import usw.suwiki.global.BaseTimeEntity;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TimetableCell extends BaseTimeEntity {
     @Id
@@ -34,6 +32,7 @@ public class TimetableCell extends BaseTimeEntity {
     @Column(name = "timetable_cell_id")
     private Long id;
 
+    // (lectureName, professorName) 중복 가능
     @NotNull
     private String lectureName;     // blank 가능
 
@@ -51,6 +50,12 @@ public class TimetableCell extends BaseTimeEntity {
     @OneToMany(mappedBy = "cell", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TimetableElement> elementList = new ArrayList<>();
 
+    @Builder
+    public TimetableCell(String lectureName, String professorName, TimetableCellColor color) {
+        this.lectureName = lectureName;
+        this.professorName = professorName;
+        this.color = color;
+    }
 
     // 연관관계 편의 메서드
     public void associateTimetable(Timetable timetable) {

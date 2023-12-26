@@ -37,7 +37,7 @@ public class Timetable extends BaseTimeEntity {
     private User user;
 
     @NotNull
-    private String name;
+    private String name;    // 중복 가능 (UNIQUE 제약 조건 없음), 길이 제한 없음
 
     @NotNull
     private Integer year;
