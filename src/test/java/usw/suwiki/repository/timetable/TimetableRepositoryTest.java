@@ -21,9 +21,11 @@ import org.springframework.context.annotation.Import;
 import usw.suwiki.config.TestJpaConfig;
 import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
+import usw.suwiki.domain.timetable.entity.TimetableCell;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
+import usw.suwiki.template.timetable.TimetableTemplate;
 import usw.suwiki.template.user.UserTemplate;
 
 @DataJpaTest
@@ -48,24 +50,14 @@ public class TimetableRepositoryTest {
     void setUp() {
         this.dummyUser = userRepository.save(UserTemplate.createDummyUser());
 
-        Timetable timetable = createUserAssociatedDummyTimetable("내 시간표", 2023, Semester.SECOND, dummyUser);
+        Timetable timetable = TimetableTemplate.createFirstDummyTimetable(dummyUser);
         this.dummyTimetable = timetableRepository.save(timetable);
 
-        createUserAssociatedDummyTimetable("1-1 시간표", 2017, Semester.FIRST, dummyUser);
-        createUserAssociatedDummyTimetable("1-2 시간표", 2017, Semester.SECOND, dummyUser);
-        createUserAssociatedDummyTimetable("2-1 시간표", 2018, Semester.FIRST, dummyUser);
+        TimetableTemplate.createCustomDummyTimetable("1-1 시간표", 2017, Semester.FIRST, dummyUser);
+        TimetableTemplate.createCustomDummyTimetable("1-2 시간표", 2017, Semester.SECOND, dummyUser);
+        TimetableTemplate.createCustomDummyTimetable("2-1 시간표", 2018, Semester.FIRST, dummyUser);
 
         userRepository.save(dummyUser);
-    }
-
-    private Timetable createUserAssociatedDummyTimetable(String name, Integer year, Semester semester, User user) {
-        Timetable timetable = Timetable.builder()
-                .name(name)
-                .year(year)
-                .semester(semester)
-                .build();
-        timetable.associateUser(user);
-        return timetable;
     }
 
     @Test
@@ -155,4 +147,21 @@ public class TimetableRepositoryTest {
     }
 
     // TODO: 연관관계 메서드를 이용한 삭제 구현 고민
+
+    // TimetableCell
+
+    @Test
+    @DisplayName("SELECT ALL TimetableCell by TimetableRepository 성공")
+    public void selectAllTimetableCellByTimetable_success() {
+        // when
+        Optional<Timetable> timetable = timetableRepository.findById(dummyTimetable.getId());   // TODO: QueryDSL 버전
+
+        // then
+        assertThat(timetable.isPresent()).isTrue();
+        List<TimetableCell> cellList = timetable.get().getCellList();
+        assertThat(cellList.size()).isEqualTo(3);
+        assertThat(cellList.get(0).getLectureName()).isEqualTo("데이터 구조");
+        assertThat(cellList.get(1).getLectureName()).isEqualTo("컴퓨터 구조");
+        assertThat(cellList.get(2).getLectureName()).isEqualTo("이산 구조");
+    }
 }
