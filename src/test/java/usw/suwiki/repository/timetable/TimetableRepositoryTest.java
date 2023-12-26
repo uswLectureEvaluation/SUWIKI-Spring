@@ -77,31 +77,32 @@ public class TimetableRepositoryTest {
      * Timetable
      */
     @Test
-    @DisplayName("INSERT Timetable 성공 - User 연관관계 편의 메서드")
-    public void insertTimetable_success_user_association_method() { // TODO: remove 연관관계 메서드 테스트
+    @DisplayName("Timetable 삽입 성공")
+    public void insertTimetable_success_user_association_method() {
         // given
-        Timetable validTimetable = Timetable.builder()
+        Timetable timetable = Timetable.builder()
                 .name("첫 학기")
                 .year(2017)
                 .semester(Semester.FIRST)
                 .build();
+        timetable.associateUser(dummyUser);
 
         // when
-        validTimetable.associateUser(dummyUser);    // 연관관계 편의 메서드
-        entityManager.persist(dummyUser);   // 유저 영속화
-        entityManager.flush();
+        timetableRepository.save(timetable);
         entityManager.clear();
 
         // then
         User foundUser = entityManager.find(User.class, dummyUser.getId());
-        Timetable foundTable = entityManager.find(Timetable.class, validTimetable.getId());
+        Optional<Timetable> foundTable = timetableRepository.findById(timetable.getId());
 
-        assertThat(foundTable.getName()).isEqualTo(validTimetable.getName());
-        assertThat(foundTable.getUser()).isEqualTo(foundUser);
+        // then
+        assertThat(foundTable.isPresent()).isTrue();
+        assertThat(foundTable.get().getName()).isEqualTo(timetable.getName());
+        assertThat(foundUser.getTimetableList()).contains(foundTable.get());
     }
 
     @Test
-    @DisplayName("INSERT Timetable 실패 - NOT NULL 제약조건 위반")
+    @DisplayName("Timetable 삽입 실패 - NOT NULL 제약조건 위반")
     public void insertTimetable_fail_notnull_constraint() {
         // given
         Timetable nullNameTimetable = Timetable.builder()
@@ -135,7 +136,7 @@ public class TimetableRepositoryTest {
     }
 
     @Test
-    @DisplayName("SELECT Timetable id 조회 성공")
+    @DisplayName("Timetable 단일 조회 성공 - findById")
     public void selectTimetableById_success() {
         // given
         Long id = dummyTimetable.getId();
@@ -149,7 +150,7 @@ public class TimetableRepositoryTest {
     }
 
     @Test
-    @DisplayName("SELECT ALL Timetable userId 조회 성공")
+    @DisplayName("Timetable 리스트 조회 성공")
     public void selectAllTimetableByUserId_success() {
         // given
         Long userId = dummyUser.getId();
@@ -168,7 +169,7 @@ public class TimetableRepositoryTest {
      * TimetableCell
      */
     @Test
-    @DisplayName("INSERT TimetableCell 성공 - Timetable 연관관계 편의 메서드")
+    @DisplayName("TimetableCell 삽입 성공 - Timetable 연관관계 편의 메서드")
     public void insertTimetableCell_success() {
         // given
         TimetableCell timetableCell = TimetableCell.builder()
@@ -191,7 +192,7 @@ public class TimetableRepositoryTest {
     }
 
     @Test
-    @DisplayName("INSERT TimetableCell 실패 - NOT NULL 제약조건 위반")
+    @DisplayName("TimetableCell 삽입 실패 - NOT NULL 제약조건 위반")
     public void insertTimetableCell_fail_notnull_constraint() {
         // given
         TimetableCell nullLectureNameCell = TimetableCell.builder()
@@ -225,7 +226,7 @@ public class TimetableRepositoryTest {
     }
 
     @Test
-    @DisplayName("SELECT ALL TimetableCell 성공 - findById")
+    @DisplayName("TimetableCell 리스트 조회 성공 - Timetable")
     public void selectAllTimetableCellByTimetable_success() {
         // when
         Optional<Timetable> timetable = timetableRepository.findById(dummyTimetable.getId());   // TODO: QueryDSL 버전
