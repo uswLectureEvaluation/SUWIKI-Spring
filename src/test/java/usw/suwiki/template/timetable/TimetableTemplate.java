@@ -10,7 +10,7 @@ public class TimetableTemplate {
     public static final int YEAR = 2023;
     public static final Semester SEMESTER = Semester.FIRST;
 
-    public static Timetable createFirstDummyTimetable(User user) { // 유저 외 연관관계 엔티티 없는 시간표 생성
+    public static Timetable createFirstDummy(User user) { // 유저 외 연관관계 엔티티 없는 시간표 생성
         Timetable timetable = Timetable.builder()
                 .name(NAME)
                 .year(YEAR)
@@ -20,7 +20,7 @@ public class TimetableTemplate {
         return timetable;
     }
 
-    public static Timetable createCustomDummyTimetable(String name, Integer year, Semester semester, User user) {
+    public static Timetable createDummy(String name, Integer year, Semester semester, User user) {
         Timetable timetable = Timetable.builder()
                 .name(name)
                 .year(year)

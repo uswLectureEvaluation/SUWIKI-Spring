@@ -2,6 +2,9 @@ package usw.suwiki.repository.timetable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static usw.suwiki.domain.timetable.entity.TimetableCellColor.BROWN;
+import static usw.suwiki.domain.timetable.entity.TimetableCellColor.GRAY;
+import static usw.suwiki.domain.timetable.entity.TimetableCellColor.ORANGE;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,10 +25,13 @@ import usw.suwiki.config.TestJpaConfig;
 import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.timetable.entity.TimetableCell;
+import usw.suwiki.domain.timetable.entity.TimetableCellColor;
+import usw.suwiki.domain.timetable.repository.TimetableCellRepository;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.template.timetable.TimetableTemplate;
+import usw.suwiki.template.timetablecell.TimetableCellTemplate;
 import usw.suwiki.template.user.UserTemplate;
 
 @DataJpaTest
@@ -36,6 +42,9 @@ public class TimetableRepositoryTest {
 
     @Autowired
     private TimetableRepository timetableRepository;
+
+    @Autowired
+    private TimetableCellRepository timetableCellRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -50,16 +59,23 @@ public class TimetableRepositoryTest {
     void setUp() {
         this.dummyUser = userRepository.save(UserTemplate.createDummyUser());
 
-        Timetable timetable = TimetableTemplate.createFirstDummyTimetable(dummyUser);
+        Timetable timetable = TimetableTemplate.createFirstDummy(dummyUser);
         this.dummyTimetable = timetableRepository.save(timetable);
 
-        TimetableTemplate.createCustomDummyTimetable("1-1 시간표", 2017, Semester.FIRST, dummyUser);
-        TimetableTemplate.createCustomDummyTimetable("1-2 시간표", 2017, Semester.SECOND, dummyUser);
-        TimetableTemplate.createCustomDummyTimetable("2-1 시간표", 2018, Semester.FIRST, dummyUser);
-
+        TimetableTemplate.createDummy("1-1 시간표", 2017, Semester.FIRST, dummyUser);
+        TimetableTemplate.createDummy("1-2 시간표", 2017, Semester.SECOND, dummyUser);
+        TimetableTemplate.createDummy("2-1 시간표", 2018, Semester.FIRST, dummyUser);
         userRepository.save(dummyUser);
+
+        TimetableCellTemplate.createDummy("데이터 구조", "손수국", GRAY, dummyTimetable);
+        TimetableCellTemplate.createDummy("컴퓨터 구조", "갓성태", ORANGE, dummyTimetable);
+        TimetableCellTemplate.createDummy("이산 구조", "김장영", BROWN, dummyTimetable);
+        timetableRepository.save(dummyTimetable);
     }
 
+    /**
+     * Timetable
+     */
     @Test
     @DisplayName("INSERT Timetable 성공 - User 연관관계 편의 메서드")
     public void insertTimetable_success_user_association_method() { // TODO: remove 연관관계 메서드 테스트
@@ -148,10 +164,68 @@ public class TimetableRepositoryTest {
 
     // TODO: 연관관계 메서드를 이용한 삭제 구현 고민
 
-    // TimetableCell
+    /**
+     * TimetableCell
+     */
+    @Test
+    @DisplayName("INSERT TimetableCell 성공 - Timetable 연관관계 편의 메서드")
+    public void insertTimetableCell_success() {
+        // given
+        TimetableCell timetableCell = TimetableCell.builder()
+                .lectureName("")        // blank 가능
+                .professorName("")      // blank 가능
+                .color(TimetableCellColor.BROWN)
+                .build();
+        timetableCell.associateTimetable(dummyTimetable);   // 연관관계 편의 메서드
+
+        // when
+        timetableRepository.save(dummyTimetable);
+        entityManager.clear();
+
+        Timetable foundTable = entityManager.find(Timetable.class, dummyTimetable.getId());
+        TimetableCell foundCell = foundTable.getCellList().get(0);
+
+        // then
+        assertThat(foundCell).isNotNull();
+        assertThat(foundCell.getTimetable()).isEqualTo(foundTable);
+    }
 
     @Test
-    @DisplayName("SELECT ALL TimetableCell by TimetableRepository 성공")
+    @DisplayName("INSERT TimetableCell 실패 - NOT NULL 제약조건 위반")
+    public void insertTimetableCell_fail_notnull_constraint() {
+        // given
+        TimetableCell nullLectureNameCell = TimetableCell.builder()
+                .lectureName(null)
+                .professorName("신호진")
+                .color(TimetableCellColor.BROWN)
+                .build();
+        nullLectureNameCell.associateTimetable(dummyTimetable);
+
+        TimetableCell nullProfessorNameCell = TimetableCell.builder()
+                .lectureName("ICT 개론")
+                .professorName(null)
+                .color(TimetableCellColor.BROWN)
+                .build();
+        nullProfessorNameCell.associateTimetable(dummyTimetable);
+
+        TimetableCell nullColorCell = TimetableCell.builder()
+                .lectureName("ICT 개론")
+                .professorName("신호진")
+                .color(null)
+                .build();
+        nullColorCell.associateTimetable(dummyTimetable);
+
+        // when & then
+        assertThatThrownBy(() -> timetableCellRepository.save(nullLectureNameCell))
+                .isExactlyInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> timetableCellRepository.save(nullProfessorNameCell))
+                .isExactlyInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> timetableCellRepository.save(nullColorCell))
+                .isExactlyInstanceOf(ConstraintViolationException.class);
+    }
+
+    @Test
+    @DisplayName("SELECT ALL TimetableCell 성공 - findById")
     public void selectAllTimetableCellByTimetable_success() {
         // when
         Optional<Timetable> timetable = timetableRepository.findById(dummyTimetable.getId());   // TODO: QueryDSL 버전
