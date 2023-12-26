@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.global.BaseTimeEntity;
@@ -36,6 +37,13 @@ public class TimetableElement extends BaseTimeEntity {
 
     // TODO: 1~10 제약 조건
     private Integer period;
+
+    @Builder
+    public TimetableElement(String location, TimetableDay day, Integer period) {
+        this.location = location;
+        this.day = day;
+        this.period = period;
+    }
 
 
     // 연관관계 메서드
