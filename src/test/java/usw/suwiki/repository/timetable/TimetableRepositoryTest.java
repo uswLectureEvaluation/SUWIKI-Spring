@@ -26,12 +26,15 @@ import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.timetable.entity.TimetableCell;
 import usw.suwiki.domain.timetable.entity.TimetableCellColor;
+import usw.suwiki.domain.timetable.entity.TimetableDay;
+import usw.suwiki.domain.timetable.entity.TimetableElement;
 import usw.suwiki.domain.timetable.repository.TimetableCellRepository;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.template.timetable.TimetableTemplate;
 import usw.suwiki.template.timetablecell.TimetableCellTemplate;
+import usw.suwiki.template.timetableelement.TimetableElementTemplate;
 import usw.suwiki.template.user.UserTemplate;
 
 @DataJpaTest
@@ -74,13 +77,15 @@ public class TimetableRepositoryTest {
         TimetableCellTemplate.createDummy("컴퓨터 구조", "갓성태", ORANGE, dummyTimetable);
         TimetableCellTemplate.createDummy("이산 구조", "김장영", BROWN, dummyTimetable);
         timetableRepository.save(dummyTimetable);
+
+        entityManager.clear();  // 영속성 컨텍스트 초기화
     }
 
     /**
      * Timetable
      */
     @Test
-    @DisplayName("Timetable 삽입 성공 - 연관관계 확인")
+    @DisplayName("Timetable 삽입 성공 - 연관관계 엔티티에서 조회가 가능해야 한다.")
     public void insertTimetable_success_user_association_method() {
         // given
         Timetable timetable = Timetable.builder()
@@ -99,12 +104,11 @@ public class TimetableRepositoryTest {
 
         // then
         assertThat(foundTable.isPresent()).isTrue();
-        assertThat(foundTable.get().getName()).isEqualTo(timetable.getName());
         assertThat(foundUser.getTimetableList()).contains(foundTable.get());
     }
 
     @Test
-    @DisplayName("Timetable 삽입 실패 - NOT NULL 제약조건 위반")
+    @DisplayName("Timetable 삽입 실패 - NOT NULL 제약조건을 위반해선 안 된다.")
     public void insertTimetable_fail_notnull_constraint() {
         // given
         Timetable nullNameTimetable = Timetable.builder()
@@ -138,7 +142,7 @@ public class TimetableRepositoryTest {
     }
 
     @Test
-    @DisplayName("Timetable 단일 조회 성공 - findById")
+    @DisplayName("Timetable 단일 조회 성공 - 필드 값이 동등해야 한다.")
     public void selectTimetableById_success() {
         // given
         Long id = dummyTimetable.getId();
@@ -148,11 +152,12 @@ public class TimetableRepositoryTest {
 
         // then
         assertThat(optionalTimetable.isPresent()).isTrue();
-        assertThat(optionalTimetable.get()).isEqualTo(dummyTimetable);
+        assertThat(optionalTimetable.get().getUser().getId()).isEqualTo(dummyTimetable.getUser().getId());
+        assertThat(optionalTimetable.get().getSemester()).isEqualTo(dummyTimetable.getSemester());
     }
 
     @Test
-    @DisplayName("Timetable 리스트 조회 성공")
+    @DisplayName("Timetable 리스트 조회 성공 - 개수 및 순서가 같아야 한다.")
     public void selectAllTimetableByUserId_success() {
         // given
         Long userId = dummyUser.getId();
@@ -163,6 +168,10 @@ public class TimetableRepositoryTest {
         // then
         assertThat(all.isEmpty()).isFalse();
         assertThat(all.size()).isEqualTo(4);
+        assertThat(all.get(0).getYear()).isEqualTo(TimetableTemplate.YEAR);
+        assertThat(all.get(1).getYear()).isEqualTo(2017);
+        assertThat(all.get(2).getYear()).isEqualTo(2017);
+        assertThat(all.get(3).getYear()).isEqualTo(2018);
     }
 
     // TODO: 연관관계 메서드를 이용한 삭제 구현 고민
@@ -171,7 +180,7 @@ public class TimetableRepositoryTest {
      * TimetableCell
      */
     @Test
-    @DisplayName("TimetableCell 삽입 성공 - 연관관계 확인")
+    @DisplayName("TimetableCell 삽입 성공 - 연관관계 엔티티에서 조회가 가능해야 한다.")
     public void insertTimetableCell_success() {
         // given
         TimetableCell timetableCell = TimetableCell.builder()
@@ -195,7 +204,7 @@ public class TimetableRepositoryTest {
     }
 
     @Test
-    @DisplayName("TimetableCell 삽입 실패 - NOT NULL 제약조건 위반")
+    @DisplayName("TimetableCell 삽입 실패 - NOT NULL 제약조건을 위반해선 안 된다.")
     public void insertTimetableCell_fail_notnull_constraint() {
         // given
         TimetableCell nullLectureNameCell = TimetableCell.builder()
@@ -229,7 +238,7 @@ public class TimetableRepositoryTest {
     }
 
     @Test
-    @DisplayName("TimetableCell 단일 조회 성공")
+    @DisplayName("TimetableCell 단일 조회 성공 - 필드 값이 동등해야 한다.")
     public void selectTimetableCell_success() {
         // given
         Long id = dummyTimetableCell.getId();
@@ -239,11 +248,13 @@ public class TimetableRepositoryTest {
 
         // then
         assertThat(optionalTimetableCell.isPresent()).isTrue();
-        assertThat(optionalTimetableCell.get()).isEqualTo(dummyTimetableCell);
+        assertThat(optionalTimetableCell.get().getTimetable().getId()).isEqualTo(dummyTimetableCell.getTimetable().getId());
+        assertThat(optionalTimetableCell.get().getLectureName()).isEqualTo(dummyTimetableCell.getLectureName());
+        assertThat(optionalTimetableCell.get().getProfessorName()).isEqualTo(dummyTimetableCell.getProfessorName());
     }
 
     @Test
-    @DisplayName("TimetableCell 리스트 조회 성공 - Timetable")
+    @DisplayName("TimetableCell 리스트 조회 성공 - 개수 및 순서가 같아야 한다.")
     public void selectAllTimetableCellByTimetable_success() {
         // when
         Optional<Timetable> timetable = timetableRepository.findById(dummyTimetable.getId());   // TODO: QueryDSL 버전
@@ -257,4 +268,11 @@ public class TimetableRepositoryTest {
         assertThat(cellList.get(2).getLectureName()).isEqualTo("컴퓨터 구조");
         assertThat(cellList.get(3).getLectureName()).isEqualTo("이산 구조");
     }
+
+    /**
+     * TimetableElement
+     */
+
+
+    // TODO: day, period, timetable을 UNIQUE key로 지정하자 -> 삽입 실패 케이스 만들자
 }
