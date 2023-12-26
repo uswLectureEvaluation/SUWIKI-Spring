@@ -3,6 +3,8 @@ package usw.suwiki.domain.timetable.entity;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -39,6 +41,7 @@ public class TimetableElement extends BaseTimeEntity {
     @NotNull
     private String location;    // blank 가능
 
+    @Enumerated(EnumType.STRING)
     @NotNull
     private TimetableDay day;
 
