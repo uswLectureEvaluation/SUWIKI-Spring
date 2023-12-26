@@ -63,15 +63,14 @@ public class TimetableRepositoryTest {
     private User dummyUser;
     private Timetable dummyTimetable;
     private TimetableCell dummyTimetableCell;
+    private TimetableElement dummyTimetableElement;
 
     @BeforeEach
     void setUp() {
         this.dummyUser = userRepository.save(UserTemplate.createDummyUser());
-        System.out.println("dummyUser.getTimetableList() = " + dummyUser.getTimetableList());
 
         Timetable timetable = TimetableTemplate.createFirstDummy(dummyUser);
         this.dummyTimetable = timetableRepository.save(timetable);
-        System.out.println("dummyTimetable.getCellList() = " + dummyTimetable.getCellList());
 
         TimetableTemplate.createDummy("1-1 시간표", 2017, Semester.FIRST, dummyUser);
         TimetableTemplate.createDummy("1-2 시간표", 2017, Semester.SECOND, dummyUser);
@@ -80,11 +79,17 @@ public class TimetableRepositoryTest {
 
         TimetableCell timetableCell = TimetableCellTemplate.createFirstDummy(dummyTimetable);
         this.dummyTimetableCell = timetableCellRepository.save(timetableCell);
-        System.out.println("dummyTimetableCell.getElementList() = " + dummyTimetableCell.getElementList());
         TimetableCellTemplate.createDummy("데이터 구조", "손수국", GRAY, dummyTimetable);
         TimetableCellTemplate.createDummy("컴퓨터 구조", "갓성태", ORANGE, dummyTimetable);
         TimetableCellTemplate.createDummy("이산 구조", "김장영", BROWN, dummyTimetable);
         timetableRepository.save(dummyTimetable);
+
+        TimetableElement timetableElement = TimetableElementTemplate.createFirstDummy(dummyTimetableCell);
+        this.dummyTimetableElement = timetableElementRepository.save(timetableElement);
+        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 4, dummyTimetableCell);
+        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 5, dummyTimetableCell);
+        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 6, dummyTimetableCell);
+        timetableCellRepository.save(dummyTimetableCell);
 
         entityManager.clear();  // 영속성 컨텍스트 초기화
     }
@@ -166,7 +171,7 @@ public class TimetableRepositoryTest {
 
     @Test
     @DisplayName("Timetable 리스트 조회 성공 - 개수 및 순서가 같아야 한다.")
-    public void selectAllTimetableByUserId_success() {
+    public void selectAllTimetable_success() {
         // given
         Long userId = dummyUser.getId();
 
@@ -256,14 +261,15 @@ public class TimetableRepositoryTest {
 
         // then
         assertThat(optionalTimetableCell.isPresent()).isTrue();
-        assertThat(optionalTimetableCell.get().getTimetable().getId()).isEqualTo(dummyTimetableCell.getTimetable().getId());
+        assertThat(optionalTimetableCell.get().getTimetable().getId()).isEqualTo(
+                dummyTimetableCell.getTimetable().getId());
         assertThat(optionalTimetableCell.get().getLectureName()).isEqualTo(dummyTimetableCell.getLectureName());
         assertThat(optionalTimetableCell.get().getProfessorName()).isEqualTo(dummyTimetableCell.getProfessorName());
     }
 
     @Test
     @DisplayName("TimetableCell 리스트 조회 성공 - 개수 및 순서가 같아야 한다.")
-    public void selectAllTimetableCellByTimetable_success() {
+    public void selectAllTimetableCell_success() {
         // when
         Optional<Timetable> timetable = timetableRepository.findById(dummyTimetable.getId());   // TODO: QueryDSL 버전
 
@@ -363,4 +369,36 @@ public class TimetableRepositoryTest {
                 .hasStackTraceContaining("Unique");
     }
 
+    @Test
+    @DisplayName("TimetableElement 단일 조회 성공 - 필드 값이 동등해야 한다.")
+    public void selectTimetableElement_success() {
+        // given
+        Long id = dummyTimetableElement.getId();
+
+        // when
+        Optional<TimetableElement> optionalTimetableElement = timetableElementRepository.findById(id);
+
+        // then
+        assertThat(optionalTimetableElement.isPresent()).isTrue();
+        assertThat(optionalTimetableElement.get().getCell().getId()).isEqualTo(dummyTimetableElement.getCell().getId());
+        assertThat(optionalTimetableElement.get().getLocation()).isEqualTo(dummyTimetableElement.getLocation());
+        assertThat(optionalTimetableElement.get().getDay()).isEqualTo(dummyTimetableElement.getDay());
+    }
+
+    @Test
+    @DisplayName("TimetableElement 리스트 조회 성공 - 개수 및 순서가 같아야 한다.")
+    public void selectAllTimetableElement_success() {
+        // when
+        // TODO: QueryDSL 버전
+        Optional<TimetableCell> optionalTimetableCell = timetableCellRepository.findById(dummyTimetableCell.getId());
+
+        // then
+        assertThat(optionalTimetableCell.isPresent()).isTrue();
+        List<TimetableElement> elementList = optionalTimetableCell.get().getElementList();
+        assertThat(elementList.size()).isEqualTo(4);
+        assertThat(elementList.get(0).getPeriod()).isEqualTo(TimetableElementTemplate.PERIOD);
+        assertThat(elementList.get(1).getPeriod()).isEqualTo(4);
+        assertThat(elementList.get(2).getPeriod()).isEqualTo(5);
+        assertThat(elementList.get(3).getPeriod()).isEqualTo(6);
+    }
 }
