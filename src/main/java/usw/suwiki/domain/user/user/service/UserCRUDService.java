@@ -6,12 +6,14 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.global.exception.errortype.FavoriteMajorException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
+import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +28,12 @@ public class UserCRUDService {
 
     public List<User> loadUsersLastLoginBetweenStartEnd(LocalDateTime startTime, LocalDateTime endTime) {
         return userRepository.findByLastLoginBetween(startTime, endTime);
+    }
+
+    @Transactional(readOnly = true)
+    public User loadUserByIdx(Long userIdx) {
+        return userRepository.findById(userIdx)
+                .orElseThrow(() -> new FavoriteMajorException(USER_NOT_EXISTS));
     }
 
     @Transactional(readOnly = true)

@@ -340,4 +340,10 @@ public class UserBusinessService {
             put("RefreshToken", jwtAgent.refreshTokenRefresh(refreshTokenPayload));
         }};
     }
+
+    public void validateRestrictedUser(String authorization) {
+        if (jwtAgent.getUserIsRestricted(authorization)) {
+            throw new AccountException(USER_RESTRICTED);
+        }
+    }
 }
