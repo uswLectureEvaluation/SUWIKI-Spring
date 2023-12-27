@@ -1,5 +1,7 @@
 package usw.suwiki.domain.favoritemajor;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.user.user.User;
@@ -8,6 +10,8 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 @Entity
 public class FavoriteMajor {
 
