@@ -50,12 +50,13 @@ public class EvaluatePost extends BaseTimeEntity {
     @JoinColumn(name = "user_idx")
     private User user;
 
-    @LastModifiedDate // 조회한 Entity값을 변경할때 ,시간이 자동 저장된다.
+    @LastModifiedDate
     private LocalDateTime modifiedDate;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;    //주관적인 강의평가 입력내용
 
+    // TODO: 연관관계 편의 메서드로 대체
     public void setLecture(Lecture lecture) {
         this.lecture = lecture;
     }
@@ -116,4 +117,15 @@ public class EvaluatePost extends BaseTimeEntity {
         this.content = dto.getContent();
         this.totalAvg = (learning + honey + satisfaction) / 3;
     }
+
+
+    // 연관관계 편의 메서드
+    public void associateUser(User user) {
+        if (Objects.nonNull(this.user)) {
+            this.user.removeEvaluatePost(this);
+        }
+        this.user = user;
+        user.addEvaluatePost(this);
+    }
+
 }

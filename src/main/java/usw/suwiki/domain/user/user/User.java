@@ -76,6 +76,11 @@ public class User {
     @Column
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<EvaluatePost> evaluatePostList = new ArrayList<>();
+
+
     public static User makeUser(String loginId, String password, String email) {
         return User.builder()
                 .loginId(loginId)
@@ -168,6 +173,15 @@ public class User {
     /**
      * EvaluatePost
      */
+
+    public void addEvaluatePost(EvaluatePost evaluatePost) {
+        this.evaluatePostList.add(evaluatePost);
+    }
+
+    public void removeEvaluatePost(EvaluatePost evaluatePost) {
+        this.evaluatePostList.remove(evaluatePost);
+    }
+
     public void updateWritingEvaluatePost() {
         final int WRITE_EVALUATE_POST = 10;
         this.point += WRITE_EVALUATE_POST;
