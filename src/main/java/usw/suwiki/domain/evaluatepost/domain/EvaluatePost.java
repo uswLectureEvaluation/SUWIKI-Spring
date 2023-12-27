@@ -119,13 +119,24 @@ public class EvaluatePost extends BaseTimeEntity {
     }
 
 
-    // 연관관계 편의 메서드
+    /**
+     * 연관관계 편의 메서드
+     */
+
     public void associateUser(User user) {
         if (Objects.nonNull(this.user)) {
             this.user.removeEvaluatePost(this);
         }
         this.user = user;
         user.addEvaluatePost(this);
+    }
+
+    public void associateLecture(Lecture lecture) {
+        if (Objects.nonNull(this.lecture)) {
+            this.lecture.removeEvaluatePost(this);
+        }
+        this.lecture = lecture;
+        lecture.addEvaluatePost(this);
     }
 
 }
