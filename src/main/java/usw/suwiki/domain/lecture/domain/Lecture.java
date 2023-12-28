@@ -1,26 +1,36 @@
 package usw.suwiki.domain.lecture.domain;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
+import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.service.dto.EvaluatePostsToLecture;
 import usw.suwiki.domain.lecture.controller.dto.JsonToLectureForm;
 import usw.suwiki.global.BaseTimeEntity;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
-
 @Getter
-@Setter
+@Setter // TODO: 제거
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor  // TODO: access PROTECTED
 public class Lecture extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // TODO: 컬럼 제약 조건 설정
     @Column(name = "semester_list")
     private String semester;
 
@@ -43,14 +53,36 @@ public class Lecture extends BaseTimeEntity {
 
     private int postsCount = 0;
 
-    @LastModifiedDate // 조회한 Entity값을 변경할때 ,시간이 자동 저장된다.
+    @LastModifiedDate
     private LocalDateTime modifiedDate;
+
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EvaluatePost> evaluatePostList = new ArrayList<>();
+
+    @Builder
+    public Lecture(
+            String semester,
+            String professor,
+            String name,
+            String majorType,
+            String type,
+            LectureDetail lectureDetail
+    ) {
+        this.semester = semester;
+        this.professor = professor;
+        this.name = name;
+        this.majorType = majorType;
+        this.type = type;
+        this.lectureDetail = lectureDetail;
+        // TODO: 생성자 없이 객체 초기화시 EvaluationInfo 필드값들이 어떻게 되는지 확인
+        this.lectureEvaluationInfo = new LectureEvaluationInfo();
+    }
 
     public void setSemester(String semester) {
         this.semester = semester;
     }
 
-
+    // TODO: 생성자 -> DTO에서 사용
     public static Lecture toEntity(JsonToLectureForm dto) {
         Lecture entity = Lecture.builder()
                 .name(dto.getLectureName())
@@ -65,19 +97,11 @@ public class Lecture extends BaseTimeEntity {
         return entity;
     }
 
-    @Builder
-    public Lecture(String semester, String professor, String name, String majorType, String type) {
-        this.name = name;
-        this.semester = semester;
-        this.professor = professor;
-        this.majorType = majorType;
-        this.type = type;
-    }
-
     private void createLectureEvaluationInfo() {
         this.lectureEvaluationInfo = new LectureEvaluationInfo();
     }
 
+    // TODO: LectureDetail 생성자 -> DTO 에서 사용
     private void createLectureDetail(JsonToLectureForm dto) {
         this.lectureDetail = LectureDetail.builder()
                 .code(dto.getLectureCode())
@@ -90,12 +114,28 @@ public class Lecture extends BaseTimeEntity {
                 .build();
     }
 
+    /**
+     * 연관관계 메서드
+     */
+    public void addEvaluatePost(EvaluatePost evaluatePost) {
+        this.evaluatePostList.add(evaluatePost);
+    }
+
+    public void removeEvaluatePost(EvaluatePost evaluatePost) {
+        this.evaluatePostList.remove(evaluatePost);
+    }
+
+    /**
+     * 비즈니스 메서드
+     */
+
     public void handleLectureEvaluationIfNewPost(EvaluatePostsToLecture post) {
         this.addLectureEvaluation(post);
         this.calculateAverage();
     }
 
-    public void handleLectureEvaluationIfUpdatePost(EvaluatePostsToLecture beforeUpdatePost, EvaluatePostsToLecture updatePost) {
+    public void handleLectureEvaluationIfUpdatePost(EvaluatePostsToLecture beforeUpdatePost,
+                                                    EvaluatePostsToLecture updatePost) {
         this.cancelLectureEvaluation(beforeUpdatePost);
         this.addLectureEvaluation(updatePost);
         this.calculateAverage();
