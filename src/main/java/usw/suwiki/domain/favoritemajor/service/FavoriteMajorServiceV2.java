@@ -27,7 +27,7 @@ public class FavoriteMajorServiceV2 {
 
     public void save(String authorization, FavoriteSaveDto favoriteSaveDto) {
         userBusinessService.validateRestrictedUser(authorization);
-        User loginUser = userCRUDService.loadUserByIdx(jwtAgent.getId(authorization));
+        User loginUser = userCRUDService.loadUserById(jwtAgent.getId(authorization));
 
         String majorType = favoriteSaveDto.getMajorType();
         validateDuplicateFavoriteMajor(loginUser, majorType);
@@ -47,7 +47,7 @@ public class FavoriteMajorServiceV2 {
 
     public List<String> findAllMajorTypeByUser(String authorization) {
         userBusinessService.validateRestrictedUser(authorization);
-        User loginUser = userCRUDService.loadUserByIdx(jwtAgent.getId(authorization));
+        User loginUser = userCRUDService.loadUserById(jwtAgent.getId(authorization));
 
         List<FavoriteMajor> favoriteMajors = favoriteMajorRepositoryV2.findAllByUserId(loginUser.getId());
         return favoriteMajors.stream().map(FavoriteMajor::getMajorType).toList();
@@ -55,7 +55,7 @@ public class FavoriteMajorServiceV2 {
 
     public void delete(String authorization,  String majorType) {
         userBusinessService.validateRestrictedUser(authorization);
-        User loginUser = userCRUDService.loadUserByIdx(jwtAgent.getId(authorization));
+        User loginUser = userCRUDService.loadUserById(jwtAgent.getId(authorization));
 
         FavoriteMajor favoriteMajor = favoriteMajorRepositoryV2.findByUserIdAndMajorType(loginUser.getId(), majorType)
                 .orElseThrow(() -> new FavoriteMajorException(FAVORITE_MAJOR_NOT_FOUND));
@@ -64,7 +64,7 @@ public class FavoriteMajorServiceV2 {
     }
 
     public void deleteAllFromUserIdx(Long userIdx) {
-        User loginUser = userCRUDService.loadUserByIdx(userIdx);
+        User loginUser = userCRUDService.loadUserById(userIdx);
         List<FavoriteMajor> favoriteMajors = favoriteMajorRepositoryV2.findAllByUserId(loginUser.getId());
         favoriteMajorRepositoryV2.deleteAll(favoriteMajors);
     }
