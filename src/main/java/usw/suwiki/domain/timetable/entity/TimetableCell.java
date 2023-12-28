@@ -1,9 +1,6 @@
 package usw.suwiki.domain.timetable.entity;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,16 +11,24 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.global.BaseTimeEntity;
 
 @Entity
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "UNIQUE_TIMETABLE_DAY_PERIOD",
+                        columnNames = {"timetable_id", "day", "startPeriod", "endPeriod"}
+                )
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TimetableCell extends BaseTimeEntity {
@@ -43,18 +48,31 @@ public class TimetableCell extends BaseTimeEntity {
     @NotNull
     private TimetableCellColor color;
 
+    @NotNull
+    private String location;    // blank 가능
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private TimetableDay day;
+
+    // TODO: 1~10 제약 조건
+    private Integer startPeriod;
+    private Integer endPeriod;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "timetable_id")
     private Timetable timetable;
 
-    @OneToMany(mappedBy = "cell", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TimetableElement> elementList = new ArrayList<>();
-
     @Builder
-    public TimetableCell(String lectureName, String professorName, TimetableCellColor color) {
+    public TimetableCell(String lectureName, String professorName, TimetableCellColor color, String location,
+                         TimetableDay day, Integer startPeriod, Integer endPeriod) {
         this.lectureName = lectureName;
         this.professorName = professorName;
         this.color = color;
+        this.location = location;
+        this.day = day;
+        this.startPeriod = startPeriod;
+        this.endPeriod = endPeriod;
     }
 
     // 연관관계 편의 메서드
@@ -66,15 +84,8 @@ public class TimetableCell extends BaseTimeEntity {
         timetable.addCell(this);
     }
 
-    public void addElement(TimetableElement element) {
-        this.elementList.add(element);
-    }
-
-    public void removeElement(TimetableElement element) {
-        this.elementList.remove(element);
-    }
-
     // 비즈니스 메서드
-    //
+
+    // TODO: 교시 유효성 검증 0 < period < 15  && end > start
 
 }

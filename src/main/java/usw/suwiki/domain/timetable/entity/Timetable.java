@@ -22,8 +22,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.global.BaseTimeEntity;
-import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.TimetableException;
 
 @Entity
 @Getter
@@ -76,14 +74,7 @@ public class Timetable extends BaseTimeEntity {
     }
 
     // 비즈니스 메서드
-    public void validateElementDayAndPeriodDuplication(TimetableElement element) {
-        List<TimetableElement> tableElementList = new ArrayList<>();
-        this.cellList.forEach(cell -> tableElementList.addAll(cell.getElementList()));
-
-        boolean isDuplicate = tableElementList.stream()
-                .anyMatch(el -> el.getDay().equals(element.getDay()) && el.getPeriod().equals(element.getPeriod()));
-        if (isDuplicate) {
-            throw new TimetableException(ExceptionType.DUPLICATE_TIMETABLE_ELEMENT_DAY_PERIOD);
-        }
+    public void validateDayAndPeriodDuplication(TimetableCell cell) {
+        // TODO: (요일-시간) 중복 검사 로직.
     }
 }
