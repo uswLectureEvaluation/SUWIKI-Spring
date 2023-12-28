@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
@@ -59,8 +61,12 @@ public class TimetableCell extends BaseTimeEntity {
     @NotNull
     private TimetableDay day;
 
-    // TODO: 1~10 제약 조건
+    @Min(value = 1)
+    @Max(value = 24)
     private Integer startPeriod;
+
+    @Min(value = 1)
+    @Max(value = 24)
     private Integer endPeriod;
 
     @ManyToOne(fetch = FetchType.LAZY)

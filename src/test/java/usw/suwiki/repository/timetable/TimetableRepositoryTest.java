@@ -32,6 +32,8 @@ import usw.suwiki.domain.timetable.repository.TimetableCellRepository;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
+import usw.suwiki.global.exception.ExceptionType;
+import usw.suwiki.global.exception.errortype.TimetableException;
 import usw.suwiki.template.timetable.TimetableTemplate;
 import usw.suwiki.template.timetablecell.TimetableCellTemplate;
 import usw.suwiki.template.user.UserTemplate;
@@ -358,6 +360,16 @@ public class TimetableRepositoryTest {
                 .build();
         tooLongLocationCell.associateTimetable(dummyTimetable);
 
+        TimetableCell tooBigPeriodCell = TimetableCell.builder()
+                .lectureName("ICT 개론")
+                .professorName("신호진")
+                .color(TimetableCellColor.BROWN)
+                .location("IT 208")
+                .day(TimetableDay.FRI)
+                .startPeriod(25)
+                .build();
+        tooLongLocationCell.associateTimetable(dummyTimetable);
+
         // when & then
         assertThatThrownBy(() -> timetableCellRepository.save(tooLongLectureNameCell))
                 .isExactlyInstanceOf(ConstraintViolationException.class);
@@ -365,6 +377,52 @@ public class TimetableRepositoryTest {
                 .isExactlyInstanceOf(ConstraintViolationException.class);
         assertThatThrownBy(() -> timetableCellRepository.save(tooLongLocationCell))
                 .isExactlyInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> timetableCellRepository.save(tooBigPeriodCell))
+                .isExactlyInstanceOf(ConstraintViolationException.class);
+    }
+
+    @Test
+    @DisplayName("TimetableCell 삽입 실패 - 기존 시간표 셀들과 겹치는 (요일, 교시)을 가져선 안 된다.")
+    public void insertTimetableCell_fail_duplicate_day_and_period() {
+        // given
+        TimetableCell cellA = TimetableCell.builder()
+                .lectureName("a".repeat(201))
+                .professorName("신호진")
+                .color(TimetableCellColor.BROWN)
+                .location("IT 208")
+                .day(TimetableDay.FRI)
+                .startPeriod(4)
+                .endPeriod(6)
+                .build();
+        cellA.associateTimetable(dummyTimetable);
+
+        TimetableCell cellB = TimetableCell.builder()
+                .lectureName("a".repeat(201))
+                .professorName("신호진")
+                .color(TimetableCellColor.BROWN)
+                .location("IT 208")
+                .day(TimetableDay.FRI)
+                .startPeriod(1)
+                .endPeriod(5)   // 겹치는 교시
+                .build();
+
+        TimetableCell cellC = TimetableCell.builder()
+                .lectureName("a".repeat(201))
+                .professorName("신호진")
+                .color(TimetableCellColor.BROWN)
+                .location("IT 208")
+                .day(TimetableDay.FRI)
+                .startPeriod(6)     // 겹치는 교시
+                .endPeriod(8)
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> dummyTimetable.validateDayAndPeriodDuplication(cellB))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.DUPLICATE_TIMETABLE_DAY_PERIOD.getMessage());
+        assertThatThrownBy(() -> dummyTimetable.validateDayAndPeriodDuplication(cellC))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.DUPLICATE_TIMETABLE_DAY_PERIOD.getMessage());
     }
 
 
@@ -383,7 +441,6 @@ public class TimetableRepositoryTest {
                 dummyTimetableCell.getTimetable().getId());
         assertThat(optionalTimetableCell.get().getLectureName()).isEqualTo(dummyTimetableCell.getLectureName());
         assertThat(optionalTimetableCell.get().getProfessorName()).isEqualTo(dummyTimetableCell.getProfessorName());
-        // TODO: 동등 조건 추가
     }
 
     @Test

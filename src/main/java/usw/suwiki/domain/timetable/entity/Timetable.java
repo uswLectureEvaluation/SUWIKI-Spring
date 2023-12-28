@@ -25,6 +25,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.global.BaseTimeEntity;
+import usw.suwiki.global.exception.ExceptionType;
+import usw.suwiki.global.exception.errortype.TimetableException;
 
 @Entity
 @Getter
@@ -81,6 +83,16 @@ public class Timetable extends BaseTimeEntity {
 
     // 비즈니스 메서드
     public void validateDayAndPeriodDuplication(TimetableCell cell) {
-        // TODO: (요일-시간) 중복 검사 로직.
+        // 기존의 cell들과 하나씩 비교 -> if day_a == day_b : (start_a > start_b && end_a > end_b) || (start_a < start_b && end_a < end_b)
+        this.cellList.forEach(it -> {
+            if (it.getDay().equals(cell.getDay())) {
+                for (int i = it.getStartPeriod(); i <= it.getEndPeriod(); i++) {
+                    if (i == cell.getStartPeriod() || i == cell.getEndPeriod()) {
+                        System.out.println(i + "교시 겹침!");
+                        throw new TimetableException(ExceptionType.DUPLICATE_TIMETABLE_DAY_PERIOD);
+                    }
+                }
+            }
+        });
     }
 }
