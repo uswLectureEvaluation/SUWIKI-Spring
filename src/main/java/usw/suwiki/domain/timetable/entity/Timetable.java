@@ -15,7 +15,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,9 +40,12 @@ public class Timetable extends BaseTimeEntity {
     private User user;
 
     @NotNull
+    @Size(max = 200)
     private String name;    // 중복 가능 (UNIQUE 제약 조건 없음), 길이 제한 없음
 
     @NotNull
+    @Min(value = 1023)
+    @Max(value = 3023)
     private Integer year;
 
     @Enumerated(EnumType.STRING)

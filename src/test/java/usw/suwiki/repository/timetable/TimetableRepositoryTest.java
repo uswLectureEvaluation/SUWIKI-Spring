@@ -141,6 +141,31 @@ public class TimetableRepositoryTest {
     }
 
     @Test
+    @DisplayName("Timetable 삽입 실패 - 값 범위 제약조건을 지켜야 한다.")
+    public void insertTimetable_fail_value_range_constraint() {
+        // given
+        Timetable invalidYearTable = Timetable.builder()
+                .name("임진왜란보다 천년 전")
+                .year(592)
+                .semester(Semester.FIRST)
+                .build();
+        invalidYearTable.associateUser(dummyUser);
+
+        Timetable invalidNameTable = Timetable.builder()
+                .name("a".repeat(201))
+                .year(2023)
+                .semester(Semester.FIRST)
+                .build();
+        invalidNameTable.associateUser(dummyUser);
+
+        // when & then
+        assertThatThrownBy(() -> timetableRepository.save(invalidYearTable))
+                .isExactlyInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> timetableRepository.save(invalidNameTable))
+                .isExactlyInstanceOf(ConstraintViolationException.class);
+    }
+
+    @Test
     @DisplayName("Timetable 단일 조회 성공 - 필드 값이 동등해야 한다.")
     public void selectTimetableById_success() {
         // given
@@ -231,13 +256,29 @@ public class TimetableRepositoryTest {
         TimetableCell nullColorCell = TimetableCell.builder()
                 .lectureName("ICT 개론")
                 .professorName("신호진")
+                .color(null)
                 .location("IT 208")
                 .day(TimetableDay.FRI)
-                .color(null)
                 .build();
         nullColorCell.associateTimetable(dummyTimetable);
 
-        // TODO: NOT NULL 컬럼 추가
+        TimetableCell nullLocationCell = TimetableCell.builder()
+                .lectureName("ICT 개론")
+                .professorName("신호진")
+                .color(TimetableCellColor.BROWN)
+                .location(null)
+                .day(TimetableDay.FRI)
+                .build();
+        nullLocationCell.associateTimetable(dummyTimetable);
+
+        TimetableCell nullDayCell = TimetableCell.builder()
+                .lectureName("ICT 개론")
+                .professorName("신호진")
+                .color(TimetableCellColor.BROWN)
+                .location("IT 208")
+                .day(null)
+                .build();
+        nullDayCell.associateTimetable(dummyTimetable);
 
         // when & then
         assertThatThrownBy(() -> timetableCellRepository.save(nullLectureNameCell))
@@ -245,6 +286,10 @@ public class TimetableRepositoryTest {
         assertThatThrownBy(() -> timetableCellRepository.save(nullProfessorNameCell))
                 .isExactlyInstanceOf(ConstraintViolationException.class);
         assertThatThrownBy(() -> timetableCellRepository.save(nullColorCell))
+                .isExactlyInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> timetableCellRepository.save(nullLocationCell))
+                .isExactlyInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> timetableCellRepository.save(nullDayCell))
                 .isExactlyInstanceOf(ConstraintViolationException.class);
     }
 
@@ -281,6 +326,47 @@ public class TimetableRepositoryTest {
         assertThatThrownBy(() -> timetableRepository.save(dummyTimetable))
                 .isExactlyInstanceOf(DataIntegrityViolationException.class);
     }
+
+    @Test
+    @DisplayName("TimetableCell 삽입 실패 - 값 범위 제약조건을 지켜야 한다.")
+    public void insertTimetableCell_fail_value_range_constraint() {
+        // given
+        TimetableCell tooLongLectureNameCell = TimetableCell.builder()
+                .lectureName("a".repeat(201))
+                .professorName("신호진")
+                .color(TimetableCellColor.BROWN)
+                .location("IT 208")
+                .day(TimetableDay.FRI)
+                .build();
+        tooLongLectureNameCell.associateTimetable(dummyTimetable);
+
+        TimetableCell tooLongProfessorNameCell = TimetableCell.builder()
+                .lectureName("ICT 개론")
+                .professorName("a".repeat(101))
+                .color(TimetableCellColor.BROWN)
+                .location("IT 208")
+                .day(TimetableDay.FRI)
+                .build();
+        tooLongProfessorNameCell.associateTimetable(dummyTimetable);
+
+        TimetableCell tooLongLocationCell = TimetableCell.builder()
+                .lectureName("ICT 개론")
+                .professorName("신호진")
+                .color(TimetableCellColor.BROWN)
+                .location("a".repeat(201))
+                .day(TimetableDay.FRI)
+                .build();
+        tooLongLocationCell.associateTimetable(dummyTimetable);
+
+        // when & then
+        assertThatThrownBy(() -> timetableCellRepository.save(tooLongLectureNameCell))
+                .isExactlyInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> timetableCellRepository.save(tooLongProfessorNameCell))
+                .isExactlyInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> timetableCellRepository.save(tooLongLocationCell))
+                .isExactlyInstanceOf(ConstraintViolationException.class);
+    }
+
 
     @Test
     @DisplayName("TimetableCell 단일 조회 성공 - 필드 값이 동등해야 한다.")

@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,9 +40,11 @@ public class TimetableCell extends BaseTimeEntity {
 
     // (lectureName, professorName) 중복 가능
     @NotNull
+    @Size(max = 200)
     private String lectureName;     // blank 가능
 
     @NotNull
+    @Size(max = 100)
     private String professorName;   // blank 가능
 
     @Enumerated(EnumType.STRING)
@@ -49,6 +52,7 @@ public class TimetableCell extends BaseTimeEntity {
     private TimetableCellColor color;
 
     @NotNull
+    @Size(max = 200)
     private String location;    // blank 가능
 
     @Enumerated(EnumType.STRING)
