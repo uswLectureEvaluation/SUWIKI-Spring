@@ -43,7 +43,7 @@ public class Timetable extends BaseTimeEntity {
 
     @NotNull
     @Size(max = 200)
-    private String name;    // 중복 가능 (UNIQUE 제약 조건 없음), 길이 제한 없음
+    private String name;    // 중복 가능 (UNIQUE 제약 조건 없음)
 
     @NotNull
     @Min(value = 1023)
@@ -82,17 +82,9 @@ public class Timetable extends BaseTimeEntity {
     }
 
     // 비즈니스 메서드
-    public void validateDayAndPeriodDuplication(TimetableCell cell) {
-        // 기존의 cell들과 하나씩 비교 -> if day_a == day_b : (start_a > start_b && end_a > end_b) || (start_a < start_b && end_a < end_b)
-        this.cellList.forEach(it -> {
-            if (it.getDay().equals(cell.getDay())) {
-                for (int i = it.getStartPeriod(); i <= it.getEndPeriod(); i++) {
-                    if (i == cell.getStartPeriod() || i == cell.getEndPeriod()) {
-                        System.out.println(i + "교시 겹침!");
-                        throw new TimetableException(ExceptionType.DUPLICATE_TIMETABLE_DAY_PERIOD);
-                    }
-                }
-            }
-        });
+    public void validateCellDayAndPeriodsDuplication(TimetableCell cell) {
+        if (cellList.stream().anyMatch(it -> it.hasDayAndPeriodsDuplication(cell))) {
+            throw new TimetableException(ExceptionType.DUPLICATE_TIMETABLE_DAY_PERIOD);
+        }
     }
 }

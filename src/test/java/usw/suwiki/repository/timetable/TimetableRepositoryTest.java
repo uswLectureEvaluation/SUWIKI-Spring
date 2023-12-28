@@ -417,10 +417,10 @@ public class TimetableRepositoryTest {
                 .build();
 
         // when & then
-        assertThatThrownBy(() -> dummyTimetable.validateDayAndPeriodDuplication(cellB))
+        assertThatThrownBy(() -> dummyTimetable.validateCellDayAndPeriodsDuplication(cellB))
                 .isExactlyInstanceOf(TimetableException.class)
                 .hasMessage(ExceptionType.DUPLICATE_TIMETABLE_DAY_PERIOD.getMessage());
-        assertThatThrownBy(() -> dummyTimetable.validateDayAndPeriodDuplication(cellC))
+        assertThatThrownBy(() -> dummyTimetable.validateCellDayAndPeriodsDuplication(cellC))
                 .isExactlyInstanceOf(TimetableException.class)
                 .hasMessage(ExceptionType.DUPLICATE_TIMETABLE_DAY_PERIOD.getMessage());
     }

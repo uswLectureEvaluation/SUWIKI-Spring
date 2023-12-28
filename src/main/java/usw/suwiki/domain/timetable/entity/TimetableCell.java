@@ -1,6 +1,7 @@
 package usw.suwiki.domain.timetable.entity;
 
 import java.util.Objects;
+import java.util.stream.IntStream;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -95,7 +96,11 @@ public class TimetableCell extends BaseTimeEntity {
     }
 
     // 비즈니스 메서드
-
-    // TODO: 교시 유효성 검증 0 < period < 15  && end > start
+    public boolean hasDayAndPeriodsDuplication(TimetableCell otherCell) {
+        // day 가 같고 start ~ end 중 하나라도 겹치면 false 반환
+        return day.equals(otherCell.getDay()) &&
+                IntStream.rangeClosed(startPeriod, endPeriod)
+                        .anyMatch(i -> i == otherCell.getStartPeriod() || i == otherCell.getEndPeriod());
+    }
 
 }
