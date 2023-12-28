@@ -34,6 +34,8 @@ import usw.suwiki.domain.timetable.repository.TimetableElementRepository;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
+import usw.suwiki.global.exception.ExceptionType;
+import usw.suwiki.global.exception.errortype.TimetableException;
 import usw.suwiki.template.timetable.TimetableTemplate;
 import usw.suwiki.template.timetablecell.TimetableCellTemplate;
 import usw.suwiki.template.timetableelement.TimetableElementTemplate;
@@ -84,11 +86,11 @@ public class TimetableRepositoryTest {
         TimetableCellTemplate.createDummy("이산 구조", "김장영", BROWN, dummyTimetable);
         timetableRepository.save(dummyTimetable);
 
-        TimetableElement timetableElement = TimetableElementTemplate.createFirstDummy(dummyTimetableCell);
+        TimetableElement timetableElement = TimetableElementTemplate.createFirstDummy(dummyTimetable, dummyTimetableCell);
         this.dummyTimetableElement = timetableElementRepository.save(timetableElement);
-        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 4, dummyTimetableCell);
-        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 5, dummyTimetableCell);
-        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 6, dummyTimetableCell);
+        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 4, dummyTimetable, dummyTimetableCell);
+        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 5, dummyTimetable, dummyTimetableCell);
+        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 6, dummyTimetable, dummyTimetableCell);
         timetableCellRepository.save(dummyTimetableCell);
 
         entityManager.clear();  // 영속성 컨텍스트 초기화
@@ -342,7 +344,7 @@ public class TimetableRepositoryTest {
     }
 
     @Test
-    @DisplayName("TimetableElement 삽입 실패 - UNIQUE 제약 조건을 지켜야 한다.")
+    @DisplayName("TimetableElement 삽입 실패 - (시간표, 요일, 교시)는 중복되어선 안 된다.")
     public void insertTimetableElement_fail_unique_constraint() {
         // given
         int samePeriod = 1;
@@ -367,6 +369,9 @@ public class TimetableRepositoryTest {
         assertThatThrownBy(() -> timetableCellRepository.save(dummyTimetableCell))
                 .isExactlyInstanceOf(DataIntegrityViolationException.class)
                 .hasStackTraceContaining("Unique");
+        assertThatThrownBy(() -> dummyTimetable.validateElementDayAndPeriodDuplication(elementA))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.DUPLICATE_TIMETABLE_ELEMENT_DAY_PERIOD.getMessage());
     }
 
     @Test

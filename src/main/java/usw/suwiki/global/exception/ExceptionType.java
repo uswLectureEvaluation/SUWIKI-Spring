@@ -87,6 +87,19 @@ public enum ExceptionType {
     REPORTED_POST_NOT_FOUND("REPORTED_POST001", "해당 신고된 게시글을 찾을 수 없습니다.", NOT_FOUND),
 
     /**
+     * Domain : Timetable
+     */
+    TIMETABLE_NOT_FOUND("TIMETABLE001", "존재하지 않는 시간표입니다.", NOT_FOUND),
+    TIMETABLE_NOT_AN_AUTHOR("TIMETABLE002", "해당 데이터의 수정 및 삭제는 작성자의 권한입니다.", FORBIDDEN),
+
+    TIMETABLE_CELL_NOT_FOUND("TIMETABLE101", "존재하지 않는 시간표 셀입니다.", NOT_FOUND),
+    INVALID_TIMETABLE_CELL_COLOR("TIMETABLE110", "유효하지 않은 셀 색상입니다.", BAD_REQUEST),
+
+    INVALID_TIMETABLE_ELEMENT_DAY("TIMETABLE210", "유효하지 않은 요일입니다.", BAD_REQUEST),
+    DUPLICATE_TIMETABLE_ELEMENT_DAY_PERIOD("TIMETABLE211", "시간표에 중복되는 요일-교시입니다.", CONFLICT),
+
+
+    /**
      * 공통
      */
     PARAM_VALID_ERROR("PARAM001", "파라미터가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
