@@ -86,11 +86,11 @@ public class TimetableRepositoryTest {
         TimetableCellTemplate.createDummy("이산 구조", "김장영", BROWN, dummyTimetable);
         timetableRepository.save(dummyTimetable);
 
-        TimetableElement timetableElement = TimetableElementTemplate.createFirstDummy(dummyTimetable, dummyTimetableCell);
+        TimetableElement timetableElement = TimetableElementTemplate.createFirstDummy(dummyTimetableCell);
         this.dummyTimetableElement = timetableElementRepository.save(timetableElement);
-        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 4, dummyTimetable, dummyTimetableCell);
-        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 5, dummyTimetable, dummyTimetableCell);
-        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 6, dummyTimetable, dummyTimetableCell);
+        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 4, dummyTimetableCell);
+        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 5, dummyTimetableCell);
+        TimetableElementTemplate.createDummy("IT 305", TimetableDay.MON, 6, dummyTimetableCell);
         timetableCellRepository.save(dummyTimetableCell);
 
         entityManager.clear();  // 영속성 컨텍스트 초기화
