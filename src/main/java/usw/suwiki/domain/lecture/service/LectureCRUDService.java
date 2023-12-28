@@ -31,10 +31,8 @@ public class LectureCRUDService {
     }
 
     public Lecture loadLectureFromIdPessimisticLock(Long id) {
-        Lecture lecture = lectureRepository.findByIdPessimisticWrite(id);
-        validateNotNull(lecture);
-
-        return lecture;
+        return lectureRepository.findForUpdateById(id)
+                .orElseThrow(() -> new LectureException(LECTURE_NOT_FOUND));
     }
 
     public LecturesAndCountDao loadLectureByKeywordAndOption(String keyword, LectureFindOption option) {
@@ -53,11 +51,6 @@ public class LectureCRUDService {
         return lectureRepository.findAllLectureByMajorType(option);
     }
 
-    public void validateNotNull(Lecture lecture) {
-        if (lecture == null) {
-            throw new LectureException(LECTURE_NOT_FOUND);
-        }
-    }
 
     public Lecture validateOptional(Optional<Lecture> lecture) {
         if (lecture.isEmpty()) {
