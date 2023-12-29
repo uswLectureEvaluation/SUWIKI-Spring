@@ -2,13 +2,16 @@ package usw.suwiki.domain.timetable.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
-import usw.suwiki.domain.timetable.dto.response.CreateTimetableResponse;
+import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
+import usw.suwiki.domain.timetable.dto.response.TimetableResponse;
 import usw.suwiki.domain.timetable.service.TimetableService;
 import usw.suwiki.global.dto.ApiResponse;
 import usw.suwiki.global.jwt.JwtAgent;
@@ -22,7 +25,7 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
     private final JwtAgent jwtAgent;
 
     @PostMapping
-    public ApiResponse<CreateTimetableResponse> createTimetable(
+    public ApiResponse<TimetableResponse> createTimetable(
             @RequestHeader String authorization,
             @RequestBody CreateTimetableRequest request
     ) {
@@ -32,7 +35,17 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
         return ApiResponse.success(timetableService.createTimetable(request, userId));
     }
 
-    // 시간표 수정
+    @PutMapping("/{timetableId}")
+    public ApiResponse<TimetableResponse> updateTimetable(
+            @PathVariable Long timetableId,
+            @RequestHeader String authorization,
+            @RequestBody UpdateTimetableRequest request
+    ) {
+        jwtAgent.validateJwt(authorization);    // TODO: V2 -> Jwt Filter 적용
+        Long userId = jwtAgent.getId(authorization);
+
+        return ApiResponse.success(timetableService.updateTimetable(request, timetableId, userId));
+    }
 
     // 시간표 삭제
 
