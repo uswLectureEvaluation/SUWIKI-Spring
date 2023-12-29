@@ -1,10 +1,16 @@
 package usw.suwiki.global.exception;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @AllArgsConstructor
@@ -20,6 +26,7 @@ public enum ExceptionType {
      */
     IS_NOT_EMAIL_FORM("USER003", "올바른 이메일 형식이 아닙니다.", BAD_REQUEST),
     USER_NOT_EXISTS("USER004", "사용자가 존재하지 않습니다.", BAD_REQUEST),
+    USER_NOT_FOUND("USER004", "사용자가 존재하지 않습니다.", NOT_FOUND),     // ver 2. status code 400 -> 404
     PASSWORD_ERROR("USER005", "비밀번호를 확인해주세요.", BAD_REQUEST),
     USER_POINT_LACK("USER006", "유저 포인트가 부족합니다.", BAD_REQUEST),
     LOGIN_REQUIRED("USER007", "로그인이 필요합니다.", FORBIDDEN),
@@ -33,7 +40,8 @@ public enum ExceptionType {
      */
     EMAIL_NOT_AUTHED("CONFIRMATION_TOKEN001", "이메일 인증을 받지 않은 사용자 입니다.", UNAUTHORIZED),
     EMAIL_VALIDATED_ERROR("CONFIRMATION_TOKEN002", "이메일 인증에 실패했습니다.", BAD_REQUEST),
-    EMAIL_VALIDATED_ERROR_RETRY("CONFIRMATION_TOKEN003", "이메일 인증 만료기간이 지나거나, 예기치 못한 오류로 이메일 인증에 실패했습니다. 회원가입을 다시 진행해주세요", BAD_REQUEST),
+    EMAIL_VALIDATED_ERROR_RETRY("CONFIRMATION_TOKEN003",
+            "이메일 인증 만료기간이 지나거나, 예기치 못한 오류로 이메일 인증에 실패했습니다. 회원가입을 다시 진행해주세요", BAD_REQUEST),
     EMAIL_AUTH_TOKEN_ALREADY_USED("CONFIRMATION_TOKEN004", "이미 사용된 인증 토큰 입니다.", BAD_REQUEST),
 
     /**
@@ -97,6 +105,7 @@ public enum ExceptionType {
      */
     TIMETABLE_NOT_FOUND("TIMETABLE001", "존재하지 않는 시간표입니다.", NOT_FOUND),
     TIMETABLE_NOT_AN_AUTHOR("TIMETABLE002", "해당 데이터의 수정 및 삭제는 작성자의 권한입니다.", FORBIDDEN),
+    INVALID_TIMETABLE_SEMESTER("TIMETABLE010", "유효하지 않은 학기명입니다.", BAD_REQUEST),
 
     TIMETABLE_CELL_NOT_FOUND("TIMETABLE101", "존재하지 않는 시간표 셀입니다.", NOT_FOUND),
     INVALID_TIMETABLE_CELL_COLOR("TIMETABLE110", "유효하지 않은 셀 색상입니다.", BAD_REQUEST),
@@ -104,13 +113,16 @@ public enum ExceptionType {
     INVALID_TIMETABLE_ELEMENT_DAY("TIMETABLE210", "유효하지 않은 요일입니다.", BAD_REQUEST),
     DUPLICATE_TIMETABLE_DAY_PERIOD("TIMETABLE211", "시간표에 중복되는 요일-교시입니다.", CONFLICT),
 
-
     /**
      * 공통
      */
     PARAM_VALID_ERROR("PARAM001", "파라미터가 올바르지 않습니다.", BAD_REQUEST),
     SEND_MAIL_FAILED("MAIL001", "메일 전송에 실패했습니다.", INTERNAL_SERVER_ERROR), //500
-    METHOD_NOT_ALLOWED("METHOD001", "Exception Message", HttpStatus.METHOD_NOT_ALLOWED),
+    COMMON_CLIENT_ERROR("CLIENT001", "기타 클라이언트 에러입니다.", BAD_REQUEST),
+    HTTP_METHOD_NOT_ALLOWED("CLIENT002", "해당 HTTP 메서드는 제공하지 않습니다.", METHOD_NOT_ALLOWED),
+    INVALID_REQUEST_BODY("CLIENT003", "요청 바디가 유효하지 않습니다.", BAD_REQUEST),
+    INVALID_REQUEST_PARAM("CLIENT004", "요청 파라미터가 유효하지 않습니다.", BAD_REQUEST),
+
     ;
 
     private final String code;
