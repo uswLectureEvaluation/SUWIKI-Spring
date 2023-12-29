@@ -87,4 +87,14 @@ public class Timetable extends BaseTimeEntity {
             throw new TimetableException(ExceptionType.DUPLICATE_TIMETABLE_DAY_PERIOD);
         }
     }
+
+    public void update(String name, Integer year, Semester semester) {
+        this.name = name;
+        this.year = year;
+        this.semester = semester;
+    }
+
+    public boolean isAuthor(User user) {
+        return this.user.equals(user);
+    }
 }
