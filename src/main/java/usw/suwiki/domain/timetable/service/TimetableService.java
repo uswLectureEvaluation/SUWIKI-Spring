@@ -5,11 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
-import usw.suwiki.domain.timetable.dto.response.CreateTimetableResponse;
+import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
+import usw.suwiki.domain.timetable.dto.response.TimetableResponse;
+import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
+import usw.suwiki.global.exception.ExceptionType;
+import usw.suwiki.global.exception.errortype.TimetableException;
 
 
 @Slf4j
@@ -22,14 +26,27 @@ public class TimetableService {
 
     // 시간표 생성
     @Transactional
-    public CreateTimetableResponse createTimetable(CreateTimetableRequest request, Long userId) {
+    public TimetableResponse createTimetable(CreateTimetableRequest request, Long userId) {
         User user = userCRUDService.loadUserById(userId);
 
         Timetable timetable = timetableRepository.save(request.toEntity(user));
-        return CreateTimetableResponse.from(timetable);
+        return TimetableResponse.from(timetable);
     }
 
     // 시간표 수정
+    @Transactional
+    public TimetableResponse updateTimetable(UpdateTimetableRequest request, Long timetableId, Long userId) {
+        User user = userCRUDService.loadUserById(userId);
+        Timetable timetable = timetableRepository.findById(timetableId)
+                .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
+        if (!timetable.isAuthor(user)) {
+            throw new TimetableException(ExceptionType.TIMETABLE_NOT_AN_AUTHOR);
+        }
+
+        timetable.update(request.getName(), request.getYear(), Semester.ofString(request.getSemester()));
+
+        return TimetableResponse.from(timetable);
+    }
 
     // 시간표 삭제
 

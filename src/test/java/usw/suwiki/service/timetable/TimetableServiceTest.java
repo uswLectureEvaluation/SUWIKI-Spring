@@ -9,6 +9,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -19,12 +20,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
-import usw.suwiki.domain.timetable.dto.response.CreateTimetableResponse;
+import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
+import usw.suwiki.domain.timetable.dto.response.TimetableResponse;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.timetable.service.TimetableService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
+import usw.suwiki.global.exception.ExceptionType;
+import usw.suwiki.global.exception.errortype.TimetableException;
 import usw.suwiki.template.timetable.TimetableTemplate;
 import usw.suwiki.template.user.UserTemplate;
 
@@ -41,15 +45,20 @@ public class TimetableServiceTest {
     TimetableRepository timetableRepository;
 
     private User user;
+    private User otherUser;
     private Timetable timetable;
 
     private final static Long SPYING_TIMETABLE_ID = 1L;
-    private final static Long RANDOM_ID = 193486L;
+    private final static Long SPYING_USER_ID = 100L;
+    public static final Long RANDOM_ID = 2345L;
+    private final static Long RANDOM_ID_A = 193486L;
+    private final static Long RANDOM_ID_B = 98345L;
 
 
     @BeforeEach
     public void setUp() {
-        this.user = UserTemplate.createDummyUser();
+        this.user = spy(UserTemplate.createDummyUser());
+        this.otherUser = spy(UserTemplate.createSecondDummyUser());
         this.timetable = spy(TimetableTemplate.createFirstDummy(user));
     }
 
@@ -68,7 +77,7 @@ public class TimetableServiceTest {
         when(timetable.getId()).thenReturn(SPYING_TIMETABLE_ID);
 
         // when
-        CreateTimetableResponse response = timetableService.createTimetable(request, RANDOM_ID);
+        TimetableResponse response = timetableService.createTimetable(request, RANDOM_ID);
 
         // then
         verify(userCRUDService).loadUserById(anyLong());
@@ -77,9 +86,73 @@ public class TimetableServiceTest {
         assertThat(response.getYear()).isEqualTo(request.getYear());
     }
 
-    // 시간표 수정 성공
-    // 시간표 수정 실패 - 존재하지 않는 시간표
-    // 시간표 수정 실패 - 시간표 수정의 주체는 작성자여야 한다.
+    @Test
+    @DisplayName("시간표 수정")
+    public void UPDATE_TIMETABLE() {
+        // given
+        final UpdateTimetableRequest request = UpdateTimetableRequest.builder()
+                .year(timetable.getYear())
+                .semester(timetable.getSemester().getValue())
+                .name("변경된 시간표")
+                .build();
+
+        given(userCRUDService.loadUserById(anyLong())).willReturn(user);
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.of(timetable));
+        when(timetable.getId()).thenReturn(SPYING_TIMETABLE_ID);
+
+        // when
+        TimetableResponse response = timetableService.updateTimetable(request, RANDOM_ID, RANDOM_ID);
+
+        // then
+        verify(userCRUDService).loadUserById(anyLong());
+        verify(timetableRepository).findById(anyLong());
+        assertThat(response.getId()).isEqualTo(SPYING_TIMETABLE_ID);
+        assertThat(response.getName()).isEqualTo(request.getName());    // 응답값에 수정된 내용이 반영되어야 한다.
+    }
+
+    @Test
+    @DisplayName("시간표 수정 실패 - DB에 존재하는 시간표여야 한다.")
+    public void UPDATE_TIMETABLE_FAIL_NOT_FOUND_TIMETABLE() {
+        // given
+        final UpdateTimetableRequest request = UpdateTimetableRequest.builder()
+                .year(timetable.getYear())
+                .semester(timetable.getSemester().getValue())
+                .name("변경된 시간표")
+                .build();
+
+        given(userCRUDService.loadUserById(anyLong())).willReturn(user);
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.empty());    // 존재하지 않는 시간표 가정
+
+        // when & then
+        assertThatThrownBy(() -> timetableService.updateTimetable(request, RANDOM_ID, RANDOM_ID))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.TIMETABLE_NOT_FOUND.getMessage());
+        verify(userCRUDService).loadUserById(anyLong());
+        verify(timetableRepository).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("시간표 수정 실패 - 시간표 수정의 주체는 작성자여야 한다.")
+    public void UPDATE_TIMETABLE_FAIL_NOT_AUTHOR() {
+        // given
+        final UpdateTimetableRequest request = UpdateTimetableRequest.builder()
+                .year(timetable.getYear())
+                .semester(timetable.getSemester().getValue())
+                .name("변경된 시간표")
+                .build();
+
+        given(userCRUDService.loadUserById(anyLong())).willReturn(otherUser);
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.of(timetable));
+        when(timetable.isAuthor(any(User.class))).thenReturn(false);    // 다른 유처가 요청한 상황을 가정
+
+        // when & then
+        assertThatThrownBy(() -> timetableService.updateTimetable(request, RANDOM_ID, RANDOM_ID))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.TIMETABLE_NOT_AN_AUTHOR.getMessage());
+        verify(userCRUDService).loadUserById(anyLong());
+        verify(timetableRepository).findById(anyLong());
+    }
+
 
     // 시간표 삭제 성공
     // 시간표 삭제 실패 - 존재하지 않는 시간표

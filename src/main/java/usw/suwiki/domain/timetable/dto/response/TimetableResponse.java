@@ -9,14 +9,14 @@ import usw.suwiki.domain.timetable.entity.Timetable;
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class CreateTimetableResponse {
+public class TimetableResponse {
     long id;
     int year;
     String semester;
     String name;
 
-    public static CreateTimetableResponse from(Timetable timetable) {
-        return CreateTimetableResponse.builder()
+    public static TimetableResponse from(Timetable timetable) {
+        return TimetableResponse.builder()
                 .id(timetable.getId())
                 .year(timetable.getYear())
                 .semester(timetable.getSemester().getValue())
