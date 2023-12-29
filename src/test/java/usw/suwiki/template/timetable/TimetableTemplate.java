@@ -5,7 +5,6 @@ import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.user.user.User;
 
 public class TimetableTemplate {
-    public static final long ID = 1L;
     public static final String NAME = "첫번째 시간표";
     public static final int YEAR = 2023;
     public static final Semester SEMESTER = Semester.FIRST;

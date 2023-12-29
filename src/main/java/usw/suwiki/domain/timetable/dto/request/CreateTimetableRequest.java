@@ -12,6 +12,7 @@ import usw.suwiki.domain.user.user.User;
 
 @Getter
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class CreateTimetableRequest {
     @NotBlank(message = "NOT NULL")
