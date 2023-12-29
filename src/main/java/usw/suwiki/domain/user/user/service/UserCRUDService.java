@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class UserCRUDService {
     @Transactional(readOnly = true)
     public User loadUserById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new AccountException(USER_NOT_EXISTS));
+                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
