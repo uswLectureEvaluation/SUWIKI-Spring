@@ -94,7 +94,13 @@ public class Timetable extends BaseTimeEntity {
         this.semester = semester;
     }
 
-    public boolean isAuthor(User user) {
-        return this.user.equals(user);
+    public void validateIsAuthor(User user) {
+        if (!isAuthorId(user.getId())) {
+            throw new TimetableException(ExceptionType.TIMETABLE_NOT_AN_AUTHOR);
+        }
+    }
+
+    private boolean isAuthorId(Long userId) {
+        return this.user.getId().equals(userId);
     }
 }

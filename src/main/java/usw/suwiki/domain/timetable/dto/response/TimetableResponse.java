@@ -15,7 +15,7 @@ public class TimetableResponse {
     String semester;
     String name;
 
-    public static TimetableResponse from(Timetable timetable) {
+    public static TimetableResponse of(Timetable timetable) {
         return TimetableResponse.builder()
                 .id(timetable.getId())
                 .year(timetable.getYear())

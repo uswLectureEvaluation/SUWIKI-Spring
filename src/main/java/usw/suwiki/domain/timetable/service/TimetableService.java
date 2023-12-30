@@ -30,7 +30,7 @@ public class TimetableService {
         User user = userCRUDService.loadUserById(userId);
 
         Timetable timetable = timetableRepository.save(request.toEntity(user));
-        return TimetableResponse.from(timetable);
+        return TimetableResponse.of(timetable);
     }
 
     // 시간표 수정
@@ -39,13 +39,10 @@ public class TimetableService {
         User user = userCRUDService.loadUserById(userId);
         Timetable timetable = timetableRepository.findById(timetableId)
                 .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
-        if (!timetable.isAuthor(user)) {
-            throw new TimetableException(ExceptionType.TIMETABLE_NOT_AN_AUTHOR);
-        }
+        timetable.validateIsAuthor(user);
 
         timetable.update(request.getName(), request.getYear(), Semester.ofString(request.getSemester()));
-
-        return TimetableResponse.from(timetable);
+        return TimetableResponse.of(timetable);
     }
 
     // 시간표 삭제

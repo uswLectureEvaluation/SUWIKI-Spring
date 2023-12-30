@@ -143,7 +143,8 @@ public class TimetableServiceTest {
 
         given(userCRUDService.loadUserById(anyLong())).willReturn(otherUser);
         given(timetableRepository.findById(anyLong())).willReturn(Optional.of(timetable));
-        when(timetable.isAuthor(any(User.class))).thenReturn(false);    // 다른 유처가 요청한 상황을 가정
+        when(user.getId()).thenReturn(RANDOM_ID_A);
+        when(otherUser.getId()).thenReturn(RANDOM_ID_B);    // 다른 유처가 요청한 상황을 가정. User id 비교 메서드
 
         // when & then
         assertThatThrownBy(() -> timetableService.updateTimetable(request, RANDOM_ID, RANDOM_ID))
