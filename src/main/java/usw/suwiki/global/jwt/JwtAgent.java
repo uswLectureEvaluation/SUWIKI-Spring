@@ -32,13 +32,11 @@ public class JwtAgent {
     @Value("${spring.secret-key}")
     private String key;
 
-    // TODO: 토큰 만료 시간 설정 외부 yml 파일로 이동
-    private static final Long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; // 30분
-    private static final Long REFRESH_TOKEN_EXPIRE_TIME = 270 * 24 * 60 * 60 * 1000L; // 270일 -> 9개월
+    @Value("${jwt.access-duration}")
+    public long accessTokenExpireTime;
 
-    // TODO: 다시 바꾸기
-//    private static final Long ACCESS_TOKEN_EXPIRE_TIME = 1 * 60 * 1000L; // 1분
-//    private static final Long REFRESH_TOKEN_EXPIRE_TIME = 3 * 60 * 1000L; // 3분
+    @Value("${jwt.refresh-duration}")
+    public long refreshTokenExpireTime;
 
     private final RefreshTokenCRUDService refreshTokenCRUDService;
 
