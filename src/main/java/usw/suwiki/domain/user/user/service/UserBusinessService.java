@@ -217,13 +217,13 @@ public class UserBusinessService {
 
     public Map<String, String> executeJWTRefreshForWebClient(Cookie requestRefreshCookie) {
         String payload = requestRefreshCookie.getValue();
-        RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload).get();
+        RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
         User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
         return refreshUserJWT(user, payload);
     }
 
-    public Map<String, String> executeJWTRefreshForMobileClient(String Authorization) {
-        RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(Authorization).get();
+    public Map<String, String> executeJWTRefreshForMobileClient(String payload) {
+        RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
         User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
         return refreshUserJWT(user, refreshToken.getPayload());
     }
