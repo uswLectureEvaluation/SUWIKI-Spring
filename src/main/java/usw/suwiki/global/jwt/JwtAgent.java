@@ -1,11 +1,20 @@
 package usw.suwiki.global.jwt;
 
+import static usw.suwiki.global.exception.ExceptionType.LOGIN_REQUIRED;
+import static usw.suwiki.global.exception.ExceptionType.TOKEN_IS_BROKEN;
+import static usw.suwiki.global.exception.ExceptionType.TOKEN_IS_EXPIRED;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,14 +25,6 @@ import usw.suwiki.domain.refreshtoken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.global.exception.errortype.AccountException;
 
-import java.security.Key;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.Optional;
-
-import static usw.suwiki.global.exception.ExceptionType.*;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -31,11 +32,13 @@ public class JwtAgent {
     @Value("${spring.secret-key}")
     private String key;
 
+    // TODO: 토큰 만료 시간 설정 외부 yml 파일로 이동
     private static final Long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L; // 30분
     private static final Long REFRESH_TOKEN_EXPIRE_TIME = 270 * 24 * 60 * 60 * 1000L; // 270일 -> 9개월
 
-    // private static final Long ACCESS_TOKEN_EXPIRE_TIME = 1 * 60 * 1000L; // 1분
-    // private static final Long REFRESH_TOKEN_EXPIRE_TIME = 3 * 60 * 1000L; // 3분
+    // TODO: 다시 바꾸기
+//    private static final Long ACCESS_TOKEN_EXPIRE_TIME = 1 * 60 * 1000L; // 1분
+//    private static final Long REFRESH_TOKEN_EXPIRE_TIME = 3 * 60 * 1000L; // 3분
 
     private final RefreshTokenCRUDService refreshTokenCRUDService;
 
@@ -60,23 +63,25 @@ public class JwtAgent {
     }
 
     @Transactional
-    public String refreshTokenRefresh(String payload) {
-        Optional<RefreshToken> refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
-        if (refreshToken.isPresent()) {
-            String validatedPayload = refreshToken.get().getPayload();
-            if (validatedPayload.equals(payload)) {
-                if (isRefreshTokenExpired(payload)) {
-                    log.error(LocalDateTime.now() + " - 리프레시 토큰이 만료되었습니다.");
-                    throw new AccountException(TOKEN_IS_EXPIRED);
-                } else if (isTokenNotExpiredButNeededReIssue(payload)) {
-                    String newPayload = reIssueRefreshToken(refreshToken.get());
-                    refreshToken.get().updatePayload(newPayload);
-                    return newPayload;
-                }
-            }
+    public String refreshTokenRefresh(String payload) { // TODO: 메서드명 리팩토링 refresh -> reissue
+        // TODO: 재발급 로직 고민. Security 공부하면서 정말 필요한 로직만 넣자.
+        // TODO: 레디스 캐싱 성능 개선
+
+        // RefreshToken 엔티티 조회
+        RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
+
+        // TODO: 애초에 payload로 찾은건데 여기서 비교할 필요가 있나?
+        if (!refreshToken.getPayload().equals(payload)) {
+            throw new AccountException(TOKEN_IS_BROKEN);
         }
-        log.error(LocalDateTime.now() + " - 토큰이 DB와 일치하지 않습니다.");
-        throw new AccountException(TOKEN_IS_BROKEN);
+
+        Claims body = resolveBodyFromRefreshToken(payload);
+
+        // TODO: isRefreshTokenNotExpired 리팩토링 후 추가
+
+        String newPayload = reIssueRefreshToken(refreshToken);
+        refreshToken.updatePayload(newPayload);
+        return newPayload;
     }
 
     @Transactional
@@ -155,30 +160,39 @@ public class JwtAgent {
         return false;
     }
 
-    private boolean isTokenNotExpiredButNeededReIssue(String payload) {
-        Date date;
+    private Claims resolveBodyFromRefreshToken(String refreshToken) {
         try {
-            date = Jwts.parserBuilder()
+            return Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
                     .build()
-                    .parseClaimsJws(payload)
-                    .getBody().getExpiration();
+                    .parseClaimsJws(refreshToken)
+                    .getBody();
         } catch (ExpiredJwtException expiredJwtException) {
-            log.error(LocalDateTime.now() + " - 리프레시 토큰이 만료되었습니다.");
             throw new AccountException(TOKEN_IS_EXPIRED);
         }
+    }
 
+    // TODO: 만료시한까지 7일 이하 남았을 때만 -> 1/4 남았을 때만.
+    private static boolean isRefreshTokenNotExpired(Date date) {   // 기존 만료일자 날짜 비교 로직
         // Jwt Claims LocalDateTime 으로 형변환
         LocalDateTime tokenExpiredAt = date
                 .toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
 
+        System.out.println("tokenExpiredAt = " + tokenExpiredAt);
+        System.out.println("LocalDateTime.now() = " + LocalDateTime.now());
+
+        // 만료 시간 > 현재 시간 => 정상
+
         // 현재시간 - 7일(초단위) 를 한 피연산자 할당
         LocalDateTime subDetractedDateTime = LocalDateTime.now().plusSeconds(604800);
+        System.out.println("subDetractedDateTime = " + subDetractedDateTime);
 
+        System.out.println(
+                "tokenExpiredAt.isBefore(subDetractedDateTime) = " + tokenExpiredAt.isBefore(subDetractedDateTime));
         // 피연산자 보다 이전 이면 True 반환 및 갱신해줘야함
-        return tokenExpiredAt.isBefore(subDetractedDateTime);
+        return tokenExpiredAt.isBefore(LocalDateTime.now());
     }
 
     private Key getSigningKey() {
@@ -196,6 +210,7 @@ public class JwtAgent {
         return claims;
     }
 
+    // TODO: body 값 정보 추가하기 (type:ac,re , subject:유저 식별자)
     private String buildAccessToken(Claims claims, Date accessTokenExpireIn) {
         return Jwts.builder()
                 .signWith(getSigningKey())
