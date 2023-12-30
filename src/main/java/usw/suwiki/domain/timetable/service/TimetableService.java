@@ -1,5 +1,6 @@
 package usw.suwiki.domain.timetable.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,12 @@ public class TimetableService {
     }
 
     // 시간표 리스트 조회
+    public List<TimetableResponse> getAllTimetableList(Long userId) {
+        List<Timetable> timetableList = timetableRepository.findAllByUserId(userId);
+        List<TimetableResponse> result = timetableList.stream().map(TimetableResponse::of).toList();
+
+        return result;
+    }
 
     // 시간표 상세 조회
 

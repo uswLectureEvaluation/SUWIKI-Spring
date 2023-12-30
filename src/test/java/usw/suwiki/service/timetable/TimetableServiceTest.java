@@ -10,6 +10,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -198,6 +199,21 @@ public class TimetableServiceTest {
     }
 
     // 시간표 리스트 조회 성공
+    @Test
+    @DisplayName("시간표 리스트 조회 성공")
+    public void SELECT_TIMETABLE_LIST() {
+        // given
+        given(timetableRepository.findAllByUserId(anyLong())).willReturn(List.of(timetable));
+        when(timetable.getId()).thenReturn(RANDOM_ID);
+
+        // when
+        List<TimetableResponse> response = timetableService.getAllTimetableList(RANDOM_ID);
+
+        // then
+        assertThat(response.size()).isEqualTo(1);
+        assertThat(response.get(0).getId()).isEqualTo(timetable.getId());
+        verify(timetableRepository).findAllByUserId(anyLong());
+    }
 
     // 시간표 상세 조회 성공
     // 시간표 상세 조회 실패 - 존재하지 않는 시간표
