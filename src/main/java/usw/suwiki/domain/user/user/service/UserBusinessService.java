@@ -337,7 +337,7 @@ public class UserBusinessService {
     private Map<String, String> refreshUserJWT(User user, String refreshTokenPayload) {
         return new HashMap<>() {{
             put("AccessToken", jwtAgent.createAccessToken(user));
-            put("RefreshToken", jwtAgent.refreshTokenRefresh(refreshTokenPayload));
+            put("RefreshToken", jwtAgent.reissueRefreshToken(refreshTokenPayload));
         }};
     }
 

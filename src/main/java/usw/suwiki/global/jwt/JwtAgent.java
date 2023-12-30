@@ -63,8 +63,8 @@ public class JwtAgent {
     }
 
     @Transactional
-    public String refreshTokenRefresh(String payload) { // TODO: 메서드명 리팩토링 refresh -> reissue
-        // TODO: 재발급 로직 고민. Security 공부하면서 정말 필요한 로직만 넣자.
+    public String reissueRefreshToken(String payload) {
+        // TODO: Security 공부하면서 정말 필요한 로직만 넣자.
         // TODO: 레디스 캐싱 성능 개선
 
         // RefreshToken 엔티티 조회
@@ -87,7 +87,7 @@ public class JwtAgent {
     @Transactional
     public String reIssueRefreshToken(RefreshToken refreshToken) {
         refreshToken.updatePayload(
-                buildRefreshToken(new Date(new Date().getTime() + REFRESH_TOKEN_EXPIRE_TIME))
+                buildRefreshToken(new Date(new Date().getTime() + refreshTokenExpireTime))
         );
         return refreshToken.getPayload();
     }
@@ -107,12 +107,12 @@ public class JwtAgent {
     public String createAccessToken(User user) {
         return buildAccessToken(
                 setAccessTokenClaimsByUser(user),
-                new Date(new Date().getTime() + ACCESS_TOKEN_EXPIRE_TIME)
+                new Date(new Date().getTime() + accessTokenExpireTime)
         );
     }
 
     public String createRefreshToken(User user) {
-        String buildRefreshToken = buildRefreshToken(new Date(new Date().getTime() + REFRESH_TOKEN_EXPIRE_TIME));
+        String buildRefreshToken = buildRefreshToken(new Date(new Date().getTime() + refreshTokenExpireTime));
         refreshTokenCRUDService.save(RefreshToken.buildRefreshToken(user.getId(), buildRefreshToken));
 
         return buildRefreshToken;
