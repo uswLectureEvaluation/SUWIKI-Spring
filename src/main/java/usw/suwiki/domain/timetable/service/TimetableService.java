@@ -12,6 +12,7 @@ import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
+import usw.suwiki.global.dto.ResultResponse;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.TimetableException;
 
@@ -46,6 +47,16 @@ public class TimetableService {
     }
 
     // 시간표 삭제
+    @Transactional
+    public ResultResponse deleteTimetable(Long timetableId, Long userId) {
+        User user = userCRUDService.loadUserById(userId);
+        Timetable timetable = timetableRepository.findById(timetableId)
+                .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
+        timetable.validateIsAuthor(user);
+
+        timetableRepository.delete(timetable);
+        return ResultResponse.of(true);
+    }
 
     // 시간표 리스트 조회
 

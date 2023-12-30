@@ -2,6 +2,7 @@ package usw.suwiki.domain.timetable.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,6 +15,7 @@ import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.response.TimetableResponse;
 import usw.suwiki.domain.timetable.service.TimetableService;
 import usw.suwiki.global.dto.ApiResponse;
+import usw.suwiki.global.dto.ResultResponse;
 import usw.suwiki.global.jwt.JwtAgent;
 
 @Slf4j
@@ -48,6 +50,16 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
     }
 
     // 시간표 삭제
+    @DeleteMapping("/{timetableId}")
+    public ApiResponse<ResultResponse> deleteTimetable(
+            @PathVariable Long timetableId,
+            @RequestHeader String authorization
+    ) {
+        jwtAgent.validateJwt(authorization);
+        Long userId = jwtAgent.getId(authorization);
+
+        return ApiResponse.success(timetableService.deleteTimetable(timetableId, userId));
+    }
 
     // 시간표 리스트 조회
 
