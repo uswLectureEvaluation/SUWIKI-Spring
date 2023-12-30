@@ -1,6 +1,7 @@
 package usw.suwiki.service.timetable;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -154,10 +155,47 @@ public class TimetableServiceTest {
         verify(timetableRepository).findById(anyLong());
     }
 
+    @Test
+    @DisplayName("시간표 삭제")
+    public void DELETE_TIMETABLE() {
+        given(userCRUDService.loadUserById(anyLong())).willReturn(user);
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.of(timetable));
+        when(user.getId()).thenReturn(SPYING_USER_ID);
 
-    // 시간표 삭제 성공
-    // 시간표 삭제 실패 - 존재하지 않는 시간표
-    // 시간표 삭제 실패 - 시간표 삭제의 주체는 작성자여야 한다.
+        // when & then
+        assertThatNoException().isThrownBy(() -> timetableService.deleteTimetable(RANDOM_ID, SPYING_USER_ID));
+    }
+
+    @Test
+    @DisplayName("시간표 삭제 실패 - DB에 존재하는 시간표여야 한다.")
+    public void DELETE_TIMETABLE_FAIL_NOT_FOUND_TIMETABLE() {
+        given(userCRUDService.loadUserById(anyLong())).willReturn(user);
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.empty());    // 존재하지 않는 시간표 가정
+
+        // when & then
+        assertThatThrownBy(() -> timetableService.deleteTimetable(RANDOM_ID, RANDOM_ID))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.TIMETABLE_NOT_FOUND.getMessage());
+        verify(userCRUDService).loadUserById(anyLong());
+        verify(timetableRepository).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("시간표 삭제 실패 - 시간표 삭제의 주체는 작성자여야 한다.")
+    public void DELETE_TIMETABLE_FAIL_NOT_AUTHOR() {
+        // given
+        given(userCRUDService.loadUserById(anyLong())).willReturn(otherUser);
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.of(timetable));
+        when(user.getId()).thenReturn(RANDOM_ID_A);
+        when(otherUser.getId()).thenReturn(RANDOM_ID_B);    // 다른 유처가 요청한 상황을 가정. User id 비교 메서드
+
+        // when & then
+        assertThatThrownBy(() -> timetableService.deleteTimetable(RANDOM_ID, RANDOM_ID))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.TIMETABLE_NOT_AN_AUTHOR.getMessage());
+        verify(userCRUDService).loadUserById(anyLong());
+        verify(timetableRepository).findById(anyLong());
+    }
 
     // 시간표 리스트 조회 성공
 
