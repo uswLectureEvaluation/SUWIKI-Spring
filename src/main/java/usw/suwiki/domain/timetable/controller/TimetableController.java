@@ -1,8 +1,10 @@
 package usw.suwiki.domain.timetable.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -62,6 +64,13 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
     }
 
     // 시간표 리스트 조회
+    @GetMapping("/all")
+    public ApiResponse<List<TimetableResponse>> getAllTimetableList(@RequestHeader String authorization) {
+        jwtAgent.validateJwt(authorization);
+        Long userId = jwtAgent.getId(authorization);
+
+        return ApiResponse.success(timetableService.getAllTimetableList(userId));
+    }
 
     // 시간표 상세 조회
 
