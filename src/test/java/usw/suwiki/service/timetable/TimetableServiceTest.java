@@ -243,8 +243,8 @@ public class TimetableServiceTest {
         assertThat(response.getId()).isEqualTo(timetable.getId());
         assertThat(response.getName()).isEqualTo(timetable.getName());
         assertThat(response.getCellList().size()).isEqualTo(2);
-        assertThat(response.getCellList().get(0).getLocation()).isEqualTo(timetableCellA.getLocation());
-        assertThat(response.getCellList().get(1).getLocation()).isEqualTo(timetableCellB.getLocation());
+        assertThat(response.getCellList().get(0).getLocation()).isEqualTo(timetableCellA.getSchedule().getLocation());
+        assertThat(response.getCellList().get(1).getLocation()).isEqualTo(timetableCellB.getSchedule().getLocation());
         verify(timetableRepository).findById(anyLong());
     }
 

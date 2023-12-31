@@ -25,10 +25,10 @@ public class TimetableCellResponse {
                 .lectureName(cell.getLectureName())
                 .professorName(cell.getProfessorName())
                 .color(cell.getColor().getValue())
-                .location(cell.getLocation())
-                .day(cell.getDay().getValue())
-                .startPeriod(cell.getStartPeriod())
-                .endPeriod(cell.getEndPeriod())
+                .location(cell.getSchedule().getLocation())
+                .day(cell.getSchedule().getDay().getValue())
+                .startPeriod(cell.getSchedule().getStartPeriod())
+                .endPeriod(cell.getSchedule().getEndPeriod())
                 .build();
     }
 }

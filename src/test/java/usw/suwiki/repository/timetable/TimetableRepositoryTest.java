@@ -27,6 +27,7 @@ import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.timetable.entity.TimetableCell;
 import usw.suwiki.domain.timetable.entity.TimetableCellColor;
+import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
 import usw.suwiki.domain.timetable.entity.TimetableDay;
 import usw.suwiki.domain.timetable.repository.TimetableCellRepository;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
@@ -209,14 +210,17 @@ public class TimetableRepositoryTest {
     @DisplayName("TimetableCell 삽입 성공 - 연관관계 엔티티에서 조회가 가능해야 한다.")
     public void insertTimetableCell_success() {
         // given
-        TimetableCell timetableCell = TimetableCell.builder()
-                .lectureName("")        // blank 가능
-                .professorName("")      // blank 가능
-                .color(TimetableCellColor.BROWN)
+        TimetableCellSchedule schedule = TimetableCellSchedule.builder()
                 .location("글경 603")
                 .day(TimetableDay.FRI)
                 .startPeriod(null)      // null 가능
                 .endPeriod(null)        // null 가능
+                .build();
+        TimetableCell timetableCell = TimetableCell.builder()
+                .lectureName("")        // blank 가능
+                .professorName("")      // blank 가능
+                .color(TimetableCellColor.BROWN)
+                .schedule(schedule)
                 .build();
         timetableCell.associateTimetable(dummyTimetable);   // 연관관계 편의 메서드
 
@@ -237,12 +241,24 @@ public class TimetableRepositoryTest {
     @DisplayName("TimetableCell 삽입 실패 - NOT NULL 제약조건을 지켜야 한다.")
     public void insertTimetableCell_fail_notnull_constraint() {
         // given
+        TimetableCellSchedule dummySchedule = TimetableCellSchedule.builder()
+                .location("글경 603")
+                .day(TimetableDay.FRI)
+                .build();
+        TimetableCellSchedule nullLocationSchedule = TimetableCellSchedule.builder()
+                .location(null)
+                .day(TimetableDay.FRI)
+                .build();
+        TimetableCellSchedule nullDaySchedule = TimetableCellSchedule.builder()
+                .location("글경 603")
+                .day(null)
+                .build();
+
         TimetableCell nullLectureNameCell = TimetableCell.builder()
                 .lectureName(null)
                 .professorName("신호진")
                 .color(TimetableCellColor.BROWN)
-                .location("IT 208")
-                .day(TimetableDay.FRI)
+                .schedule(dummySchedule)
                 .build();
         nullLectureNameCell.associateTimetable(dummyTimetable);
 
@@ -250,8 +266,7 @@ public class TimetableRepositoryTest {
                 .lectureName("ICT 개론")
                 .professorName(null)
                 .color(TimetableCellColor.BROWN)
-                .location("IT 208")
-                .day(TimetableDay.FRI)
+                .schedule(dummySchedule)
                 .build();
         nullProfessorNameCell.associateTimetable(dummyTimetable);
 
@@ -259,8 +274,7 @@ public class TimetableRepositoryTest {
                 .lectureName("ICT 개론")
                 .professorName("신호진")
                 .color(null)
-                .location("IT 208")
-                .day(TimetableDay.FRI)
+                .schedule(dummySchedule)
                 .build();
         nullColorCell.associateTimetable(dummyTimetable);
 
@@ -268,8 +282,7 @@ public class TimetableRepositoryTest {
                 .lectureName("ICT 개론")
                 .professorName("신호진")
                 .color(TimetableCellColor.BROWN)
-                .location(null)
-                .day(TimetableDay.FRI)
+                .schedule(nullLocationSchedule)
                 .build();
         nullLocationCell.associateTimetable(dummyTimetable);
 
@@ -277,8 +290,7 @@ public class TimetableRepositoryTest {
                 .lectureName("ICT 개론")
                 .professorName("신호진")
                 .color(TimetableCellColor.BROWN)
-                .location("IT 208")
-                .day(null)
+                .schedule(nullDaySchedule)
                 .build();
         nullDayCell.associateTimetable(dummyTimetable);
 
@@ -298,18 +310,19 @@ public class TimetableRepositoryTest {
     @Test
     @DisplayName("TimetableCell 삽입 실패 - UNIQUE 제약조건을 지켜야 한다.")
     public void insertTimetableCell_fail_unique_constraint() {
-        final int sameStartPeriod = 1;
-        final int sameEndPeriod = 3;
+        TimetableCellSchedule sameSchedule = TimetableCellSchedule.builder()
+                .location("IT 208")
+                .day(TimetableDay.FRI)
+                .startPeriod(1)
+                .endPeriod(3)
+                .build();
 
         // given
         TimetableCell cellA = TimetableCell.builder()
                 .lectureName("ICT 개론")
                 .professorName("신호진")
                 .color(TimetableCellColor.BROWN)
-                .location("IT 208")
-                .day(TimetableDay.FRI)
-                .startPeriod(sameStartPeriod)
-                .endPeriod(sameEndPeriod)
+                .schedule(sameSchedule)
                 .build();
         cellA.associateTimetable(dummyTimetable);
 
@@ -317,10 +330,7 @@ public class TimetableRepositoryTest {
                 .lectureName("ICT 개론")
                 .professorName("신호진")
                 .color(TimetableCellColor.BROWN)
-                .location("IT 208")
-                .day(TimetableDay.FRI)
-                .startPeriod(sameStartPeriod)
-                .endPeriod(sameEndPeriod)
+                .schedule(sameSchedule)
                 .build();
         callB.associateTimetable(dummyTimetable);
 
@@ -333,12 +343,26 @@ public class TimetableRepositoryTest {
     @DisplayName("TimetableCell 삽입 실패 - 값 범위 제약조건을 지켜야 한다.")
     public void insertTimetableCell_fail_value_range_constraint() {
         // given
+
+        TimetableCellSchedule dummySchedule = TimetableCellSchedule.builder()
+                .location("글경 603")
+                .day(TimetableDay.FRI)
+                .build();
+        TimetableCellSchedule tooLongLocationSchedule = TimetableCellSchedule.builder()
+                .location("a".repeat(201))
+                .day(TimetableDay.FRI)
+                .build();
+        TimetableCellSchedule tooBigPeriodSchedule = TimetableCellSchedule.builder()
+                .location("글경 603")
+                .day(TimetableDay.FRI)
+                .startPeriod(25)
+                .build();
+
         TimetableCell tooLongLectureNameCell = TimetableCell.builder()
                 .lectureName("a".repeat(201))
                 .professorName("신호진")
                 .color(TimetableCellColor.BROWN)
-                .location("IT 208")
-                .day(TimetableDay.FRI)
+                .schedule(dummySchedule)
                 .build();
         tooLongLectureNameCell.associateTimetable(dummyTimetable);
 
@@ -346,8 +370,7 @@ public class TimetableRepositoryTest {
                 .lectureName("ICT 개론")
                 .professorName("a".repeat(101))
                 .color(TimetableCellColor.BROWN)
-                .location("IT 208")
-                .day(TimetableDay.FRI)
+                .schedule(dummySchedule)
                 .build();
         tooLongProfessorNameCell.associateTimetable(dummyTimetable);
 
@@ -355,8 +378,7 @@ public class TimetableRepositoryTest {
                 .lectureName("ICT 개론")
                 .professorName("신호진")
                 .color(TimetableCellColor.BROWN)
-                .location("a".repeat(201))
-                .day(TimetableDay.FRI)
+                .schedule(tooLongLocationSchedule)
                 .build();
         tooLongLocationCell.associateTimetable(dummyTimetable);
 
@@ -364,9 +386,7 @@ public class TimetableRepositoryTest {
                 .lectureName("ICT 개론")
                 .professorName("신호진")
                 .color(TimetableCellColor.BROWN)
-                .location("IT 208")
-                .day(TimetableDay.FRI)
-                .startPeriod(25)
+                .schedule(tooBigPeriodSchedule)
                 .build();
         tooLongLocationCell.associateTimetable(dummyTimetable);
 
@@ -385,42 +405,41 @@ public class TimetableRepositoryTest {
     @DisplayName("TimetableCell 삽입 실패 - 기존 시간표 셀들과 겹치는 (요일, 교시)을 가져선 안 된다.")
     public void insertTimetableCell_fail_duplicate_day_and_period() {
         // given
-        TimetableCell cellA = TimetableCell.builder()
-                .lectureName("a".repeat(201))
-                .professorName("신호진")
-                .color(TimetableCellColor.BROWN)
+        TimetableCellSchedule scheduleA = TimetableCellSchedule.builder()
                 .location("IT 208")
                 .day(TimetableDay.FRI)
                 .startPeriod(4)
                 .endPeriod(6)
                 .build();
-        cellA.associateTimetable(dummyTimetable);
 
-        TimetableCell cellB = TimetableCell.builder()
-                .lectureName("a".repeat(201))
+        TimetableCell timetableCell = TimetableCell.builder()
+                .lectureName("ICT 개론")
                 .professorName("신호진")
-                .color(TimetableCellColor.BROWN)
+                .color(BROWN)
+                .schedule(scheduleA)
+                .build();
+        timetableCell.associateTimetable(dummyTimetable);
+        timetableCellRepository.save(timetableCell);
+
+        TimetableCellSchedule scheduleB = TimetableCellSchedule.builder()
                 .location("IT 208")
                 .day(TimetableDay.FRI)
                 .startPeriod(1)
                 .endPeriod(5)   // 겹치는 교시
                 .build();
 
-        TimetableCell cellC = TimetableCell.builder()
-                .lectureName("a".repeat(201))
-                .professorName("신호진")
-                .color(TimetableCellColor.BROWN)
+        TimetableCellSchedule scheduleC = TimetableCellSchedule.builder()
                 .location("IT 208")
                 .day(TimetableDay.FRI)
-                .startPeriod(6)     // 겹치는 교시
+                .startPeriod(6) // 겹치는 교시
                 .endPeriod(8)
                 .build();
 
         // when & then
-        assertThatThrownBy(() -> dummyTimetable.validateCellDayAndPeriodsDuplication(cellB))
+        assertThatThrownBy(() -> dummyTimetable.validateCellScheduleOverlap(scheduleB))
                 .isExactlyInstanceOf(TimetableException.class)
                 .hasMessage(ExceptionType.DUPLICATE_TIMETABLE_DAY_PERIOD.getMessage());
-        assertThatThrownBy(() -> dummyTimetable.validateCellDayAndPeriodsDuplication(cellC))
+        assertThatThrownBy(() -> dummyTimetable.validateCellScheduleOverlap(scheduleC))
                 .isExactlyInstanceOf(TimetableException.class)
                 .hasMessage(ExceptionType.DUPLICATE_TIMETABLE_DAY_PERIOD.getMessage());
     }

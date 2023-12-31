@@ -3,6 +3,7 @@ package usw.suwiki.template.timetablecell;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.timetable.entity.TimetableCell;
 import usw.suwiki.domain.timetable.entity.TimetableCellColor;
+import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
 import usw.suwiki.domain.timetable.entity.TimetableDay;
 
 public class TimetableCellTemplate {
@@ -42,14 +43,17 @@ public class TimetableCellTemplate {
             Integer startPeriod,
             Integer endPeriod
     ) {
-        TimetableCell timetableCell = TimetableCell.builder()
-                .lectureName(lectureName)
-                .professorName(professorName)
-                .color(color)
+        TimetableCellSchedule schedule = TimetableCellSchedule.builder()
                 .location(location)
                 .day(day)
                 .startPeriod(startPeriod)
                 .endPeriod(endPeriod)
+                .build();
+        TimetableCell timetableCell = TimetableCell.builder()
+                .lectureName(lectureName)
+                .professorName(professorName)
+                .color(color)
+                .schedule(schedule)
                 .build();
         timetableCell.associateTimetable(timetable);
         return timetableCell;

@@ -14,7 +14,6 @@ import usw.suwiki.domain.timetable.dto.response.TimetableResponse;
 import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.timetable.entity.TimetableCell;
-import usw.suwiki.domain.timetable.entity.TimetableDay;
 import usw.suwiki.domain.timetable.repository.TimetableCellRepository;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.user.user.User;
@@ -81,11 +80,7 @@ public class TimetableService {
     @Transactional
     public TimetableCellResponse createTimetableCell(CreateTimetableCellRequest request, Long timetableId, Long userId) {
         Timetable timetable = resolveExactAuthorTimetable(timetableId, userId);
-        timetable.validateCellDayAndPeriodsDuplication(
-                TimetableDay.ofString(request.getDay()),
-                request.getStartPeriod(),
-                request.getEndPeriod()
-        );
+        timetable.validateCellScheduleOverlap(request.extractTimetableCellSchedule());
 
         TimetableCell timetableCell = request.toEntity(timetable);
         timetableCellRepository.save(timetableCell);
