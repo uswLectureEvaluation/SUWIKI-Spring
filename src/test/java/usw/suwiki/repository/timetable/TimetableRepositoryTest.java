@@ -453,7 +453,7 @@ public class TimetableRepositoryTest {
         assertThat(timetable.isPresent()).isTrue();
         List<TimetableCell> cellList = timetable.get().getCellList();
         assertThat(cellList.size()).isEqualTo(4);
-        assertThat(cellList.get(0).getLectureName()).isEqualTo(TimetableCellTemplate.LECTURE_NAME);
+        assertThat(cellList.get(0).getLectureName()).isEqualTo(TimetableCellTemplate.LECTURE_NAME_A);
         assertThat(cellList.get(1).getLectureName()).isEqualTo("데이터 구조");
         assertThat(cellList.get(2).getLectureName()).isEqualTo("컴퓨터 구조");
         assertThat(cellList.get(3).getLectureName()).isEqualTo("이산 구조");

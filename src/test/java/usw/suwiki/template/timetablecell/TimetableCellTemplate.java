@@ -1,24 +1,35 @@
 package usw.suwiki.template.timetablecell;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.validation.constraints.NotNull;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.timetable.entity.TimetableCell;
 import usw.suwiki.domain.timetable.entity.TimetableCellColor;
 import usw.suwiki.domain.timetable.entity.TimetableDay;
 
 public class TimetableCellTemplate {
-    public static final String LECTURE_NAME = "더미 강의";
-    public static final String PROFESSOR_NAME = "더미 교수";
-    public static final TimetableCellColor COLOR = TimetableCellColor.GRAY;
+    public static final String LECTURE_NAME_A = "더미 강의 A";
+    public static final String LECTURE_NAME_B = "더미 강의 B";
+    public static final String PROFESSOR_NAME_A = "더미 교수 A";
+    public static final String PROFESSOR_NAME_B = "더미 교수 B";
+    public static final TimetableCellColor COLOR_A = TimetableCellColor.RED_LIGHT;
+    public static final TimetableCellColor COLOR_B = TimetableCellColor.GRAY;
     public static final String LOCATION = "RANDOM 101";    // blank 가능
-    private static final TimetableDay DAY = TimetableDay.MON;
-    private static final int START_PERIOD = 1;
-    private static final int END_PERIOD = 3;
+    private static final TimetableDay DAY_A = TimetableDay.MON;
+    private static final TimetableDay DAY_B = TimetableDay.WED;
+    private static final int START_PERIOD_A = 1;
+    private static final int START_PERIOD_B = 1;
+    private static final int END_PERIOD_A = 3;
+    private static final int END_PERIOD_B = 3;
 
     public static TimetableCell createFirstDummy(Timetable timetable) {
-        return createDummy(timetable, LECTURE_NAME, PROFESSOR_NAME, COLOR, LOCATION, DAY, START_PERIOD, END_PERIOD);
+        return createDummy(
+                timetable, LECTURE_NAME_A, PROFESSOR_NAME_A, COLOR_A, LOCATION, DAY_A, START_PERIOD_A, END_PERIOD_A
+        );
+    }
+
+    public static TimetableCell createSecondDummy(Timetable timetable) {
+        return createDummy(
+                timetable, LECTURE_NAME_B, PROFESSOR_NAME_B, COLOR_B, LOCATION, DAY_B, START_PERIOD_B, END_PERIOD_B
+        );
     }
 
     public static TimetableCell createDummy(

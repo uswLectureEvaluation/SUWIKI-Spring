@@ -10,6 +10,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,8 +24,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
+import usw.suwiki.domain.timetable.dto.response.SimpleTimetableResponse;
 import usw.suwiki.domain.timetable.dto.response.TimetableResponse;
 import usw.suwiki.domain.timetable.entity.Timetable;
+import usw.suwiki.domain.timetable.entity.TimetableCell;
+import usw.suwiki.domain.timetable.entity.TimetableCellColor;
+import usw.suwiki.domain.timetable.entity.TimetableDay;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.timetable.service.TimetableService;
 import usw.suwiki.domain.user.user.User;
@@ -32,6 +37,7 @@ import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.TimetableException;
 import usw.suwiki.template.timetable.TimetableTemplate;
+import usw.suwiki.template.timetablecell.TimetableCellTemplate;
 import usw.suwiki.template.user.UserTemplate;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,6 +55,8 @@ public class TimetableServiceTest {
     private User user;
     private User otherUser;
     private Timetable timetable;
+    private TimetableCell timetableCellA;
+    private TimetableCell timetableCellB;
 
     private final static Long SPYING_TIMETABLE_ID = 1L;
     private final static Long SPYING_USER_ID = 100L;
@@ -62,6 +70,8 @@ public class TimetableServiceTest {
         this.user = spy(UserTemplate.createDummyUser());
         this.otherUser = spy(UserTemplate.createSecondDummyUser());
         this.timetable = spy(TimetableTemplate.createFirstDummy(user));
+        this.timetableCellA = spy(TimetableCellTemplate.createFirstDummy(timetable));
+        this.timetableCellB = spy(TimetableCellTemplate.createSecondDummy(timetable));
     }
 
     @Test
@@ -79,7 +89,7 @@ public class TimetableServiceTest {
         when(timetable.getId()).thenReturn(SPYING_TIMETABLE_ID);
 
         // when
-        TimetableResponse response = timetableService.createTimetable(request, RANDOM_ID);
+        SimpleTimetableResponse response = timetableService.createTimetable(request, RANDOM_ID);
 
         // then
         verify(userCRUDService).loadUserById(anyLong());
@@ -103,7 +113,7 @@ public class TimetableServiceTest {
         when(timetable.getId()).thenReturn(SPYING_TIMETABLE_ID);
 
         // when
-        TimetableResponse response = timetableService.updateTimetable(request, RANDOM_ID, RANDOM_ID);
+        SimpleTimetableResponse response = timetableService.updateTimetable(request, RANDOM_ID, RANDOM_ID);
 
         // then
         verify(userCRUDService).loadUserById(anyLong());
@@ -207,7 +217,7 @@ public class TimetableServiceTest {
         when(timetable.getId()).thenReturn(RANDOM_ID);
 
         // when
-        List<TimetableResponse> response = timetableService.getAllTimetableList(RANDOM_ID);
+        List<SimpleTimetableResponse> response = timetableService.getAllTimetableList(RANDOM_ID);
 
         // then
         assertThat(response.size()).isEqualTo(1);
@@ -216,7 +226,40 @@ public class TimetableServiceTest {
     }
 
     // 시간표 상세 조회 성공
-    // 시간표 상세 조회 실패 - 존재하지 않는 시간표
+    @Test
+    @DisplayName("시간표 상세 조회 성공")
+    public void SELECT_TIMETABLE_WITH_CELL_LIST() {
+        // given
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.of(timetable));
+        when(timetable.getId()).thenReturn(RANDOM_ID);
+        when(timetable.getCellList()).thenReturn(List.of(timetableCellA, timetableCellB));
+        when(timetableCellA.getId()).thenReturn(RANDOM_ID_A);
+        when(timetableCellB.getId()).thenReturn(RANDOM_ID_B);
+
+        // when
+        TimetableResponse response = timetableService.getTimetable(RANDOM_ID);
+
+        // then
+        assertThat(response.getId()).isEqualTo(timetable.getId());
+        assertThat(response.getName()).isEqualTo(timetable.getName());
+        assertThat(response.getCellList().size()).isEqualTo(2);
+        assertThat(response.getCellList().get(0).getLocation()).isEqualTo(timetableCellA.getLocation());
+        assertThat(response.getCellList().get(1).getLocation()).isEqualTo(timetableCellB.getLocation());
+        verify(timetableRepository).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("시간표 상세 조회 실패 - 존재하지 않는 시간표")
+    public void SELECT_TIMETABLE_WITH_CELL_LIST_FAIL_NOT_FOUND_TIMETABLE() {
+        // given
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.empty());    // 존재하지 않음
+
+        // when & then
+        assertThatThrownBy(() -> timetableService.getTimetable(RANDOM_ID))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.TIMETABLE_NOT_FOUND.getMessage());
+        verify(timetableRepository).findById(anyLong());
+    }
 
     // 시간표 셀 생성 성공
     // 시간표 셀 생성 실패 - 존재하지 않는 시간표
