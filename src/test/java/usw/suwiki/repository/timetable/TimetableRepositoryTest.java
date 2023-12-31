@@ -438,10 +438,10 @@ public class TimetableRepositoryTest {
         // when & then
         assertThatThrownBy(() -> dummyTimetable.validateCellScheduleOverlap(scheduleB))
                 .isExactlyInstanceOf(TimetableException.class)
-                .hasMessage(ExceptionType.DUPLICATE_TIMETABLE_DAY_PERIOD.getMessage());
+                .hasMessage(ExceptionType.OVERLAPPED_TIMETABLE_CELL_SCHEDULE.getMessage());
         assertThatThrownBy(() -> dummyTimetable.validateCellScheduleOverlap(scheduleC))
                 .isExactlyInstanceOf(TimetableException.class)
-                .hasMessage(ExceptionType.DUPLICATE_TIMETABLE_DAY_PERIOD.getMessage());
+                .hasMessage(ExceptionType.OVERLAPPED_TIMETABLE_CELL_SCHEDULE.getMessage());
     }
 
 

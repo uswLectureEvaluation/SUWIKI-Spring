@@ -87,7 +87,7 @@ public class Timetable extends BaseTimeEntity {
                 .anyMatch(it -> it.getSchedule().isOverlapped(schedule));
 
         if (isOverlapped) {
-            throw new TimetableException(ExceptionType.DUPLICATE_TIMETABLE_DAY_PERIOD);
+            throw new TimetableException(ExceptionType.OVERLAPPED_TIMETABLE_CELL_SCHEDULE);
         }
     }
 
