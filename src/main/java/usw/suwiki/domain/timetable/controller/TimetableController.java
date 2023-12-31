@@ -1,6 +1,7 @@
 package usw.suwiki.domain.timetable.controller;
 
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,9 +33,9 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
     @PostMapping
     public ApiResponse<SimpleTimetableResponse> createTimetable(
             @RequestHeader String authorization,
-            @RequestBody CreateTimetableRequest request
+            @Valid @RequestBody CreateTimetableRequest request // TODO: @Valid 및 Global Exception Handler 적용
     ) {
-        jwtAgent.validateJwt(authorization);    // TODO: V2 -> Jwt Filter 적용
+        jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);
 
         return ApiResponse.success(timetableService.createTimetable(request, userId));
@@ -44,9 +45,9 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
     public ApiResponse<SimpleTimetableResponse> updateTimetable(
             @PathVariable Long timetableId,
             @RequestHeader String authorization,
-            @RequestBody UpdateTimetableRequest request
+            @Valid @RequestBody UpdateTimetableRequest request // TODO: @Valid 및 Global Exception Handler 적용
     ) {
-        jwtAgent.validateJwt(authorization);    // TODO: V2 -> Jwt Filter 적용
+        jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);
 
         return ApiResponse.success(timetableService.updateTimetable(request, timetableId, userId));
