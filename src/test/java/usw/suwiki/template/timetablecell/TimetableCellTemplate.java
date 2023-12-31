@@ -17,9 +17,9 @@ public class TimetableCellTemplate {
     private static final TimetableDay DAY_A = TimetableDay.MON;
     private static final TimetableDay DAY_B = TimetableDay.WED;
     private static final int START_PERIOD_A = 1;
-    private static final int START_PERIOD_B = 1;
+    private static final int START_PERIOD_B = 4;
     private static final int END_PERIOD_A = 3;
-    private static final int END_PERIOD_B = 3;
+    private static final int END_PERIOD_B = 6;
 
     public static TimetableCell createFirstDummy(Timetable timetable) {
         return createDummy(
@@ -57,5 +57,28 @@ public class TimetableCellTemplate {
                 .build();
         timetableCell.associateTimetable(timetable);
         return timetableCell;
+    }
+
+    public static TimetableCell createOrphanDummy(
+            String lectureName,
+            String professorName,
+            TimetableCellColor color,
+            String location,
+            TimetableDay day,
+            Integer startPeriod,
+            Integer endPeriod
+    ) {
+        TimetableCellSchedule schedule = TimetableCellSchedule.builder()
+                .location(location)
+                .day(day)
+                .startPeriod(startPeriod)
+                .endPeriod(endPeriod)
+                .build();
+        return TimetableCell.builder()
+                .lectureName(lectureName)
+                .professorName(professorName)
+                .color(color)
+                .schedule(schedule)
+                .build();
     }
 }
