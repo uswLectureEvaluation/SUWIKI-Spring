@@ -1,32 +1,26 @@
 package usw.suwiki.domain.timetable.dto.response;
 
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import usw.suwiki.domain.timetable.entity.Timetable;
 
+@Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter
-public class TimetableResponse {
+public class SimpleTimetableResponse {
     long id;
     int year;
     String semester;
     String name;
-    List<TimetableCellResponse> cellList;
 
-    public static TimetableResponse of(Timetable timetable) {
-        return TimetableResponse.builder()
+    public static SimpleTimetableResponse of(Timetable timetable) {
+        return SimpleTimetableResponse.builder()
                 .id(timetable.getId())
                 .year(timetable.getYear())
                 .semester(timetable.getSemester().getValue())
                 .name(timetable.getName())
-                .cellList(
-                        timetable.getCellList().stream()
-                                .map(TimetableCellResponse::of)
-                                .toList())
                 .build();
     }
 }
