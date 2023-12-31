@@ -82,8 +82,7 @@ public class TimetableService {
         Timetable timetable = resolveExactAuthorTimetable(timetableId, userId);
         timetable.validateCellScheduleOverlap(request.extractTimetableCellSchedule());
 
-        TimetableCell timetableCell = request.toEntity(timetable);
-        timetableCellRepository.save(timetableCell);
+        TimetableCell timetableCell = timetableCellRepository.save(request.toEntity(timetable));
         return TimetableCellResponse.of(timetableCell);
     }
 
