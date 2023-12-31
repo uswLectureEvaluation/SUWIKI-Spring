@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import usw.suwiki.domain.timetable.dto.request.CreateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.response.SimpleTimetableResponse;
+import usw.suwiki.domain.timetable.dto.response.TimetableCellResponse;
 import usw.suwiki.domain.timetable.dto.response.TimetableResponse;
 import usw.suwiki.domain.timetable.service.TimetableService;
 import usw.suwiki.global.dto.ApiResponse;
@@ -24,7 +26,7 @@ import usw.suwiki.global.jwt.JwtAgent;
 
 @Slf4j
 @RestController
-@RequestMapping("/timetables/mine")
+@RequestMapping("/timetables/mine")// TODO: URI 패턴 변경 -> /timetables (시간표 리스트 조회 제외) 고민
 @RequiredArgsConstructor
 public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체, AuthService 유저 검증 로직 추가
     private final TimetableService timetableService;
@@ -86,6 +88,17 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
     }
 
     // 시간표 강의 - 생성
+    @PostMapping("/{timetableId}/cells")
+    public ApiResponse<TimetableCellResponse> createTimetableCell(
+            @PathVariable Long timetableId,
+            @RequestHeader String authorization,
+            @Valid @RequestBody CreateTimetableCellRequest request
+    ) {
+        jwtAgent.validateJwt(authorization);
+        Long userId = jwtAgent.getId(authorization);
+
+        return ApiResponse.success(timetableService.createTimetableCell(request, timetableId, userId));
+    }
 
     // 시간표 강의 - 수정
 
