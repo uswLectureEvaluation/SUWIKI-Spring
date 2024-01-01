@@ -102,11 +102,21 @@ public class TimetableService {
     }
 
     // 시간표 셀 삭제
+    @Transactional
+    public ResultResponse deleteTimetableCell(Long cellId, Long userId) {
+        TimetableCell timetableCell = timetableCellRepository.findById(cellId)
+                .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_CELL_NOT_FOUND));
+        Timetable timetable = resolveExactAuthorTimetable(timetableCell.bringTimetableId(), userId);
+
+        timetableCell.dissociateTimetable(timetable);
+
+        return ResultResponse.of(true);
+    }
 
     // 시간표 일괄 DB 동기화 (시간표 및 강의 bulk 생성)
 
 
-    // private methods
+    // TimetableService 메서드
     private Timetable resolveExactAuthorTimetable(Long timetableId, Long userId) {
         User user = userCRUDService.loadUserById(userId);
         Timetable timetable = timetableRepository.findById(timetableId)

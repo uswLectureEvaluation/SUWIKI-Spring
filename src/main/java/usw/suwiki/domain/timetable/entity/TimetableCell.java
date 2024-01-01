@@ -79,6 +79,11 @@ public class TimetableCell extends BaseTimeEntity {
         timetable.addCell(this);
     }
 
+    public void dissociateTimetable(Timetable timetable) {
+        this.timetable = null;
+        timetable.removeCell(this);
+    }
+
     public Long bringTimetableId() {
         return this.timetable.getId();
     }
