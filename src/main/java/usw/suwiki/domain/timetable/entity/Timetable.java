@@ -82,8 +82,18 @@ public class Timetable extends BaseTimeEntity {
     }
 
     // 비즈니스 메서드
-    public void validateCellScheduleOverlap(TimetableCellSchedule schedule) {    // TODO Embed 사용 고민
+    public void validateCellScheduleOverlap(TimetableCellSchedule schedule) {
         boolean isOverlapped = cellList.stream()
+                .anyMatch(it -> it.getSchedule().isOverlapped(schedule));
+
+        if (isOverlapped) {
+            throw new TimetableException(ExceptionType.OVERLAPPED_TIMETABLE_CELL_SCHEDULE);
+        }
+    }
+
+    public void validateCellScheduleOverlapExceptOneCell(TimetableCellSchedule schedule, TimetableCell timetableCell) {
+        boolean isOverlapped = cellList.stream()
+                .filter(it -> !it.equals(timetableCell))
                 .anyMatch(it -> it.getSchedule().isOverlapped(schedule));
 
         if (isOverlapped) {
