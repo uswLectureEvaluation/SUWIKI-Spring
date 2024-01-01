@@ -532,7 +532,58 @@ public class TimetableServiceTest {
         verify(timetableRepository).findById(anyLong());
     }
 
-    // 시간표 셀 삭제 성공
-    // 시간표 셀 삭제 실패 - 존재하지 않는 시간표 셀
-    // 시간표 셀 삭제 실패 - 시간표 셀 삭제의 주체는 작성자여야 한다.
+    @Test
+    @DisplayName("시간표 셀 삭제 성공")
+    public void DELETE_TIMETABLE_CELL() {
+        // given
+        given(timetableCellRepository.findById(anyLong())).willReturn(Optional.of(timetableCellA));
+        given(userCRUDService.loadUserById(anyLong())).willReturn(user);
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.of(timetable));
+        when(timetable.getId()).thenReturn(SPYING_TIMETABLE_ID);
+
+        // when
+        timetableService.deleteTimetableCell(RANDOM_ID, RANDOM_ID);
+
+        // then
+        assertThat(timetableCellA.getTimetable()).isNull();
+        assertThat(timetableCellA).isNotIn(timetable);
+
+        verify(userCRUDService).loadUserById(anyLong());
+        verify(timetableRepository).findById(anyLong());
+        verify(timetableCellRepository).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("시간표 셀 삭제 실패 - 존재하지 않는 시간표 셀")
+    public void DELETE_TIMETABLE_CELL_FAIL_NOT_FOUND_TIMETABLE_CELL() {
+        // given
+        given(timetableCellRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(()->timetableService.deleteTimetableCell(RANDOM_ID, RANDOM_ID))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.TIMETABLE_CELL_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("시간표 셀 삭제 실패 - 시간표 셀 삭제의 주체는 작성자여야 한다.")
+    public void DELETE_TIMETABLE_CELL_FAIL_NOT_AUTHOR() {
+        // given
+        given(timetableCellRepository.findById(anyLong())).willReturn(Optional.of(timetableCellA));
+        given(userCRUDService.loadUserById(anyLong())).willReturn(otherUser);
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.of(timetable));
+        when(user.getId()).thenReturn(RANDOM_ID_A);     // 다른 사용자의 요청을 가정
+        when(otherUser.getId()).thenReturn(RANDOM_ID_B);
+        when(timetable.getId()).thenReturn(SPYING_TIMETABLE_ID);
+
+        // when & then
+        assertThatThrownBy(()->timetableService.deleteTimetableCell(RANDOM_ID, RANDOM_ID))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.TIMETABLE_NOT_AN_AUTHOR.getMessage());
+
+        verify(userCRUDService).loadUserById(anyLong());
+        verify(timetableRepository).findById(anyLong());
+        verify(timetableCellRepository).findById(anyLong());
+    }
+
 }
