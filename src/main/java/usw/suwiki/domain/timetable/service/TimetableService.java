@@ -21,7 +21,6 @@ import usw.suwiki.domain.timetable.repository.TimetableCellRepository;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
-import usw.suwiki.global.dto.ResultResponse;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.TimetableException;
 
@@ -61,7 +60,7 @@ public class TimetableService {
         timetable.dissociateUser(user);
     }
 
-    public List<SimpleTimetableResponse> getAllTimetableList(Long userId) {
+    public List<SimpleTimetableResponse> getMyAllTimetableList(Long userId) {
         List<Timetable> timetableList = timetableRepository.findAllByUserId(userId);
 
         return timetableList.stream()

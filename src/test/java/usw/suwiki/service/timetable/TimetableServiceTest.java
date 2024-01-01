@@ -240,7 +240,7 @@ public class TimetableServiceTest {
         when(timetable.getId()).thenReturn(RANDOM_ID);
 
         // when
-        List<SimpleTimetableResponse> response = timetableService.getAllTimetableList(RANDOM_ID);
+        List<SimpleTimetableResponse> response = timetableService.getMyAllTimetableList(RANDOM_ID);
 
         // then
         assertThat(response.size()).isEqualTo(1);

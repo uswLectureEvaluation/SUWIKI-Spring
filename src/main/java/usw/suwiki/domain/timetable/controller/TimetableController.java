@@ -27,7 +27,7 @@ import usw.suwiki.global.jwt.JwtAgent;
 
 @Slf4j
 @RestController
-@RequestMapping("/timetables/mine")// TODO: URI 패턴 변경 -> /timetables (시간표 리스트 조회 제외) 고민
+@RequestMapping("/timetables")
 @RequiredArgsConstructor
 public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체, AuthService 유저 검증 로직 추가
     private final TimetableService timetableService;
@@ -68,12 +68,12 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
         return ApiResponse.success(ResultResponse.complete());
     }
 
-    @GetMapping("/all")
-    public ApiResponse<List<SimpleTimetableResponse>> getAllTimetableList(@RequestHeader String authorization) {
+    @GetMapping
+    public ApiResponse<List<SimpleTimetableResponse>> getMyAllTimetableList(@RequestHeader String authorization) {
         jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);
 
-        return ApiResponse.success(timetableService.getAllTimetableList(userId));
+        return ApiResponse.success(timetableService.getMyAllTimetableList(userId));
     }
 
     @GetMapping("/{timetableId}")
