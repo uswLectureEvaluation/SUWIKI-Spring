@@ -24,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
+import usw.suwiki.domain.timetable.dto.request.UpdateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.response.SimpleTimetableResponse;
 import usw.suwiki.domain.timetable.dto.response.TimetableCellResponse;
@@ -63,7 +64,7 @@ public class TimetableServiceTest {
     private Timetable timetable;
     private TimetableCell timetableCellA;
     private TimetableCell timetableCellB;
-    private TimetableCell orphanTimeTableCell;
+    private TimetableCell newTimeTableCell;
 
 
     private final static Long SPYING_TIMETABLE_ID = 1L;
@@ -83,8 +84,8 @@ public class TimetableServiceTest {
         this.timetableCellA = spy(TimetableCellTemplate.createFirstDummy(timetable));
         this.timetableCellB = spy(TimetableCellTemplate.createSecondDummy(timetable));
 
-        // 연관관계 설정으로 인해 발생하는 시간표 중복 검사를 피하기 위함
-        TimetableCell orphanDummyTimetableCell = TimetableCellTemplate.createOrphanDummy(
+        // 셀 생성 테스트에 쓰이는 객체
+        TimetableCell dummyTimetableCell = TimetableCellTemplate.createOrphanDummy(
                 "연관관계 없음",
                 "노연관",
                 TimetableCellColor.ORANGE,
@@ -93,7 +94,7 @@ public class TimetableServiceTest {
                 1,
                 4
         );
-        this.orphanTimeTableCell = spy(orphanDummyTimetableCell);
+        this.newTimeTableCell = spy(dummyTimetableCell);
     }
 
     @Test
@@ -288,19 +289,19 @@ public class TimetableServiceTest {
     public void CREATE_TIMETABLE_CELL() {
         // given
         CreateTimetableCellRequest request = CreateTimetableCellRequest.builder()
-                .lectureName(orphanTimeTableCell.getLectureName())
-                .professorName(orphanTimeTableCell.getProfessorName())
-                .color(orphanTimeTableCell.getColor().getValue())
-                .location(orphanTimeTableCell.getSchedule().getLocation())
-                .day(orphanTimeTableCell.getSchedule().getDay().getValue())   // 기존의 셀들과 겹치지 않는 (요일,교시)
-                .startPeriod(orphanTimeTableCell.getSchedule().getStartPeriod())
-                .endPeriod(orphanTimeTableCell.getSchedule().getEndPeriod())
+                .lectureName(newTimeTableCell.getLectureName())
+                .professorName(newTimeTableCell.getProfessorName())
+                .color(newTimeTableCell.getColor().getValue())
+                .location(newTimeTableCell.getSchedule().getLocation())
+                .day(newTimeTableCell.getSchedule().getDay().getValue())   // 기존의 셀들과 겹치지 않는 (요일,교시)
+                .startPeriod(newTimeTableCell.getSchedule().getStartPeriod())
+                .endPeriod(newTimeTableCell.getSchedule().getEndPeriod())
                 .build();
 
         given(userCRUDService.loadUserById(anyLong())).willReturn(user);
         given(timetableRepository.findById(anyLong())).willReturn(Optional.of(timetable));
-        given(timetableCellRepository.save(any(TimetableCell.class))).willReturn(orphanTimeTableCell);
-        when(orphanTimeTableCell.getId()).thenReturn(SPYING_TIMETABLE_CELL_ID);
+        given(timetableCellRepository.save(any(TimetableCell.class))).willReturn(newTimeTableCell);
+        when(newTimeTableCell.getId()).thenReturn(SPYING_TIMETABLE_CELL_ID);
 
         // when
         TimetableCellResponse response = timetableService.createTimetableCell(request, RANDOM_ID, RANDOM_ID);
@@ -320,13 +321,13 @@ public class TimetableServiceTest {
     public void CREATE_TIMETABLE_CELL_FAIL_NOT_FOUND_TIMETABLE() {
         // given
         CreateTimetableCellRequest request = CreateTimetableCellRequest.builder()
-                .lectureName(orphanTimeTableCell.getLectureName())
-                .professorName(orphanTimeTableCell.getProfessorName())
-                .color(orphanTimeTableCell.getColor().getValue())
-                .location(orphanTimeTableCell.getSchedule().getLocation())
-                .day(orphanTimeTableCell.getSchedule().getDay().getValue())
-                .startPeriod(orphanTimeTableCell.getSchedule().getStartPeriod())
-                .endPeriod(orphanTimeTableCell.getSchedule().getEndPeriod())
+                .lectureName(newTimeTableCell.getLectureName())
+                .professorName(newTimeTableCell.getProfessorName())
+                .color(newTimeTableCell.getColor().getValue())
+                .location(newTimeTableCell.getSchedule().getLocation())
+                .day(newTimeTableCell.getSchedule().getDay().getValue())
+                .startPeriod(newTimeTableCell.getSchedule().getStartPeriod())
+                .endPeriod(newTimeTableCell.getSchedule().getEndPeriod())
                 .build();
 
         given(userCRUDService.loadUserById(anyLong())).willReturn(user);
@@ -343,13 +344,13 @@ public class TimetableServiceTest {
     public void CREATE_TIMETABLE_CELL_FAIL_INVALID_CELL_COLOR() {
         // given
         CreateTimetableCellRequest request = CreateTimetableCellRequest.builder()
-                .lectureName(orphanTimeTableCell.getLectureName())
-                .professorName(orphanTimeTableCell.getProfessorName())
+                .lectureName(newTimeTableCell.getLectureName())
+                .professorName(newTimeTableCell.getProfessorName())
                 .color("유효하지 않은 색상")
-                .location(orphanTimeTableCell.getSchedule().getLocation())
-                .day(orphanTimeTableCell.getSchedule().getDay().getValue())
-                .startPeriod(orphanTimeTableCell.getSchedule().getStartPeriod())
-                .endPeriod(orphanTimeTableCell.getSchedule().getEndPeriod())
+                .location(newTimeTableCell.getSchedule().getLocation())
+                .day(newTimeTableCell.getSchedule().getDay().getValue())
+                .startPeriod(newTimeTableCell.getSchedule().getStartPeriod())
+                .endPeriod(newTimeTableCell.getSchedule().getEndPeriod())
                 .build();
 
         given(userCRUDService.loadUserById(anyLong())).willReturn(user);
@@ -366,11 +367,11 @@ public class TimetableServiceTest {
     public void CREATE_TIMETABLE_CELL_FAIL_OVERLAPPED_CELL_SCHEDULE() {
         // given
         CreateTimetableCellRequest request = CreateTimetableCellRequest.builder()
-                .lectureName(orphanTimeTableCell.getLectureName())
-                .professorName(orphanTimeTableCell.getProfessorName())
-                .color(orphanTimeTableCell.getColor().getValue())
-                .location(orphanTimeTableCell.getSchedule().getLocation())
-                .day(orphanTimeTableCell.getSchedule().getDay().getValue())
+                .lectureName(newTimeTableCell.getLectureName())
+                .professorName(newTimeTableCell.getProfessorName())
+                .color(newTimeTableCell.getColor().getValue())
+                .location(newTimeTableCell.getSchedule().getLocation())
+                .day(newTimeTableCell.getSchedule().getDay().getValue())
                 .startPeriod(timetableCellA.getSchedule().getStartPeriod()) // 기존에 저장된 A 셀의 교시
                 .endPeriod(timetableCellA.getSchedule().getEndPeriod())
                 .build();
@@ -387,11 +388,149 @@ public class TimetableServiceTest {
                 .hasMessage(ExceptionType.OVERLAPPED_TIMETABLE_CELL_SCHEDULE.getMessage());
     }
 
-    // 시간표 셀 수정 성공
-    // 시간표 셀 수정 실패 - 존재하지 않는 시간표 셀
-    // 시간표 셀 수정 실패 - 유효하지 않은 색상
-    // 시간표 셀 수정 실패 - 시간표 셀 수정의 주체는 작성자여야 한다.
-    // 시간표 셀 수정 실패 - (요일, 교시)는 중복되어선 안 된다.
+    @Test
+    @DisplayName("시간표 셀 수정 성공")
+    public void UPDATE_TIMETABLE_CELL() {
+        // given
+        UpdateTimetableCellRequest request = UpdateTimetableCellRequest.builder()
+                .lectureName(timetableCellA.getLectureName())
+                .professorName(timetableCellA.getProfessorName())
+                .color(timetableCellA.getColor().getValue())
+                .location("인문 303")
+                .day("THU")   // 기존의 셀들과 겹치지 않는 (요일,교시)
+                .startPeriod(8)
+                .endPeriod(10)
+                .build();
+
+        given(timetableCellRepository.findById(anyLong())).willReturn(Optional.of(timetableCellA));
+        given(userCRUDService.loadUserById(anyLong())).willReturn(user);
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.of(timetable));
+        when(timetable.getId()).thenReturn(SPYING_TIMETABLE_ID);
+        when(timetableCellA.getId()).thenReturn(SPYING_TIMETABLE_CELL_ID);
+
+        // when
+        TimetableCellResponse response = timetableService.updateTimetableCell(request, RANDOM_ID, RANDOM_ID);
+
+        // then
+        assertThat(response.getId()).isEqualTo(SPYING_TIMETABLE_CELL_ID);
+        assertThat(response.getLocation()).isEqualTo(request.getLocation());
+        assertThat(response.getDay()).isEqualTo(request.getDay());
+
+        verify(userCRUDService).loadUserById(anyLong());
+        verify(timetableRepository).findById(anyLong());
+        verify(timetableCellRepository).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("시간표 셀 수정 실패 - 존재하지 않는 시간표 셀")
+    public void UPDATE_TIMETABLE_CELL_FAIL_NOT_FOUND_TIMETABLE_CELL() {
+        // given
+        UpdateTimetableCellRequest request = UpdateTimetableCellRequest.builder()
+                .lectureName(timetableCellA.getLectureName())
+                .professorName(timetableCellA.getProfessorName())
+                .color(timetableCellA.getColor().getValue())
+                .location("인문 303")
+                .day("THU")   // 기존의 셀들과 겹치지 않는 (요일,교시)
+                .startPeriod(8)
+                .endPeriod(10)
+                .build();
+
+        given(timetableCellRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> timetableService.updateTimetableCell(request, RANDOM_ID, RANDOM_ID))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.TIMETABLE_CELL_NOT_FOUND.getMessage());
+
+        verify(timetableCellRepository).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("시간표 셀 수정 실패 - 기존에 등록된 색상이어야 한다.")
+    public void UPDATE_TIMETABLE_CELL_INVALID_CELL_COLOR() {
+        // given
+        UpdateTimetableCellRequest request = UpdateTimetableCellRequest.builder()
+                .lectureName(timetableCellA.getLectureName())
+                .professorName(timetableCellA.getProfessorName())
+                .color("RAINBOW")    // 등록되지 않은 색상
+                .location("인문 303")
+                .day("THU")
+                .startPeriod(8)
+                .endPeriod(10)
+                .build();
+
+        given(timetableCellRepository.findById(anyLong())).willReturn(Optional.of(timetableCellA));
+        given(userCRUDService.loadUserById(anyLong())).willReturn(user);
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.of(timetable));
+        when(timetable.getId()).thenReturn(SPYING_TIMETABLE_ID);
+
+        // when & then
+        assertThatThrownBy(() -> timetableService.updateTimetableCell(request, RANDOM_ID, RANDOM_ID))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.INVALID_TIMETABLE_CELL_COLOR.getMessage());
+
+        verify(timetableCellRepository).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("시간표 셀 수정 실패 - 시간표 셀 수정의 주체는 작성자여야 한다.")
+    public void UPDATE_TIMETABLE_CELL_FAIL_NOT_AUTHOR() {
+        // given
+        UpdateTimetableCellRequest request = UpdateTimetableCellRequest.builder()
+                .lectureName(timetableCellA.getLectureName())
+                .professorName(timetableCellA.getProfessorName())
+                .color("RAINBOW")    // 등록되지 않은 색상
+                .location("인문 303")
+                .day("THU")
+                .startPeriod(8)
+                .endPeriod(10)
+                .build();
+
+        given(timetableCellRepository.findById(anyLong())).willReturn(Optional.of(timetableCellA));
+        given(userCRUDService.loadUserById(anyLong())).willReturn(otherUser);
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.of(timetable));
+        when(user.getId()).thenReturn(RANDOM_ID_A);     // 다른 사용자를 가정. timetable.validateIsAuthor 메서드에 의존
+        when(otherUser.getId()).thenReturn(RANDOM_ID_B);
+        when(timetable.getId()).thenReturn(SPYING_TIMETABLE_ID);
+
+        // when & then
+        assertThatThrownBy(() -> timetableService.updateTimetableCell(request, RANDOM_ID, RANDOM_ID))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.TIMETABLE_NOT_AN_AUTHOR.getMessage());
+
+        verify(timetableCellRepository).findById(anyLong());
+        verify(userCRUDService).loadUserById(anyLong());
+        verify(timetableRepository).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("시간표 셀 수정 실패 - (요일, 교시)는 중복되어선 안 된다.")
+    public void UPDATE_TIMETABLE_CELL_FAIL_OVERLAPPED_CELL_SCHEDULE() {
+        // given
+        UpdateTimetableCellRequest request = UpdateTimetableCellRequest.builder()
+                .lectureName(timetableCellA.getLectureName())
+                .professorName(timetableCellA.getProfessorName())
+                .color(timetableCellA.getColor().getValue())
+                .location(timetableCellA.getSchedule().getLocation())
+                .day(timetableCellB.getSchedule().getDay().getValue())  // 기존에 저장된 B 셀과 한 교시라도 겹치는 요청을 가정
+                .startPeriod(timetableCellB.getSchedule().getStartPeriod())
+                .endPeriod(timetableCellB.getSchedule().getEndPeriod())
+                .build();
+
+        given(timetableCellRepository.findById(anyLong())).willReturn(Optional.of(timetableCellA));
+        given(userCRUDService.loadUserById(anyLong())).willReturn(user);
+        given(timetableRepository.findById(anyLong())).willReturn(Optional.of(timetable));
+        when(timetable.getId()).thenReturn(SPYING_TIMETABLE_ID);
+
+        // when & then
+        assertThatThrownBy(() -> timetableService.updateTimetableCell(request, RANDOM_ID, RANDOM_ID))
+                .isExactlyInstanceOf(TimetableException.class)
+                .hasMessage(ExceptionType.OVERLAPPED_TIMETABLE_CELL_SCHEDULE.getMessage());
+
+        verify(timetableCellRepository).findById(anyLong());
+        verify(userCRUDService).loadUserById(anyLong());
+        verify(timetableRepository).findById(anyLong());
+    }
 
     // 시간표 셀 삭제 성공
     // 시간표 셀 삭제 실패 - 존재하지 않는 시간표 셀
