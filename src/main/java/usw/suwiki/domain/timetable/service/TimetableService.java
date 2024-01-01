@@ -68,7 +68,7 @@ public class TimetableService {
                 .toList();
     }
 
-    public TimetableResponse getTimetable(Long timetableId) {   // TODO: 동일 유저 검증 로직 고민
+    public TimetableResponse getTimetable(Long timetableId) {
         Timetable timetable = timetableRepository.findById(timetableId)
                 .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
 
@@ -114,7 +114,6 @@ public class TimetableService {
     // 시간표 일괄 DB 동기화 (시간표 및 강의 bulk 생성)
 
 
-    // TimetableService 메서드
     private Timetable resolveExactAuthorTimetable(Long timetableId, Long userId) {
         User user = userCRUDService.loadUserById(userId);
         Timetable timetable = timetableRepository.findById(timetableId)
