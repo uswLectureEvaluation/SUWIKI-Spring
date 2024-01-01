@@ -201,8 +201,6 @@ public class TimetableRepositoryTest {
         assertThat(all.get(3).getYear()).isEqualTo(2018);
     }
 
-    // TODO: 연관관계 메서드를 이용한 삭제 구현 고민
-
     /**
      * TimetableCell
      */
@@ -466,7 +464,7 @@ public class TimetableRepositoryTest {
     @DisplayName("TimetableCell 리스트 조회 성공 - 개수 및 순서가 같아야 한다.")
     public void selectAllTimetableCell_success() {
         // when
-        Optional<Timetable> timetable = timetableRepository.findById(dummyTimetable.getId());   // TODO: QueryDSL 버전
+        Optional<Timetable> timetable = timetableRepository.findById(dummyTimetable.getId());
 
         // then
         assertThat(timetable.isPresent()).isTrue();

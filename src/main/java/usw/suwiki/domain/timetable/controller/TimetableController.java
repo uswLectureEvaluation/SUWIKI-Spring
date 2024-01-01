@@ -36,7 +36,7 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
     @PostMapping
     public ApiResponse<SimpleTimetableResponse> createTimetable(
             @RequestHeader String authorization,
-            @Valid @RequestBody CreateTimetableRequest request // TODO: @Valid 및 Global Exception Handler 적용
+            @Valid @RequestBody CreateTimetableRequest request
     ) {
         jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);
@@ -48,7 +48,7 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
     public ApiResponse<SimpleTimetableResponse> updateTimetable(
             @PathVariable Long timetableId,
             @RequestHeader String authorization,
-            @Valid @RequestBody UpdateTimetableRequest request // TODO: @Valid 및 Global Exception Handler 적용
+            @Valid @RequestBody UpdateTimetableRequest request
     ) {
         jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);
@@ -56,7 +56,6 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
         return ApiResponse.success(timetableService.updateTimetable(request, timetableId, userId));
     }
 
-    // 시간표 삭제
     @DeleteMapping("/{timetableId}")
     public ApiResponse<ResultResponse> deleteTimetable(
             @PathVariable Long timetableId,
@@ -68,7 +67,6 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
         return ApiResponse.success(timetableService.deleteTimetable(timetableId, userId));
     }
 
-    // 시간표 리스트 조회
     @GetMapping("/all")
     public ApiResponse<List<SimpleTimetableResponse>> getAllTimetableList(@RequestHeader String authorization) {
         jwtAgent.validateJwt(authorization);
@@ -77,7 +75,6 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
         return ApiResponse.success(timetableService.getAllTimetableList(userId));
     }
 
-    // 시간표 상세 조회
     @GetMapping("/{timetableId}")
     public ApiResponse<TimetableResponse> getTimetable(
             @PathVariable Long timetableId,
@@ -88,7 +85,6 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
         return ApiResponse.success(timetableService.getTimetable(timetableId));
     }
 
-    // 시간표 강의 - 생성
     @PostMapping("/{timetableId}/cells")
     public ApiResponse<TimetableCellResponse> createTimetableCell(
             @PathVariable Long timetableId,
@@ -101,7 +97,6 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
         return ApiResponse.success(timetableService.createTimetableCell(request, timetableId, userId));
     }
 
-    // 시간표 강의 - 수정
     @PutMapping("/cells/{cellId}")
     public ApiResponse<TimetableCellResponse> updateTimetableCell(
             @PathVariable Long cellId,
@@ -114,7 +109,6 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
         return ApiResponse.success(timetableService.updateTimetableCell(request, cellId, userId));
     }
 
-    // 시간표 강의 - 삭제
     @DeleteMapping("/cells/{cellId}")
     public ApiResponse<ResultResponse> deleteTimetableCell(
             @PathVariable Long cellId,

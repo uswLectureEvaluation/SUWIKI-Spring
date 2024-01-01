@@ -67,7 +67,7 @@ public class TimetableService {
                 .toList();
     }
 
-    public TimetableResponse getTimetable(Long timetableId) {   // TODO: 동일 유저 검증 로직 추가
+    public TimetableResponse getTimetable(Long timetableId) {   // TODO: 동일 유저 검증 로직 고민
         Timetable timetable = timetableRepository.findById(timetableId)
                 .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
 
@@ -101,7 +101,6 @@ public class TimetableService {
         return TimetableCellResponse.of(timetableCell);
     }
 
-    // 시간표 셀 삭제
     @Transactional
     public ResultResponse deleteTimetableCell(Long cellId, Long userId) {
         TimetableCell timetableCell = timetableCellRepository.findById(cellId)
