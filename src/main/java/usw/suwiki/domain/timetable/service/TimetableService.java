@@ -52,14 +52,13 @@ public class TimetableService {
     }
 
     @Transactional
-    public ResultResponse deleteTimetable(Long timetableId, Long userId) {
+    public void deleteTimetable(Long timetableId, Long userId) {
         User user = userCRUDService.loadUserById(userId);
         Timetable timetable = timetableRepository.findById(timetableId)
                 .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
         timetable.validateIsAuthor(user);
 
         timetable.dissociateUser(user);
-        return ResultResponse.of(true);
     }
 
     public List<SimpleTimetableResponse> getAllTimetableList(Long userId) {
@@ -105,13 +104,12 @@ public class TimetableService {
     }
 
     @Transactional
-    public ResultResponse deleteTimetableCell(Long cellId, Long userId) {
+    public void deleteTimetableCell(Long cellId, Long userId) {
         TimetableCell timetableCell = timetableCellRepository.findById(cellId)
                 .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_CELL_NOT_FOUND));
         Timetable timetable = resolveExactAuthorTimetable(timetableCell.bringTimetableId(), userId);
 
         timetableCell.dissociateTimetable(timetable);
-        return ResultResponse.of(true);
     }
 
     // 시간표 일괄 DB 동기화 (시간표 및 강의 bulk 생성)

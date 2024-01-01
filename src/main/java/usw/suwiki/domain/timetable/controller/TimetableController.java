@@ -64,7 +64,8 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
         jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);
 
-        return ApiResponse.success(timetableService.deleteTimetable(timetableId, userId));
+        timetableService.deleteTimetable(timetableId, userId);
+        return ApiResponse.success(ResultResponse.complete());
     }
 
     @GetMapping("/all")
@@ -117,7 +118,8 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
         jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);
 
-        return ApiResponse.success(timetableService.deleteTimetableCell(cellId, userId));
+        timetableService.deleteTimetableCell(cellId, userId);
+        return ApiResponse.success(ResultResponse.complete());
     }
 
     // 시간표 일괄 DB 동기화 (시간표 및 강의 bulk 생성)
