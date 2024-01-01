@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
+import usw.suwiki.domain.timetable.dto.request.UpdateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.response.SimpleTimetableResponse;
 import usw.suwiki.domain.timetable.dto.response.TimetableCellResponse;
@@ -101,6 +102,17 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
     }
 
     // 시간표 강의 - 수정
+    @PutMapping("/cells/{cellId}")
+    public ApiResponse<TimetableCellResponse> updateTimetableCell(
+            @PathVariable Long cellId,
+            @RequestHeader String authorization,
+            @Valid @RequestBody UpdateTimetableCellRequest request
+    ) {
+        jwtAgent.validateJwt(authorization);
+        Long userId = jwtAgent.getId(authorization);
+
+        return ApiResponse.success(timetableService.updateTimetableCell(request, cellId, userId));
+    }
 
     // 시간표 강의 - 삭제
 
