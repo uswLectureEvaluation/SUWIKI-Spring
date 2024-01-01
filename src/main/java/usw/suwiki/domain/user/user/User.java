@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
+import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.global.exception.errortype.AccountException;
 
@@ -80,6 +81,11 @@ public class User {
     @Column
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<EvaluatePost> evaluatePostList = new ArrayList<>();
+
+
     public static User makeUser(String loginId, String password, String email) {
         return User.builder()
                 .loginId(loginId)
@@ -94,6 +100,9 @@ public class User {
                 .build();
     }
 
+    /**
+     * User Status
+     */
     public void editRestricted(boolean restricted) {
         this.restricted = restricted;
     }
@@ -124,44 +133,17 @@ public class User {
         this.email = email;
     }
 
-    public void updateWritingEvaluatePost() {
-        final int WRITE_EVALUATE_POST = 10;
-        this.point += WRITE_EVALUATE_POST;
-        this.writtenEvaluation += 1;
+    public void activateUser() {
+        this.restricted = false;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        this.role = Role.USER;
     }
 
-    public void increasePointByWritingExamPost() {
-        this.point += 20;
-        this.writtenExam += 1;
-    }
 
-    public void purchaseExamPost() {
-        final int examPostRequiringPoint = 20;
-        if (this.point < examPostRequiringPoint) {
-            throw new AccountException(USER_POINT_LACK);
-        }
-        this.point -= examPostRequiringPoint;
-        this.viewExamCount += 1;
-    }
-
-    public void decreasePointAndWrittenEvaluationByDeleteEvaluatePosts() {
-        final int deletePostRequiringPoint = 30;
-        if (this.point < deletePostRequiringPoint) {
-            throw new AccountException(USER_POINT_LACK);
-        }
-        this.point -= deletePostRequiringPoint;
-        this.writtenEvaluation -= 1;
-    }
-
-    public void decreasePointAndWrittenExamByDeleteExamPosts() {
-        final int deletePostRequiringPoint = 30;
-        if (this.point < deletePostRequiringPoint) {
-            throw new AccountException(USER_POINT_LACK);
-        }
-        this.point -= deletePostRequiringPoint;
-        this.writtenExam -= 1;
-    }
-
+    /**
+     * Auth
+     */
     public void updatePassword(BCryptPasswordEncoder bCryptPasswordEncoder, String newPassword) {
         this.password = bCryptPasswordEncoder.encode(newPassword);
     }
@@ -178,13 +160,6 @@ public class User {
         return bCryptPasswordEncoder.matches(inputPassword, this.password);
     }
 
-    public void activateUser() {
-        this.restricted = false;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-        this.role = Role.USER;
-    }
-
     public boolean isUserEmailAuthed(Optional<ConfirmationToken> confirmationToken) {
         if (confirmationToken.isPresent()) {
             if (confirmationToken.get().isVerified()) {
@@ -199,6 +174,63 @@ public class User {
         this.lastLogin = LocalDateTime.now();
     }
 
+
+    /**
+     * EvaluatePost
+     */
+
+    public void addEvaluatePost(EvaluatePost evaluatePost) {
+        this.evaluatePostList.add(evaluatePost);
+    }
+
+    public void removeEvaluatePost(EvaluatePost evaluatePost) {
+        this.evaluatePostList.remove(evaluatePost);
+    }
+
+    public void updateWritingEvaluatePost() {
+        final int WRITE_EVALUATE_POST = 10;
+        this.point += WRITE_EVALUATE_POST;
+        this.writtenEvaluation += 1;
+    }
+
+    public void decreasePointAndWrittenEvaluationByDeleteEvaluatePosts() {
+        final int deletePostRequiringPoint = 30;
+        if (this.point < deletePostRequiringPoint) {
+            throw new AccountException(USER_POINT_LACK);
+        }
+        this.point -= deletePostRequiringPoint;
+        this.writtenEvaluation -= 1;
+    }
+
+    /**
+     * ExamPost
+     */
+    public void increasePointByWritingExamPost() {
+        this.point += 20;
+        this.writtenExam += 1;
+    }
+
+    public void purchaseExamPost() {
+        final int examPostRequiringPoint = 20;
+        if (this.point < examPostRequiringPoint) {
+            throw new AccountException(USER_POINT_LACK);
+        }
+        this.point -= examPostRequiringPoint;
+        this.viewExamCount += 1;
+    }
+
+    public void decreasePointAndWrittenExamByDeleteExamPosts() {
+        final int deletePostRequiringPoint = 30;
+        if (this.point < deletePostRequiringPoint) {
+            throw new AccountException(USER_POINT_LACK);
+        }
+        this.point -= deletePostRequiringPoint;
+        this.writtenExam -= 1;
+    }
+
+    /**
+     * Report
+     */
     public void increaseRestrictedCountByReportedPost() {
         this.restrictedCount += 1;
     }
@@ -207,7 +239,9 @@ public class User {
         this.point += 1;
     }
 
-    // 시간표 연관관계 메서드
+    /**
+     * Timetable
+     */
     public void addTimetable(Timetable timetable) {
         this.timetableList.add(timetable);
     }
