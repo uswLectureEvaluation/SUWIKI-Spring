@@ -79,7 +79,19 @@ public class TimetableCell extends BaseTimeEntity {
         timetable.addCell(this);
     }
 
-    // 비즈니스 메서드
+    public Long bringTimetableId() {
+        return this.timetable.getId();
+    }
 
+    // 비즈니스 메서드
+    public void update(
+            String lectureName, String professorName, TimetableCellColor color,
+            TimetableCellSchedule schedule
+    ) {
+        this.lectureName = lectureName;
+        this.professorName = professorName;
+        this.color = color;
+        this.schedule = schedule;
+    }
 
 }

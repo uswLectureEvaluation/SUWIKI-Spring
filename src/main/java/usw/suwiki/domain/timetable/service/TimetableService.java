@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
+import usw.suwiki.domain.timetable.dto.request.UpdateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.response.SimpleTimetableResponse;
 import usw.suwiki.domain.timetable.dto.response.TimetableCellResponse;
@@ -14,6 +15,8 @@ import usw.suwiki.domain.timetable.dto.response.TimetableResponse;
 import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.timetable.entity.TimetableCell;
+import usw.suwiki.domain.timetable.entity.TimetableCellColor;
+import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
 import usw.suwiki.domain.timetable.repository.TimetableCellRepository;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.user.user.User;
@@ -32,7 +35,6 @@ public class TimetableService {
     private final TimetableCellRepository timetableCellRepository;
     private final UserCRUDService userCRUDService;
 
-    // 시간표 생성
     @Transactional
     public SimpleTimetableResponse createTimetable(CreateTimetableRequest request, Long userId) {
         User user = userCRUDService.loadUserById(userId);
@@ -41,7 +43,6 @@ public class TimetableService {
         return SimpleTimetableResponse.of(timetable);
     }
 
-    // 시간표 수정
     @Transactional
     public SimpleTimetableResponse updateTimetable(UpdateTimetableRequest request, Long timetableId, Long userId) {
         Timetable timetable = resolveExactAuthorTimetable(timetableId, userId);
@@ -50,7 +51,6 @@ public class TimetableService {
         return SimpleTimetableResponse.of(timetable);
     }
 
-    // 시간표 삭제
     @Transactional
     public ResultResponse deleteTimetable(Long timetableId, Long userId) {
         Timetable timetable = resolveExactAuthorTimetable(timetableId, userId);
@@ -59,7 +59,6 @@ public class TimetableService {
         return ResultResponse.of(true);
     }
 
-    // 시간표 리스트 조회
     public List<SimpleTimetableResponse> getAllTimetableList(Long userId) {
         List<Timetable> timetableList = timetableRepository.findAllByUserId(userId);
 
@@ -68,7 +67,6 @@ public class TimetableService {
                 .toList();
     }
 
-    // 시간표 상세 조회
     public TimetableResponse getTimetable(Long timetableId) {   // TODO: 동일 유저 검증 로직 추가
         Timetable timetable = timetableRepository.findById(timetableId)
                 .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
@@ -76,9 +74,9 @@ public class TimetableService {
         return TimetableResponse.of(timetable);
     }
 
-    // 시간표 셀 생성
     @Transactional
-    public TimetableCellResponse createTimetableCell(CreateTimetableCellRequest request, Long timetableId, Long userId) {
+    public TimetableCellResponse createTimetableCell(CreateTimetableCellRequest request, Long timetableId,
+                                                     Long userId) {
         Timetable timetable = resolveExactAuthorTimetable(timetableId, userId);
         timetable.validateCellScheduleOverlap(request.extractTimetableCellSchedule());
 
@@ -86,6 +84,29 @@ public class TimetableService {
         return TimetableCellResponse.of(timetableCell);
     }
 
+    @Transactional
+    public TimetableCellResponse updateTimetableCell(UpdateTimetableCellRequest request, Long cellId, Long userId) {
+        TimetableCell timetableCell = timetableCellRepository.findById(cellId)
+                .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_CELL_NOT_FOUND));
+        Timetable timetable = resolveExactAuthorTimetable(timetableCell.bringTimetableId(), userId);
+        TimetableCellSchedule cellSchedule = request.extractTimetableCellSchedule();
+        timetable.validateCellScheduleOverlapExceptOneCell(cellSchedule, timetableCell);
+
+        timetableCell.update(
+                request.getLectureName(),
+                request.getProfessorName(),
+                TimetableCellColor.ofString(request.getColor()),
+                cellSchedule
+        );
+        return TimetableCellResponse.of(timetableCell);
+    }
+
+    // 시간표 셀 삭제
+
+    // 시간표 일괄 DB 동기화 (시간표 및 강의 bulk 생성)
+
+
+    // private methods
     private Timetable resolveExactAuthorTimetable(Long timetableId, Long userId) {
         User user = userCRUDService.loadUserById(userId);
         Timetable timetable = timetableRepository.findById(timetableId)
@@ -94,9 +115,4 @@ public class TimetableService {
         return timetable;
     }
 
-    // 시간표 셀 수정
-
-    // 시간표 셀 삭제
-
-    // 시간표 일괄 DB 동기화 (시간표 및 강의 bulk 생성)
 }
