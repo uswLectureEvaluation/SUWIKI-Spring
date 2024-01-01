@@ -115,6 +115,16 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
     }
 
     // 시간표 강의 - 삭제
+    @DeleteMapping("/cells/{cellId}")
+    public ApiResponse<ResultResponse> deleteTimetableCell(
+            @PathVariable Long cellId,
+            @RequestHeader String authorization
+    ) {
+        jwtAgent.validateJwt(authorization);
+        Long userId = jwtAgent.getId(authorization);
+
+        return ApiResponse.success(timetableService.deleteTimetableCell(cellId, userId));
+    }
 
     // 시간표 일괄 DB 동기화 (시간표 및 강의 bulk 생성)
 }
