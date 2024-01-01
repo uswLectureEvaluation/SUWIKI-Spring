@@ -53,9 +53,12 @@ public class TimetableService {
 
     @Transactional
     public ResultResponse deleteTimetable(Long timetableId, Long userId) {
-        Timetable timetable = resolveExactAuthorTimetable(timetableId, userId);
+        User user = userCRUDService.loadUserById(userId);
+        Timetable timetable = timetableRepository.findById(timetableId)
+                .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
+        timetable.validateIsAuthor(user);
 
-        timetableRepository.delete(timetable);
+        timetable.dissociateUser(user);
         return ResultResponse.of(true);
     }
 
@@ -108,7 +111,6 @@ public class TimetableService {
         Timetable timetable = resolveExactAuthorTimetable(timetableCell.bringTimetableId(), userId);
 
         timetableCell.dissociateTimetable(timetable);
-
         return ResultResponse.of(true);
     }
 

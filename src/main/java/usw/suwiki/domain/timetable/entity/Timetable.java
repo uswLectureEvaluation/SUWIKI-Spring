@@ -73,6 +73,11 @@ public class Timetable extends BaseTimeEntity {
         user.addTimetable(this);
     }
 
+    public void dissociateUser(User user) {
+        this.user = null;
+        user.removeTimetable(this);
+    }
+
     public void addCell(TimetableCell cell) {
         this.cellList.add(cell);
     }
