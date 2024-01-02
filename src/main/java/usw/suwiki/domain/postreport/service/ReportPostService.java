@@ -46,7 +46,6 @@ public class ReportPostService {
         evaluateReportRepository.deleteByReportingUserIdx(userId);
     }
 
-
     public void deleteByEvaluateIdx(Long evaluateIdx) {
         evaluateReportRepository.deleteByEvaluateIdx(evaluateIdx);
     }

@@ -2,6 +2,7 @@ package usw.suwiki.domain.evaluatepost.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.domain.repository.EvaluatePostRepository;
 import usw.suwiki.domain.lecture.domain.Lecture;
@@ -17,6 +18,7 @@ import static usw.suwiki.global.exception.ExceptionType.EVALUATE_POST_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class EvaluatePostCRUDService {
 
     private static final int LIMIT_PAGE_SIZE = 10;

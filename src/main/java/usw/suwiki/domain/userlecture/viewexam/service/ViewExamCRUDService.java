@@ -3,6 +3,7 @@ package usw.suwiki.domain.userlecture.viewexam.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.userlecture.viewexam.repository.ViewExamRepository;
 import usw.suwiki.domain.userlecture.viewexam.ViewExam;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ViewExamCRUDService {
 
     private final ViewExamRepository viewExamRepository;
