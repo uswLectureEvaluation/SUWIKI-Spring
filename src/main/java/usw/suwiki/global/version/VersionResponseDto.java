@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class VersionResponseDto {
 
-    private float version;
+    private final float version;
 
     public VersionResponseDto(float version) {
         this.version = version;
