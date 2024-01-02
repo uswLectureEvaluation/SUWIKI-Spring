@@ -6,7 +6,7 @@ import usw.suwiki.global.exception.ExceptionType;
 public class BaseException extends RuntimeException {
 
     @Getter
-    private ExceptionType exceptionType;
+    private final ExceptionType exceptionType;
 
     public BaseException(ExceptionType exceptionType) {
         super(exceptionType.getMessage());
