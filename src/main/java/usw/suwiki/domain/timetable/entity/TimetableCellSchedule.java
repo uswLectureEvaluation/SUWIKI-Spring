@@ -39,7 +39,7 @@ public class TimetableCellSchedule {
     // 셀끼리 요일이 같은 상태에서 교시가 하나라도 겹치는지 여부
     public boolean isOverlapped(TimetableCellSchedule otherSchedule) {
         return this.day.equals(otherSchedule.day) &&
-                IntStream.rangeClosed(this.startPeriod, this.endPeriod)
-                        .anyMatch(period -> period == otherSchedule.startPeriod || period == otherSchedule.endPeriod);
+                Math.max(this.startPeriod, otherSchedule.startPeriod)
+                        <= Math.min(this.endPeriod, otherSchedule.getEndPeriod());
     }
 }
