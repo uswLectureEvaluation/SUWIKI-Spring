@@ -191,14 +191,17 @@ public class UserController {
     }
 
     // 회원 탈퇴
-    @ResponseStatus
+    @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("quit")
     public Map<String, Boolean> userQuit(
             @Valid @RequestBody UserQuitForm userQuitForm,
             @Valid @RequestHeader String Authorization
     ) {
-        return userBusinessService.executeQuit(Authorization, userQuitForm.password());
+        return userBusinessService.executeQuit(
+                Authorization,
+                userQuitForm.password()
+        );
     }
 
     // 강의평가 신고
