@@ -111,8 +111,8 @@ public enum ExceptionType {
     INVALID_TIMETABLE_CELL_COLOR("TIMETABLE110", "유효하지 않은 셀 색상입니다.", BAD_REQUEST),
     INVALID_TIMETABLE_CELL_DAY("TIMETABLE111", "유효하지 않은 요일입니다.", BAD_REQUEST),
 
+    INVALID_TIMETABLE_CELL_SCHEDULE("TIMETABLE210", "유효하지 않은 셀 스케줄입니다.", BAD_REQUEST),
     OVERLAPPED_TIMETABLE_CELL_SCHEDULE("TIMETABLE211", "시간표에 중복되는 요일-교시입니다.", CONFLICT),
-
     /**
      * 공통
      */
