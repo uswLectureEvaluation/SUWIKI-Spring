@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
+import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.global.exception.errortype.AccountException;
 
 import javax.persistence.*;
@@ -67,6 +68,10 @@ public class User {
 
     @Column
     private LocalDateTime requestedQuitDate;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Timetable> timetableList = new ArrayList<>();
 
     @CreatedDate
     @Column
@@ -233,4 +238,16 @@ public class User {
     public void increasePointByReporting() {
         this.point += 1;
     }
+
+    /**
+     * Timetable
+     */
+    public void addTimetable(Timetable timetable) {
+        this.timetableList.add(timetable);
+    }
+
+    public void removeTimetable(Timetable timetable) {
+        this.timetableList.remove(timetable);
+    }
+
 }
