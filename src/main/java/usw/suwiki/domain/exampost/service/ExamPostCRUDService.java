@@ -2,13 +2,15 @@ package usw.suwiki.domain.exampost.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.exampost.domain.ExamPost;
 import usw.suwiki.domain.exampost.domain.repository.ExamPostRepository;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.user.User;
-import usw.suwiki.domain.user.user.service.UserCRUDService;
+import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.exception.ExceptionType;
+import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.exception.errortype.ExamPostException;
 
 import java.util.List;
@@ -16,15 +18,16 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ExamPostCRUDService {
 
     private static final int LIMIT_PAGE_SIZE = 10;
 
     private final ExamPostRepository examPostRepository;
-    private final UserCRUDService userCRUDService;
+    private final UserRepository userRepository;
 
-    public void save(ExamPost examPost) {
-        examPostRepository.save(examPost);
+    public List<ExamPost> loadExamPostListFromUserIdx(Long userIdx) {
+        return examPostRepository.findAllByUser(userRepository.findById(userIdx).get());
     }
 
     public ExamPost loadExamPostFromExamPostIdx(Long examIdx) {
@@ -33,6 +36,10 @@ public class ExamPostCRUDService {
             return examPost.get();
         }
         throw new ExamPostException(ExceptionType.EXAM_POST_NOT_FOUND);
+    }
+
+    public void save(ExamPost examPost) {
+        examPostRepository.save(examPost);
     }
 
     public void deleteFromUserIdx(Long userIdx) {
@@ -57,10 +64,6 @@ public class ExamPostCRUDService {
 
     public boolean isWrite(User user, Lecture lecture) {
         return examPostRepository.findByUserAndLecture(user, lecture).isPresent();
-    }
-
-    public List<ExamPost> loadExamPostListFromUserIdx(Long userIdx) {
-        return examPostRepository.findAllByUser(userCRUDService.loadUserFromUserIdx(userIdx));
     }
 
     public void delete(ExamPost examPost) {
