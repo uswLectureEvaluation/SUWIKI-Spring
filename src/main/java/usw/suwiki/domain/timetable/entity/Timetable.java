@@ -55,7 +55,7 @@ public class Timetable extends BaseTimeEntity {
     private Semester semester;
 
     @OneToMany(mappedBy = "timetable", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TimetableCell> cellList = new ArrayList<>();
+    private final List<TimetableCell> cellList = new ArrayList<>();
 
     @Builder
     public Timetable(String name, Integer year, Semester semester) {

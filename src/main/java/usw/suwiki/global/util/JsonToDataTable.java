@@ -76,7 +76,7 @@ public class JsonToDataTable {
                         .evaluateType((String) jsonObject.get("cretEvalNm"))
                         .lectureCode((String) jsonObject.get("subjtCd"))
                         .selectedSemester(jsonObject.get("subjtEstbYear") + "-" + String.valueOf(
-                                jsonObject.get("subjtEstbSmrCd")).substring(0, 1))
+                                jsonObject.get("subjtEstbSmrCd")).charAt(0))
                         .grade(Integer.parseInt(jsonObject.get("trgtGrdeCd").toString()))
                         .lectureType((String) jsonObject.get("facDvnm"))
                         .placeSchedule(String.valueOf(jsonObject.get("timtSmryCn")))

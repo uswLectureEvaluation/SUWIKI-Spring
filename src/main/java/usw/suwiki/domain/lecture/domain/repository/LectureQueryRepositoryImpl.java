@@ -100,7 +100,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
                         createPostCountOption(),
                         orderSpecifier
                 )
-                .offset((page - 1) * DEFAULT_LIMIT)
+                .offset((long) (page - 1) * DEFAULT_LIMIT)
                 .limit(DEFAULT_LIMIT)
                 .fetchResults();
 
@@ -129,7 +129,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
                         createPostCountOption(),
                         orderSpecifier
                 )
-                .offset((page - 1) * DEFAULT_LIMIT)
+                .offset((long) (page - 1) * DEFAULT_LIMIT)
                 .limit(DEFAULT_LIMIT)
                 .fetchResults();
 
@@ -159,7 +159,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
                         createPostCountOption(),
                         orderSpecifier
                 )
-                .offset((page - 1) * DEFAULT_LIMIT)
+                .offset((long) (page - 1) * DEFAULT_LIMIT)
                 .limit(DEFAULT_LIMIT)
                 .fetchResults();
 

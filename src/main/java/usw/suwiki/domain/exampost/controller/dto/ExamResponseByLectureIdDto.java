@@ -6,14 +6,14 @@ import usw.suwiki.domain.exampost.domain.ExamPost;
 @Getter
 public class ExamResponseByLectureIdDto {
 
-    private Long id;
-    private String selectedSemester;
+    private final Long id;
+    private final String selectedSemester;
 
-    private String examType;
-    private String examInfo;    //시험방식
-    private String examDifficulty;    //난이도
+    private final String examType;
+    private final String examInfo;    //시험방식
+    private final String examDifficulty;    //난이도
 
-    private String content;    //주관적인 강의평가 입력내용
+    private final String content;    //주관적인 강의평가 입력내용
 
     public ExamResponseByLectureIdDto(ExamPost entity) {
         this.id = entity.getId();
