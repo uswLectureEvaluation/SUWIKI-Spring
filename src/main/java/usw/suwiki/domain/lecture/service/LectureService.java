@@ -1,26 +1,24 @@
 package usw.suwiki.domain.lecture.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
-import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
-import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
 import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
-import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
-
-import java.util.ArrayList;
-import java.util.List;
+import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
+import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LectureService {
 
     private final LectureCRUDService lectureCRUDService;
 
-    @Transactional(readOnly = true)
     public LectureAndCountResponseForm readLectureByKeyword(String keyword, LectureFindOption option) {
         if (option.passMajorFiltering()) {
             return readLectureByKeywordAndOption(keyword, option);
@@ -28,7 +26,6 @@ public class LectureService {
         return readLectureByKeywordAndMajor(keyword, option);
     }
 
-    @Transactional(readOnly = true)
     public LectureAndCountResponseForm readAllLecture(LectureFindOption option) {
         if (option.passMajorFiltering()) {
             return readAllLectureByOption(option);
@@ -36,11 +33,14 @@ public class LectureService {
         return readAllLectureByMajorType(option);
     }
 
-    @Transactional(readOnly = true)
     public LectureDetailResponseDto readLectureDetail(Long id) {
         Lecture lecture = lectureCRUDService.loadLectureFromId(id);
         return new LectureDetailResponseDto(lecture);
     }
+
+    // 강의 검색 - 시간표 생성시 조회
+
+
 
     private LectureAndCountResponseForm readLectureByKeywordAndOption(String keyword, LectureFindOption option) {
         LecturesAndCountDao lectureInfo = lectureCRUDService.loadLectureByKeywordAndOption(keyword, option);
