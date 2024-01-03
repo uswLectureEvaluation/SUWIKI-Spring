@@ -6,17 +6,17 @@ import usw.suwiki.domain.exampost.domain.ExamPost;
 @Getter
 public class ExamResponseByUserIdxDto {
 
-    private Long id;
-    private String lectureName;
-    private String professor;
-    private String majorType;
-    private String selectedSemester;
+    private final Long id;
+    private final String lectureName;
+    private final String professor;
+    private final String majorType;
+    private final String selectedSemester;
     private String semesterList;
-    private String examType;
-    private String examInfo;
-    private String examDifficulty;    //난이도
+    private final String examType;
+    private final String examInfo;
+    private final String examDifficulty;    //난이도
 
-    private String content;    //주관적인 강의평가 입력내용
+    private final String content;    //주관적인 강의평가 입력내용
 
     public void setSemesterList(String semesterList) {
         this.semesterList = semesterList;

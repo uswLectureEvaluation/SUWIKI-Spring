@@ -1,23 +1,19 @@
 package usw.suwiki.domain.lecture.domain.repository;
 
+import static usw.suwiki.domain.lecture.domain.QLecture.lecture;
+
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
-import usw.suwiki.domain.lecture.domain.QLecture;
+import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
-
-import javax.persistence.EntityManager;
-
-import java.util.List;
-
-import static usw.suwiki.domain.lecture.domain.QLecture.lecture;
 
 @RequiredArgsConstructor
 public class LectureQueryRepositoryImpl implements LectureQueryRepository {
@@ -100,7 +96,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
                         createPostCountOption(),
                         orderSpecifier
                 )
-                .offset((page - 1) * DEFAULT_LIMIT)
+                .offset((long) (page - 1) * DEFAULT_LIMIT)
                 .limit(DEFAULT_LIMIT)
                 .fetchResults();
 
@@ -129,7 +125,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
                         createPostCountOption(),
                         orderSpecifier
                 )
-                .offset((page - 1) * DEFAULT_LIMIT)
+                .offset((long) (page - 1) * DEFAULT_LIMIT)
                 .limit(DEFAULT_LIMIT)
                 .fetchResults();
 
@@ -159,7 +155,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
                         createPostCountOption(),
                         orderSpecifier
                 )
-                .offset((page - 1) * DEFAULT_LIMIT)
+                .offset((long) (page - 1) * DEFAULT_LIMIT)
                 .limit(DEFAULT_LIMIT)
                 .fetchResults();
 
