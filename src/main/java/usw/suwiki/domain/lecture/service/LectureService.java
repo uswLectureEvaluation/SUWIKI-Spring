@@ -1,5 +1,7 @@
 package usw.suwiki.domain.lecture.service;
 
+import static usw.suwiki.global.exception.ExceptionType.LECTURE_NOT_FOUND;
+
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +12,9 @@ import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
 import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
+import usw.suwiki.global.exception.errortype.LectureException;
 
 @Service
 @Transactional(readOnly = true)
@@ -18,6 +22,7 @@ import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 public class LectureService {
 
     private final LectureCRUDService lectureCRUDService;
+    private final LectureRepository lectureRepository;
 
     public LectureAndCountResponseForm readLectureByKeyword(String keyword, LectureFindOption option) {
         if (option.passMajorFiltering()) {
@@ -34,12 +39,19 @@ public class LectureService {
     }
 
     public LectureDetailResponseDto readLectureDetail(Long id) {
-        Lecture lecture = lectureCRUDService.loadLectureFromId(id);
+        Lecture lecture = findLectureById(id);
         return new LectureDetailResponseDto(lecture);
     }
 
     // 강의 검색 - 시간표 생성시 조회
 
+    /**
+     * 공통 메서드
+     */
+    public Lecture findLectureById(Long id) {
+        return lectureRepository.findById(id)
+                .orElseThrow(() -> new LectureException(LECTURE_NOT_FOUND));
+    }
 
 
     private LectureAndCountResponseForm readLectureByKeywordAndOption(String keyword, LectureFindOption option) {
