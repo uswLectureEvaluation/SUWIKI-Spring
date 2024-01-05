@@ -26,6 +26,20 @@ public enum TimetableDay implements KeyValueEnumModel<String> {
                 .orElseThrow(() -> new TimetableException(ExceptionType.INVALID_TIMETABLE_CELL_DAY));
     }
 
+    public static TimetableDay ofKorean(String param) {
+        return switch (param) {
+            case "월" -> MON;
+            case "화" -> TUE;
+            case "수" -> WED;
+            case "목" -> THU;
+            case "금" -> FRI;
+            case "토" -> SAT;
+            case "일" -> SUN;
+
+            default -> throw new TimetableException(ExceptionType.INVALID_TIMETABLE_CELL_DAY);
+        };
+    }
+
     @Override
     public String getKey() {
         return this.name();
