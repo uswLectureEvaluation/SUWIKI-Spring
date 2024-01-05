@@ -8,8 +8,14 @@ import usw.suwiki.global.util.enums.KeyValueEnumModel;
 
 @RequiredArgsConstructor
 public enum TimetableDay implements KeyValueEnumModel<String> {
-    MON("MON"), TUE("TUE"), WED("WED"), THU("THU"), FRI("FRI"), SAT("SAT"), E_LEARNING("E_LEARNING")
-    ;
+    MON("MON"),
+    TUE("TUE"),
+    WED("WED"),
+    THU("THU"),
+    FRI("FRI"),
+    SAT("SAT"),
+    SUN("SUN"),
+    E_LEARNING("E_LEARNING");
 
     private final String value;
 
