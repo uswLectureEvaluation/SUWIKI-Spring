@@ -8,7 +8,7 @@ import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 
 
 public interface LectureCustomRepository {
-    Slice<Lecture> findCurrentSemesterLecturesPage(
+    Slice<Lecture> findCurrentSemesterLectures(
             final Long cursorId,
             final int limit,
             final String keyword,

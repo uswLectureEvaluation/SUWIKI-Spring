@@ -111,7 +111,7 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 ë³
             ));
         }
 
-        Slice<Lecture> result = lectureRepository.findCurrentSemesterLecturesPage(
+        Slice<Lecture> result = lectureRepository.findCurrentSemesterLectures(
                 0L,
                 20,
                 null, null, null
@@ -176,28 +176,28 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 ë³
 
         // TODO fix: Slice 0 containing UNKNOWN instances
         // when
-        Slice<Lecture> currentSemester = lectureRepository.findCurrentSemesterLecturesPage(
+        Slice<Lecture> currentSemester = lectureRepository.findCurrentSemesterLectures(
                 cursorId,
                 limit,
                 null,
                 null,
                 null
         );
-        Slice<Lecture> keywordResult = lectureRepository.findCurrentSemesterLecturesPage(
+        Slice<Lecture> keywordResult = lectureRepository.findCurrentSemesterLectures(
                 cursorId,
                 limit,
                 keyword,
                 null,
                 null
         );
-        Slice<Lecture> majorResult = lectureRepository.findCurrentSemesterLecturesPage(
+        Slice<Lecture> majorResult = lectureRepository.findCurrentSemesterLectures(
                 cursorId,
                 limit,
                 null,
                 majorType,
                 null
         );
-        Slice<Lecture> majorGradeResult = lectureRepository.findCurrentSemesterLecturesPage(
+        Slice<Lecture> majorGradeResult = lectureRepository.findCurrentSemesterLectures(
                 cursorId,
                 limit,
                 null,

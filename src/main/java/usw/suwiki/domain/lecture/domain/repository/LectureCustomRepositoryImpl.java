@@ -32,7 +32,7 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
     private String currentSemester; // TODO 고민: Lecture - currently_opened 혹은 last_opened_semester 컬럼 추가 -> 데이터 파싱 로직 및 WHERE절 변경해야 함.
 
     @Override
-    public Slice<Lecture> findCurrentSemesterLecturesPage(
+    public Slice<Lecture> findCurrentSemesterLectures(
             final Long cursorId,
             final int limit,
             final String keyword,
