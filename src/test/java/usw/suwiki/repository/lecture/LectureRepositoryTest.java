@@ -50,7 +50,7 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
     }
 
     @Test
-    @DisplayName("Lecture 단일 조회 성공")
+    @DisplayName("강의 단일 조회")
     public void selectLecture_success() {
         // given
         Long id = dummyLecture.getId();
@@ -67,7 +67,7 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
     }
 
     @Test
-    @DisplayName("Lecture 단일 조회 성공 - 비관적 락 조회")
+    @DisplayName("강의 단일 조회 - 비관적 락")
     public void selectLecture_success_with_pessimistic_lock() {
         // given
         Long id = dummyLecture.getId();
