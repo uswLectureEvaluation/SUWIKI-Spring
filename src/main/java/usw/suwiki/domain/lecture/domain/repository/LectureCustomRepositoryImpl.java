@@ -21,7 +21,7 @@ import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 import usw.suwiki.global.util.query.SlicePaginationUtils;
 
 @RequiredArgsConstructor
-public class LectureQueryRepositoryImpl implements LectureQueryRepository { // TODO style: Repository명 변경
+public class LectureCustomRepositoryImpl implements LectureCustomRepository { // TODO style: Repository명 변경
 
     private final JPAQueryFactory queryFactory;
     private final String DEFAULT_ORDER = "modifiedDate";
