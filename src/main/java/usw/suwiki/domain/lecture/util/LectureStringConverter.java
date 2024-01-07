@@ -8,18 +8,20 @@ import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
 import usw.suwiki.domain.timetable.entity.TimetableDay;
 
 public final class LectureStringConverter {
+    // TODO refactor: TimetableCellSchedule 의존성 제거. 해당 클래스는 스트링 변환 작업만 책임지도록
     /**
-     * @param ScheduleChunk 강의의 장소 및 강의 시간 원본 (lecture.place_schedule)
+     * @param scheduleChunk 강의의 장소 및 강의 시간 원본 (lecture.place_schedule)
      * @implNote place_schedule을 TimetableCellSchedule 객체 리스트로 변환
      */
-    public static List<TimetableCellSchedule> convertScheduleChunkIntoTimetableCellScheduleList(String ScheduleChunk) {
+    public static List<TimetableCellSchedule> convertScheduleChunkIntoTimetableCellScheduleList(String scheduleChunk) {
         List<TimetableCellSchedule> scheduleList = new ArrayList<>();
 
-        if (Objects.equals(ScheduleChunk, "null")) {  // TODO refactor: "null" -> null. 데이터 파싱 로직 변경 필요
+        // TODO refactor: "null" -> null. 데이터 파싱 로직 변경 필요
+        if (Objects.equals(scheduleChunk, "null") || Objects.isNull(scheduleChunk)) {
             return scheduleList;
         }
 
-        List<String> locationAndDaysChunkList = splitScheduleChunkIntoLocationAndDaysChunkList(ScheduleChunk);
+        List<String> locationAndDaysChunkList = splitScheduleChunkIntoLocationAndDaysChunkList(scheduleChunk);
 
         for (String locationAndDaysChunk : locationAndDaysChunkList) {
             String location = extractLocationFromLocationAndDaysChunk(locationAndDaysChunk);
