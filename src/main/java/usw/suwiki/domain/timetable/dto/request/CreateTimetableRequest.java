@@ -33,7 +33,7 @@ public class CreateTimetableRequest {
     private String name;
 
     public Timetable toEntity(User user) {
-        Semester semester = Semester.ofString(this.semester);
+        Semester semester = Semester.of(this.semester);
         Timetable timetable = Timetable.builder()
                 .year(year)
                 .semester(semester)

@@ -46,7 +46,7 @@ public class TimetableService {
     public SimpleTimetableResponse updateTimetable(UpdateTimetableRequest request, Long timetableId, Long userId) {
         Timetable timetable = resolveExactAuthorTimetable(timetableId, userId);
 
-        timetable.update(request.getName(), request.getYear(), Semester.ofString(request.getSemester()));
+        timetable.update(request.getName(), request.getYear(), Semester.of(request.getSemester()));
         return SimpleTimetableResponse.of(timetable);
     }
 

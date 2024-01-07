@@ -17,7 +17,7 @@ public enum Semester implements KeyValueEnumModel<String> {
 
     private final String value;
 
-    public static Semester ofString(String param) {
+    public static Semester of(String param) {
         return Arrays.stream(Semester.values())
                 .filter(v -> v.getValue().equals(param.toUpperCase()))
                 .findFirst()
