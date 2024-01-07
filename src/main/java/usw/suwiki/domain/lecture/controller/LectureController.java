@@ -1,21 +1,29 @@
 package usw.suwiki.domain.lecture.controller;
 
+import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
 import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
+import usw.suwiki.domain.lecture.controller.dto.LectureWithScheduleResponse;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.annotation.CacheStatics;
+import usw.suwiki.global.dto.ApiResponse;
+import usw.suwiki.global.dto.NoOffsetPaginationResponse;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
 import usw.suwiki.global.util.CacheStaticsLogger;
-
-import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
 
 
 @RestController
@@ -41,6 +49,20 @@ public class LectureController {
                 searchValue, findOption);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/current/cells/search")
+    public ResponseEntity<ApiResponse<NoOffsetPaginationResponse<LectureWithScheduleResponse>>> searchLectureCells(
+            @RequestParam(required = false) Long cursorId,
+            @RequestParam(required = false, defaultValue = "20") Integer size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String major,
+            @RequestParam(required = false) Integer grade
+    ) {
+        NoOffsetPaginationResponse<LectureWithScheduleResponse> response =
+                lectureService.findPagedLecturesWithSchedule(cursorId, size, keyword, major, grade);
+
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @Cacheable(cacheNames = "lecture")

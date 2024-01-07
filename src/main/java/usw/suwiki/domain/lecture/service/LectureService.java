@@ -1,26 +1,35 @@
 package usw.suwiki.domain.lecture.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
-import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
-import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
-import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
-import usw.suwiki.domain.lecture.domain.Lecture;
-import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
+import static usw.suwiki.global.exception.ExceptionType.LECTURE_NOT_FOUND;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
+import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
+import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
+import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
+import usw.suwiki.domain.lecture.controller.dto.LectureWithScheduleResponse;
+import usw.suwiki.domain.lecture.controller.dto.OriginalLectureCellResponse;
+import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
+import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
+import usw.suwiki.domain.lecture.util.LectureStringConverter;
+import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
+import usw.suwiki.global.dto.NoOffsetPaginationResponse;
+import usw.suwiki.global.exception.errortype.LectureException;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LectureService {
 
     private final LectureCRUDService lectureCRUDService;
+    private final LectureRepository lectureRepository;
 
-    @Transactional(readOnly = true)
     public LectureAndCountResponseForm readLectureByKeyword(String keyword, LectureFindOption option) {
         if (option.passMajorFiltering()) {
             return readLectureByKeywordAndOption(keyword, option);
@@ -28,7 +37,6 @@ public class LectureService {
         return readLectureByKeywordAndMajor(keyword, option);
     }
 
-    @Transactional(readOnly = true)
     public LectureAndCountResponseForm readAllLecture(LectureFindOption option) {
         if (option.passMajorFiltering()) {
             return readAllLectureByOption(option);
@@ -36,11 +44,47 @@ public class LectureService {
         return readAllLectureByMajorType(option);
     }
 
-    @Transactional(readOnly = true)
     public LectureDetailResponseDto readLectureDetail(Long id) {
-        Lecture lecture = lectureCRUDService.loadLectureFromId(id);
+        Lecture lecture = findLectureById(id);
         return new LectureDetailResponseDto(lecture);
     }
+
+    public NoOffsetPaginationResponse<LectureWithScheduleResponse> findPagedLecturesWithSchedule(
+            Long cursorId,
+            int limit,
+            String keyword,
+            String major,
+            Integer grade
+    ) {
+        Slice<Lecture> lectureSlice = lectureRepository
+                .findCurrentSemesterLectures(cursorId, limit, keyword, major, grade);
+
+        Slice<LectureWithScheduleResponse> result = lectureSlice
+                .map(this::convertLectureWithSchedule);
+
+        return NoOffsetPaginationResponse.of(result);
+    }
+
+    private LectureWithScheduleResponse convertLectureWithSchedule(Lecture lecture) {
+        LectureWithScheduleResponse response = LectureWithScheduleResponse.of(lecture);
+        String placeSchedule = lecture.getLectureDetail().getPlaceSchedule();
+
+        List<TimetableCellSchedule> scheduleList = LectureStringConverter
+                .convertScheduleChunkIntoTimetableCellScheduleList(placeSchedule);
+
+        scheduleList.forEach(it -> response.addOriginalCellResponse(OriginalLectureCellResponse.of(it)));
+        return response;
+    }
+
+
+    /**
+     * 공통 메서드
+     */
+    public Lecture findLectureById(Long id) {
+        return lectureRepository.findById(id)
+                .orElseThrow(() -> new LectureException(LECTURE_NOT_FOUND));
+    }
+
 
     private LectureAndCountResponseForm readLectureByKeywordAndOption(String keyword, LectureFindOption option) {
         LecturesAndCountDao lectureInfo = lectureCRUDService.loadLectureByKeywordAndOption(keyword, option);
