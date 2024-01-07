@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
+import usw.suwiki.domain.timetable.dto.request.CreateWholeTimetableRequest;
 import usw.suwiki.domain.timetable.dto.request.UpdateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.response.SimpleTimetableResponse;
@@ -40,6 +41,21 @@ public class TimetableService {
 
         Timetable timetable = timetableRepository.save(request.toEntity(user));
         return SimpleTimetableResponse.of(timetable);
+    }
+
+    @Transactional
+    public List<TimetableResponse> bulkCreateTimetables(List<CreateWholeTimetableRequest> requests, Long userId) {
+        User user = userCRUDService.loadUserById(userId);
+
+        List<Timetable> timetableList = timetableRepository.saveAll(
+                requests.stream()
+                        .map(it -> it.toEntity(user))
+                        .toList()
+        );
+
+        return timetableList.stream()
+                .map(TimetableResponse::of)
+                .toList();
     }
 
     @Transactional
@@ -111,7 +127,6 @@ public class TimetableService {
         timetableCell.dissociateTimetable(timetable);
     }
 
-    // 시간표 일괄 DB 동기화 (시간표 및 강의 bulk 생성)
 
 
     private Timetable resolveExactAuthorTimetable(Long timetableId, Long userId) {
