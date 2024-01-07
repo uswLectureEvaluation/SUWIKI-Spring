@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.lenient;
@@ -24,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
+import usw.suwiki.domain.timetable.dto.request.CreateWholeTimetableRequest;
 import usw.suwiki.domain.timetable.dto.request.UpdateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.response.SimpleTimetableResponse;
@@ -120,6 +122,51 @@ public class TimetableServiceTest {
         assertThat(response.getId()).isEqualTo(SPYING_TIMETABLE_ID);
         assertThat(response.getYear()).isEqualTo(request.getYear());
     }
+
+    @Test
+    @DisplayName("시간표 벌크 생성")
+    public void BULK_CREATE_TIMETABLES() {
+        // given
+
+        CreateWholeTimetableRequest requestA = CreateWholeTimetableRequest.builder()
+                .name(timetable.getName())
+                .year(timetable.getYear())
+                .semester(timetable.getSemester().getValue())
+                .cellList(List.of())
+                .build();
+        CreateWholeTimetableRequest requestB = CreateWholeTimetableRequest.builder()
+                .name(timetable.getName())
+                .year(timetable.getYear())
+                .semester(timetable.getSemester().getValue())
+                .cellList(List.of())
+                .build();
+        Timetable timetableA = spy(requestA.toEntity(user));
+        Timetable timetableB = spy(requestB.toEntity(user));
+
+        given(userCRUDService.loadUserById(anyLong())).willReturn(user);
+        given(timetableRepository.saveAll(anyList())).willReturn(List.of(timetableA, timetableB));
+        when(timetableA.getId()).thenReturn(SPYING_TIMETABLE_ID);
+        when(timetableB.getId()).thenReturn(SPYING_TIMETABLE_ID);
+        when(timetableCellA.getId()).thenReturn(SPYING_TIMETABLE_CELL_ID);
+        when(timetableCellB.getId()).thenReturn(SPYING_TIMETABLE_CELL_ID);
+        when(timetableA.getCellList()).thenReturn(List.of(timetableCellA, timetableCellB));
+        when(timetableB.getCellList()).thenReturn(List.of(timetableCellA, timetableCellB));
+
+        // when
+        List<TimetableResponse> response = timetableService.bulkCreateTimetables(
+                List.of(requestA, requestB),
+                0L
+        );
+
+        // then
+        assertThat(response.size()).isEqualTo(2);
+        assertThat(response.get(0).getCellList().get(0).getLectureName()).isEqualTo(timetableCellA.getLectureName());
+        assertThat(response.get(1).getCellList().get(1).getLectureName()).isEqualTo(timetableCellB.getLectureName());
+
+        verify(userCRUDService).loadUserById(anyLong());
+        verify(timetableRepository).saveAll(anyList());
+    }
+
 
     @Test
     @DisplayName("시간표 수정")
@@ -560,7 +607,7 @@ public class TimetableServiceTest {
         given(timetableCellRepository.findById(anyLong())).willReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(()->timetableService.deleteTimetableCell(RANDOM_ID, RANDOM_ID))
+        assertThatThrownBy(() -> timetableService.deleteTimetableCell(RANDOM_ID, RANDOM_ID))
                 .isExactlyInstanceOf(TimetableException.class)
                 .hasMessage(ExceptionType.TIMETABLE_CELL_NOT_FOUND.getMessage());
     }
@@ -577,7 +624,7 @@ public class TimetableServiceTest {
         when(timetable.getId()).thenReturn(SPYING_TIMETABLE_ID);
 
         // when & then
-        assertThatThrownBy(()->timetableService.deleteTimetableCell(RANDOM_ID, RANDOM_ID))
+        assertThatThrownBy(() -> timetableService.deleteTimetableCell(RANDOM_ID, RANDOM_ID))
                 .isExactlyInstanceOf(TimetableException.class)
                 .hasMessage(ExceptionType.TIMETABLE_NOT_AN_AUTHOR.getMessage());
 
