@@ -11,11 +11,15 @@ public class LectureDetailTemplate {
     public static final int GRADE = 2;
     public static final String EVALUATE_TYPE = "상대평가";
 
-    public static LectureDetail createfirstDummyLectureDetail() {
-        return createDummyLectureDetail(PLACE_SCHEDULE, CODE, POINT, CAPPR_TYPE, DICL_NO, GRADE, EVALUATE_TYPE);
+    public static LectureDetail createFirstDummy() {
+        return createDummy(PLACE_SCHEDULE, CODE, POINT, CAPPR_TYPE, DICL_NO, GRADE, EVALUATE_TYPE);
     }
 
-    public static LectureDetail createDummyLectureDetail(
+    public static LectureDetail varyPlaceSchedule(String placeSchedule) {
+        return createDummy(placeSchedule, CODE, POINT, CAPPR_TYPE, DICL_NO, GRADE, EVALUATE_TYPE);
+    }
+
+    public static LectureDetail createDummy(
             String placeSchedule,
             String code,
             double point,

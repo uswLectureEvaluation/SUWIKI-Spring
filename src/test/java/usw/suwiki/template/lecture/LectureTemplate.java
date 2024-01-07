@@ -9,7 +9,7 @@ public class LectureTemplate {
     public static final String NAME = "데이터 구조";
     public static final String MAJOR_TYPE = "컴퓨터 학부";
     public static final String LECTURE_TYPE = "전핵";
-    public static final LectureDetail LECTURE_DETAIL = LectureDetailTemplate.createfirstDummyLectureDetail();
+    public static final LectureDetail LECTURE_DETAIL = LectureDetailTemplate.createFirstDummy();
 
     public static Lecture createFirstDummyLecture() {
         return createDummyLecture(SEMESTER, PROFESSOR, NAME, MAJOR_TYPE, LECTURE_TYPE, LECTURE_DETAIL);
