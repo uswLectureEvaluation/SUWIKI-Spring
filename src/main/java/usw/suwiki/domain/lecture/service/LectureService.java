@@ -49,7 +49,6 @@ public class LectureService {
         return new LectureDetailResponseDto(lecture);
     }
 
-    // 강의 검색 - 시간표 생성시 조회
     public NoOffsetPaginationResponse<LectureWithScheduleResponse> findPagedLecturesWithSchedule(
             Long cursorId,
             int limit,
