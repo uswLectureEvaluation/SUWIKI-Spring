@@ -4,20 +4,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
 import usw.suwiki.domain.timetable.entity.TimetableDay;
 
+// TODO refactor: TimetableCellSchedule 의존성 제거. 해당 클래스는 스트링 변환 작업만 책임지도록
 public final class LectureStringConverter {
-    // TODO refactor: TimetableCellSchedule 의존성 제거. 해당 클래스는 스트링 변환 작업만 책임지도록
+
+    /*
+        변환에 필요한 최소한의 스트링 형식입니다.    https://regexr.com/7q2nv
+        pass : "강의실107-1(수6,7,8)" "강의실 B215(화5,6,7 수5,6,7)"
+        fail : "(월1,2)" "강의실(1,2)" "강의실 월1,2" "강의실107(요일아님6,7,8)"
+     */
+    private static final String PLACE_SCHEDULE_REGEX = "^([\\s가-힣A-Za-z\\d-]+\\([월화수목금토일]\\d+(?:,\\d+)*.*?\\))+$";
+
     /**
-     * @param scheduleChunk 강의의 장소 및 강의 시간 원본 (lecture.place_schedule)
+     * @param scheduleChunk 강의 장소 및 시간 원본 lecture.place_schedule
      * @implNote place_schedule을 TimetableCellSchedule 객체 리스트로 변환
      */
     public static List<TimetableCellSchedule> convertScheduleChunkIntoTimetableCellScheduleList(String scheduleChunk) {
         List<TimetableCellSchedule> scheduleList = new ArrayList<>();
 
         // TODO refactor: "null" -> null. 데이터 파싱 로직 변경 필요
-        if (Objects.equals(scheduleChunk, "null") || Objects.isNull(scheduleChunk)) {
+        if (Objects.equals(scheduleChunk, "null")
+                || Objects.isNull(scheduleChunk)
+                || !Pattern.matches(PLACE_SCHEDULE_REGEX, scheduleChunk)
+        ) {
             return scheduleList;
         }
 
