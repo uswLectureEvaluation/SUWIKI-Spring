@@ -79,7 +79,7 @@ public class TimetableService {
     public TimetableCellResponse createTimetableCell(CreateTimetableCellRequest request, Long timetableId,
                                                      Long userId) {
         Timetable timetable = resolveExactAuthorTimetable(timetableId, userId);
-        timetable.validateCellScheduleOverlap(request.extractTimetableCellSchedule());
+        timetable.validateCellScheduleOverlapBeforeAssociation(request.extractTimetableCellSchedule());
 
         TimetableCell timetableCell = timetableCellRepository.save(request.toEntity(timetable));
         return TimetableCellResponse.of(timetableCell);
@@ -91,7 +91,7 @@ public class TimetableService {
                 .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_CELL_NOT_FOUND));
         Timetable timetable = resolveExactAuthorTimetable(timetableCell.bringTimetableId(), userId);
         TimetableCellSchedule cellSchedule = request.extractTimetableCellSchedule();
-        timetable.validateCellScheduleOverlapExceptOneCell(cellSchedule, timetableCell);
+        timetable.validateCellScheduleOverlapAfterAssociation(cellSchedule, timetableCell);
 
         timetableCell.update(
                 request.getLectureName(),
