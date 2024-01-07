@@ -31,8 +31,6 @@ public class ApiResponse<T> {
 
     public static ApiResponse error(String code, String message) {
         HashMap<String, String> empty = new HashMap<>();
-        System.out.println("code = " + code);
-        System.out.println("message = " + message);
         return ApiResponse.builder()
                 .code(code)
                 .data(empty)

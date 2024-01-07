@@ -117,8 +117,6 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
                 20,
                 null, null, null
         );
-        System.out.println("result = " + result);
-
         entityManager.clear();
     }
 
@@ -173,7 +171,6 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
         String keyword = "도전";
         String majorType = "교양";
         int grade = 2;
-        System.out.println("lectureRepository.count() = " + lectureRepository.count());
 
         // TODO fix: Slice 0 containing UNKNOWN instances
         // when
