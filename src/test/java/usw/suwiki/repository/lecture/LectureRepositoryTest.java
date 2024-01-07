@@ -30,6 +30,7 @@ import usw.suwiki.template.lecture.LectureTemplate;
 import usw.suwiki.template.user.UserTemplate;
 
 // TODO: RepositoryTest 슈퍼 클래스로 공통 설정 상속
+// TODO refactor: 테스트 독립성 보장. TRUNCATE 실행
 @DataJpaTest
 @Import(TestJpaConfig.class)
 @TestMethodOrder(MethodOrderer.DisplayName.class)
