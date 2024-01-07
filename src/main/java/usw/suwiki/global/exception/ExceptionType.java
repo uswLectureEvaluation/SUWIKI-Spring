@@ -79,6 +79,7 @@ public enum ExceptionType {
     NOT_EXISTS_LECTURE_NAME("LECTURE001", "강의 제목을 입력해주세요", BAD_REQUEST),
     NOT_EXISTS_PROFESSOR_NAME("LECTURE002", "교수 이름을 입력해주세요", BAD_REQUEST),
     NOT_EXISTS_LECTURE("LECTURE003", "해당 강의가 존재하지 않습니다.", BAD_REQUEST),
+    INVALID_LECTURE_PLACE_SCHEDULE_FORM("LECTURE101", "유효하지 않은 강의의 장소 및 교시입니다.", INTERNAL_SERVER_ERROR),
     //404
     LECTURE_NOT_FOUND("LECTURE001", "해당 강의에 대한 정보를 찾을 수 없습니다.", NOT_FOUND),
 
