@@ -12,8 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -24,14 +22,6 @@ import lombok.NoArgsConstructor;
 import usw.suwiki.global.BaseTimeEntity;
 
 @Entity
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "UNIQUE_TIMETABLE_DAY_PERIOD",
-                        columnNames = {"timetable_id", "day", "startPeriod", "endPeriod"}
-                )
-        }
-)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TimetableCell extends BaseTimeEntity {
@@ -61,6 +51,8 @@ public class TimetableCell extends BaseTimeEntity {
     @JoinColumn(name = "timetable_id")
     private Timetable timetable;
 
+    // TODO 고민: 오버랩 검증 로직 및 연관관계 편의 메서드 호출을 생성자로 이동
+    // timetable을 받게 되면, timetable의 null 여부에 따른 분기 처리를 해야 함. 무조건 검증을 하면 복잡해질 듯
     @Builder
     public TimetableCell(String lectureName, String professorName, TimetableCellColor color,
                          TimetableCellSchedule schedule) {

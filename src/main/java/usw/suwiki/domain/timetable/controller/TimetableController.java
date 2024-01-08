@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
+import usw.suwiki.domain.timetable.dto.request.CreateWholeTimetableRequest;
 import usw.suwiki.domain.timetable.dto.request.UpdateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.response.SimpleTimetableResponse;
@@ -22,6 +23,7 @@ import usw.suwiki.domain.timetable.dto.response.TimetableCellResponse;
 import usw.suwiki.domain.timetable.dto.response.TimetableResponse;
 import usw.suwiki.domain.timetable.service.TimetableService;
 import usw.suwiki.global.dto.ApiResponse;
+import usw.suwiki.global.dto.BulkRequest;
 import usw.suwiki.global.dto.ResultResponse;
 import usw.suwiki.global.jwt.JwtAgent;
 
@@ -42,6 +44,17 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
         Long userId = jwtAgent.getId(authorization);
 
         return ApiResponse.success(timetableService.createTimetable(request, userId));
+    }
+
+    @PostMapping("/bulk")
+    public ApiResponse<List<TimetableResponse>> bulkCreateTimetables(
+            @RequestHeader String authorization,
+            @Valid @RequestBody BulkRequest<CreateWholeTimetableRequest> request
+    ) {
+        jwtAgent.validateJwt(authorization);
+        Long userId = jwtAgent.getId(authorization);
+
+        return ApiResponse.success(timetableService.bulkCreateTimetables(request.getBulk(), userId));
     }
 
     @PutMapping("/{timetableId}")
@@ -122,5 +135,4 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
         return ApiResponse.success(ResultResponse.complete());
     }
 
-    // 시간표 일괄 DB 동기화 (시간표 및 강의 bulk 생성)
 }

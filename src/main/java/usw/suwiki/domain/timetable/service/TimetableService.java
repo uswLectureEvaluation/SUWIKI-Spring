@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
+import usw.suwiki.domain.timetable.dto.request.CreateWholeTimetableRequest;
 import usw.suwiki.domain.timetable.dto.request.UpdateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.response.SimpleTimetableResponse;
@@ -43,10 +44,25 @@ public class TimetableService {
     }
 
     @Transactional
+    public List<TimetableResponse> bulkCreateTimetables(List<CreateWholeTimetableRequest> requests, Long userId) {
+        User user = userCRUDService.loadUserById(userId);
+
+        List<Timetable> timetableList = timetableRepository.saveAll(
+                requests.stream()
+                        .map(it -> it.toEntity(user))
+                        .toList()
+        );
+
+        return timetableList.stream()
+                .map(TimetableResponse::of)
+                .toList();
+    }
+
+    @Transactional
     public SimpleTimetableResponse updateTimetable(UpdateTimetableRequest request, Long timetableId, Long userId) {
         Timetable timetable = resolveExactAuthorTimetable(timetableId, userId);
 
-        timetable.update(request.getName(), request.getYear(), Semester.ofString(request.getSemester()));
+        timetable.update(request.getName(), request.getYear(), Semester.of(request.getSemester()));
         return SimpleTimetableResponse.of(timetable);
     }
 
@@ -79,7 +95,7 @@ public class TimetableService {
     public TimetableCellResponse createTimetableCell(CreateTimetableCellRequest request, Long timetableId,
                                                      Long userId) {
         Timetable timetable = resolveExactAuthorTimetable(timetableId, userId);
-        timetable.validateCellScheduleOverlap(request.extractTimetableCellSchedule());
+        timetable.validateCellScheduleOverlapBeforeAssociation(request.extractTimetableCellSchedule());
 
         TimetableCell timetableCell = timetableCellRepository.save(request.toEntity(timetable));
         return TimetableCellResponse.of(timetableCell);
@@ -91,7 +107,7 @@ public class TimetableService {
                 .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_CELL_NOT_FOUND));
         Timetable timetable = resolveExactAuthorTimetable(timetableCell.bringTimetableId(), userId);
         TimetableCellSchedule cellSchedule = request.extractTimetableCellSchedule();
-        timetable.validateCellScheduleOverlapExceptOneCell(cellSchedule, timetableCell);
+        timetable.validateCellScheduleOverlapAfterAssociation(cellSchedule, timetableCell);
 
         timetableCell.update(
                 request.getLectureName(),
@@ -111,7 +127,6 @@ public class TimetableService {
         timetableCell.dissociateTimetable(timetable);
     }
 
-    // 시간표 일괄 DB 동기화 (시간표 및 강의 bulk 생성)
 
 
     private Timetable resolveExactAuthorTimetable(Long timetableId, Long userId) {

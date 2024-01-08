@@ -60,6 +60,16 @@ public class CreateTimetableCellRequest {
         return timetableCell;
     }
 
+    public TimetableCell toEntity() {
+        return TimetableCell.builder()
+                .lectureName(lectureName)
+                .professorName(professorName)
+                .color(TimetableCellColor.ofString(color))
+                .schedule(extractTimetableCellSchedule())
+                .build();
+    }
+
+
     public TimetableCellSchedule extractTimetableCellSchedule() {
         return TimetableCellSchedule.builder()
                 .location(location)

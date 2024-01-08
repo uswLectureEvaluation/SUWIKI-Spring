@@ -1,6 +1,7 @@
 package usw.suwiki.domain.timetable.dto.request;
 
-import javax.validation.constraints.NotBlank;
+import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
@@ -12,13 +13,12 @@ import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.user.user.User;
 
-
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreateTimetableRequest {
-    public static final int MAX_NAME_LENGTH = 150;
+public class CreateWholeTimetableRequest {
+    public static final int MAX_NAME_LENGTH = 200;
     public static final int MAX_SEMESTER_LENGTH = 50;
 
     @NotNull
@@ -32,14 +32,24 @@ public class CreateTimetableRequest {
     @Size(max = MAX_NAME_LENGTH)
     private String name;
 
+    @Valid
+    @NotNull
+    private List<CreateTimetableCellRequest> cellList;
+
     public Timetable toEntity(User user) {
-        Semester semester = Semester.of(this.semester);
         Timetable timetable = Timetable.builder()
                 .year(year)
-                .semester(semester)
+                .semester(Semester.of(semester))
                 .name(name)
                 .build();
         timetable.associateUser(user);
+
+        cellList.stream()
+                .map(cellRequest -> cellRequest.toEntity())
+                .forEach(cell -> {
+                    timetable.validateCellScheduleOverlapBeforeAssociation(cell.getSchedule());
+                    cell.associateTimetable(timetable);
+                });
         return timetable;
     }
 }

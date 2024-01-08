@@ -21,7 +21,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.dao.DataIntegrityViolationException;
 import usw.suwiki.config.TestJpaConfig;
 import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
@@ -82,6 +81,13 @@ public class TimetableRepositoryTest {
 
         entityManager.clear();  // 영속성 컨텍스트 초기화
     }
+
+//    @AfterEach
+//    void tearDown() {
+//        timetableRepository.deleteAll();
+//        timetableCellRepository.deleteAll();
+//        userRepository.deleteAll();
+//    }
 
     /**
      * Timetable
@@ -305,37 +311,6 @@ public class TimetableRepositoryTest {
                 .isExactlyInstanceOf(ConstraintViolationException.class);
     }
 
-    @Test
-    @DisplayName("TimetableCell 삽입 실패 - UNIQUE 제약조건을 지켜야 한다.")
-    public void insertTimetableCell_fail_unique_constraint() {
-        TimetableCellSchedule sameSchedule = TimetableCellSchedule.builder()
-                .location("IT 208")
-                .day(TimetableDay.FRI)
-                .startPeriod(1)
-                .endPeriod(3)
-                .build();
-
-        // given
-        TimetableCell cellA = TimetableCell.builder()
-                .lectureName("ICT 개론")
-                .professorName("신호진")
-                .color(TimetableCellColor.BROWN)
-                .schedule(sameSchedule)
-                .build();
-        cellA.associateTimetable(dummyTimetable);
-
-        TimetableCell callB = TimetableCell.builder()
-                .lectureName("ICT 개론")
-                .professorName("신호진")
-                .color(TimetableCellColor.BROWN)
-                .schedule(sameSchedule)
-                .build();
-        callB.associateTimetable(dummyTimetable);
-
-        // when & then
-        assertThatThrownBy(() -> timetableRepository.save(dummyTimetable))
-                .isExactlyInstanceOf(DataIntegrityViolationException.class);
-    }
 
     @Test
     @DisplayName("TimetableCell 삽입 실패 - 값 범위 제약조건을 지켜야 한다.")
@@ -434,10 +409,10 @@ public class TimetableRepositoryTest {
                 .build();
 
         // when & then
-        assertThatThrownBy(() -> dummyTimetable.validateCellScheduleOverlap(scheduleB))
+        assertThatThrownBy(() -> dummyTimetable.validateCellScheduleOverlapBeforeAssociation(scheduleB))
                 .isExactlyInstanceOf(TimetableException.class)
                 .hasMessage(ExceptionType.OVERLAPPED_TIMETABLE_CELL_SCHEDULE.getMessage());
-        assertThatThrownBy(() -> dummyTimetable.validateCellScheduleOverlap(scheduleC))
+        assertThatThrownBy(() -> dummyTimetable.validateCellScheduleOverlapBeforeAssociation(scheduleC))
                 .isExactlyInstanceOf(TimetableException.class)
                 .hasMessage(ExceptionType.OVERLAPPED_TIMETABLE_CELL_SCHEDULE.getMessage());
     }
