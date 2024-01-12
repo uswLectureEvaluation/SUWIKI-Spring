@@ -50,6 +50,7 @@ import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
+import usw.suwiki.global.properties.ServerProperties;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
 import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
 import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
@@ -59,10 +60,10 @@ import usw.suwiki.global.util.mailsender.EmailSender;
 @RequiredArgsConstructor
 @Transactional
 public class UserBusinessService {
-
-    private static final String BASE_LINK = "https://api.suwiki.kr/v2/confirmation-token/verify/?token=";
-    private static final String LOCAL_BASE_LINK = "http://localhost:8080/v2/confirmation-token/verify/?token=";
+    private static final String CONFIRMATION_TOKEN_URL = "/v2/confirmation-token/verify/?token=";
     private static final String MAIL_FORM = "@suwon.ac.kr";
+
+    private final ServerProperties serverProperties;
     private final UserCRUDService userCRUDService;
     private final UserIsolationCRUDService userIsolationCRUDService;
     private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
@@ -122,7 +123,9 @@ public class UserBusinessService {
 
         emailSender.send(
                 email,
-                buildEmailAuthForm.buildEmail(BASE_LINK + confirmationToken.getToken())
+                buildEmailAuthForm.buildEmail(
+                        serverProperties.getDomain() + CONFIRMATION_TOKEN_URL + confirmationToken.getToken()
+                )
         );
         return successFlag();
     }
