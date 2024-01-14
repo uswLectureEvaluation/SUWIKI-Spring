@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.global.util.apiresponse.ResponseFieldManipulationUtils;
 
 @Getter
 @Builder
@@ -26,10 +27,11 @@ public class LectureWithScheduleResponse {
     public static LectureWithScheduleResponse of(
             Lecture lecture
     ) {
+        final String professorName = ResponseFieldManipulationUtils.resolveLiteralNull(lecture.getProfessor());
         return LectureWithScheduleResponse.builder()
                 .id(lecture.getId())
                 .name(lecture.getName())
-                .professorName(lecture.getProfessor())
+                .professorName(professorName)
                 .type(lecture.getType())
                 .major(lecture.getMajorType())
                 .grade(lecture.getLectureDetail().getGrade())

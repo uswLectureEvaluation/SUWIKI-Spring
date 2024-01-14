@@ -91,7 +91,7 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
                     "테스트학개론",
                     "중핵",
                     "교양 아님",
-                    "우문균",
+                    "장성태",
                     firstGradeLectureDetail
             ));
             lectureRepository.save(LectureTemplate.createDummyLecture(
@@ -99,7 +99,7 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
                     "도전과 창조",
                     "중핵",
                     "교양",
-                    "우문균",
+                    "소크라테스",
                     firstGradeLectureDetail
             ));
             lectureRepository.save(LectureTemplate.createDummyLecture(
@@ -168,7 +168,9 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
         // given
         long cursorId = 0;
         int limit = 80;
-        String keyword = "도전";
+        String lectureNameKeyword = "도전";
+        String professorNameKeyword = "장성태";
+        String bothKeyword = "테스";
         String majorType = "교양";
         int grade = 2;
 
@@ -181,10 +183,24 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
                 null,
                 null
         );
-        Slice<Lecture> keywordResult = lectureRepository.findCurrentSemesterLectures(
+        Slice<Lecture> lectureKeywordResult = lectureRepository.findCurrentSemesterLectures(
                 cursorId,
                 limit,
-                keyword,
+                lectureNameKeyword,
+                null,
+                null
+        );
+        Slice<Lecture> professorKeywordResult = lectureRepository.findCurrentSemesterLectures(
+                cursorId,
+                limit,
+                professorNameKeyword,
+                null,
+                null
+        );
+        Slice<Lecture> bothKeywordResult = lectureRepository.findCurrentSemesterLectures(
+                cursorId,
+                limit,
+                bothKeyword,
                 null,
                 null
         );
@@ -205,7 +221,9 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
 
         // then
         assertThat(currentSemester.getContent().size()).isEqualTo(80);
-        assertThat(keywordResult.getContent().size()).isEqualTo(60);
+        assertThat(lectureKeywordResult.getContent().size()).isEqualTo(60);
+        assertThat(professorKeywordResult.getContent().size()).isEqualTo(20);
+        assertThat(bothKeywordResult.getContent().size()).isEqualTo(40);    // 강의명 테스트학개론, 교수명 소크라테스
         assertThat(majorResult.getContent().size()).isEqualTo(40);
         assertThat(majorGradeResult.getContent().size()).isEqualTo(20);
     }

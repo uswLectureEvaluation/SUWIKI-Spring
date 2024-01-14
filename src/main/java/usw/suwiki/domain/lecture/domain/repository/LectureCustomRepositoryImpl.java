@@ -41,7 +41,7 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
     ) {
         JPAQuery<Lecture> query = queryFactory.selectFrom(lecture)
                 .where(gtCursorId(cursorId))
-                .where(containsKeyword(keyword))
+                .where(containsLectureKeyword(keyword))
                 .where(eqMajorType(majorType))
                 .where(eqGrade(grade))
                 .where(lecture.semester.endsWith(currentSemester))
@@ -210,11 +210,12 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
         return lecture.id.gt(cursorId);
     }
 
-    private BooleanExpression containsKeyword(String keyword) {
+    private BooleanExpression containsLectureKeyword(String keyword) {
         if (Objects.isNull(keyword)) {
             return null;
         }
-        return lecture.name.contains(keyword);
+        return lecture.name.contains(keyword)
+                .or(lecture.professor.contains(keyword));
     }
 
     private BooleanExpression eqMajorType(String majorType) {
