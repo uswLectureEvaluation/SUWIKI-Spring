@@ -1,5 +1,25 @@
 package usw.suwiki.domain.user.user.service;
 
+import static usw.suwiki.domain.postreport.EvaluatePostReport.buildEvaluatePostReport;
+import static usw.suwiki.domain.postreport.ExamPostReport.buildExamPostReport;
+import static usw.suwiki.domain.user.user.controller.dto.UserResponseDto.UserInformationResponseForm.buildMyPageResponseForm;
+import static usw.suwiki.global.exception.ExceptionType.IS_NOT_EMAIL_FORM;
+import static usw.suwiki.global.exception.ExceptionType.LOGIN_ID_OR_EMAIL_OVERLAP;
+import static usw.suwiki.global.exception.ExceptionType.PASSWORD_ERROR;
+import static usw.suwiki.global.exception.ExceptionType.PASSWORD_NOT_CHANGED;
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_FOUND_BY_EMAIL;
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_FOUND_BY_LOGINID;
+import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapFalseFlag;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.overlapTrueFlag;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successFlag;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,7 +32,6 @@ import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.exampost.domain.ExamPost;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
-import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
@@ -27,6 +46,7 @@ import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyRestrict
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.UserInformationResponseForm;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.service.UserIsolationCRUDService;
+import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
@@ -35,26 +55,12 @@ import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
 import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
 import usw.suwiki.global.util.mailsender.EmailSender;
 
-import javax.servlet.http.Cookie;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static usw.suwiki.domain.postreport.EvaluatePostReport.buildEvaluatePostReport;
-import static usw.suwiki.domain.postreport.ExamPostReport.buildExamPostReport;
-import static usw.suwiki.domain.user.user.controller.dto.UserResponseDto.UserInformationResponseForm.buildMyPageResponseForm;
-import static usw.suwiki.global.exception.ExceptionType.*;
-import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.*;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class UserBusinessService {
-
-    private static final String BASE_LINK = "https://api.suwiki.kr/v2/confirmation-token/verify/?token=";
-    private static final String LOCAL_BASE_LINK = "http://localhost:8080/v2/confirmation-token/verify/?token=";
     private static final String MAIL_FORM = "@suwon.ac.kr";
+
     private final UserCRUDService userCRUDService;
     private final UserIsolationCRUDService userIsolationCRUDService;
     private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
@@ -98,10 +104,13 @@ public class UserBusinessService {
         if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
                 userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
                 userCRUDService.loadWrappedUserFromEmail(email).isPresent() ||
-                userIsolationCRUDService.loadWrappedUserFromEmail(email).isPresent())
+                userIsolationCRUDService.loadWrappedUserFromEmail(email).isPresent()) {
             throw new AccountException(LOGIN_ID_OR_EMAIL_OVERLAP);
+        }
 
-        if (!email.contains(MAIL_FORM)) throw new AccountException(IS_NOT_EMAIL_FORM);
+        if (!email.contains(MAIL_FORM)) {
+            throw new AccountException(IS_NOT_EMAIL_FORM);
+        }
 
         User user = User.makeUser(loginId, bCryptPasswordEncoder.encode(password), email);
         userCRUDService.saveUser(user);
@@ -109,10 +118,7 @@ public class UserBusinessService {
         ConfirmationToken confirmationToken = ConfirmationToken.makeToken(user);
         confirmationTokenCRUDService.saveConfirmationToken(confirmationToken);
 
-        emailSender.send(
-                email,
-                buildEmailAuthForm.buildEmail(BASE_LINK + confirmationToken.getToken())
-        );
+        emailSender.send(email, buildEmailAuthForm.buildEmail(confirmationToken));
         return successFlag();
     }
 
@@ -137,10 +143,14 @@ public class UserBusinessService {
 
     public Map<String, Boolean> executeFindPw(String loginId, String email) {
         Optional<User> userByLoginId = userCRUDService.loadWrappedUserFromLoginId(loginId);
-        if (userByLoginId.isEmpty()) throw new AccountException(USER_NOT_FOUND_BY_LOGINID);
+        if (userByLoginId.isEmpty()) {
+            throw new AccountException(USER_NOT_FOUND_BY_LOGINID);
+        }
 
         Optional<User> userByEmail = userCRUDService.loadWrappedUserFromEmail(email);
-        if (userByEmail.isEmpty()) throw new AccountException(USER_NOT_FOUND_BY_EMAIL);
+        if (userByEmail.isEmpty()) {
+            throw new AccountException(USER_NOT_FOUND_BY_EMAIL);
+        }
 
         Optional<UserIsolation> isolationUserByLoginId =
                 userIsolationCRUDService.loadWrappedUserFromLoginId(loginId);
@@ -246,7 +256,9 @@ public class UserBusinessService {
             EvaluateReportForm evaluateReportForm,
             String Authorization
     ) {
-        if (jwtAgent.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
+        if (jwtAgent.getUserIsRestricted(Authorization)) {
+            throw new AccountException(USER_RESTRICTED);
+        }
         Long reportingUserIdx = jwtAgent.getId(Authorization);
         EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(
                 evaluateReportForm.evaluateIdx());
@@ -266,7 +278,9 @@ public class UserBusinessService {
             ExamReportForm examReportForm,
             String Authorization
     ) {
-        if (jwtAgent.getUserIsRestricted(Authorization)) throw new AccountException(USER_RESTRICTED);
+        if (jwtAgent.getUserIsRestricted(Authorization)) {
+            throw new AccountException(USER_RESTRICTED);
+        }
         Long reportingUserIdx = jwtAgent.getId(Authorization);
         ExamPost examPost = examPostCRUDService.loadExamPostFromExamPostIdx(
                 examReportForm.examIdx());

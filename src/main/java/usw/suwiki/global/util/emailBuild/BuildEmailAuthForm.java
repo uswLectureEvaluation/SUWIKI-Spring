@@ -1,18 +1,30 @@
 package usw.suwiki.global.util.emailBuild;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
+import usw.suwiki.global.properties.ServerProperties;
 
-@Component
+@Component  // TODO refactor: Component 제거. -> ServerProperties 빈 주입 방법 고민
+@RequiredArgsConstructor
 public class BuildEmailAuthForm {
-    public String buildEmail(String link) {
+    private static final String CONFIRMATION_TOKEN_URL = "/v2/confirmation-token/verify/?token=";
+    private final ServerProperties serverProperties;
+
+    // TODO: refactor static 메서드 고민. serverProperties를 외부에서 주입받아야 함
+    public String buildEmail(ConfirmationToken confirmationToken) {
+        String redirectUrl = buildRedirectUrl(confirmationToken);
+
+        // TODO refactor: 반복성 제거. 템플릿 메서드 패턴 혹은 타임 리프 고민
         return "<center>\n" +
-                "\t<img class=\"suwikilogo\"src=\"https://avatars.githubusercontent.com/u/96416159?s=200&v=4\" style=\"display:block; \"alt=\"SUWIKILOGO\">" +
+                "\t<img class=\"suwikilogo\"src=\"https://avatars.githubusercontent.com/u/96416159?s=200&v=4\" style=\"display:block; \"alt=\"SUWIKILOGO\">"
+                +
                 "\t<div class=container>\n" +
                 "\t\t안녕하세요. 수원대학교 강의평가 플랫폼 SUWIKI 입니다.\n" +
                 "\t\t<p>\n" +
                 "                <b>재학생 인증 메일 전송해드립니다. </b>\n" +
                 "\t\t<br>\n" +
-                "\t\t" + "<a href=" + link + ">클릭하여 이메일 인증하기</a>" + "\n" +
+                "\t\t" + "<a href=" + redirectUrl + ">클릭하여 이메일 인증하기</a>" + "\n" +
                 "                <p>\n" +
                 "<br>" +
                 "                위 링크를 클릭하시면 정상적으로 서비스 이용이 가능합니다." + "\n" +
@@ -22,5 +34,9 @@ public class BuildEmailAuthForm {
                 "\t\t감사합니다.\n" +
                 "\t</div>\n" +
                 "</center>";
+    }
+
+    private String buildRedirectUrl(ConfirmationToken confirmationToken) {
+        return serverProperties.getDomain() + CONFIRMATION_TOKEN_URL + confirmationToken.getToken();
     }
 }
