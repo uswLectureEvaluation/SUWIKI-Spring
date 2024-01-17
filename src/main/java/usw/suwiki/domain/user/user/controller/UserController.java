@@ -1,8 +1,37 @@
 package usw.suwiki.domain.user.user.controller;
 
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.OK;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.CheckEmailForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.CheckLoginIdForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.EditMyPasswordForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.EvaluateReportForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.ExamReportForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.FindIdForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.FindPasswordForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.JoinForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.UserQuitForm;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenBusinessService;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
@@ -11,16 +40,8 @@ import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.UserInformatio
 import usw.suwiki.domain.user.user.service.UserBusinessService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.springframework.http.HttpStatus.OK;
-import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.*;
+import usw.suwiki.global.exception.ExceptionType;
+import usw.suwiki.global.exception.errortype.AccountException;
 
 @RestController
 @RequestMapping("/user")
@@ -191,17 +212,20 @@ public class UserController {
     }
 
     // 회원 탈퇴
-    @ResponseStatus(OK)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ApiLogger(option = "user")
     @PostMapping("quit")
     public Map<String, Boolean> userQuit(
             @Valid @RequestBody UserQuitForm userQuitForm,
             @Valid @RequestHeader String Authorization
     ) {
-        return userBusinessService.executeQuit(
-                Authorization,
-                userQuitForm.password()
-        );
+//        return userBusinessService.executeQuit(
+//                Authorization,
+//                userQuitForm.password()
+//        );
+
+        // TODO fix: 회원 탈퇴 오류에 의한 임시 처리. 유저 탈퇴 로직 fix 후 복구해야 합니다.
+        throw new AccountException(ExceptionType.SERVER_ERROR);
     }
 
     // 강의평가 신고
