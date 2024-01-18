@@ -18,8 +18,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.service.dto.EvaluatePostsToLecture;
-import usw.suwiki.domain.lecture.controller.dto.JSONLectureVO;
 import usw.suwiki.global.BaseTimeEntity;
+import usw.suwiki.global.util.loadjson.JSONLectureVO;
 
 @Getter
 @Setter // TODO: 제거

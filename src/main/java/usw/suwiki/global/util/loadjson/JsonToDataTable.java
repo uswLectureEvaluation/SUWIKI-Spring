@@ -1,4 +1,4 @@
-package usw.suwiki.global.util;
+package usw.suwiki.global.util.loadjson;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,7 +11,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
-import usw.suwiki.domain.lecture.controller.dto.JSONLectureVO;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 
@@ -23,8 +22,6 @@ import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 public class JsonToDataTable {
 
     private final LectureRepository lectureRepository;
-
-
 
     // JSON File path -> 강의 데이터 변환
     // TODO style: 메서드명 변경

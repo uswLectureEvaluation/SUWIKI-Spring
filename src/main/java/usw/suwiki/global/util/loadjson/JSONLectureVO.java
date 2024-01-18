@@ -1,4 +1,4 @@
-package usw.suwiki.domain.lecture.controller.dto;
+package usw.suwiki.global.util.loadjson;
 
 import lombok.Builder;
 import lombok.Getter;
