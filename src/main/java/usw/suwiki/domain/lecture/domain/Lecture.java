@@ -18,7 +18,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.service.dto.EvaluatePostsToLecture;
-import usw.suwiki.domain.lecture.controller.dto.JsonToLectureForm;
+import usw.suwiki.domain.lecture.controller.dto.JSONLectureVO;
 import usw.suwiki.global.BaseTimeEntity;
 
 @Getter
@@ -83,16 +83,16 @@ public class Lecture extends BaseTimeEntity {
     }
 
     // TODO: 생성자 -> DTO에서 사용
-    public static Lecture toEntity(JsonToLectureForm dto) {
+    public static Lecture toEntity(JSONLectureVO vo) {
         Lecture entity = Lecture.builder()
-                .name(dto.getLectureName())
-                .type(dto.getLectureType())
-                .professor(dto.getProfessor())
-                .semester(dto.getSelectedSemester())
-                .majorType(dto.getMajorType())
+                .name(vo.getLectureName())
+                .type(vo.getLectureType())
+                .professor(vo.getProfessor())
+                .semester(vo.getSelectedSemester())
+                .majorType(vo.getMajorType())
                 .build();
         entity.createLectureEvaluationInfo();
-        entity.createLectureDetail(dto);
+        entity.createLectureDetail(vo);
 
         return entity;
     }
@@ -102,15 +102,15 @@ public class Lecture extends BaseTimeEntity {
     }
 
     // TODO: LectureDetail 생성자 -> DTO 에서 사용
-    private void createLectureDetail(JsonToLectureForm dto) {
+    private void createLectureDetail(JSONLectureVO vo) {
         this.lectureDetail = LectureDetail.builder()
-                .code(dto.getLectureCode())
-                .grade(dto.getGrade())
-                .point(dto.getPoint())
-                .diclNo(dto.getDiclNo())
-                .evaluateType(dto.getEvaluateType())
-                .placeSchedule(dto.getPlaceSchedule())
-                .capprType(dto.getCapprType())
+                .code(vo.getLectureCode())
+                .grade(vo.getGrade())
+                .point(vo.getPoint())
+                .diclNo(vo.getDiclNo())
+                .evaluateType(vo.getEvaluateType())
+                .placeSchedule(vo.getPlaceSchedule())
+                .capprType(vo.getCapprType())
                 .build();
     }
 
@@ -170,5 +170,16 @@ public class Lecture extends BaseTimeEntity {
 
     private void decreasePostCount() {
         this.postsCount -= 1;
+    }
+
+
+    // legacy: 기존에 잘못 입력된 값들을 정상화
+    public void fixOmission(JSONLectureVO vo) {
+        if (this.type == null || this.type.isEmpty()) {
+            this.type = vo.getLectureType();
+        }
+
+        this.lectureDetail.fixOmittedGrade(vo.getGrade());
+        this.lectureDetail.fixOmittedPlaceSchedudle(vo.getPlaceSchedule());
     }
 }

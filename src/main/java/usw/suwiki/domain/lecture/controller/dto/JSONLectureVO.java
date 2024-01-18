@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class JsonToLectureForm {
+public class JSONLectureVO {
     private static final String[] KEYWORDS_TO_REMOVE = {"재수강", "비대면수업", "대면수업", "혼합수업"};
 
     private String selectedSemester;
@@ -35,10 +35,10 @@ public class JsonToLectureForm {
     }
 
     @Builder
-    public JsonToLectureForm(String selectedSemester, String placeSchedule, String professor, String lectureType,
-                             String lectureCode,
-                             String lectureName, String evaluateType, String diclNo, String majorType, double point,
-                             String capprType, int grade) {
+    public JSONLectureVO(String selectedSemester, String placeSchedule, String professor, String lectureType,
+                         String lectureCode,
+                         String lectureName, String evaluateType, String diclNo, String majorType, double point,
+                         String capprType, int grade) {
 
 
 

@@ -11,7 +11,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
-import usw.suwiki.domain.lecture.controller.dto.JsonToLectureForm;
+import usw.suwiki.domain.lecture.controller.dto.JSONLectureVO;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 
@@ -42,8 +42,7 @@ public class JsonToDataTable {
             for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
-                // TODO sytle: dto -> vo
-                JsonToLectureForm dto = JsonToLectureForm.builder()
+                JSONLectureVO jsonLectureVO = JSONLectureVO.builder()
                         // TODO refactor: 매직 리터럴 상수화
                         .capprType((String) jsonObject.get("capprTypeNm"))
                         .evaluateType((String) jsonObject.get("cretEvalNm"))
@@ -73,31 +72,39 @@ public class JsonToDataTable {
                  * 교수 테이블을 분리하는게 낫다고 생각.
                  */
 
+                /**
+                 * TODO think:
+                 * Lecture은 잘 조회되지만, 이 과정에서 많은 수의 place_schedule들이 누락되고 있다.
+                 * "강의" 조회는 별 문제 없겠지만 시간표용 강의 조회로써는 그닥이다. 결국 학생들이 스케줄을 수정해야 한다.
+                 * PlaceSchedule을 별도 테이블에 관리를 해야 할지..
+                 */
+
+                /**
+                 * TODO think:
+                 * 이미 엎질러진 강의들은 어쩔 수가 없다...
+                 * grade = 0인 강의들은
+                 */
                 Optional<Lecture> optionalExistingLecture = lectureRepository.verifyJsonLecture(
-                        dto.getLectureName(),
-                        dto.getProfessor(),
-                        dto.getMajorType()
+                        jsonLectureVO.getLectureName(),
+                        jsonLectureVO.getProfessor(),
+                        jsonLectureVO.getMajorType()
                 );
 
                 if (optionalExistingLecture.isPresent()) {
                     Lecture lecture = optionalExistingLecture.get();
-                    if (lecture.getType() == null || lecture.getType().isEmpty()) {
-                        lecture.setType(dto.getLectureType());
-                    }
 
-                    /**
-                     * TODO think:
-                     * Lecture은 잘 저장되지만, 많은 수의 place_schedule들이 누락되고 있다.
-                     */
-                    if (!lecture.getSemester().contains(dto.getSelectedSemester())) {
+                    // TODO warn: 일회성 코드
+                    lecture.fixOmission(jsonLectureVO);
+
+                    if (!lecture.getSemester().contains(jsonLectureVO.getSelectedSemester())) {
                         String updateString =
-                                lecture.getSemester() + ", " + dto.getSelectedSemester();
+                                lecture.getSemester() + ", " + jsonLectureVO.getSelectedSemester();
                         lecture.setSemester(updateString);  //refactoring 필요
                         lectureRepository.save(lecture);
                     }
                 } else {
                     // TODO refactor: JsonToLectureForm -> Lecture 의존하도록
-                    Lecture savedLecture = Lecture.toEntity(dto);
+                    Lecture savedLecture = Lecture.toEntity(jsonLectureVO);
                     Thread.sleep(1);    // TODO figure: 왜 필요하지?
                     lectureRepository.save(savedLecture);
                 }
