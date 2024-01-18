@@ -116,12 +116,26 @@ public class JsonToDataTable {
                     dto.setMajorType(majorType);
                 }
 
-                Lecture lecture = lectureRepository.verifyJsonLecture(dto.getLectureName(),
-                        dto.getProfessor(), dto.getMajorType());
+                /**
+                 * TODO refactor:
+                 * 기존의 강의가 있다면 해당 강의로. 강의의 식별자는 강의명 + 교수명 + 전공 타입
+                 * 음... 만약에 같은 전공학과에 같은 이름의 교수가 둘 있다면?
+                 * JSONData의 professor 식별 번호가 있다. (추정) 이걸로 하는게 낫다고 생각.
+                 * 문제점: DB 스키마를 변경해야 함. 강의에 교수번호를 붙여야 하는데... 정규화 위배..
+                 * 교수 테이블을 분리하는게 낫다고 생각.
+                 */
 
-                if (lecture.getType() == null || lecture.getType().isEmpty()) {
-                    lecture.setType(dto.getLectureType());
-                }
+                Optional<Lecture> optionalExistingLecture = lectureRepository.verifyJsonLecture(
+                        dto.getLectureName(),
+                        dto.getProfessor(),
+                        dto.getMajorType()
+                );
+
+                if (optionalExistingLecture.isPresent()) {
+                    Lecture lecture = optionalExistingLecture.get();
+                    if (lecture.getType() == null || lecture.getType().isEmpty()) {
+                        lecture.setType(dto.getLectureType());
+                    }
 
                     /**
                      * TODO think:
