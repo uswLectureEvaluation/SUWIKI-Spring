@@ -26,6 +26,8 @@ public class JsonToDataTable {
     // JSON File path -> 강의 데이터 변환
     // TODO style: 메서드명 변경
     // TODO refactor: try catch문. try resource문도 가능한가? File이면.
+    // TODO fix: 강의 장소-교시 컬럼 (place_schedule) 누락
+    // TODO fix: place_schedule - 강의 장소 스트링 누락
     public void toEntity(String path) throws IOException, ParseException, InterruptedException {
 
         Reader reader = new FileReader(path);
@@ -38,27 +40,7 @@ public class JsonToDataTable {
         if (jsonArray.size() > 0) {
             for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-
-                JSONLectureVO jsonLectureVO = JSONLectureVO.builder()
-                        // TODO refactor: 매직 리터럴 상수화
-                        .capprType((String) jsonObject.get("capprTypeNm"))
-                        .evaluateType((String) jsonObject.get("cretEvalNm"))
-                        .lectureCode((String) jsonObject.get("subjtCd"))
-                        .selectedSemester(jsonObject.get("subjtEstbYear") + "-" + String.valueOf(
-                                jsonObject.get("subjtEstbSmrCd")).charAt(0))
-                        // 이거 이미 JSON에서 int 아닌가?
-                        .grade(Integer.parseInt(jsonObject.get("trgtGrdeCd").toString()))
-                        .lectureType((String) jsonObject.get("facDvnm"))
-
-                        // TODO fix: 강의 장소-교시 컬럼 (place_schedule) 누락
-                        // TODO fix: place_schedule - 강의 장소 스트링 누락
-                        .placeSchedule(String.valueOf(jsonObject.get("timtSmryCn")))
-                        .diclNo(String.valueOf(jsonObject.get("diclNo")))
-                        .majorType(String.valueOf(jsonObject.get("estbDpmjNm")))
-                        .point(Double.parseDouble(String.valueOf(jsonObject.get("point"))))
-                        .professor(String.valueOf(jsonObject.get("reprPrfsEnoNm")))
-                        .lectureName(String.valueOf(jsonObject.get("subjtNm")))
-                        .build();
+                JSONLectureVO jsonLectureVO = new JSONLectureVO(jsonObject);
 
                 /**
                  * TODO refactor:
@@ -74,12 +56,6 @@ public class JsonToDataTable {
                  * Lecture은 잘 조회되지만, 이 과정에서 많은 수의 place_schedule들이 누락되고 있다.
                  * "강의" 조회는 별 문제 없겠지만 시간표용 강의 조회로써는 그닥이다. 결국 학생들이 스케줄을 수정해야 한다.
                  * PlaceSchedule을 별도 테이블에 관리를 해야 할지..
-                 */
-
-                /**
-                 * TODO think:
-                 * 이미 엎질러진 강의들은 어쩔 수가 없다...
-                 * grade = 0인 강의들은
                  */
                 Optional<Lecture> optionalExistingLecture = lectureRepository.verifyJsonLecture(
                         jsonLectureVO.getLectureName(),

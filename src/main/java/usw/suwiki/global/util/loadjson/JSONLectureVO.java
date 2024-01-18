@@ -1,8 +1,8 @@
 package usw.suwiki.global.util.loadjson;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.json.simple.JSONObject;
 
 @Getter
 @NoArgsConstructor
@@ -34,24 +34,32 @@ public class JSONLectureVO {
         this.lectureName = lectureName;
     }
 
-    @Builder
-    public JSONLectureVO(String selectedSemester, String placeSchedule, String professor, String lectureType,
-                         String lectureCode,
-                         String lectureName, String evaluateType, String diclNo, String majorType, double point,
-                         String capprType, int grade) {
-
-
+    public JSONLectureVO(JSONObject jsonObject) {
+        String selectedSemester = jsonObject.get("subjtEstbYear")
+                + "-"
+                + String.valueOf(jsonObject.get("subjtEstbSmrCd")).charAt(0);
+        String placeSchedule = String.valueOf(jsonObject.get("timtSmryCn"));
+        String professor = String.valueOf(jsonObject.get("reprPrfsEnoNm"));
+        String lectureType = (String) jsonObject.get("facDvnm");
+        String lectureCode = (String) jsonObject.get("subjtCd");
+        String lectureName = String.valueOf(jsonObject.get("subjtNm"));
+        String evaluateType = (String) jsonObject.get("cretEvalNm");
+        String diclNo = String.valueOf(jsonObject.get("diclNo"));
+        String majorType = String.valueOf(jsonObject.get("estbDpmjNm"));
+        double point = Double.parseDouble(String.valueOf(jsonObject.get("point")));
+        String capprType = (String) jsonObject.get("capprTypeNm");
+        int grade = Integer.parseInt(jsonObject.get("trgtGrdeCd").toString());
 
         this.selectedSemester = selectedSemester;
         this.placeSchedule = placeSchedule;
         // TODO fix: 그냥 null값을 넣는게..
         this.professor = professor.isEmpty() ? "-" : professor;     //professor 없으면 "-" 로 채움 (null 값 들어가지 않게)
-        this.lectureType = resolveDirtyMajorType(majorType);
+        this.lectureType = lectureType;
         this.lectureCode = lectureCode;
         this.lectureName = resolveDirtyLectureName(lectureName);
         this.evaluateType = evaluateType;
         this.diclNo = diclNo;
-        this.majorType = majorType;
+        this.majorType = resolveDirtyMajorType(majorType);
         this.point = point;
         this.capprType = capprType;
         this.grade = grade;
