@@ -24,41 +24,7 @@ public class JsonToDataTable {
 
     private final LectureRepository lectureRepository;
 
-    // 이상한 강의명 분기 처리 로직.
-    private JsonToLectureForm handleLectureNameException(JsonToLectureForm dto) {
 
-        if (dto.getLectureName().contains("재수강-")) {
-            int index = dto.getLectureName().indexOf("(");
-            String lectureName = dto.getLectureName().substring(0, index);
-            dto.setLectureName(lectureName);
-        }
-
-        if (dto.getLectureName().contains("재수강")) {
-            dto.setLectureName(dto.getLectureName().replace("(재수강)", ""));
-            dto.setLectureName(dto.getLectureName().replace("재수강", ""));
-        }
-
-        if (dto.getLectureName().contains("비대면수업")) {
-            dto.setLectureName(dto.getLectureName().replace("(비대면수업)", ""));
-            dto.setLectureName(dto.getLectureName().replace("비대면수업-", ""));
-            dto.setLectureName(dto.getLectureName().replace("비대면수업_", ""));
-            dto.setLectureName(dto.getLectureName().replace("비대면수업", ""));
-        }
-        if (dto.getLectureName().contains("대면수업")) {
-            dto.setLectureName(dto.getLectureName().replace("(대면수업)", ""));
-            dto.setLectureName(dto.getLectureName().replace("대면수업-", ""));
-            dto.setLectureName(dto.getLectureName().replace("대면수업_", ""));
-            dto.setLectureName(dto.getLectureName().replace("대면수업", ""));
-        }
-        if (dto.getLectureName().contains("혼합수업")) {
-            dto.setLectureName(dto.getLectureName().replace("(혼합수업)", ""));
-            dto.setLectureName(dto.getLectureName().replace("혼합수업-", ""));
-            dto.setLectureName(dto.getLectureName().replace("혼합수업_", ""));
-            dto.setLectureName(dto.getLectureName().replace("혼합수업", ""));
-        }
-
-        return dto;
-    }
 
     // JSON File path -> 강의 데이터 변환
     // TODO style: 메서드명 변경
@@ -84,7 +50,6 @@ public class JsonToDataTable {
                         .lectureCode((String) jsonObject.get("subjtCd"))
                         .selectedSemester(jsonObject.get("subjtEstbYear") + "-" + String.valueOf(
                                 jsonObject.get("subjtEstbSmrCd")).charAt(0))
-                        // TODO fix: grade 값이 0으로 삽입되는 문제. primitive type(int) => null값일 때 0으로 들어가는 것일 수 있음
                         // 이거 이미 JSON에서 int 아닌가?
                         .grade(Integer.parseInt(jsonObject.get("trgtGrdeCd").toString()))
                         .lectureType((String) jsonObject.get("facDvnm"))
@@ -98,23 +63,6 @@ public class JsonToDataTable {
                         .professor(String.valueOf(jsonObject.get("reprPrfsEnoNm")))
                         .lectureName(String.valueOf(jsonObject.get("subjtNm")))
                         .build();
-
-                //professor 없으면 "-" 로 채움 (null 값 들어가지 않게)
-                // TODO fix: 강의 교수명 (professor) 컬럼 누락
-                // TODO refactor: JsonToLectureForm의 책임. 이동
-                if (dto.getProfessor().isEmpty() || dto.getProfessor() == null) {
-                    dto.setProfessor("-");
-                }
-
-                //handleException
-                dto = handleLectureNameException(dto);
-
-                //"·" to replace "-"
-                if (dto.getMajorType().contains("·")) {
-                    String majorType = dto.getMajorType();
-                    majorType = majorType.replace("·", "-");
-                    dto.setMajorType(majorType);
-                }
 
                 /**
                  * TODO refactor:
