@@ -1,38 +1,24 @@
 package usw.suwiki.global.util.loadjson;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.json.simple.JSONObject;
 
 @Getter
-@NoArgsConstructor
 public class JSONLectureVO {
     private static final String[] KEYWORDS_TO_REMOVE = {"재수강", "비대면수업", "대면수업", "혼합수업"};
 
-    private String selectedSemester;
-    private String placeSchedule;  // 시간표 대로 나워야 하나?
-    private String professor;
-    private int grade;
-    private String lectureType;
-    private String lectureCode;
-    private String lectureName;
-    private String evaluateType;
-    private String diclNo;
-    private String majorType;
-    private double point;
-    private String capprType;
-
-    public void setProfessor(String professor) {
-        this.professor = professor;
-    }
-
-    public void setMajorType(String majorType) {
-        this.majorType = majorType;
-    }
-
-    public void setLectureName(String lectureName) {
-        this.lectureName = lectureName;
-    }
+    private final String selectedSemester;
+    private final String placeSchedule;  // 시간표 대로 나워야 하나?
+    private final String professor;
+    private final int grade;
+    private final String lectureType;
+    private final String lectureCode;
+    private final String lectureName;
+    private final String evaluateType;
+    private final String diclNo;
+    private final String majorType;
+    private final double point;
+    private final String capprType;
 
     public JSONLectureVO(JSONObject jsonObject) {
         String selectedSemester = jsonObject.get("subjtEstbYear")
