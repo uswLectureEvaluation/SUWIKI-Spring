@@ -78,42 +78,6 @@ public class Lecture extends BaseTimeEntity {
         this.lectureEvaluationInfo = new LectureEvaluationInfo();
     }
 
-    public void setSemester(String semester) {
-        this.semester = semester;
-    }
-
-    // TODO: 생성자 -> DTO에서 사용
-    public static Lecture toEntity(JSONLectureVO vo) {
-        Lecture entity = Lecture.builder()
-                .name(vo.getLectureName())
-                .type(vo.getLectureType())
-                .professor(vo.getProfessor())
-                .semester(vo.getSelectedSemester())
-                .majorType(vo.getMajorType())
-                .build();
-        entity.createLectureEvaluationInfo();
-        entity.createLectureDetail(vo);
-
-        return entity;
-    }
-
-    private void createLectureEvaluationInfo() {
-        this.lectureEvaluationInfo = new LectureEvaluationInfo();
-    }
-
-    // TODO: LectureDetail 생성자 -> DTO 에서 사용
-    private void createLectureDetail(JSONLectureVO vo) {
-        this.lectureDetail = LectureDetail.builder()
-                .code(vo.getLectureCode())
-                .grade(vo.getGrade())
-                .point(vo.getPoint())
-                .diclNo(vo.getDiclNo())
-                .evaluateType(vo.getEvaluateType())
-                .placeSchedule(vo.getPlaceSchedule())
-                .capprType(vo.getCapprType())
-                .build();
-    }
-
     /**
      * 연관관계 메서드
      */

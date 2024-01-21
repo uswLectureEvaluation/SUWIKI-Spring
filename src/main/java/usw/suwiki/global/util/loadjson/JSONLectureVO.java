@@ -36,19 +36,25 @@ public class JSONLectureVO {
         String capprType = (String) jsonObject.get("capprTypeNm");
         int grade = Integer.parseInt(jsonObject.get("trgtGrdeCd").toString());
 
-        this.selectedSemester = selectedSemester;
-        this.placeSchedule = placeSchedule;
-        // TODO fix: 그냥 null값을 넣는게..
-        this.professor = professor.isEmpty() ? "-" : professor;     //professor 없으면 "-" 로 채움 (null 값 들어가지 않게)
-        this.lectureType = lectureType;
-        this.lectureCode = lectureCode;
-        this.lectureName = resolveDirtyLectureName(lectureName);
-        this.evaluateType = evaluateType;
-        this.diclNo = diclNo;
-        this.majorType = resolveDirtyMajorType(majorType);
-        this.point = point;
-        this.capprType = capprType;
-        this.grade = grade;
+    public Lecture toEntity() {
+        LectureDetail lectureDetail = LectureDetail.builder()
+                .code(lectureCode)
+                .grade(grade)
+                .point(point)
+                .diclNo(diclNo)
+                .evaluateType(evaluateType)
+                .placeSchedule(placeSchedule)
+                .capprType(capprType)
+                .build();
+
+        return Lecture.builder()
+                .name(lectureName)
+                .type(lectureType)
+                .professor(professor)
+                .semester(selectedSemester)
+                .majorType(majorType)
+                .lectureDetail(lectureDetail)
+                .build();
     }
 
     // 이상한 강의명 분기 처리 로직.
