@@ -25,11 +25,10 @@ public class JsonToDataTable {
 
     // JSON File path -> 강의 데이터 변환
     // TODO style: 메서드명 변경
-    // TODO refactor: try catch문. try resource문도 가능한가? File이면.
+    // TODO refactor: throws -> try catch
     // TODO fix: 강의 장소-교시 컬럼 (place_schedule) 누락
     // TODO fix: place_schedule - 강의 장소 스트링 누락
     public void toEntity(String path) throws IOException, ParseException, InterruptedException {
-
         Reader reader = new FileReader(path);
 
         JSONParser parser = new JSONParser();
@@ -57,24 +56,19 @@ public class JsonToDataTable {
                  * "강의" 조회는 별 문제 없겠지만 시간표용 강의 조회로써는 그닥이다. 결국 학생들이 스케줄을 수정해야 한다.
                  * PlaceSchedule을 별도 테이블에 관리를 해야 할지..
                  */
-                Optional<Lecture> optionalExistingLecture = lectureRepository.verifyJsonLecture(
+                Optional<Lecture> optionalLecture = lectureRepository.verifyJsonLecture(
                         jsonLectureVO.getLectureName(),
                         jsonLectureVO.getProfessor(),
                         jsonLectureVO.getMajorType()
                 );
 
-                if (optionalExistingLecture.isPresent()) {
-                    Lecture lecture = optionalExistingLecture.get();
+                if (optionalLecture.isPresent()) {
+                    Lecture lecture = optionalLecture.get();
 
-                    // TODO warn: 일회성 코드
                     lecture.fixOmission(jsonLectureVO);
+                    lecture.addSemester(jsonLectureVO);
 
-                    if (!lecture.getSemester().contains(jsonLectureVO.getSelectedSemester())) {
-                        String updateString =
-                                lecture.getSemester() + ", " + jsonLectureVO.getSelectedSemester();
-                        lecture.setSemester(updateString);  //refactoring 필요
-                        lectureRepository.save(lecture);
-                    }
+                    lectureRepository.save(lecture);
                 } else {
                     // TODO refactor: JsonToLectureForm -> Lecture 의존하도록
                     Lecture savedLecture = Lecture.toEntity(jsonLectureVO);

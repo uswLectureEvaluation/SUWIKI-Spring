@@ -172,6 +172,19 @@ public class Lecture extends BaseTimeEntity {
         this.postsCount -= 1;
     }
 
+    // 강의 데이터 적재 로직
+    public void addSemester(JSONLectureVO jsonLectureVO) {
+        String VOSemester = jsonLectureVO.getSelectedSemester();
+        if (this.semester.contains(VOSemester)) {
+            return;
+        }
+
+        this.semester = buildAddedSemester(this.semester, VOSemester);
+    }
+
+    private static String buildAddedSemester(String originalSemesters, String semester) {
+        return originalSemesters + ", " + semester;
+    }
 
     // legacy: 기존에 잘못 입력된 값들을 정상화
     public void fixOmission(JSONLectureVO vo) {
