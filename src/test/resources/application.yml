@@ -1,7 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: test
 
   datasource:
     driver-class-name: org.h2.Driver
