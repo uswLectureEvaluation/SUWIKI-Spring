@@ -53,11 +53,13 @@ public class LectureService {
         return new LectureDetailResponseDto(lecture);
     }
 
-    // TODO feat: 데이터 적재 과정을 admin API로 생성
     @Transactional
     public void bulkSaveJsonLectures(String filePath) {
         JSONArray jsonArray = resolveJsonArrayFromJsonFile(filePath);
+        bulkSaveLectures(jsonArray);
+    }
 
+    private void bulkSaveLectures(JSONArray jsonArray) {
         for (Object o : jsonArray) {
             JSONObject jsonObject = (JSONObject) o;
             JSONLectureVO jsonLectureVO = new JSONLectureVO(jsonObject);
