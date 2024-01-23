@@ -23,17 +23,13 @@ public class JsonToDataTable {
 
     private final LectureRepository lectureRepository;
 
-    // JSON File path -> 강의 데이터 변환
-    // TODO style: 메서드명 변경
     // TODO refactor: throws -> try catch
-    public void toEntity(String path) throws IOException, ParseException {
-        Reader reader = new FileReader(path);
-
+    public void bulkSaveJsonLectures(String filePath) throws IOException, ParseException {
+        Reader reader = new FileReader(filePath);
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(reader);
 
         JSONArray jsonArray = (JSONArray) obj;
-
         if (jsonArray.size() > 0) {
             for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject jsonObject = (JSONObject) jsonArray.get(i);
