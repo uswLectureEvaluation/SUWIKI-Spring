@@ -25,7 +25,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
     private final Integer DEFAULT_LIMIT = 10;
 
     @Override
-    public Optional<Lecture> verifyJsonLecture(String lectureName, String professorName, String majorType) {
+    public Optional<Lecture> findByExtraUniqueKey(String lectureName, String professorName, String majorType) {
         Lecture result = queryFactory
                 .selectFrom(lecture)
                 .where(

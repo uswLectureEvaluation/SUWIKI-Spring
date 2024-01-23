@@ -26,7 +26,6 @@ public class JsonToDataTable {
     // JSON File path -> 강의 데이터 변환
     // TODO style: 메서드명 변경
     // TODO refactor: throws -> try catch
-    // TODO fix: 강의 장소-교시 컬럼 (place_schedule) 누락
     public void toEntity(String path) throws IOException, ParseException {
         Reader reader = new FileReader(path);
 
@@ -40,7 +39,7 @@ public class JsonToDataTable {
                 JSONObject jsonObject = (JSONObject) jsonArray.get(i);
                 JSONLectureVO jsonLectureVO = new JSONLectureVO(jsonObject);
 
-                Optional<Lecture> optionalLecture = lectureRepository.verifyJsonLecture(    // TODO refactor: 메서드명
+                Optional<Lecture> optionalLecture = lectureRepository.findByExtraUniqueKey(
                         jsonLectureVO.getLectureName(),
                         jsonLectureVO.getProfessor(),
                         jsonLectureVO.getMajorType()
@@ -54,7 +53,6 @@ public class JsonToDataTable {
 
                     lectureRepository.save(lecture);
                 } else {
-                    // TODO refactor: JsonToLectureForm -> Lecture 의존하도록
                     Lecture newLecture = jsonLectureVO.toEntity();
                     lectureRepository.save(newLecture);
                 }

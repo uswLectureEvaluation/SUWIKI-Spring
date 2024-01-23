@@ -9,7 +9,7 @@ import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 
 public interface LectureQueryRepository {
 
-    Optional<Lecture> verifyJsonLecture(String lectureName, String ProfessorName, String majorType);
+    Optional<Lecture> findByExtraUniqueKey(String lectureName, String ProfessorName, String majorType);
 
     List<String> findAllMajorType();
 
