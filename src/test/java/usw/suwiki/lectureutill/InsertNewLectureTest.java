@@ -1,7 +1,5 @@
 package usw.suwiki.lectureutill;
 
-import java.io.IOException;
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +20,7 @@ class InsertNewLectureTest {
     LectureRepository lectureRepository;
 
     @Test
-    void insertNewLecture() throws IOException, ParseException {
+    void insertNewLecture() {
         lectureService.bulkSaveJsonLectures("src/main/resources/USW_2023_2.json");
     }
 }

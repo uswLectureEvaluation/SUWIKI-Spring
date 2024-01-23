@@ -20,6 +20,8 @@ import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
+import usw.suwiki.global.exception.ExceptionType;
+import usw.suwiki.global.exception.errortype.LectureException;
 import usw.suwiki.global.util.loadjson.JSONLectureVO;
 
 @Service
@@ -51,39 +53,45 @@ public class LectureService {
         return new LectureDetailResponseDto(lecture);
     }
 
-    // TODO refactor: throws -> try catch
     // TODO feat: 데이터 적재 과정을 admin API로 생성
     @Transactional
-    public void bulkSaveJsonLectures(String filePath) throws IOException, ParseException {
-        Reader reader = new FileReader(filePath);
-        JSONParser parser = new JSONParser();
-        Object obj = parser.parse(reader);
+    public void bulkSaveJsonLectures(String filePath) {
+        JSONArray jsonArray = resolveJsonArrayFromJsonFile(filePath);
 
-        JSONArray jsonArray = (JSONArray) obj;
-        if (jsonArray.size() > 0) {
-            for (int i = 0; i < jsonArray.size(); i++) {
-                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                JSONLectureVO jsonLectureVO = new JSONLectureVO(jsonObject);
+        for (Object o : jsonArray) {
+            JSONObject jsonObject = (JSONObject) o;
+            JSONLectureVO jsonLectureVO = new JSONLectureVO(jsonObject);
 
-                Optional<Lecture> optionalLecture = lectureRepository.findByExtraUniqueKey(
-                        jsonLectureVO.getLectureName(),
-                        jsonLectureVO.getProfessor(),
-                        jsonLectureVO.getMajorType()
-                );
+            Optional<Lecture> optionalLecture = lectureRepository.findByExtraUniqueKey(
+                    jsonLectureVO.getLectureName(),
+                    jsonLectureVO.getProfessor(),
+                    jsonLectureVO.getMajorType()
+            );
 
-                if (optionalLecture.isPresent()) {
-                    Lecture lecture = optionalLecture.get();
+            if (optionalLecture.isPresent()) {
+                Lecture lecture = optionalLecture.get();
 
-                    lecture.fixOmission(jsonLectureVO);
-                    lecture.addSemester(jsonLectureVO);
+                lecture.fixOmission(jsonLectureVO);
+                lecture.addSemester(jsonLectureVO);
 
-                    lectureRepository.save(lecture);
-                } else {
-                    Lecture newLecture = jsonLectureVO.toEntity();
-                    lectureRepository.save(newLecture);
-                }
-
+                lectureRepository.save(lecture);
+            } else {
+                Lecture newLecture = jsonLectureVO.toEntity();
+                lectureRepository.save(newLecture);
             }
+        }
+    }
+
+    private static JSONArray resolveJsonArrayFromJsonFile(String filePath) {
+        try {
+            Reader reader = new FileReader(filePath);
+            JSONParser parser = new JSONParser();
+            Object obj = parser.parse(reader);
+
+            return (JSONArray) obj;
+        } catch (IOException | ParseException ex) {
+            ex.printStackTrace();
+            throw new LectureException(ExceptionType.SERVER_ERROR);
         }
     }
 
