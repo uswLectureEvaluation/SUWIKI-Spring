@@ -72,7 +72,7 @@ public class LectureService {
 
             if (optionalLecture.isPresent()) {
                 Lecture lecture = optionalLecture.get();
-                lecture.addSemester(jsonLectureVO);
+                lecture.addSemester(jsonLectureVO.getSelectedSemester());
 
                 lectureRepository.save(lecture);
             } else {

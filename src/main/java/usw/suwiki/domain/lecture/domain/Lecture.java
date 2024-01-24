@@ -3,6 +3,7 @@ package usw.suwiki.domain.lecture.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -19,7 +20,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.service.dto.EvaluatePostsToLecture;
 import usw.suwiki.global.BaseTimeEntity;
-import usw.suwiki.global.util.loadjson.JSONLectureVO;
 
 @Entity
 @Getter
@@ -29,7 +29,7 @@ public class Lecture extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO: 컬럼 제약 조건 설정
+    // TODO refactor: Embeddable 객체로 분리
     @Column(name = "semester_list")
     private String semester;
 
@@ -73,7 +73,6 @@ public class Lecture extends BaseTimeEntity {
         this.majorType = majorType;
         this.type = type;
         this.lectureDetail = lectureDetail;
-        // TODO: 생성자 없이 객체 초기화시 EvaluationInfo 필드값들이 어떻게 되는지 확인
         this.lectureEvaluationInfo = new LectureEvaluationInfo();
     }
 
@@ -135,14 +134,20 @@ public class Lecture extends BaseTimeEntity {
         this.postsCount -= 1;
     }
 
-    // 강의 데이터 적재 로직
-    public void addSemester(JSONLectureVO jsonLectureVO) {
-        String VOSemester = jsonLectureVO.getSelectedSemester();
-        if (this.semester.contains(VOSemester)) {
+    public void addSemester(String singleSemester) {
+        validateSingleSemester(singleSemester);
+        if (this.semester.contains(singleSemester)) {
             return;
         }
 
-        this.semester = buildAddedSemester(this.semester, VOSemester);
+        this.semester = buildAddedSemester(this.semester, singleSemester);
+    }
+
+    private void validateSingleSemester(String candidate) {
+        boolean matches = Pattern.matches("^(2\\d{3})-(1|2)$", candidate);
+        if (!matches) {
+            throw new IllegalArgumentException("invalid semester");
+        }
     }
 
     private static String buildAddedSemester(String originalSemesters, String semester) {
