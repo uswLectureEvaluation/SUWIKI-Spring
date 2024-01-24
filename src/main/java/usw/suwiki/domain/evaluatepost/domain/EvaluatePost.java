@@ -1,6 +1,5 @@
 package usw.suwiki.domain.evaluatepost.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +12,6 @@ import javax.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.LastModifiedDate;
 import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostSaveDto;
 import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostUpdateDto;
 import usw.suwiki.domain.lecture.domain.Lecture;
@@ -50,8 +48,6 @@ public class EvaluatePost extends BaseTimeEntity {
     @JoinColumn(name = "user_idx")
     private User user;
 
-    @LastModifiedDate
-    private LocalDateTime modifiedDate;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;    //주관적인 강의평가 입력내용
