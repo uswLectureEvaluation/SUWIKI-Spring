@@ -1,18 +1,22 @@
 package usw.suwiki.domain.exampost.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.LastModifiedDate;
-import usw.suwiki.domain.exampost.controller.dto.ExamPostsSaveDto;
 import usw.suwiki.domain.exampost.controller.dto.ExamPostUpdateDto;
+import usw.suwiki.domain.exampost.controller.dto.ExamPostsSaveDto;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.global.BaseTimeEntity;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,9 +33,6 @@ public class ExamPost extends BaseTimeEntity {
     private String examType;
     private String examInfo;    //시험방식
     private String examDifficulty;    //난이도
-
-    @LastModifiedDate
-    private LocalDateTime modifiedDate;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;

@@ -16,13 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.request.CreateWholeTimetableRequest;
@@ -40,14 +36,14 @@ import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.timetable.service.TimetableService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
+import usw.suwiki.global.annotation.SuwikiMockitoTest;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.TimetableException;
 import usw.suwiki.template.timetable.TimetableTemplate;
 import usw.suwiki.template.timetablecell.TimetableCellTemplate;
 import usw.suwiki.template.user.UserTemplate;
 
-@ExtendWith(MockitoExtension.class)
-@TestMethodOrder(MethodOrderer.DisplayName.class)
+@SuwikiMockitoTest
 public class TimetableServiceTest {
     @InjectMocks
     TimetableService timetableService;

@@ -13,15 +13,8 @@ import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import usw.suwiki.config.TestJpaConfig;
 import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.timetable.entity.TimetableCell;
@@ -32,16 +25,14 @@ import usw.suwiki.domain.timetable.repository.TimetableCellRepository;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
+import usw.suwiki.global.annotation.SuwikiJpaTest;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.TimetableException;
 import usw.suwiki.template.timetable.TimetableTemplate;
 import usw.suwiki.template.timetablecell.TimetableCellTemplate;
 import usw.suwiki.template.user.UserTemplate;
 
-@DataJpaTest
-@Import(TestJpaConfig.class)
-@TestMethodOrder(MethodOrderer.DisplayName.class)
-@AutoConfigureTestDatabase(replace = Replace.NONE)
+@SuwikiJpaTest
 public class TimetableRepositoryTest {
 
     @Autowired

@@ -10,13 +10,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -24,12 +20,12 @@ import usw.suwiki.domain.lecture.controller.dto.LectureWithScheduleResponse;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 import usw.suwiki.domain.lecture.service.LectureService;
+import usw.suwiki.global.annotation.SuwikiMockitoTest;
 import usw.suwiki.global.dto.NoOffsetPaginationResponse;
 import usw.suwiki.template.lecture.LectureDetailTemplate;
 import usw.suwiki.template.lecture.LectureTemplate;
 
-@ExtendWith(MockitoExtension.class)
-@TestMethodOrder(MethodOrderer.DisplayName.class)
+@SuwikiMockitoTest
 public class LectureServiceTest {
     @InjectMocks
     LectureService lectureService;
