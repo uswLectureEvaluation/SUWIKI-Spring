@@ -1,6 +1,7 @@
 package usw.suwiki.domain.version.entity;
 
 import java.util.Arrays;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.VersionException;
@@ -13,10 +14,13 @@ public enum ClientOS implements KeyValueEnumModel<String> {
     private final String value;
 
     public static ClientOS ofString(String param) {
+        if (Objects.isNull(param)) {
+            throw new VersionException(ExceptionType.INVALID_CLIENT_OS);
+        }
         return Arrays.stream(ClientOS.values())
                 .filter(v -> v.getValue().equals(param.toUpperCase()))
                 .findFirst()
-                .orElseThrow(() -> new VersionException(ExceptionType.INVALID_CLIENT_OS));
+                .orElseThrow(() -> new VersionException(ExceptionType.COMMON_CLIENT_ERROR));
     }
 
     @Override
