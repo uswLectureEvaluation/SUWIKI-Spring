@@ -2,7 +2,6 @@ package usw.suwiki.domain.lecture.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +33,7 @@ public class LectureDetail {
 
 	@Builder
 	public LectureDetail(String placeSchedule, String code, double point, String capprType, String diclNo,
-		int grade, String evaluateType) {
+						 int grade, String evaluateType) {
 		this.placeSchedule = placeSchedule;
 		this.code = code;
 		this.point = point;
@@ -43,4 +42,5 @@ public class LectureDetail {
 		this.grade = grade;
 		this.evaluateType = evaluateType;
 	}
+
 }

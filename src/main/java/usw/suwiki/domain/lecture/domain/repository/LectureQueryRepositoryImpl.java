@@ -8,6 +8,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +25,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
     private final Integer DEFAULT_LIMIT = 10;
 
     @Override
-    public Lecture verifyJsonLecture(String lectureName, String professorName, String majorType) {
+    public Optional<Lecture> findByExtraUniqueKey(String lectureName, String professorName, String majorType) {
         Lecture result = queryFactory
                 .selectFrom(lecture)
                 .where(
@@ -34,7 +35,7 @@ public class LectureQueryRepositoryImpl implements LectureQueryRepository {
                 )
                 .fetchOne();
 
-        return result;
+        return Optional.ofNullable(result);
     }
 
 
