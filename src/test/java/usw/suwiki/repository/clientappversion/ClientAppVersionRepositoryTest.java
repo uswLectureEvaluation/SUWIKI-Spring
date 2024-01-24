@@ -24,7 +24,10 @@ public class ClientAppVersionRepositoryTest {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private ClientAppVersion dummyClientAppVersion;
+    private ClientAppVersion dummyClientAppVersionFirst;
+    private ClientAppVersion dummyClientAppVersionSecond;
+    private ClientAppVersion dummyClientAppVersionThird;
+
 
     @BeforeEach
     public void setUp() {
@@ -41,12 +44,12 @@ public class ClientAppVersionRepositoryTest {
         ClientAppVersion androidVersion3 = ClientAppVersion.builder()
                 .os(ClientOS.ANDROID)
                 .versionCode(3)
-                .isVital(true)
+                .isVital(false)
                 .build();
 
-        clientAppVersionRepository.save(androidVersion1);
-        clientAppVersionRepository.save(androidVersion2);
-        clientAppVersionRepository.save(androidVersion3);
+        this.dummyClientAppVersionFirst = clientAppVersionRepository.save(androidVersion1);
+        this.dummyClientAppVersionSecond = clientAppVersionRepository.save(androidVersion2);
+        this.dummyClientAppVersionThird = clientAppVersionRepository.save(androidVersion3);
 
         entityManager.clear();
     }
@@ -99,4 +102,17 @@ public class ClientAppVersionRepositoryTest {
         assertThatThrownBy(()->clientAppVersionRepository.save(nullIsVitalVersion))
                 .isExactlyInstanceOf(ConstraintViolationException.class);
     }
+
+    @Test
+    @DisplayName("클라이언트 앱 버전 조회 - 특정 OS에 대한 가장 최신의 필수 버전 조회")
+    public void CLIENT_APP_VERSION_FIND_MOST_RECENT_VITAL_VERSION() {
+        // given
+        Optional<ClientAppVersion> optionalClientAppVersion = clientAppVersionRepository
+                .findFirstByOsAndIsVitalTrueOrderByVersionCodeDesc(ClientOS.ANDROID);
+
+        // when & then
+        assertThat(optionalClientAppVersion).isPresent();
+        assertThat(optionalClientAppVersion.get().getVersionCode()).isEqualTo(2);
+    }
+
 }
