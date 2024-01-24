@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Embeddable
 @NoArgsConstructor
-public class LectureDetail {
+public class LectureDetail {	// TODO refactor: placeSchedule, grade, point 은 Lecture로 이동. 혹은 전체 이동.
 	@Column(name = "place_schedule")
 	private String placeSchedule;
 

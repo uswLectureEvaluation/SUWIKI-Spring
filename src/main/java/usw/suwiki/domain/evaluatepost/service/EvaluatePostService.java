@@ -1,5 +1,9 @@
 package usw.suwiki.domain.evaluatepost.service;
 
+import static usw.suwiki.global.exception.ExceptionType.POSTS_WRITE_OVERLAP;
+
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,15 +16,11 @@ import usw.suwiki.domain.evaluatepost.service.dto.EvaluatePostsToLecture;
 import usw.suwiki.domain.evaluatepost.service.dto.FindByLectureToJson;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureCRUDService;
+import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.exception.errortype.EvaluatePostException;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static usw.suwiki.global.exception.ExceptionType.POSTS_WRITE_OVERLAP;
 
 @Service
 @RequiredArgsConstructor
@@ -28,12 +28,13 @@ public class EvaluatePostService {
 
     private final EvaluatePostCRUDService evaluatePostCRUDService;
     private final LectureCRUDService lectureCRUDService;
+    private final LectureService lectureService;
     private final UserCRUDService userCRUDService;
 
     @Transactional
     public void write(EvaluatePostSaveDto evaluatePostData, Long userIdx, Long lectureId) {
         checkAlreadyWrite(userIdx, lectureId);
-        Lecture lecture = lectureCRUDService.loadLectureFromId(lectureId);
+        Lecture lecture = lectureService.findLectureById(lectureId);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         EvaluatePost evaluatePost = createEvaluatePost(evaluatePostData, user, lecture);
 
@@ -104,7 +105,7 @@ public class EvaluatePostService {
     }
 
     public boolean verifyIsUserCanWriteEvaluatePost(Long userIdx, Long lectureId) {
-        Lecture lecture = lectureCRUDService.loadLectureFromId(lectureId);
+        Lecture lecture = lectureService.findLectureById(lectureId);;
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         return evaluatePostCRUDService.isAlreadyWritten(user, lecture);
     }

@@ -13,7 +13,6 @@ build/
 /src/main/resources/application-prod.yml
 /src/main/resources/application-dev.yml
 /src/main/resources/application-local.yml
-/src/test/resources/*.yml
 
 *.json
 *.DS_Store

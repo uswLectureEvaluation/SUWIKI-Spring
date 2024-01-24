@@ -1,6 +1,5 @@
 package usw.suwiki.domain.lecture.domain;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -16,7 +15,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.LastModifiedDate;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.service.dto.EvaluatePostsToLecture;
 import usw.suwiki.global.BaseTimeEntity;
@@ -52,8 +50,6 @@ public class Lecture extends BaseTimeEntity {
 
     private int postsCount = 0;
 
-    @LastModifiedDate
-    private LocalDateTime modifiedDate;
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EvaluatePost> evaluatePostList = new ArrayList<>();

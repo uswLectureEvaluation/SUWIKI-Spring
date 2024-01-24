@@ -56,7 +56,7 @@ public class FavoriteMajorServiceV2Test {
     public void saveFavoriteMajor_success() throws Exception {
         //given
         injectDummyUserId();
-        given(userCRUDService.loadUserByIdx(dummyUser.getId())).willReturn(dummyUser);
+        given(userCRUDService.loadUserById(dummyUser.getId())).willReturn(dummyUser);
         given(favoriteMajorRepositoryV2.existsByUserIdAndMajorType(dummyUser.getId(), dummyFavoriteMajor.getMajorType()))
                 .willReturn(false);
         given(favoriteMajorRepositoryV2.save(any(FavoriteMajor.class))).willReturn(dummyFavoriteMajor);
@@ -75,7 +75,7 @@ public class FavoriteMajorServiceV2Test {
     public void saveFavoriteMajor_fail_for_duplicate_request() throws Exception {
         //given
         injectDummyUserId();
-        given(userCRUDService.loadUserByIdx(dummyUser.getId())).willReturn(dummyUser);
+        given(userCRUDService.loadUserById(dummyUser.getId())).willReturn(dummyUser);
         given(favoriteMajorRepositoryV2.existsByUserIdAndMajorType(dummyUser.getId(), dummyFavoriteMajor.getMajorType()))
                 .willReturn(true);
         //when
@@ -90,7 +90,7 @@ public class FavoriteMajorServiceV2Test {
     public void findSingleFavoriteMajorByUser_success() throws Exception {
         //given
         injectDummyUserId();
-        given(userCRUDService.loadUserByIdx(dummyUser.getId())).willReturn(dummyUser);
+        given(userCRUDService.loadUserById(dummyUser.getId())).willReturn(dummyUser);
         given(favoriteMajorRepositoryV2.findAllByUserId(dummyUser.getId())).willReturn(List.of(dummyFavoriteMajor));
 
         //when
@@ -106,7 +106,7 @@ public class FavoriteMajorServiceV2Test {
     public void findMultiFavoriteMajorByUser_success() throws Exception {
         //given
         injectDummyUserId();
-        given(userCRUDService.loadUserByIdx(dummyUser.getId())).willReturn(dummyUser);
+        given(userCRUDService.loadUserById(dummyUser.getId())).willReturn(dummyUser);
         given(favoriteMajorRepositoryV2.findAllByUserId(dummyUser.getId()))
                 .willReturn(List.of(dummyFavoriteMajor, getDummyFavoriteMajor_business));
 
@@ -124,7 +124,7 @@ public class FavoriteMajorServiceV2Test {
     public void deleteSingleFavoriteMajor_success() throws Exception {
         //given
         injectDummyUserId();
-        given(userCRUDService.loadUserByIdx(dummyUser.getId())).willReturn(dummyUser);
+        given(userCRUDService.loadUserById(dummyUser.getId())).willReturn(dummyUser);
         given(favoriteMajorRepositoryV2.findByUserIdAndMajorType(dummyUser.getId(), dummyFavoriteMajor.getMajorType()))
                 .willReturn(Optional.of(dummyFavoriteMajor));
         doNothing().when(favoriteMajorRepositoryV2).delete(dummyFavoriteMajor);
@@ -141,7 +141,7 @@ public class FavoriteMajorServiceV2Test {
     public void deleteSingleFavoriteMajor_fail_not_exist() throws Exception {
         //given
         injectDummyUserId();
-        given(userCRUDService.loadUserByIdx(dummyUser.getId())).willReturn(dummyUser);
+        given(userCRUDService.loadUserById(dummyUser.getId())).willReturn(dummyUser);
         given(favoriteMajorRepositoryV2.findByUserIdAndMajorType(dummyUser.getId(), "없음")).willReturn(Optional.empty());
 
         //when - then
@@ -154,7 +154,7 @@ public class FavoriteMajorServiceV2Test {
     @Test
     public void deleteMultiFavoriteMajor_success() throws Exception {
         //given
-        given(userCRUDService.loadUserByIdx(dummyUser.getId())).willReturn(dummyUser);
+        given(userCRUDService.loadUserById(dummyUser.getId())).willReturn(dummyUser);
         List<FavoriteMajor> favoriteMajors = List.of(dummyFavoriteMajor, getDummyFavoriteMajor_business);
         given(favoriteMajorRepositoryV2.findAllByUserId(dummyUser.getId())).willReturn(favoriteMajors);
         doNothing().when(favoriteMajorRepositoryV2).deleteAll(favoriteMajors);

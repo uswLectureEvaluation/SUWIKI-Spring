@@ -178,17 +178,10 @@ public class JwtAgent {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
 
-        System.out.println("tokenExpiredAt = " + tokenExpiredAt);
-        System.out.println("LocalDateTime.now() = " + LocalDateTime.now());
-
         // 만료 시간 > 현재 시간 => 정상
 
         // 현재시간 - 7일(초단위) 를 한 피연산자 할당
         LocalDateTime subDetractedDateTime = LocalDateTime.now().plusSeconds(604800);
-        System.out.println("subDetractedDateTime = " + subDetractedDateTime);
-
-        System.out.println(
-                "tokenExpiredAt.isBefore(subDetractedDateTime) = " + tokenExpiredAt.isBefore(subDetractedDateTime));
         // 피연산자 보다 이전 이면 True 반환 및 갱신해줘야함
         return tokenExpiredAt.isBefore(LocalDateTime.now());
     }

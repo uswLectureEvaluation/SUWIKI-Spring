@@ -1,22 +1,24 @@
 package usw.suwiki.domain.exampost.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import usw.suwiki.domain.exampost.controller.dto.*;
+import usw.suwiki.domain.exampost.controller.dto.ExamPostUpdateDto;
+import usw.suwiki.domain.exampost.controller.dto.ExamPostsSaveDto;
+import usw.suwiki.domain.exampost.controller.dto.ExamResponseByLectureIdDto;
+import usw.suwiki.domain.exampost.controller.dto.ExamResponseByUserIdxDto;
+import usw.suwiki.domain.exampost.controller.dto.ReadExamPostResponse;
 import usw.suwiki.domain.exampost.controller.dto.viewexam.PurchaseHistoryDto;
 import usw.suwiki.domain.exampost.domain.ExamPost;
-import usw.suwiki.domain.userlecture.viewexam.ViewExam;
 import usw.suwiki.domain.lecture.domain.Lecture;
-import usw.suwiki.domain.lecture.service.LectureCRUDService;
+import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
+import usw.suwiki.domain.userlecture.viewexam.ViewExam;
 import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.global.PageOption;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +26,12 @@ public class ExamPostService {
 
     private final ExamPostCRUDService examPostCRUDService;
     private final ViewExamCRUDService viewExamCRUDService;
-    private final LectureCRUDService lectureCRUDService;
+    private final LectureService lectureService;
     private final UserCRUDService userCRUDService;
 
     @Transactional
     public void write(ExamPostsSaveDto examData, Long userIdx, Long lectureId) {
-        Lecture lecture = lectureCRUDService.loadLectureFromId(lectureId);
+        Lecture lecture = lectureService.findLectureById(lectureId);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
 
         ExamPost examPost = createExamPost(examData, user, lecture);
@@ -41,7 +43,7 @@ public class ExamPostService {
     @Transactional
     public void purchase(Long lectureIdx, Long userIdx) {
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
-        Lecture lecture = lectureCRUDService.loadLectureFromId(lectureIdx);
+        Lecture lecture =lectureService.findLectureById(lectureIdx);
         user.purchaseExamPost();
 
         ViewExam viewExam = ViewExam.builder()
@@ -109,7 +111,7 @@ public class ExamPostService {
     @Transactional(readOnly = true)
     public boolean isWrite(Long userIdx, Long lectureIdx) {
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
-        Lecture lecture = lectureCRUDService.loadLectureFromId(lectureIdx);
+        Lecture lecture = lectureService.findLectureById(lectureIdx);
         return examPostCRUDService.isWrite(user, lecture);
     }
 

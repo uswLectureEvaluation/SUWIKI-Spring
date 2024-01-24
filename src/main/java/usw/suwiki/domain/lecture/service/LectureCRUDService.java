@@ -1,17 +1,14 @@
 package usw.suwiki.domain.lecture.service;
 
-import static usw.suwiki.global.exception.ExceptionType.*;
+import static usw.suwiki.global.exception.ExceptionType.LECTURE_NOT_FOUND;
 
 import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
-import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
+import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 import usw.suwiki.global.exception.errortype.LectureException;
 
 @Service
@@ -19,11 +16,6 @@ import usw.suwiki.global.exception.errortype.LectureException;
 public class LectureCRUDService {
 
     private final LectureRepository lectureRepository;
-
-    public Lecture loadLectureFromId(Long id) {
-        Optional<Lecture> lecture = lectureRepository.findById(id);
-        return validateOptional(lecture);
-    }
 
     public List<String> loadMajorTypes() {
         List<String> majors = lectureRepository.findAllMajorType();
@@ -51,11 +43,4 @@ public class LectureCRUDService {
         return lectureRepository.findAllLectureByMajorType(option);
     }
 
-
-    public Lecture validateOptional(Optional<Lecture> lecture) {
-        if (lecture.isEmpty()) {
-            throw new LectureException(LECTURE_NOT_FOUND);
-        }
-        return lecture.get();
-    }
 }
