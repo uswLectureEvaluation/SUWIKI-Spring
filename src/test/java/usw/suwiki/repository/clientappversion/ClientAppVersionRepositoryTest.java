@@ -17,6 +17,7 @@ import usw.suwiki.domain.version.entity.ClientAppVersion;
 import usw.suwiki.domain.version.entity.ClientOS;
 import usw.suwiki.domain.version.repository.ClientAppVersionRepository;
 import usw.suwiki.global.annotation.SuwikiJpaTest;
+import usw.suwiki.global.exception.errortype.VersionException;
 
 @SuwikiJpaTest
 public class ClientAppVersionRepositoryTest {
@@ -97,11 +98,11 @@ public class ClientAppVersionRepositoryTest {
                 .build();
 
         // when & then
-        assertThatThrownBy(()->clientAppVersionRepository.save(nullOsVersion))
+        assertThatThrownBy(() -> clientAppVersionRepository.save(nullOsVersion))
                 .isExactlyInstanceOf(ConstraintViolationException.class);
-        assertThatThrownBy(()->clientAppVersionRepository.save(nullCodeVersion))
+        assertThatThrownBy(() -> clientAppVersionRepository.save(nullCodeVersion))
                 .isExactlyInstanceOf(ConstraintViolationException.class);
-        assertThatThrownBy(()->clientAppVersionRepository.save(nullIsVitalVersion))
+        assertThatThrownBy(() -> clientAppVersionRepository.save(nullIsVitalVersion))
                 .isExactlyInstanceOf(ConstraintViolationException.class);
     }
 
@@ -137,5 +138,21 @@ public class ClientAppVersionRepositoryTest {
         assertThat(optionalClientAppVersion).isPresent();
         assertThat(optionalClientAppVersion.get().getVersionCode()).isEqualTo(2);
     }
+
+    @Test
+    @DisplayName("클라이언트 앱 버전 조회 - 업데이트 필수 여부 확인")
+    public void CLIENT_APP_VERSION_CHECK_IS_UPDATE_REQUIRED() {
+        // given
+        Optional<ClientAppVersion> optionalClientAppVersion = clientAppVersionRepository
+                .findFirstByOsAndIsVitalTrueOrderByVersionCodeDesc(ClientOS.ANDROID);
+
+        // when & then
+        assertThat(optionalClientAppVersion).isPresent();
+        assertThat(optionalClientAppVersion.get().judgeIsUpdateRequired(ClientOS.ANDROID, 1))
+                .isTrue();
+        assertThatThrownBy(() -> optionalClientAppVersion.get().judgeIsUpdateRequired(ClientOS.IOS, 1))
+                .isExactlyInstanceOf(VersionException.class);
+    }
+
 
 }

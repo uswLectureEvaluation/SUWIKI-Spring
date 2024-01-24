@@ -7,6 +7,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -15,6 +17,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.global.BaseTimeEntity;
+import usw.suwiki.global.exception.ExceptionType;
+import usw.suwiki.global.exception.errortype.VersionException;
 
 @Entity
 @Getter
@@ -55,5 +59,12 @@ public class ClientAppVersion extends BaseTimeEntity {
         this.versionCode = versionCode;
         this.isVital = isVital;
         this.description = description;
+    }
+
+    public boolean judgeIsUpdateRequired(ClientOS os, Integer otherVersionCode) {
+        if (!this.os.equals(os)) {
+            throw new VersionException(ExceptionType.SERVER_ERROR);
+        }
+        return this.isVital && this.versionCode > otherVersionCode;
     }
 }
