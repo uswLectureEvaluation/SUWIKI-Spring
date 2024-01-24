@@ -148,9 +148,9 @@ public class ClientAppVersionRepositoryTest {
 
         // when & then
         assertThat(optionalClientAppVersion).isPresent();
-        assertThat(optionalClientAppVersion.get().judgeIsUpdateRequired(ClientOS.ANDROID, 1))
+        assertThat(optionalClientAppVersion.get().judgeIsUpdateMandatory(ClientOS.ANDROID, 1))
                 .isTrue();
-        assertThatThrownBy(() -> optionalClientAppVersion.get().judgeIsUpdateRequired(ClientOS.IOS, 1))
+        assertThatThrownBy(() -> optionalClientAppVersion.get().judgeIsUpdateMandatory(ClientOS.IOS, 1))
                 .isExactlyInstanceOf(VersionException.class);
     }
 

@@ -61,7 +61,7 @@ public class ClientAppVersion extends BaseTimeEntity {
         this.description = description;
     }
 
-    public boolean judgeIsUpdateRequired(ClientOS os, Integer otherVersionCode) {
+    public boolean judgeIsUpdateMandatory(ClientOS os, Integer otherVersionCode) {
         if (!this.os.equals(os)) {
             throw new VersionException(ExceptionType.SERVER_ERROR);
         }
