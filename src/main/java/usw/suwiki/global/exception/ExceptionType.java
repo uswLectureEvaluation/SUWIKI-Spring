@@ -114,6 +114,13 @@ public enum ExceptionType {
 
     INVALID_TIMETABLE_CELL_SCHEDULE("TIMETABLE210", "유효하지 않은 셀 스케줄입니다.", BAD_REQUEST),
     OVERLAPPED_TIMETABLE_CELL_SCHEDULE("TIMETABLE211", "시간표에 중복되는 요일-교시입니다.", CONFLICT),
+
+    /**
+     * Domain : Version
+     */
+    INVALID_CLIENT_OS("VERSION110", "유효하지 않은 클라이언트 OS 입니다.", BAD_REQUEST),
+
+
     /**
      * 공통
      */
