@@ -35,17 +35,17 @@ public class ClientAppVersion extends BaseTimeEntity {
     private Integer versionCode;
 
     @NotNull
-    private Boolean isUpdateRequired;
+    private Boolean isVital;
 
     @Size(max = 2000)
     private String description;
 
 
     @Builder
-    public ClientAppVersion(ClientOS os, Integer versionCode, Boolean isUpdateRequired, String description) {
+    public ClientAppVersion(ClientOS os, Integer versionCode, Boolean isVital, String description) {
         this.os = os;
         this.versionCode = versionCode;
-        this.isUpdateRequired = isUpdateRequired;
+        this.isVital = isVital;
         this.description = description;
     }
 }
