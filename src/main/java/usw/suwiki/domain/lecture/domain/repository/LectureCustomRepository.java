@@ -2,7 +2,6 @@ package usw.suwiki.domain.lecture.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.List;
 import org.springframework.data.domain.Slice;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.domain.Lecture;
@@ -19,8 +18,6 @@ public interface LectureCustomRepository {
     );
 
     Optional<Lecture> findByExtraUniqueKey(String lectureName, String ProfessorName, String majorType);
-
-    Lecture verifyJsonLecture(String lectureName, String ProfessorName, String majorType);
 
     List<String> findAllMajorType();
 
