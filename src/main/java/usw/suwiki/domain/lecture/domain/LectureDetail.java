@@ -1,6 +1,5 @@
 package usw.suwiki.domain.lecture.domain;
 
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import lombok.Builder;
@@ -43,18 +42,5 @@ public class LectureDetail {
 		this.grade = grade;
 		this.evaluateType = evaluateType;
 	}
-
-	public void fixOmittedGrade(int grade) {
-		if (this.grade == 0) {
-			this.grade = grade;
-		}
-	}
-
-	public void fixOmittedPlaceSchedudle(String placeSchedule) {
-		if (Objects.equals(this.placeSchedule, "null")) {
-			this.placeSchedule = placeSchedule;
-		}
-	}
-
 
 }

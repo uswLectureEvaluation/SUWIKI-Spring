@@ -150,13 +150,4 @@ public class Lecture extends BaseTimeEntity {
         return originalSemesters + ", " + semester;
     }
 
-    // legacy: 기존에 잘못 입력된 값들을 정상화
-    public void fixOmission(JSONLectureVO vo) {
-        if (this.type == null || this.type.isEmpty()) {
-            this.type = vo.getLectureType();
-        }
-
-        this.lectureDetail.fixOmittedGrade(vo.getGrade());
-        this.lectureDetail.fixOmittedPlaceSchedudle(vo.getPlaceSchedule());
-    }
 }
