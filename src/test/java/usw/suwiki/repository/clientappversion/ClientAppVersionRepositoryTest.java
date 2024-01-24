@@ -1,6 +1,7 @@
 package usw.suwiki.repository.clientappversion;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Optional;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import usw.suwiki.domain.version.entity.ClientAppVersion;
 import usw.suwiki.domain.version.entity.ClientOS;
 import usw.suwiki.domain.version.repository.ClientAppVersionRepository;
@@ -101,6 +103,27 @@ public class ClientAppVersionRepositoryTest {
                 .isExactlyInstanceOf(ConstraintViolationException.class);
         assertThatThrownBy(()->clientAppVersionRepository.save(nullIsVitalVersion))
                 .isExactlyInstanceOf(ConstraintViolationException.class);
+    }
+
+    @Test
+    @DisplayName("클라이언트 앱 버전 생성 실패 - UNIQUE 제약 조건 (os, versionCode)을 준수해야 한다.")
+    public void CLIENT_APP_VERSION_CREATE_FAIL_UNIQUE_CONSTRAINT() {
+        // given
+        ClientAppVersion first = ClientAppVersion.builder()
+                .os(ClientOS.IOS)
+                .versionCode(1)
+                .isVital(false)
+                .build();
+        ClientAppVersion second = ClientAppVersion.builder()
+                .os(ClientOS.IOS)
+                .versionCode(1)
+                .isVital(false)
+                .build();
+
+        // when & then
+        assertThatNoException().isThrownBy(() -> clientAppVersionRepository.save(first));
+        assertThatThrownBy(() -> clientAppVersionRepository.save(second))
+                .isExactlyInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test

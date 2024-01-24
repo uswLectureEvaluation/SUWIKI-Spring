@@ -19,19 +19,27 @@ import usw.suwiki.global.BaseTimeEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(uniqueConstraints = {
+        @UniqueConstraint(
+                name = "UNIQUE_OS_AND_VERSION_CODE",
+                columnNames = {"os", "version_code"}
+        )
+})
 public class ClientAppVersion extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "client_version_id")
+    @Column(name = "client_app_version_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)
     @NotNull
+    @Column(name = "os")
     private ClientOS os;
 
     @NotNull
     @Min(value = 0)
+    @Column(name = "version_code")
     private Integer versionCode;
 
     @NotNull
