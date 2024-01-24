@@ -11,20 +11,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.service.dto.EvaluatePostsToLecture;
 import usw.suwiki.global.BaseTimeEntity;
 import usw.suwiki.global.util.loadjson.JSONLectureVO;
 
-@Getter
-@Setter // TODO: 제거
 @Entity
-@NoArgsConstructor  // TODO: access PROTECTED
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Lecture extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
