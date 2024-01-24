@@ -3,6 +3,7 @@ package usw.suwiki.domain.lecture.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -11,26 +12,24 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.service.dto.EvaluatePostsToLecture;
-import usw.suwiki.domain.lecture.controller.dto.JsonToLectureForm;
 import usw.suwiki.global.BaseTimeEntity;
 
-@Getter
-@Setter // TODO: 제거
 @Entity
-@NoArgsConstructor  // TODO: access PROTECTED
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Lecture extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO: 컬럼 제약 조건 설정
+    // TODO refactor: Embeddable 객체로 분리
     @Column(name = "semester_list")
     private String semester;
 
@@ -74,44 +73,7 @@ public class Lecture extends BaseTimeEntity {
         this.majorType = majorType;
         this.type = type;
         this.lectureDetail = lectureDetail;
-        // TODO: 생성자 없이 객체 초기화시 EvaluationInfo 필드값들이 어떻게 되는지 확인
         this.lectureEvaluationInfo = new LectureEvaluationInfo();
-    }
-
-    public void setSemester(String semester) {
-        this.semester = semester;
-    }
-
-    // TODO: 생성자 -> DTO에서 사용
-    public static Lecture toEntity(JsonToLectureForm dto) {
-        Lecture entity = Lecture.builder()
-                .name(dto.getLectureName())
-                .type(dto.getLectureType())
-                .professor(dto.getProfessor())
-                .semester(dto.getSelectedSemester())
-                .majorType(dto.getMajorType())
-                .build();
-        entity.createLectureEvaluationInfo();
-        entity.createLectureDetail(dto);
-
-        return entity;
-    }
-
-    private void createLectureEvaluationInfo() {
-        this.lectureEvaluationInfo = new LectureEvaluationInfo();
-    }
-
-    // TODO: LectureDetail 생성자 -> DTO 에서 사용
-    private void createLectureDetail(JsonToLectureForm dto) {
-        this.lectureDetail = LectureDetail.builder()
-                .code(dto.getLectureCode())
-                .grade(dto.getGrade())
-                .point(dto.getPoint())
-                .diclNo(dto.getDiclNo())
-                .evaluateType(dto.getEvaluateType())
-                .placeSchedule(dto.getPlaceSchedule())
-                .capprType(dto.getCapprType())
-                .build();
     }
 
     /**
@@ -171,4 +133,25 @@ public class Lecture extends BaseTimeEntity {
     private void decreasePostCount() {
         this.postsCount -= 1;
     }
+
+    public void addSemester(String singleSemester) {
+        validateSingleSemester(singleSemester);
+        if (this.semester.contains(singleSemester)) {
+            return;
+        }
+
+        this.semester = buildAddedSemester(this.semester, singleSemester);
+    }
+
+    private void validateSingleSemester(String candidate) {
+        boolean matches = Pattern.matches("^(2\\d{3})-(1|2)$", candidate);
+        if (!matches) {
+            throw new IllegalArgumentException("invalid semester");
+        }
+    }
+
+    private static String buildAddedSemester(String originalSemesters, String semester) {
+        return originalSemesters + ", " + semester;
+    }
+
 }

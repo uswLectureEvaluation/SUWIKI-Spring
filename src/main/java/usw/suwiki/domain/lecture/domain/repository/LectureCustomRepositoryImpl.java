@@ -10,6 +10,8 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Objects;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +21,7 @@ import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 import usw.suwiki.global.util.query.SlicePaginationUtils;
+
 
 @RequiredArgsConstructor
 public class LectureCustomRepositoryImpl implements LectureCustomRepository { // TODO style: Repository명 변경
@@ -53,7 +56,7 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
 
 
     @Override
-    public Lecture verifyJsonLecture(String lectureName, String professorName, String majorType) {
+    public Optional<Lecture> findByExtraUniqueKey(String lectureName, String professorName, String majorType) {
         Lecture result = queryFactory
                 .selectFrom(lecture)
                 .where(
@@ -63,7 +66,7 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
                 )
                 .fetchOne();
 
-        return result;
+        return Optional.ofNullable(result);
     }
 
 

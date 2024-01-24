@@ -4,8 +4,18 @@ import static usw.suwiki.global.exception.ExceptionType.LECTURE_NOT_FOUND;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
@@ -21,6 +31,11 @@ import usw.suwiki.domain.lecture.util.LectureStringConverter;
 import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
 import usw.suwiki.global.dto.NoOffsetPaginationResponse;
 import usw.suwiki.global.exception.errortype.LectureException;
+import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
+import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
+import usw.suwiki.global.exception.ExceptionType;
+import usw.suwiki.global.exception.errortype.LectureException;
+import usw.suwiki.global.util.loadjson.JSONLectureVO;
 
 @Service
 @Transactional(readOnly = true)
@@ -85,6 +100,48 @@ public class LectureService {
                 .orElseThrow(() -> new LectureException(LECTURE_NOT_FOUND));
     }
 
+
+    @Transactional
+    public void bulkSaveJsonLectures(String filePath) {
+        JSONArray jsonArray = resolveJsonArrayFromJsonFile(filePath);
+        bulkSaveLectures(jsonArray);
+    }
+
+    private void bulkSaveLectures(JSONArray jsonArray) {
+        for (Object o : jsonArray) {
+            JSONObject jsonObject = (JSONObject) o;
+            JSONLectureVO jsonLectureVO = new JSONLectureVO(jsonObject);
+
+            Optional<Lecture> optionalLecture = lectureRepository.findByExtraUniqueKey(
+                    jsonLectureVO.getLectureName(),
+                    jsonLectureVO.getProfessor(),
+                    jsonLectureVO.getMajorType()
+            );
+
+            if (optionalLecture.isPresent()) {
+                Lecture lecture = optionalLecture.get();
+                lecture.addSemester(jsonLectureVO.getSelectedSemester());
+
+                lectureRepository.save(lecture);
+            } else {
+                Lecture newLecture = jsonLectureVO.toEntity();
+                lectureRepository.save(newLecture);
+            }
+        }
+    }
+
+    private static JSONArray resolveJsonArrayFromJsonFile(String filePath) {
+        try {
+            Reader reader = new FileReader(filePath);
+            JSONParser parser = new JSONParser();
+            Object obj = parser.parse(reader);
+
+            return (JSONArray) obj;
+        } catch (IOException | ParseException ex) {
+            ex.printStackTrace();
+            throw new LectureException(ExceptionType.SERVER_ERROR);
+        }
+    }
 
     private LectureAndCountResponseForm readLectureByKeywordAndOption(String keyword, LectureFindOption option) {
         LecturesAndCountDao lectureInfo = lectureCRUDService.loadLectureByKeywordAndOption(keyword, option);

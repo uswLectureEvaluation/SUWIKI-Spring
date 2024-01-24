@@ -33,7 +33,7 @@ public class LectureDetail {	// TODO refactor: placeSchedule, grade, point 은 L
 
 	@Builder
 	public LectureDetail(String placeSchedule, String code, double point, String capprType, String diclNo,
-		int grade, String evaluateType) {
+						 int grade, String evaluateType) {
 		this.placeSchedule = placeSchedule;
 		this.code = code;
 		this.point = point;
@@ -42,4 +42,5 @@ public class LectureDetail {	// TODO refactor: placeSchedule, grade, point 은 L
 		this.grade = grade;
 		this.evaluateType = evaluateType;
 	}
+
 }
