@@ -1,10 +1,10 @@
-package usw.suwiki.domain.evaluatepost.template;
+package usw.suwiki.domain.evaluatepost.fixture;
 
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.user.User;
 
-public class EvaluatePostTemplate {
+public class EvaluatePostFixture {
     private static final String LECTURE_NAME = "데이터 구조"; //과목
     private static final String SELECTED_SEMESTER = "2023-2";
     private static final String PROFESSOR = "신호진";   //교수

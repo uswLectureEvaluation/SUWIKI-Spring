@@ -31,11 +31,11 @@ import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.timetable.entity.TimetableCell;
 import usw.suwiki.domain.timetable.entity.TimetableCellColor;
 import usw.suwiki.domain.timetable.entity.TimetableDay;
+import usw.suwiki.domain.timetable.fixture.TimetableCellFixture;
+import usw.suwiki.domain.timetable.fixture.TimetableFixture;
 import usw.suwiki.domain.timetable.repository.TimetableCellRepository;
 import usw.suwiki.domain.timetable.repository.TimetableRepository;
-import usw.suwiki.domain.timetable.template.TimetableCellTemplate;
-import usw.suwiki.domain.timetable.template.TimetableTemplate;
-import usw.suwiki.domain.user.template.UserTemplate;
+import usw.suwiki.domain.user.fixture.UserFixture;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.annotation.SuwikiMockitoTest;
@@ -75,14 +75,14 @@ public class TimetableServiceTest {
 
     @BeforeEach
     public void setUp() {
-        this.user = spy(UserTemplate.createDummyUser());
-        this.otherUser = spy(UserTemplate.createSecondDummyUser());
-        this.timetable = spy(TimetableTemplate.createFirstDummy(user));
-        this.timetableCellA = spy(TimetableCellTemplate.createFirstDummy(timetable));
-        this.timetableCellB = spy(TimetableCellTemplate.createSecondDummy(timetable));
+        this.user = spy(UserFixture.createDummyUser());
+        this.otherUser = spy(UserFixture.createSecondDummyUser());
+        this.timetable = spy(TimetableFixture.createFirstDummy(user));
+        this.timetableCellA = spy(TimetableCellFixture.createFirstDummy(timetable));
+        this.timetableCellB = spy(TimetableCellFixture.createSecondDummy(timetable));
 
         // 셀 생성 테스트에 쓰이는 객체
-        TimetableCell dummyTimetableCell = TimetableCellTemplate.createOrphanDummy(
+        TimetableCell dummyTimetableCell = TimetableCellFixture.createOrphanDummy(
                 "연관관계 없음",
                 "노연관",
                 TimetableCellColor.ORANGE,

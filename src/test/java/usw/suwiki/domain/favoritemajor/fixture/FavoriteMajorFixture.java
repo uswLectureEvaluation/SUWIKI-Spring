@@ -1,9 +1,9 @@
-package usw.suwiki.domain.favoritemajor.template;
+package usw.suwiki.domain.favoritemajor.fixture;
 
 import usw.suwiki.domain.favoritemajor.FavoriteMajor;
 import usw.suwiki.domain.user.user.User;
 
-public class FavoriteMajorTemplate {
+public class FavoriteMajorFixture {
 
     private static final Long FAVORITE_MAJOR_ID = 1L;
     private static final String MAJOR_TYPE_A = "컴퓨터SW";

@@ -1,4 +1,4 @@
-package usw.suwiki.domain.timetable.template;
+package usw.suwiki.domain.timetable.fixture;
 
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.timetable.entity.TimetableCell;
@@ -6,7 +6,7 @@ import usw.suwiki.domain.timetable.entity.TimetableCellColor;
 import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
 import usw.suwiki.domain.timetable.entity.TimetableDay;
 
-public class TimetableCellTemplate {
+public class TimetableCellFixture {
     public static final String LECTURE_NAME_A = "더미 강의 A";
     public static final String LECTURE_NAME_B = "더미 강의 B";
     public static final String PROFESSOR_NAME_A = "더미 교수 A";

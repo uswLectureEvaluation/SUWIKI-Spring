@@ -1,10 +1,10 @@
-package usw.suwiki.domain.user.template;
+package usw.suwiki.domain.user.fixture;
 
 import java.time.LocalDateTime;
 import usw.suwiki.domain.user.user.Role;
 import usw.suwiki.domain.user.user.User;
 
-public class UserTemplate {
+public class UserFixture {
 
     private static final Long ID_A = 1L;
     private static final Long ID_B = 2L;

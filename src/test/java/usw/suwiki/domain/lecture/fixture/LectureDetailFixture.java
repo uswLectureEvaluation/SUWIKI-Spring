@@ -1,8 +1,8 @@
-package usw.suwiki.domain.lecture.template;
+package usw.suwiki.domain.lecture.fixture;
 
 import usw.suwiki.domain.lecture.domain.LectureDetail;
 
-public class LectureDetailTemplate {
+public class LectureDetailFixture {
     public static final String PLACE_SCHEDULE = "IT307(월6,7,8)";
     public static final String CODE = "01760";
     public static final double POINT = 0;

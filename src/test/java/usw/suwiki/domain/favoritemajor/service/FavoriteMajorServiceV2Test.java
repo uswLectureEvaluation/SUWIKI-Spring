@@ -20,9 +20,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import usw.suwiki.domain.favoritemajor.FavoriteMajor;
 import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
+import usw.suwiki.domain.favoritemajor.fixture.FavoriteMajorFixture;
 import usw.suwiki.domain.favoritemajor.repository.FavoriteMajorRepositoryV2;
-import usw.suwiki.domain.favoritemajor.template.FavoriteMajorTemplate;
-import usw.suwiki.domain.user.template.UserTemplate;
+import usw.suwiki.domain.user.fixture.UserFixture;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserBusinessService;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
@@ -32,9 +32,9 @@ import usw.suwiki.global.jwt.JwtAgent;
 @ExtendWith(MockitoExtension.class)
 public class FavoriteMajorServiceV2Test {
 
-    private static final User dummyUser = UserTemplate.createDummyUser();
-    private static final FavoriteMajor dummyFavoriteMajor = FavoriteMajorTemplate.createDummyFavoriteMajor(dummyUser);
-    private static final FavoriteMajor getDummyFavoriteMajor_business = FavoriteMajorTemplate.createDummyFavoriteMajor(2L, dummyUser, "경영");
+    private static final User dummyUser = UserFixture.createDummyUser();
+    private static final FavoriteMajor dummyFavoriteMajor = FavoriteMajorFixture.createDummyFavoriteMajor(dummyUser);
+    private static final FavoriteMajor getDummyFavoriteMajor_business = FavoriteMajorFixture.createDummyFavoriteMajor(2L, dummyUser, "경영");
     private static final String AUTHORIZATION_TOKEN = "authorization";
     @InjectMocks
     FavoriteMajorServiceV2 favoriteMajorServiceV2;

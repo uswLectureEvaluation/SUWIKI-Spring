@@ -19,12 +19,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Slice;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
-import usw.suwiki.domain.evaluatepost.template.EvaluatePostTemplate;
+import usw.suwiki.domain.evaluatepost.fixture.EvaluatePostFixture;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.LectureDetail;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
-import usw.suwiki.domain.lecture.template.LectureTemplate;
-import usw.suwiki.domain.user.template.UserTemplate;
+import usw.suwiki.domain.lecture.fixture.LectureFixture;
+import usw.suwiki.domain.user.fixture.UserFixture;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.global.config.TestJpaConfig;
@@ -54,9 +54,9 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
 
     @BeforeEach
     void setUp() {
-        this.dummyUser = userRepository.save(UserTemplate.createDummyUser());
-        this.dummyLecture = lectureRepository.save(LectureTemplate.createFirstDummyLecture());
-        this.dummyEvaluatePost = EvaluatePostTemplate.createFirstDummyEvaluatePost(dummyUser, dummyLecture);
+        this.dummyUser = userRepository.save(UserFixture.createDummyUser());
+        this.dummyLecture = lectureRepository.save(LectureFixture.createFirstDummyLecture());
+        this.dummyEvaluatePost = EvaluatePostFixture.createFirstDummyEvaluatePost(dummyUser, dummyLecture);
 
         LectureDetail firstGradeLectureDetail = LectureDetail.builder()
                 .grade(1)
@@ -78,7 +78,7 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
             grade: 이번 학기중 2학년 과목은 20개
          */
         for (int i = 0; i < 20; i++) {
-            lectureRepository.save(LectureTemplate.createDummyLecture(
+            lectureRepository.save(LectureFixture.createDummyLecture(
                     "2021-2, 2022-2, " + currentSemester,
                     "도전과 창조",
                     "중핵",
@@ -86,7 +86,7 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
                     "우문균",
                     firstGradeLectureDetail
             ));
-            lectureRepository.save(LectureTemplate.createDummyLecture(
+            lectureRepository.save(LectureFixture.createDummyLecture(
                     "2021-2, 2022-2, " + currentSemester,
                     "테스트학개론",
                     "중핵",
@@ -94,7 +94,7 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
                     "장성태",
                     firstGradeLectureDetail
             ));
-            lectureRepository.save(LectureTemplate.createDummyLecture(
+            lectureRepository.save(LectureFixture.createDummyLecture(
                     "2021-2, 2022-2, " + currentSemester,
                     "도전과 창조",
                     "중핵",
@@ -102,7 +102,7 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
                     "소크라테스",
                     firstGradeLectureDetail
             ));
-            lectureRepository.save(LectureTemplate.createDummyLecture(
+            lectureRepository.save(LectureFixture.createDummyLecture(
                     "2021-2, 2022-2, " + currentSemester,
                     "도전과 창조",
                     "중핵",

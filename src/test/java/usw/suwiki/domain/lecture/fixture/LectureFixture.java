@@ -1,15 +1,15 @@
-package usw.suwiki.domain.lecture.template;
+package usw.suwiki.domain.lecture.fixture;
 
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.LectureDetail;
 
-public class LectureTemplate {
+public class LectureFixture {
     public static final String SEMESTER = "2022-1, 2023-1";
     public static final String PROFESSOR = "신호진";
     public static final String NAME = "데이터 구조";
     public static final String MAJOR_TYPE = "컴퓨터 학부";
     public static final String LECTURE_TYPE = "전핵";
-    public static final LectureDetail LECTURE_DETAIL = LectureDetailTemplate.createFirstDummy();
+    public static final LectureDetail LECTURE_DETAIL = LectureDetailFixture.createFirstDummy();
 
     public static Lecture createFirstDummyLecture() {
         return createDummyLecture(SEMESTER, PROFESSOR, NAME, MAJOR_TYPE, LECTURE_TYPE, LECTURE_DETAIL);

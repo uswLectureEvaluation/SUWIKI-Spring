@@ -21,9 +21,9 @@ import usw.suwiki.domain.timetable.entity.TimetableCell;
 import usw.suwiki.domain.timetable.entity.TimetableCellColor;
 import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
 import usw.suwiki.domain.timetable.entity.TimetableDay;
-import usw.suwiki.domain.timetable.template.TimetableCellTemplate;
-import usw.suwiki.domain.timetable.template.TimetableTemplate;
-import usw.suwiki.domain.user.template.UserTemplate;
+import usw.suwiki.domain.timetable.fixture.TimetableCellFixture;
+import usw.suwiki.domain.timetable.fixture.TimetableFixture;
+import usw.suwiki.domain.user.fixture.UserFixture;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.global.annotation.SuwikiJpaTest;
@@ -51,21 +51,21 @@ public class TimetableRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        this.dummyUser = userRepository.save(UserTemplate.createDummyUser());
+        this.dummyUser = userRepository.save(UserFixture.createDummyUser());
 
-        Timetable timetable = TimetableTemplate.createFirstDummy(dummyUser);
+        Timetable timetable = TimetableFixture.createFirstDummy(dummyUser);
         this.dummyTimetable = timetableRepository.save(timetable);
 
-        TimetableTemplate.createDummy("1-1 시간표", 2017, Semester.FIRST, dummyUser);
-        TimetableTemplate.createDummy("1-2 시간표", 2017, Semester.SECOND, dummyUser);
-        TimetableTemplate.createDummy("2-1 시간표", 2018, Semester.FIRST, dummyUser);
+        TimetableFixture.createDummy("1-1 시간표", 2017, Semester.FIRST, dummyUser);
+        TimetableFixture.createDummy("1-2 시간표", 2017, Semester.SECOND, dummyUser);
+        TimetableFixture.createDummy("2-1 시간표", 2018, Semester.FIRST, dummyUser);
         userRepository.save(dummyUser);
 
-        TimetableCell timetableCell = TimetableCellTemplate.createFirstDummy(dummyTimetable);
+        TimetableCell timetableCell = TimetableCellFixture.createFirstDummy(dummyTimetable);
         this.dummyTimetableCell = timetableCellRepository.save(timetableCell);
-        TimetableCellTemplate.createDummy(dummyTimetable, "데이터 구조", "손수국", GRAY, "IT 305", TimetableDay.TUE, 1, 3);
-        TimetableCellTemplate.createDummy(dummyTimetable, "컴퓨터 구조", "갓성태", ORANGE, "IT 504", TimetableDay.WED, 1, 3);
-        TimetableCellTemplate.createDummy(dummyTimetable, "이산 구조", "김장영", BROWN, "IT 105", TimetableDay.THU, 1, 3);
+        TimetableCellFixture.createDummy(dummyTimetable, "데이터 구조", "손수국", GRAY, "IT 305", TimetableDay.TUE, 1, 3);
+        TimetableCellFixture.createDummy(dummyTimetable, "컴퓨터 구조", "갓성태", ORANGE, "IT 504", TimetableDay.WED, 1, 3);
+        TimetableCellFixture.createDummy(dummyTimetable, "이산 구조", "김장영", BROWN, "IT 105", TimetableDay.THU, 1, 3);
         timetableRepository.save(dummyTimetable);
 
         entityManager.clear();  // 영속성 컨텍스트 초기화
@@ -190,7 +190,7 @@ public class TimetableRepositoryTest {
         // then
         assertThat(all.isEmpty()).isFalse();
         assertThat(all.size()).isEqualTo(4);
-        assertThat(all.get(0).getYear()).isEqualTo(TimetableTemplate.YEAR);
+        assertThat(all.get(0).getYear()).isEqualTo(TimetableFixture.YEAR);
         assertThat(all.get(1).getYear()).isEqualTo(2017);
         assertThat(all.get(2).getYear()).isEqualTo(2017);
         assertThat(all.get(3).getYear()).isEqualTo(2018);
@@ -434,7 +434,7 @@ public class TimetableRepositoryTest {
         assertThat(timetable.isPresent()).isTrue();
         List<TimetableCell> cellList = timetable.get().getCellList();
         assertThat(cellList.size()).isEqualTo(4);
-        assertThat(cellList.get(0).getLectureName()).isEqualTo(TimetableCellTemplate.LECTURE_NAME_A);
+        assertThat(cellList.get(0).getLectureName()).isEqualTo(TimetableCellFixture.LECTURE_NAME_A);
         assertThat(cellList.get(1).getLectureName()).isEqualTo("데이터 구조");
         assertThat(cellList.get(2).getLectureName()).isEqualTo("컴퓨터 구조");
         assertThat(cellList.get(3).getLectureName()).isEqualTo("이산 구조");

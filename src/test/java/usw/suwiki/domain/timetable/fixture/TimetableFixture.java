@@ -1,10 +1,10 @@
-package usw.suwiki.domain.timetable.template;
+package usw.suwiki.domain.timetable.fixture;
 
 import usw.suwiki.domain.timetable.entity.Semester;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.domain.user.user.User;
 
-public class TimetableTemplate {
+public class TimetableFixture {
     public static final String NAME = "첫번째 시간표";
     public static final int YEAR = 2023;
     public static final Semester SEMESTER = Semester.FIRST;
