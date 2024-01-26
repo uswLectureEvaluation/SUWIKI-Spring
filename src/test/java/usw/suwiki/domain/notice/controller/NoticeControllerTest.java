@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import usw.suwiki.domain.notice.controller.dto.NoticeSaveOrUpdateDto;
 import usw.suwiki.global.IntegrationTestBase;
 
-class NoticeControllerTestBase extends IntegrationTestBase {
+class NoticeControllerTest extends IntegrationTestBase {
 
     @BeforeAll
     public void init() throws Exception {

@@ -22,7 +22,7 @@ import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.UserQuitForm;
 import usw.suwiki.global.IntegrationTestBase;
 
-public class UserControllerTestBase extends IntegrationTestBase {
+public class UserControllerTest extends IntegrationTestBase {
 
     @BeforeAll
     public void init() throws Exception {

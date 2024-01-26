@@ -37,7 +37,7 @@ import usw.suwiki.global.util.mailsender.EmailSender;
 
 @SpringBootTest
 @Transactional
-public class UserIsolationSchedulingServiceTestBase extends IntegrationTestBase {
+public class UserIsolationSchedulingServiceTest extends IntegrationTestBase {
 
     @Autowired
     UserCRUDService userCRUDService;

@@ -13,7 +13,7 @@ import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostRe
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
 import usw.suwiki.global.IntegrationTestBase;
 
-class AdminControllerV2TestBase extends IntegrationTestBase {
+class AdminControllerV2Test extends IntegrationTestBase {
 
     @BeforeAll
     public void init() throws Exception {

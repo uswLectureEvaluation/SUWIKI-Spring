@@ -12,7 +12,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.global.IntegrationTestBase;
 
-public class ConfirmationTokenControllerTestBase extends IntegrationTestBase {
+public class ConfirmationTokenControllerTest extends IntegrationTestBase {
 
     @Autowired
     ConfirmationTokenCRUDService confirmationTokenCRUDService;

@@ -14,7 +14,7 @@ import usw.suwiki.global.IntegrationTestBase;
 import usw.suwiki.global.jwt.JwtAgent;
 
 
-public class BlacklistDomainControllerV2TestBase extends IntegrationTestBase {
+public class BlacklistDomainControllerV2Test extends IntegrationTestBase {
 
     @MockBean
     JwtAgent jwtAgent;

@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import usw.suwiki.global.IntegrationTestBase;
 import usw.suwiki.global.jwt.JwtAgent;
 
-class LectureControllerTestBase extends IntegrationTestBase {
+class LectureControllerTest extends IntegrationTestBase {
 
     @MockBean
     JwtAgent jwtAgent;

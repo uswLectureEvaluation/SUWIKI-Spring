@@ -11,7 +11,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.web.servlet.ResultActions;
 import usw.suwiki.global.IntegrationTestBase;
 
-class ExamPostControllerTestBase extends IntegrationTestBase {
+class ExamPostControllerTest extends IntegrationTestBase {
 
     @BeforeAll
     public void init() throws Exception {

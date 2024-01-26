@@ -14,7 +14,7 @@ import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostSaveDto;
 import usw.suwiki.global.IntegrationTestBase;
 import usw.suwiki.global.jwt.JwtAgent;
 
-class EvaluatePostControllerTestBase extends IntegrationTestBase {
+class EvaluatePostControllerTest extends IntegrationTestBase {
 
     @MockBean
     JwtAgent jwtAgent;
