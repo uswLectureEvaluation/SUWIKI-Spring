@@ -45,5 +45,5 @@ server:
   domain: http://localhost:8080
 
 business:
-  current-semester: 2023-2
+  current-semester: 2024-1
 
