@@ -9,4 +9,4 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 business:
-  current-semester: 2023-2
+  current-semester: 2024-1
