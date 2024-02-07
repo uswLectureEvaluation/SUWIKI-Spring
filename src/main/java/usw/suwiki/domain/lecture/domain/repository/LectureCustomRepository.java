@@ -5,11 +5,12 @@ import java.util.Optional;
 import org.springframework.data.domain.Slice;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.domain.lecture.domain.LectureSchedule;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 
 
 public interface LectureCustomRepository {
-    Slice<Lecture> findCurrentSemesterLectures(
+    Slice<LectureSchedule> findCurrentSemesterLectureSchedules(
             final Long cursorId,
             final int limit,
             final String keyword,

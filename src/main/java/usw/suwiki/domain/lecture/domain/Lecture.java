@@ -50,6 +50,8 @@ public class Lecture extends BaseTimeEntity {
 
     private int postsCount = 0;
 
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LectureSchedule> scheduleList = new ArrayList<>();
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EvaluatePost> evaluatePostList = new ArrayList<>();
@@ -83,6 +85,13 @@ public class Lecture extends BaseTimeEntity {
         this.evaluatePostList.remove(evaluatePost);
     }
 
+    public void addSchedule(LectureSchedule lectureSchedule) {
+        this.scheduleList.add(lectureSchedule);
+    }
+
+    public void removeSchedule(LectureSchedule lectureSchedule) {
+        this.scheduleList.remove(lectureSchedule);
+    }
     /**
      * 비즈니스 메서드
      */

@@ -42,9 +42,10 @@ public class JSONLectureVO {
                 .point(point)
                 .diclNo(diclNo)
                 .evaluateType(evaluateType)
-                .placeSchedule(placeSchedule)
                 .capprType(capprType)
                 .build();
+
+        // TODO fix: LectureSchedule 생성. 이 메서드 말고 밖에서 만들어야 할듯
 
         return Lecture.builder()
                 .name(lectureName)

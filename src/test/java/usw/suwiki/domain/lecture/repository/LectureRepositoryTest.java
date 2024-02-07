@@ -22,6 +22,7 @@ import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.fixture.EvaluatePostFixture;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.LectureDetail;
+import usw.suwiki.domain.lecture.domain.LectureSchedule;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 import usw.suwiki.domain.lecture.fixture.LectureFixture;
 import usw.suwiki.domain.user.fixture.UserFixture;
@@ -78,45 +79,62 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
             grade: 이번 학기중 2학년 과목은 20개
          */
         for (int i = 0; i < 20; i++) {
-            lectureRepository.save(LectureFixture.createDummyLecture(
+            Lecture dummyLecture1 = LectureFixture.createDummyLecture(
                     "2021-2, 2022-2, " + currentSemester,
                     "도전과 창조",
                     "중핵",
                     "교양 아님",
                     "우문균",
-                    firstGradeLectureDetail
-            ));
-            lectureRepository.save(LectureFixture.createDummyLecture(
+                    firstGradeLectureDetail);
+            LectureSchedule.builder()
+                    .placeSchedule("IT123(월1,2,3)")
+                    .lecture(dummyLecture1)
+                    .build();
+            lectureRepository.save(dummyLecture1);
+
+            Lecture dummyLecture2 = LectureFixture.createDummyLecture(
                     "2021-2, 2022-2, " + currentSemester,
                     "테스트학개론",
                     "중핵",
                     "교양 아님",
                     "장성태",
                     firstGradeLectureDetail
-            ));
-            lectureRepository.save(LectureFixture.createDummyLecture(
+            );
+            LectureSchedule.builder()
+                    .placeSchedule("IT123(월1,2,3)")
+                    .lecture(dummyLecture2)
+                    .build();
+            lectureRepository.save(dummyLecture2);
+
+            Lecture dummyLecture3 = LectureFixture.createDummyLecture(
                     "2021-2, 2022-2, " + currentSemester,
                     "도전과 창조",
                     "중핵",
                     "교양",
                     "소크라테스",
                     firstGradeLectureDetail
-            ));
-            lectureRepository.save(LectureFixture.createDummyLecture(
+            );
+            LectureSchedule.builder()
+                    .placeSchedule("IT123(월1,2,3)")
+                    .lecture(dummyLecture3)
+                    .build();
+            lectureRepository.save(dummyLecture3);
+
+            Lecture dummyLecture4 = LectureFixture.createDummyLecture(
                     "2021-2, 2022-2, " + currentSemester,
                     "도전과 창조",
                     "중핵",
                     "교양",
                     "우문균",
                     secondGradeLectureDetail
-            ));
+            );
+            LectureSchedule.builder()
+                    .placeSchedule("IT123(월1,2,3)")
+                    .lecture(dummyLecture4)
+                    .build();
+            lectureRepository.save(dummyLecture4);
         }
 
-        Slice<Lecture> result = lectureRepository.findCurrentSemesterLectures(
-                0L,
-                20,
-                null, null, null
-        );
         entityManager.clear();
     }
 
@@ -174,44 +192,43 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
         String majorType = "교양";
         int grade = 2;
 
-        // TODO fix: Slice 0 containing UNKNOWN instances
         // when
-        Slice<Lecture> currentSemester = lectureRepository.findCurrentSemesterLectures(
+        Slice<LectureSchedule> currentSemesterResult = lectureRepository.findCurrentSemesterLectureSchedules(
                 cursorId,
                 limit,
                 null,
                 null,
                 null
         );
-        Slice<Lecture> lectureKeywordResult = lectureRepository.findCurrentSemesterLectures(
+        Slice<LectureSchedule> lectureKeywordResult = lectureRepository.findCurrentSemesterLectureSchedules(
                 cursorId,
                 limit,
                 lectureNameKeyword,
                 null,
                 null
         );
-        Slice<Lecture> professorKeywordResult = lectureRepository.findCurrentSemesterLectures(
+        Slice<LectureSchedule> professorKeywordResult = lectureRepository.findCurrentSemesterLectureSchedules(
                 cursorId,
                 limit,
                 professorNameKeyword,
                 null,
                 null
         );
-        Slice<Lecture> bothKeywordResult = lectureRepository.findCurrentSemesterLectures(
+        Slice<LectureSchedule> bothKeywordResult = lectureRepository.findCurrentSemesterLectureSchedules(
                 cursorId,
                 limit,
                 bothKeyword,
                 null,
                 null
         );
-        Slice<Lecture> majorResult = lectureRepository.findCurrentSemesterLectures(
+        Slice<LectureSchedule> majorResult = lectureRepository.findCurrentSemesterLectureSchedules(
                 cursorId,
                 limit,
                 null,
                 majorType,
                 null
         );
-        Slice<Lecture> majorGradeResult = lectureRepository.findCurrentSemesterLectures(
+        Slice<LectureSchedule> majorGradeResult = lectureRepository.findCurrentSemesterLectureSchedules(
                 cursorId,
                 limit,
                 null,
@@ -220,7 +237,7 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 �
         );
 
         // then
-        assertThat(currentSemester.getContent().size()).isEqualTo(80);
+        assertThat(currentSemesterResult.getContent().size()).isEqualTo(80);
         assertThat(lectureKeywordResult.getContent().size()).isEqualTo(60);
         assertThat(professorKeywordResult.getContent().size()).isEqualTo(20);
         assertThat(bothKeywordResult.getContent().size()).isEqualTo(40);    // 강의명 테스트학개론, 교수명 소크라테스

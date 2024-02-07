@@ -2,8 +2,6 @@ package usw.suwiki.domain.lecture.service;
 
 import static usw.suwiki.global.exception.ExceptionType.LECTURE_NOT_FOUND;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -11,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Slice;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
@@ -25,14 +23,12 @@ import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
 import usw.suwiki.domain.lecture.controller.dto.LectureWithScheduleResponse;
 import usw.suwiki.domain.lecture.controller.dto.OriginalLectureCellResponse;
 import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.domain.lecture.domain.LectureSchedule;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 import usw.suwiki.domain.lecture.util.LectureStringConverter;
 import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
 import usw.suwiki.global.dto.NoOffsetPaginationResponse;
-import usw.suwiki.global.exception.errortype.LectureException;
-import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
-import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.LectureException;
 import usw.suwiki.global.util.loadjson.JSONLectureVO;
@@ -71,18 +67,20 @@ public class LectureService {
             String major,
             Integer grade
     ) {
-        Slice<Lecture> lectureSlice = lectureRepository
-                .findCurrentSemesterLectures(cursorId, limit, keyword, major, grade);
+        Slice<LectureSchedule> lectureScheduleSlice = lectureRepository
+                .findCurrentSemesterLectureSchedules(cursorId, limit, keyword, major, grade);
 
-        Slice<LectureWithScheduleResponse> result = lectureSlice
+        Slice<LectureWithScheduleResponse> result = lectureScheduleSlice
                 .map(this::convertLectureWithSchedule);
 
         return NoOffsetPaginationResponse.of(result);
     }
 
-    private LectureWithScheduleResponse convertLectureWithSchedule(Lecture lecture) {
-        LectureWithScheduleResponse response = LectureWithScheduleResponse.of(lecture);
-        String placeSchedule = lecture.getLectureDetail().getPlaceSchedule();
+    private LectureWithScheduleResponse convertLectureWithSchedule(LectureSchedule lectureSchedule) {
+        LectureWithScheduleResponse response = LectureWithScheduleResponse.of(lectureSchedule);
+        // TODO fix: LectureSchedule 을 조회 후 가져오기
+
+        String placeSchedule = lectureSchedule.getPlaceSchedule();
 
         List<TimetableCellSchedule> scheduleList = LectureStringConverter
                 .convertScheduleChunkIntoTimetableCellScheduleList(placeSchedule);
@@ -117,6 +115,8 @@ public class LectureService {
                     jsonLectureVO.getProfessor(),
                     jsonLectureVO.getMajorType()
             );
+
+            // TODO fix: Lecture이 있다면, Lecture은 저장하지 말고 LectureSchedule만 저장하자.
 
             if (optionalLecture.isPresent()) {
                 Lecture lecture = optionalLecture.get();
