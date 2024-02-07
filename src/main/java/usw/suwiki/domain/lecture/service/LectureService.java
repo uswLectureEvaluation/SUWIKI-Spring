@@ -13,6 +13,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import usw.suwiki.domain.lecture.controller.dto.OriginalLectureCellResponse;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.LectureSchedule;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
+import usw.suwiki.domain.lecture.domain.repository.LectureScheduleRepository;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 import usw.suwiki.domain.lecture.util.LectureStringConverter;
 import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
@@ -40,6 +42,10 @@ public class LectureService {
 
     private final LectureCRUDService lectureCRUDService;
     private final LectureRepository lectureRepository;
+    private final LectureScheduleRepository lectureScheduleRepository;
+
+    @Value("${business.current-semester}")
+    private String currentSemester;
 
     public LectureAndCountResponseForm readLectureByKeyword(String keyword, LectureFindOption option) {
         if (option.passMajorFiltering()) {
@@ -116,18 +122,30 @@ public class LectureService {
                     jsonLectureVO.getMajorType()
             );
 
-            // TODO fix: Lecture이 있다면, Lecture은 저장하지 말고 LectureSchedule만 저장하자.
-
             if (optionalLecture.isPresent()) {
                 Lecture lecture = optionalLecture.get();
                 lecture.addSemester(jsonLectureVO.getSelectedSemester());
 
-                lectureRepository.save(lecture);
+                boolean anyMatch = lecture.getScheduleList().stream()
+                        .anyMatch(jsonLectureVO::isLectureAndPlaceScheduleEqual);
+                if (!anyMatch) {    // 없던 스케줄일 경우 : 추가
+                    LectureSchedule.builder()
+                            .lecture(lecture)
+                            .placeSchedule(jsonLectureVO.getPlaceSchedule())
+                            .build();
+                    lectureRepository.save(lecture);
+                }
             } else {
                 Lecture newLecture = jsonLectureVO.toEntity();
+                LectureSchedule.builder()
+                        .lecture(newLecture)
+                        .placeSchedule(jsonLectureVO.getPlaceSchedule())
+                        .build();
+
                 lectureRepository.save(newLecture);
             }
         }
+
     }
 
     private static JSONArray resolveJsonArrayFromJsonFile(String filePath) {
