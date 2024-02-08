@@ -1,11 +1,17 @@
 package usw.suwiki.global.util.loadjson;
 
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.LectureDetail;
+import usw.suwiki.domain.lecture.domain.LectureSchedule;
 
 @Getter
+@Builder
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class JSONLectureVO {
     private final String selectedSemester;
     private final String placeSchedule;
@@ -20,19 +26,21 @@ public class JSONLectureVO {
     private final double point;
     private final String capprType;
 
-    public JSONLectureVO(JSONObject jsonObject) {
-        this.selectedSemester = USWTermResolver.getSemester(jsonObject);
-        this.placeSchedule = USWTermResolver.extractPlaceSchedule(jsonObject);
-        this.professor = USWTermResolver.getOptionalProfessorName(jsonObject);
-        this.lectureType = USWTermResolver.extractLectureFacultyType(jsonObject);
-        this.lectureCode = USWTermResolver.extractLectureCode(jsonObject);
-        this.lectureName = USWTermResolver.getLectureName(jsonObject);
-        this.evaluateType = USWTermResolver.extractEvaluationType(jsonObject);
-        this.diclNo = USWTermResolver.extractDivideClassNumber(jsonObject);
-        this.majorType = USWTermResolver.getMajorType(jsonObject);
-        this.point = USWTermResolver.extractLecturePoint(jsonObject);
-        this.capprType = USWTermResolver.extractCapacityType(jsonObject);
-        this.grade = USWTermResolver.extractTargetGrade(jsonObject);
+    public static JSONLectureVO from(JSONObject jsonObject) {
+        return JSONLectureVO.builder()
+                .selectedSemester(USWTermResolver.getSemester(jsonObject))
+                .placeSchedule(USWTermResolver.extractPlaceSchedule(jsonObject))
+                .professor(USWTermResolver.getOptionalProfessorName(jsonObject))
+                .lectureType(USWTermResolver.extractLectureFacultyType(jsonObject))
+                .lectureCode(USWTermResolver.extractLectureCode(jsonObject))
+                .lectureName(USWTermResolver.getLectureName(jsonObject))
+                .evaluateType(USWTermResolver.extractEvaluationType(jsonObject))
+                .diclNo(USWTermResolver.extractDivideClassNumber(jsonObject))
+                .majorType(USWTermResolver.getMajorType(jsonObject))
+                .point(USWTermResolver.extractLecturePoint(jsonObject))
+                .capprType(USWTermResolver.extractCapacityType(jsonObject))
+                .grade(USWTermResolver.extractTargetGrade(jsonObject))
+                .build();
     }
 
     public Lecture toEntity() {
@@ -55,6 +63,40 @@ public class JSONLectureVO {
                 .majorType(majorType)
                 .lectureDetail(lectureDetail)
                 .build();
+    }
+
+    public boolean isLectureAndPlaceScheduleEqual(LectureSchedule lectureSchedule) {
+        boolean b = lectureSchedule.getPlaceSchedule().contains(placeSchedule)
+                && lectureSchedule.getLecture().getName().equals(lectureName)
+                && lectureSchedule.getLecture().getProfessor().equals(professor)
+                && lectureSchedule.getLecture().getMajorType().equals(majorType);
+
+        if (b) {
+            System.out.println("lectureSchedule.getId() = " + lectureSchedule.getId());
+            System.out.println("lectureSchedule.getPlaceSchedule() = " + lectureSchedule.getPlaceSchedule());
+            System.out.println("placeSchedule = " + placeSchedule);
+            System.out.println(
+                    "lectureSchedule.getPlaceSchedule().equals(placeSchedule) = " + lectureSchedule.getPlaceSchedule()
+                            .equals(placeSchedule));
+            System.out.println("lectureSchedule.getLecture().getName() = " + lectureSchedule.getLecture().getName());
+            System.out.println("lectureName = " + lectureName);
+            System.out.println(
+                    "lectureSchedule.getLecture().getName().equals(lectureName) = " + lectureSchedule.getLecture()
+                            .getName().equals(lectureName));
+            System.out.println(
+                    "lectureSchedule.getLecture().getProfessor() = " + lectureSchedule.getLecture().getProfessor());
+            System.out.println("professor = " + professor);
+            System.out.println(
+                    "lectureSchedule.getLecture().getProfessor().equals(professor) = " + lectureSchedule.getLecture()
+                            .getProfessor().equals(professor));
+            System.out.println(
+                    "lectureSchedule.getLecture().getMajorType() = " + lectureSchedule.getLecture().getMajorType());
+            System.out.println("majorType = " + majorType);
+            System.out.println(
+                    "lectureSchedule.getLecture().getMajorType().equals(majorType) = " + lectureSchedule.getLecture()
+                            .getMajorType().equals(majorType));
+        }
+        return b;
     }
 
 }

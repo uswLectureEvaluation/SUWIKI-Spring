@@ -114,7 +114,7 @@ public class LectureService {
     private void bulkSaveLectures(JSONArray jsonArray) {
         for (Object o : jsonArray) {
             JSONObject jsonObject = (JSONObject) o;
-            JSONLectureVO jsonLectureVO = new JSONLectureVO(jsonObject);
+            JSONLectureVO jsonLectureVO = JSONLectureVO.from(jsonObject);
 
             Optional<Lecture> optionalLecture = lectureRepository.findByExtraUniqueKey(
                     jsonLectureVO.getLectureName(),
