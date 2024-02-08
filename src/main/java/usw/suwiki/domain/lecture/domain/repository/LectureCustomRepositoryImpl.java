@@ -1,6 +1,7 @@
 package usw.suwiki.domain.lecture.domain.repository;
 
 import static usw.suwiki.domain.lecture.domain.QLecture.lecture;
+import static usw.suwiki.domain.lecture.domain.QLectureSchedule.lectureSchedule;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
@@ -10,7 +11,6 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Objects;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.domain.lecture.domain.LectureSchedule;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 import usw.suwiki.global.util.query.SlicePaginationUtils;
 
@@ -35,23 +36,32 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
     private String currentSemester; // TODO 고민: Lecture - currently_opened 혹은 last_opened_semester 컬럼 추가 -> 데이터 파싱 로직 및 WHERE절 변경해야 함.
 
     @Override
-    public Slice<Lecture> findCurrentSemesterLectures(
+    public Slice<LectureSchedule> findCurrentSemesterLectureSchedules(
             final Long cursorId,
             final int limit,
             final String keyword,
             final String majorType,
             final Integer grade
     ) {
-        JPAQuery<Lecture> query = queryFactory.selectFrom(lecture)
-                .where(gtCursorId(cursorId))
-                .where(containsLectureKeyword(keyword))
-                .where(eqMajorType(majorType))
-                .where(eqGrade(grade))
-                .where(lecture.semester.endsWith(currentSemester))
-                .orderBy(lecture.id.asc())
+        JPAQuery<LectureSchedule> query = queryFactory.selectFrom(lectureSchedule)
+                .join(lectureSchedule.lecture).fetchJoin()
+                .where(gtLectureScheduleCursorId(cursorId))
+                .where(containsLectureScheduleLectureKeyword(keyword))
+                .where(eqLectureScheduleLectureMajorType(majorType))
+                .where(eqLectureScheduleLectureGrade(grade))
+                .where(lectureSchedule.lecture.semester.endsWith(currentSemester))
+                .orderBy(lectureSchedule.id.asc())
                 .limit(SlicePaginationUtils.increaseSliceLimit(limit));
 
         return SlicePaginationUtils.buildSlice(query.fetch(), limit);
+    }
+
+    @Override
+    public List<LectureSchedule> findAllLectureSchedulesByLectureSemesterContains(String semester) {
+        return queryFactory.selectFrom(lectureSchedule)
+                .join(lectureSchedule.lecture).fetchJoin()
+                .where(lectureSchedule.lecture.semester.contains(semester))
+                .fetch();
     }
 
 
@@ -206,33 +216,33 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
                 .fetch();
     }
 
-    private BooleanExpression gtCursorId(Long cursorId) {
+    private BooleanExpression gtLectureScheduleCursorId(Long cursorId) {
         if (Objects.isNull(cursorId)) {
             return null;
         }
-        return lecture.id.gt(cursorId);
+        return lectureSchedule.id.gt(cursorId);
     }
 
-    private BooleanExpression containsLectureKeyword(String keyword) {
+    private BooleanExpression containsLectureScheduleLectureKeyword(String keyword) {
         if (Objects.isNull(keyword)) {
             return null;
         }
-        return lecture.name.contains(keyword)
-                .or(lecture.professor.contains(keyword));
+        return lectureSchedule.lecture.name.contains(keyword)
+                .or(lectureSchedule.lecture.professor.contains(keyword));
     }
 
-    private BooleanExpression eqMajorType(String majorType) {
+    private BooleanExpression eqLectureScheduleLectureMajorType(String majorType) {
         if (Objects.isNull(majorType)) {
             return null;
         }
-        return lecture.majorType.eq(majorType);
+        return lectureSchedule.lecture.majorType.eq(majorType);
     }
 
-    private BooleanExpression eqGrade(Integer grade) {
+    private BooleanExpression eqLectureScheduleLectureGrade(Integer grade) {
         if (Objects.isNull(grade)) {
             return null;
         }
-        return lecture.lectureDetail.grade.eq(grade);
+        return lectureSchedule.lecture.lectureDetail.grade.eq(grade);
     }
 
     private OrderSpecifier<?> getOrderSpecifier(String orderOption) {

@@ -7,14 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.lecture.domain.Lecture;
+import usw.suwiki.domain.lecture.domain.LectureSchedule;
 import usw.suwiki.global.util.apiresponse.ResponseFieldManipulationUtils;
 
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LectureWithScheduleResponse {
+public class LectureWithScheduleResponse {  // TODO refactor V2: lecture_id, schedule_id 분리
     private long id;
     private String name;
     private String type;
@@ -25,16 +25,16 @@ public class LectureWithScheduleResponse {
     private final List<OriginalLectureCellResponse> originalCellList = new ArrayList<>();
 
     public static LectureWithScheduleResponse of(
-            Lecture lecture
+            LectureSchedule lectureSchedule
     ) {
-        final String professorName = ResponseFieldManipulationUtils.resolveLiteralNull(lecture.getProfessor());
+        final String professorName = ResponseFieldManipulationUtils.resolveLiteralNull(lectureSchedule.getLecture().getProfessor());
         return LectureWithScheduleResponse.builder()
-                .id(lecture.getId())
-                .name(lecture.getName())
+                .id(lectureSchedule.getId())
+                .name(lectureSchedule.getLecture().getName())
                 .professorName(professorName)
-                .type(lecture.getType())
-                .major(lecture.getMajorType())
-                .grade(lecture.getLectureDetail().getGrade())
+                .type(lectureSchedule.getLecture().getType())
+                .major(lectureSchedule.getLecture().getMajorType())
+                .grade(lectureSchedule.getLecture().getLectureDetail().getGrade())
                 .build();
     }
 

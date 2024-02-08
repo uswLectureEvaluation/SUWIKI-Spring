@@ -3,7 +3,6 @@ package usw.suwiki.domain.lecture.fixture;
 import usw.suwiki.domain.lecture.domain.LectureDetail;
 
 public class LectureDetailFixture {
-    public static final String PLACE_SCHEDULE = "IT307(월6,7,8)";
     public static final String CODE = "01760";
     public static final double POINT = 0;
     public static final String CAPPR_TYPE = "A형(강의식 수업)";
@@ -12,15 +11,11 @@ public class LectureDetailFixture {
     public static final String EVALUATE_TYPE = "상대평가";
 
     public static LectureDetail createFirstDummy() {
-        return createDummy(PLACE_SCHEDULE, CODE, POINT, CAPPR_TYPE, DICL_NO, GRADE, EVALUATE_TYPE);
+        return createDummy(CODE, POINT, CAPPR_TYPE, DICL_NO, GRADE, EVALUATE_TYPE);
     }
 
-    public static LectureDetail varyPlaceSchedule(String placeSchedule) {
-        return createDummy(placeSchedule, CODE, POINT, CAPPR_TYPE, DICL_NO, GRADE, EVALUATE_TYPE);
-    }
 
     public static LectureDetail createDummy(
-            String placeSchedule,
             String code,
             double point,
             String capprType,
@@ -29,7 +24,6 @@ public class LectureDetailFixture {
             String evaluateType
     ) {
         return LectureDetail.builder()
-                .placeSchedule(placeSchedule)
                 .code(code)
                 .point(point)
                 .capprType(capprType)
