@@ -18,6 +18,8 @@ public interface LectureCustomRepository {
             final Integer grade
     );
 
+    List<LectureSchedule> findAllLectureSchedulesByLectureSemesterContains(String semester);
+
     Optional<Lecture> findByExtraUniqueKey(String lectureName, String ProfessorName, String majorType);
 
     List<String> findAllMajorType();

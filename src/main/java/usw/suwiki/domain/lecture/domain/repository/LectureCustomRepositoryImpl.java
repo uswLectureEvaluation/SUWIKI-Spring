@@ -45,15 +45,23 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
     ) {
         JPAQuery<LectureSchedule> query = queryFactory.selectFrom(lectureSchedule)
                 .join(lectureSchedule.lecture).fetchJoin()
-                .where(gtLectureScheduleLectureCursorId(cursorId))
+                .where(gtLectureScheduleCursorId(cursorId))
                 .where(containsLectureScheduleLectureKeyword(keyword))
                 .where(eqLectureScheduleLectureMajorType(majorType))
                 .where(eqLectureScheduleLectureGrade(grade))
                 .where(lectureSchedule.lecture.semester.endsWith(currentSemester))
-                .orderBy(lectureSchedule.lecture.id.asc())
+                .orderBy(lectureSchedule.id.asc())
                 .limit(SlicePaginationUtils.increaseSliceLimit(limit));
 
         return SlicePaginationUtils.buildSlice(query.fetch(), limit);
+    }
+
+    @Override
+    public List<LectureSchedule> findAllLectureSchedulesByLectureSemesterContains(String semester) {
+        return queryFactory.selectFrom(lectureSchedule)
+                .join(lectureSchedule.lecture).fetchJoin()
+                .where(lectureSchedule.lecture.semester.contains(semester))
+                .fetch();
     }
 
 
@@ -208,11 +216,11 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
                 .fetch();
     }
 
-    private BooleanExpression gtLectureScheduleLectureCursorId(Long cursorId) {
+    private BooleanExpression gtLectureScheduleCursorId(Long cursorId) {
         if (Objects.isNull(cursorId)) {
             return null;
         }
-        return lectureSchedule.lecture.id.gt(cursorId);
+        return lectureSchedule.id.gt(cursorId);
     }
 
     private BooleanExpression containsLectureScheduleLectureKeyword(String keyword) {

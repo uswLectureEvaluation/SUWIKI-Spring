@@ -16,6 +16,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
 import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
@@ -105,47 +106,12 @@ public class LectureService {
 
 
     @Transactional
-    public void bulkSaveJsonLectures(String filePath) {
+    public void bulkApplyLectureJsonFile(String filePath) {
         JSONArray jsonArray = resolveJsonArrayFromJsonFile(filePath);
-        bulkSaveLectures(jsonArray);
+        List<JSONLectureVO> jsonLectureVOList = convertJSONArrayToVOList(jsonArray);
+        bulkApplyJsonLectureList(jsonLectureVOList);
     }
 
-    private void bulkSaveLectures(JSONArray jsonArray) {
-        for (Object o : jsonArray) {
-            JSONObject jsonObject = (JSONObject) o;
-            JSONLectureVO jsonLectureVO = JSONLectureVO.from(jsonObject);
-
-            Optional<Lecture> optionalLecture = lectureRepository.findByExtraUniqueKey(
-                    jsonLectureVO.getLectureName(),
-                    jsonLectureVO.getProfessor(),
-                    jsonLectureVO.getMajorType()
-            );
-
-            if (optionalLecture.isPresent()) {
-                Lecture lecture = optionalLecture.get();
-                lecture.addSemester(jsonLectureVO.getSelectedSemester());
-
-                boolean anyMatch = lecture.getScheduleList().stream()
-                        .anyMatch(jsonLectureVO::isLectureAndPlaceScheduleEqual);
-                if (!anyMatch) {    // 없던 스케줄일 경우 : 추가
-                    LectureSchedule.builder()
-                            .lecture(lecture)
-                            .placeSchedule(jsonLectureVO.getPlaceSchedule())
-                            .build();
-                    lectureRepository.save(lecture);
-                }
-            } else {
-                Lecture newLecture = jsonLectureVO.toEntity();
-                LectureSchedule.builder()
-                        .lecture(newLecture)
-                        .placeSchedule(jsonLectureVO.getPlaceSchedule())
-                        .build();
-
-                lectureRepository.save(newLecture);
-            }
-        }
-
-    }
 
     private static JSONArray resolveJsonArrayFromJsonFile(String filePath) {
         try {
@@ -158,6 +124,77 @@ public class LectureService {
             ex.printStackTrace();
             throw new LectureException(ExceptionType.SERVER_ERROR);
         }
+    }
+
+    private static List<JSONLectureVO> convertJSONArrayToVOList(JSONArray jsonArray) {
+        List<JSONLectureVO> jsonLectureVOList = new ArrayList<>();
+        for (Object rawObject : jsonArray) {
+            JSONLectureVO jsonLectureVO = JSONLectureVO.from((JSONObject) rawObject);
+            jsonLectureVOList.add(jsonLectureVO);
+        }
+        return jsonLectureVOList;
+    }
+
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void bulkApplyJsonLectureList(List<JSONLectureVO> jsonLectureVOList) {
+        List<LectureSchedule> currentSemeterLectureScheduleList = lectureRepository
+                .findAllLectureSchedulesByLectureSemesterContains("2024-1");
+
+        List<LectureSchedule> deletedLectureScheduleList = resolveDeletedLectureScheduleList(
+                jsonLectureVOList,
+                currentSemeterLectureScheduleList
+        );
+
+        jsonLectureVOList.forEach(vo -> applyJsonLecture(vo, deletedLectureScheduleList));
+    }
+
+    private void applyJsonLecture(
+            JSONLectureVO jsonLectureVO,
+            List<LectureSchedule> deletedLectureScheduleList
+    ) {
+        Optional<Lecture> optionalLecture = lectureRepository.findByExtraUniqueKey(
+                jsonLectureVO.getLectureName(),
+                jsonLectureVO.getProfessor(),
+                jsonLectureVO.getMajorType()
+        );
+
+        if (optionalLecture.isPresent()) {
+            Lecture lecture = optionalLecture.get();
+            lecture.addSemester(jsonLectureVO.getSelectedSemester());
+
+            boolean isThereNewSchedule = lecture.getScheduleList().stream()
+                    .noneMatch(jsonLectureVO::isLectureAndPlaceScheduleEqual);
+            if (isThereNewSchedule) {
+                LectureSchedule schedule = LectureSchedule.builder()
+                        .lecture(lecture)
+                        .placeSchedule(jsonLectureVO.getPlaceSchedule())
+                        .build();
+                lectureScheduleRepository.save(schedule);
+            }
+
+            deletedLectureScheduleList.stream()
+                    .filter(it -> it.getLecture().getId().equals(lecture.getId()))
+                    .forEach(lecture::removeSchedule);
+        } else {
+            Lecture newLecture = jsonLectureVO.toEntity();
+            LectureSchedule.builder()
+                    .lecture(newLecture)
+                    .placeSchedule(jsonLectureVO.getPlaceSchedule())
+                    .build();
+
+            lectureRepository.save(newLecture);
+        }
+    }
+
+    private static List<LectureSchedule> resolveDeletedLectureScheduleList(
+            List<JSONLectureVO> jsonLectureVOList,
+            List<LectureSchedule> currentSemeterLectureScheduleList
+    ) {
+        // 기존의 스케줄이 삭제된 케이스 필터링 : O(N^2) 비교
+        return currentSemeterLectureScheduleList.stream()
+                .filter(it -> jsonLectureVOList.stream().noneMatch(vo -> vo.isLectureAndPlaceScheduleEqual(it)))
+                .toList();
     }
 
     private LectureAndCountResponseForm readLectureByKeywordAndOption(String keyword, LectureFindOption option) {

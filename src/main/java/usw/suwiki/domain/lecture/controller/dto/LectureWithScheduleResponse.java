@@ -29,7 +29,7 @@ public class LectureWithScheduleResponse {  // TODO refactor V2: lecture_id, sch
     ) {
         final String professorName = ResponseFieldManipulationUtils.resolveLiteralNull(lectureSchedule.getLecture().getProfessor());
         return LectureWithScheduleResponse.builder()
-                .id(lectureSchedule.getLecture().getId())
+                .id(lectureSchedule.getId())
                 .name(lectureSchedule.getLecture().getName())
                 .professorName(professorName)
                 .type(lectureSchedule.getLecture().getType())

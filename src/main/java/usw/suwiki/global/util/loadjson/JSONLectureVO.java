@@ -66,37 +66,10 @@ public class JSONLectureVO {
     }
 
     public boolean isLectureAndPlaceScheduleEqual(LectureSchedule lectureSchedule) {
-        boolean b = lectureSchedule.getPlaceSchedule().contains(placeSchedule)
+        return lectureSchedule.getPlaceSchedule().contains(placeSchedule)
                 && lectureSchedule.getLecture().getName().equals(lectureName)
                 && lectureSchedule.getLecture().getProfessor().equals(professor)
                 && lectureSchedule.getLecture().getMajorType().equals(majorType);
-
-        if (b) {
-            System.out.println("lectureSchedule.getId() = " + lectureSchedule.getId());
-            System.out.println("lectureSchedule.getPlaceSchedule() = " + lectureSchedule.getPlaceSchedule());
-            System.out.println("placeSchedule = " + placeSchedule);
-            System.out.println(
-                    "lectureSchedule.getPlaceSchedule().equals(placeSchedule) = " + lectureSchedule.getPlaceSchedule()
-                            .equals(placeSchedule));
-            System.out.println("lectureSchedule.getLecture().getName() = " + lectureSchedule.getLecture().getName());
-            System.out.println("lectureName = " + lectureName);
-            System.out.println(
-                    "lectureSchedule.getLecture().getName().equals(lectureName) = " + lectureSchedule.getLecture()
-                            .getName().equals(lectureName));
-            System.out.println(
-                    "lectureSchedule.getLecture().getProfessor() = " + lectureSchedule.getLecture().getProfessor());
-            System.out.println("professor = " + professor);
-            System.out.println(
-                    "lectureSchedule.getLecture().getProfessor().equals(professor) = " + lectureSchedule.getLecture()
-                            .getProfessor().equals(professor));
-            System.out.println(
-                    "lectureSchedule.getLecture().getMajorType() = " + lectureSchedule.getLecture().getMajorType());
-            System.out.println("majorType = " + majorType);
-            System.out.println(
-                    "lectureSchedule.getLecture().getMajorType().equals(majorType) = " + lectureSchedule.getLecture()
-                            .getMajorType().equals(majorType));
-        }
-        return b;
     }
 
 }
