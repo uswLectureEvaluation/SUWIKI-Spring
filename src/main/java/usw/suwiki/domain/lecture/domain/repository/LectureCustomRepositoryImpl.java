@@ -35,7 +35,6 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
     @Value("${business.current-semester}")
     private String currentSemester; // TODO 고민: Lecture - currently_opened 혹은 last_opened_semester 컬럼 추가 -> 데이터 파싱 로직 및 WHERE절 변경해야 함.
 
-    // TODO fix: LectureSchedule을 Lecture과 조인해서 조회해야 함. 단, where절 orderby절 등 기준은 lecture가 되어야 함.
     @Override
     public Slice<LectureSchedule> findCurrentSemesterLectureSchedules(
             final Long cursorId,
@@ -45,7 +44,7 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
             final Integer grade
     ) {
         JPAQuery<LectureSchedule> query = queryFactory.selectFrom(lectureSchedule)
-                .join(lectureSchedule.lecture)
+                .join(lectureSchedule.lecture).fetchJoin()
                 .where(gtLectureScheduleLectureCursorId(cursorId))
                 .where(containsLectureScheduleLectureKeyword(keyword))
                 .where(eqLectureScheduleLectureMajorType(majorType))
