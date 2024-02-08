@@ -84,7 +84,6 @@ public class LectureService {
 
     private LectureWithScheduleResponse convertLectureWithSchedule(LectureSchedule lectureSchedule) {
         LectureWithScheduleResponse response = LectureWithScheduleResponse.of(lectureSchedule);
-        // TODO fix: LectureSchedule 을 조회 후 가져오기
 
         String placeSchedule = lectureSchedule.getPlaceSchedule();
 
