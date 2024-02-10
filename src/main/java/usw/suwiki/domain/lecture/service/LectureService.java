@@ -156,7 +156,8 @@ public class LectureService {
         Optional<Lecture> optionalLecture = lectureRepository.findByExtraUniqueKey(
                 jsonLectureVO.getLectureName(),
                 jsonLectureVO.getProfessor(),
-                jsonLectureVO.getMajorType()
+                jsonLectureVO.getMajorType(),
+                jsonLectureVO.getDividedClassNumber()
         );
 
         if (optionalLecture.isPresent()) {

@@ -20,7 +20,7 @@ public interface LectureCustomRepository {
 
     List<LectureSchedule> findAllLectureSchedulesByLectureSemesterContains(String semester);
 
-    Optional<Lecture> findByExtraUniqueKey(String lectureName, String ProfessorName, String majorType);
+    Optional<Lecture> findByExtraUniqueKey(String lectureName, String ProfessorName, String majorType, String dividedClassNumber);
 
     List<String> findAllMajorType();
 

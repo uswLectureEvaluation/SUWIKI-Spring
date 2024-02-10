@@ -35,6 +35,7 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
     @Value("${business.current-semester}")
     private String currentSemester; // TODO 고민: Lecture - currently_opened 혹은 last_opened_semester 컬럼 추가 -> 데이터 파싱 로직 및 WHERE절 변경해야 함.
 
+    // TODO fix: lecture을 기준으로 조회. default batch size로 해결
     @Override
     public Slice<LectureSchedule> findCurrentSemesterLectureSchedules(
             final Long cursorId,
@@ -66,13 +67,14 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
 
 
     @Override
-    public Optional<Lecture> findByExtraUniqueKey(String lectureName, String professorName, String majorType) {
+    public Optional<Lecture> findByExtraUniqueKey(String lectureName, String professorName, String majorType, String dividedClassNumber) {
         Lecture result = queryFactory
                 .selectFrom(lecture)
                 .where(
                         lecture.name.eq(lectureName),
                         lecture.professor.eq(professorName),
-                        lecture.majorType.eq(majorType)
+                        lecture.majorType.eq(majorType),
+                        lecture.lectureDetail.diclNo.eq(dividedClassNumber)
                 )
                 .fetchOne();
 
