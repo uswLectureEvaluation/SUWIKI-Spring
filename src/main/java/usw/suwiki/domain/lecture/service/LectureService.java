@@ -139,7 +139,7 @@ public class LectureService {
     @Transactional(propagation = Propagation.MANDATORY)
     public void bulkApplyJsonLectureList(List<JSONLectureVO> jsonLectureVOList) {
         List<LectureSchedule> currentSemeterLectureScheduleList = lectureRepository
-                .findAllLectureSchedulesByLectureSemesterContains("2024-1");
+                .findAllLectureSchedulesByLectureSemesterContains(currentSemester);
 
         List<LectureSchedule> deletedLectureScheduleList = resolveDeletedLectureScheduleList(
                 jsonLectureVOList,
@@ -166,11 +166,7 @@ public class LectureService {
             boolean isThereNewSchedule = lecture.getScheduleList().stream()
                     .noneMatch(jsonLectureVO::isLectureAndPlaceScheduleEqual);
             if (isThereNewSchedule) {
-                LectureSchedule schedule = LectureSchedule.builder()
-                        .lecture(lecture)
-                        .placeSchedule(jsonLectureVO.getPlaceSchedule())
-                        .build();
-                lectureScheduleRepository.save(schedule);
+                saveOnlyValidLectureSchedule(jsonLectureVO, lecture);
             }
 
             deletedLectureScheduleList.stream()
@@ -178,12 +174,18 @@ public class LectureService {
                     .forEach(lecture::removeSchedule);
         } else {
             Lecture newLecture = jsonLectureVO.toEntity();
-            LectureSchedule.builder()
+            saveOnlyValidLectureSchedule(jsonLectureVO, newLecture);
+            lectureRepository.save(newLecture);
+        }
+    }
+
+    private void saveOnlyValidLectureSchedule(JSONLectureVO jsonLectureVO, Lecture newLecture) {
+        if (jsonLectureVO.isPlaceScheduleValid()) {
+            LectureSchedule schedule = LectureSchedule.builder()
                     .lecture(newLecture)
                     .placeSchedule(jsonLectureVO.getPlaceSchedule())
                     .build();
-
-            lectureRepository.save(newLecture);
+            lectureScheduleRepository.save(schedule);
         }
     }
 
