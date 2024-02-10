@@ -53,8 +53,6 @@ public class JSONLectureVO {
                 .capprType(capprType)
                 .build();
 
-        // TODO fix: LectureSchedule 생성. 이 메서드 말고 밖에서 만들어야 할듯
-
         return Lecture.builder()
                 .name(lectureName)
                 .type(lectureType)
@@ -63,6 +61,12 @@ public class JSONLectureVO {
                 .majorType(majorType)
                 .lectureDetail(lectureDetail)
                 .build();
+    }
+
+
+
+    public boolean isPlaceScheduleValid() {
+        return !(placeSchedule.equals("null") || placeSchedule.isEmpty());
     }
 
     public boolean isLectureAndPlaceScheduleEqual(LectureSchedule lectureSchedule) {
