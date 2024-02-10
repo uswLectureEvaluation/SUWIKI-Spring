@@ -139,7 +139,7 @@ public class LectureService {
     @Transactional(propagation = Propagation.MANDATORY)
     public void bulkApplyJsonLectureList(List<JSONLectureVO> jsonLectureVOList) {
         List<LectureSchedule> currentSemeterLectureScheduleList = lectureRepository
-                .findAllLectureSchedulesByLectureSemesterContains("2024-1");
+                .findAllLectureSchedulesByLectureSemesterContains(currentSemester);
 
         List<LectureSchedule> deletedLectureScheduleList = resolveDeletedLectureScheduleList(
                 jsonLectureVOList,
