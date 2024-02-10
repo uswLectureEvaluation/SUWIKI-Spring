@@ -21,10 +21,10 @@ public class JSONLectureVO {
     private final String lectureCode;
     private final String lectureName;
     private final String evaluateType;
-    private final String diclNo;
+    private final String dividedClassNumber;
     private final String majorType;
     private final double point;
-    private final String capprType;
+    private final String capacityPresentationType;
 
     public static JSONLectureVO from(JSONObject jsonObject) {
         return JSONLectureVO.builder()
@@ -35,10 +35,10 @@ public class JSONLectureVO {
                 .lectureCode(USWTermResolver.extractLectureCode(jsonObject))
                 .lectureName(USWTermResolver.getLectureName(jsonObject))
                 .evaluateType(USWTermResolver.extractEvaluationType(jsonObject))
-                .diclNo(USWTermResolver.extractDivideClassNumber(jsonObject))
+                .dividedClassNumber(USWTermResolver.extractDivideClassNumber(jsonObject))
                 .majorType(USWTermResolver.getMajorType(jsonObject))
                 .point(USWTermResolver.extractLecturePoint(jsonObject))
-                .capprType(USWTermResolver.extractCapacityType(jsonObject))
+                .capacityPresentationType(USWTermResolver.extractCapacityType(jsonObject))
                 .grade(USWTermResolver.extractTargetGrade(jsonObject))
                 .build();
     }
@@ -48,9 +48,9 @@ public class JSONLectureVO {
                 .code(lectureCode)
                 .grade(grade)
                 .point(point)
-                .diclNo(diclNo)
+                .diclNo(dividedClassNumber)
                 .evaluateType(evaluateType)
-                .capprType(capprType)
+                .capprType(capacityPresentationType)
                 .build();
 
         return Lecture.builder()
@@ -73,7 +73,8 @@ public class JSONLectureVO {
         return lectureSchedule.getPlaceSchedule().contains(placeSchedule)
                 && lectureSchedule.getLecture().getName().equals(lectureName)
                 && lectureSchedule.getLecture().getProfessor().equals(professor)
-                && lectureSchedule.getLecture().getMajorType().equals(majorType);
+                && lectureSchedule.getLecture().getMajorType().equals(majorType)
+                && lectureSchedule.getLecture().getLectureDetail().getDiclNo().equals(dividedClassNumber);
     }
 
 }
