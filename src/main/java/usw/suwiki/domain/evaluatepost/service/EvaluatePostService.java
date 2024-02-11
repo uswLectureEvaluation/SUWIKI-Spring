@@ -105,7 +105,7 @@ public class EvaluatePostService {
     }
 
     public boolean verifyIsUserCanWriteEvaluatePost(Long userIdx, Long lectureId) {
-        Lecture lecture = lectureService.findLectureById(lectureId);;
+        Lecture lecture = lectureService.findLectureById(lectureId);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         return evaluatePostCRUDService.isAlreadyWritten(user, lecture);
     }

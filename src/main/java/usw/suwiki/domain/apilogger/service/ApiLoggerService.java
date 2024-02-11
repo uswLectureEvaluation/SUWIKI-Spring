@@ -3,6 +3,7 @@ package usw.suwiki.domain.apilogger.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.apilogger.ApiLogger;
@@ -24,6 +25,7 @@ public class ApiLoggerService {
     private final String userOption = "user";
     private final String noticeOption = "notice";
 
+    @Async
     @Transactional
     public void logApi(LocalDate today, Long currentProcessTime, String option) {
         Optional<ApiLogger> apiLogger = apiLoggerRepository.findByCallDate(today);
