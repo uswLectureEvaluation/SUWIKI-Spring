@@ -1,6 +1,6 @@
 ### Infrastructure
 
-![](https://github.com/uswLectureEvaluation/SUWIKI-Spring/assets/60564431/c2b9e1c1-23b8-4a34-b850-6225fff412d7)
+![](https://private-user-images.githubusercontent.com/60564431/303929785-4c506402-805c-4016-adcc-ddaa6db74d80.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDc2NjY2MzEsIm5iZiI6MTcwNzY2NjMzMSwicGF0aCI6Ii82MDU2NDQzMS8zMDM5Mjk3ODUtNGM1MDY0MDItODA1Yy00MDE2LWFkY2MtZGRhYTZkYjc0ZDgwLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMTElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjExVDE1NDUzMVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTQ0M2RmOGE3ZTFiYWYyYmYzNTIxNWMzYWRkNjBmNjYyZGYwZmQ3YWFhMDlmZjJiZmZjMTM4NWEzZjRmZDE5M2YmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.MbsHkmyie40fy7XTycRwFwE3hzONsdQ4Qqc7Da9H3FI)
 
 ---
  
@@ -16,7 +16,7 @@
 
 ---
 
-### Role
+### 역할
 
 | JIWON-JEONG                               | K-Diger                        |
 |-------------------------------------------|--------------------------------|
@@ -28,7 +28,7 @@
 
 ---
 
-### Stack
+### 기술 스택
 
 |                                                                                                                                                                                                                                                                                            BASE                                                                                                                                                                                                                                                                                             |                                                  DB                                                  |                                                                                                                                                                                                        Deploy Environment                                                                                                                                                                                                        |
 |:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
