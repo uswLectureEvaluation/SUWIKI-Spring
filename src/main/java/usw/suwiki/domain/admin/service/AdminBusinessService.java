@@ -15,9 +15,11 @@ import usw.suwiki.domain.postreport.EvaluatePostReport;
 import usw.suwiki.domain.postreport.ExamPostReport;
 import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
+import usw.suwiki.domain.user.user.Role;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
+import usw.suwiki.domain.user.userIsolation.service.UserIsolationCRUDService;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
 
@@ -36,6 +38,7 @@ public class AdminBusinessService {
 
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final UserCRUDService userCRUDService;
+    private final UserIsolationCRUDService userIsolationCRUDService;
     private final ReportPostService reportPostService;
     private final EvaluatePostCRUDService evaluatePostCRUDService;
     private final ExamPostCRUDService examPostCRUDService;
@@ -49,10 +52,15 @@ public class AdminBusinessService {
     public Map<String, String> executeAdminLogin(LoginForm loginForm) {
         User user = userCRUDService.loadUserFromLoginId(loginForm.loginId());
         if (user.validatePassword(bCryptPasswordEncoder, loginForm.password())) {
-            if (user.getRole().getKey().equals("ADMIN")) {
+            if (user.getRole().getKey().equals(Role.ADMIN.getKey())) {
+
+                final int userCount = userCRUDService.findAllUsersSize();
+                final int userIsolationCount = userIsolationCRUDService.findAllIsolationUsersSize();
+                final int totalUserCount = userCount + userIsolationCount;
+
                 return new HashMap<>() {{
                     put("AccessToken", jwtAgent.createAccessToken(user));
-                    put("UserCount", String.valueOf(userCRUDService.findAllUsersSize()));
+                    put("UserCount", String.valueOf(totalUserCount));
                 }};
             }
             throw new AccountException(USER_RESTRICTED);

@@ -61,6 +61,11 @@ public class UserIsolationCRUDService {
         return convertOptionalUserToDomainUser(userIsolationRepository.findByEmail(email));
     }
 
+    @Transactional(readOnly = true)
+    public int findAllIsolationUsersSize() {
+        return userIsolationRepository.findAll().size();
+    }
+
     public void deleteByUserIdx(Long userIdx) {
         userIsolationRepository.deleteByUserIdx(userIdx);
     }
