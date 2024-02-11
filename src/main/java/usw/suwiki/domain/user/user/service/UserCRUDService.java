@@ -1,18 +1,17 @@
 package usw.suwiki.domain.user.user.service;
 
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_FOUND;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.global.exception.errortype.AccountException;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
-import static usw.suwiki.global.exception.ExceptionType.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -73,8 +72,8 @@ public class UserCRUDService {
     }
 
     @Transactional(readOnly = true)
-    public int findAllUsersSize() {
-        return userRepository.findAll().size();
+    public long countAllUsers() {
+        return userRepository.count();
     }
 
     public void deleteFromUserIdx(Long userIdx) {
