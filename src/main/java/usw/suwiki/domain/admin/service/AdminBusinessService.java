@@ -1,10 +1,22 @@
 package usw.suwiki.domain.admin.service;
 
+import static usw.suwiki.global.exception.ExceptionType.PASSWORD_ERROR;
+import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successCapitalFlag;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.*;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostBlacklistForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostNoProblemForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostBlacklistForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostNoProblemForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostRestrictForm;
 import usw.suwiki.domain.admin.controller.dto.UserAdminResponseDto.LoadAllReportedPostForm;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
@@ -22,14 +34,6 @@ import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.domain.user.userIsolation.service.UserIsolationCRUDService;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static usw.suwiki.global.exception.ExceptionType.PASSWORD_ERROR;
-import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
-import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successCapitalFlag;
 
 @Service
 @Transactional
@@ -54,9 +58,9 @@ public class AdminBusinessService {
         if (user.validatePassword(bCryptPasswordEncoder, loginForm.password())) {
             if (user.getRole().getKey().equals(Role.ADMIN.getKey())) {
 
-                final int userCount = userCRUDService.findAllUsersSize();
-                final int userIsolationCount = userIsolationCRUDService.findAllIsolationUsersSize();
-                final int totalUserCount = userCount + userIsolationCount;
+                final long userCount = userCRUDService.countAllUsers();
+                final long userIsolationCount = userIsolationCRUDService.countAllIsolatedUsers();
+                final long totalUserCount = userCount + userIsolationCount;
 
                 return new HashMap<>() {{
                     put("AccessToken", jwtAgent.createAccessToken(user));
