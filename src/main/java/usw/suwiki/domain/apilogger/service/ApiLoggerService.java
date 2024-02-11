@@ -45,23 +45,14 @@ public class ApiLoggerService {
             LocalDate today, Long currentProcessTime, String option
     ) {
         ApiLogger newApiLogger = new ApiLogger();
-        switch (option) {
-            case lecturePostsOption:
-                newApiLogger = newApiLogger.saveNewLectureStatistics(today, currentProcessTime);
-                break;
-            case evaluatePostsOption:
-                newApiLogger = newApiLogger.saveNewEvaluatePostsStatistics(today, currentProcessTime);
-                break;
-            case examPostsOption:
-                newApiLogger = newApiLogger.saveNewExamPostsStatistics(today, currentProcessTime);
-                break;
-            case userOption:
-                newApiLogger = newApiLogger.saveNewUserStatistics(today, currentProcessTime);
-                break;
-            case noticeOption:
-                newApiLogger = newApiLogger.saveNewNoticeStatistics(today, currentProcessTime);
-                break;
-        }
+        newApiLogger = switch (option) {
+            case lecturePostsOption -> newApiLogger.saveNewLectureStatistics(today, currentProcessTime);
+            case evaluatePostsOption -> newApiLogger.saveNewEvaluatePostsStatistics(today, currentProcessTime);
+            case examPostsOption -> newApiLogger.saveNewExamPostsStatistics(today, currentProcessTime);
+            case userOption -> newApiLogger.saveNewUserStatistics(today, currentProcessTime);
+            case noticeOption -> newApiLogger.saveNewNoticeStatistics(today, currentProcessTime);
+            default -> newApiLogger;
+        };
         return newApiLogger;
     }
 
@@ -69,21 +60,11 @@ public class ApiLoggerService {
             ApiLogger apiLogger, Long currentProcessTime, String option
     ) {
         switch (option) {
-            case lecturePostsOption:
-                apiLogger.calculateLectureApiStatistics(currentProcessTime);
-                break;
-            case evaluatePostsOption:
-                apiLogger.calculateEvaluatePostsApiStatistics(currentProcessTime);
-                break;
-            case examPostsOption:
-                apiLogger.calculateExamPostsStatistics(currentProcessTime);
-                break;
-            case userOption:
-                apiLogger.calculateUserApiStatistics(currentProcessTime);
-                break;
-            case noticeOption:
-                apiLogger.calculateNoticeApiStatistics(currentProcessTime);
-                break;
+            case lecturePostsOption -> apiLogger.calculateLectureApiStatistics(currentProcessTime);
+            case evaluatePostsOption -> apiLogger.calculateEvaluatePostsApiStatistics(currentProcessTime);
+            case examPostsOption -> apiLogger.calculateExamPostsStatistics(currentProcessTime);
+            case userOption -> apiLogger.calculateUserApiStatistics(currentProcessTime);
+            case noticeOption -> apiLogger.calculateNoticeApiStatistics(currentProcessTime);
         }
         return apiLogger;
     }

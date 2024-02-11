@@ -5,6 +5,16 @@ import java.util.Map;
 
 public class ApiResponseFactory {
 
+    public static Map<String, String> adminLoginResponseForm(
+            final String accessToken,
+            final String userCount
+    ) {
+        return new HashMap<>() {{
+            put("AccessToken", accessToken);
+            put("UserCount", userCount);
+        }};
+    }
+
     public static Map<String, Boolean> successFlag() {
         return new HashMap<>() {{
             put("success", true);
