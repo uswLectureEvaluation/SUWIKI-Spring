@@ -33,25 +33,23 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
     private final Integer DEFAULT_LIMIT = 10;
 
     @Value("${business.current-semester}")
-    private String currentSemester; // TODO 고민: Lecture - currently_opened 혹은 last_opened_semester 컬럼 추가 -> 데이터 파싱 로직 및 WHERE절 변경해야 함.
+    private String currentSemester;
 
-    // TODO fix: lecture을 기준으로 조회. default batch size로 해결
     @Override
-    public Slice<LectureSchedule> findCurrentSemesterLectureSchedules(
+    public Slice<Lecture> findCurrentSemesterLectures(
             final Long cursorId,
             final int limit,
             final String keyword,
             final String majorType,
             final Integer grade
     ) {
-        JPAQuery<LectureSchedule> query = queryFactory.selectFrom(lectureSchedule)
-                .join(lectureSchedule.lecture).fetchJoin()
-                .where(gtLectureScheduleCursorId(cursorId))
-                .where(containsLectureScheduleLectureKeyword(keyword))
-                .where(eqLectureScheduleLectureMajorType(majorType))
-                .where(eqLectureScheduleLectureGrade(grade))
-                .where(lectureSchedule.lecture.semester.endsWith(currentSemester))
-                .orderBy(lectureSchedule.id.asc())
+        JPAQuery<Lecture> query = queryFactory.selectFrom(lecture)
+                .where(gtLectureCursorId(cursorId))
+                .where(containsKeywordInNameOrProfessor(keyword))
+                .where(eqMajorType(majorType))
+                .where(eqGrade(grade))
+                .where(lecture.semester.endsWith(currentSemester))  // TODO refactor: extract method
+                .orderBy(lecture.id.asc())
                 .limit(SlicePaginationUtils.increaseSliceLimit(limit));
 
         return SlicePaginationUtils.buildSlice(query.fetch(), limit);
@@ -218,33 +216,33 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
                 .fetch();
     }
 
-    private BooleanExpression gtLectureScheduleCursorId(Long cursorId) {
+    private BooleanExpression gtLectureCursorId(Long cursorId) {
         if (Objects.isNull(cursorId)) {
             return null;
         }
-        return lectureSchedule.id.gt(cursorId);
+        return lecture.id.gt(cursorId);
     }
 
-    private BooleanExpression containsLectureScheduleLectureKeyword(String keyword) {
+    private BooleanExpression containsKeywordInNameOrProfessor(String keyword) {
         if (Objects.isNull(keyword)) {
             return null;
         }
-        return lectureSchedule.lecture.name.contains(keyword)
-                .or(lectureSchedule.lecture.professor.contains(keyword));
+        return lecture.name.contains(keyword)
+                .or(lecture.professor.contains(keyword));
     }
 
-    private BooleanExpression eqLectureScheduleLectureMajorType(String majorType) {
+    private BooleanExpression eqMajorType(String majorType) {
         if (Objects.isNull(majorType)) {
             return null;
         }
-        return lectureSchedule.lecture.majorType.eq(majorType);
+        return lecture.majorType.eq(majorType);
     }
 
-    private BooleanExpression eqLectureScheduleLectureGrade(Integer grade) {
+    private BooleanExpression eqGrade(Integer grade) {
         if (Objects.isNull(grade)) {
             return null;
         }
-        return lectureSchedule.lecture.lectureDetail.grade.eq(grade);
+        return lecture.lectureDetail.grade.eq(grade);
     }
 
     private OrderSpecifier<?> getOrderSpecifier(String orderOption) {
