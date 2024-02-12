@@ -48,7 +48,7 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
                 .where(containsKeywordInNameOrProfessor(keyword))
                 .where(eqMajorType(majorType))
                 .where(eqGrade(grade))
-                .where(lecture.semester.endsWith(currentSemester))  // TODO refactor: extract method
+                .where(endsWithCurrentSemester())
                 .orderBy(lecture.id.asc())
                 .limit(SlicePaginationUtils.increaseSliceLimit(limit));
 
@@ -243,6 +243,10 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
             return null;
         }
         return lecture.lectureDetail.grade.eq(grade);
+    }
+
+    private BooleanExpression endsWithCurrentSemester() {
+        return lecture.semester.endsWith(currentSemester);
     }
 
     private OrderSpecifier<?> getOrderSpecifier(String orderOption) {
