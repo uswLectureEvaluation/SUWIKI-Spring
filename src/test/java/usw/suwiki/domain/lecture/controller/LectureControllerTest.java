@@ -93,4 +93,7 @@ class LectureControllerTest extends IntegrationTestBase {
                 .andExpect(jsonPath("$.data", hasSize(RESPONSE_DATA_SIZE)))
                 .andExpect(jsonPath("$.data[0].id").value(RESPONSE_ID));
     }
+
+
+    // TODO test: 강의 시간표 리스트 조회 성공 - 응답 리스트 개수가 요청 size보다 클 수 있음
 }
