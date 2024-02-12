@@ -22,6 +22,13 @@ public class NoOffsetPaginationResponse<T> {
                 .build();
     }
 
+    public static <T>NoOffsetPaginationResponse<T> of(List<T> content, boolean isLast) {
+        return NoOffsetPaginationResponse.<T>builder()
+                .content(content)
+                .isLast(isLast)
+                .build();
+    }
+
     public static <T> NoOffsetPaginationResponse<T> of(Page<T> page) {
         return NoOffsetPaginationResponse.<T>builder()
                 .content(page.getContent())

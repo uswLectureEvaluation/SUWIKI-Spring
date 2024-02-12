@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
-import usw.suwiki.domain.lecture.controller.dto.LectureWithScheduleResponse;
+import usw.suwiki.domain.lecture.controller.dto.LectureWithOptionalScheduleResponse;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.LectureSchedule;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
@@ -94,14 +94,14 @@ public class LectureServiceTest {
                 .lecture(unconnectedPeriodsLecture)
                 .build();
 
-        List<LectureSchedule> lectureList = List.of(
-                multipleLocationLectureSchedule,
-                multipleDayLectureSchedule,
-                multipleLocationAndDayLectureSchedule,
-                unconnectedPeriodsLectureSchedule
+        List<Lecture> lectureList = List.of(
+                multipleLocationLecture,
+                multipleDayLecture,
+                multipleLocationAndDayLecture,
+                unconnectedPeriodsLecture
         );
-        Slice<LectureSchedule> queryResult = new SliceImpl<>(lectureList);
-        given(lectureRepository.findCurrentSemesterLectureSchedules(anyLong(), anyInt(), any(), any(), any()))
+        Slice<Lecture> queryResult = new SliceImpl<>(lectureList);
+        given(lectureRepository.findCurrentSemesterLectures(anyLong(), anyInt(), any(), any(), any()))
                 .willReturn(queryResult);
 
         when(multipleLocationLecture.getId()).thenReturn(SPYING_ID);
@@ -110,7 +110,7 @@ public class LectureServiceTest {
         when(unconnectedPeriodsLecture.getId()).thenReturn(SPYING_ID);
 
         // when
-        NoOffsetPaginationResponse<LectureWithScheduleResponse> response = lectureService
+        NoOffsetPaginationResponse<LectureWithOptionalScheduleResponse> response = lectureService
                 .findPagedLecturesWithSchedule(0L, 20, null, null, null);
 
         // then

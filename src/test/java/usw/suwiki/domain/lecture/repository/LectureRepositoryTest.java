@@ -193,42 +193,42 @@ public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 ë³
         int grade = 2;
 
         // when
-        Slice<LectureSchedule> currentSemesterResult = lectureRepository.findCurrentSemesterLectureSchedules(
+        Slice<Lecture> currentSemesterResult = lectureRepository.findCurrentSemesterLectures(
                 cursorId,
                 limit,
                 null,
                 null,
                 null
         );
-        Slice<LectureSchedule> lectureKeywordResult = lectureRepository.findCurrentSemesterLectureSchedules(
+        Slice<Lecture> lectureKeywordResult = lectureRepository.findCurrentSemesterLectures(
                 cursorId,
                 limit,
                 lectureNameKeyword,
                 null,
                 null
         );
-        Slice<LectureSchedule> professorKeywordResult = lectureRepository.findCurrentSemesterLectureSchedules(
+        Slice<Lecture> professorKeywordResult = lectureRepository.findCurrentSemesterLectures(
                 cursorId,
                 limit,
                 professorNameKeyword,
                 null,
                 null
         );
-        Slice<LectureSchedule> bothKeywordResult = lectureRepository.findCurrentSemesterLectureSchedules(
+        Slice<Lecture> bothKeywordResult = lectureRepository.findCurrentSemesterLectures(
                 cursorId,
                 limit,
                 bothKeyword,
                 null,
                 null
         );
-        Slice<LectureSchedule> majorResult = lectureRepository.findCurrentSemesterLectureSchedules(
+        Slice<Lecture> majorResult = lectureRepository.findCurrentSemesterLectures(
                 cursorId,
                 limit,
                 null,
                 majorType,
                 null
         );
-        Slice<LectureSchedule> majorGradeResult = lectureRepository.findCurrentSemesterLectureSchedules(
+        Slice<Lecture> majorGradeResult = lectureRepository.findCurrentSemesterLectures(
                 cursorId,
                 limit,
                 null,

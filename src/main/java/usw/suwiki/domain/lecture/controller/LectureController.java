@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
 import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
-import usw.suwiki.domain.lecture.controller.dto.LectureWithScheduleResponse;
+import usw.suwiki.domain.lecture.controller.dto.LectureWithOptionalScheduleResponse;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
@@ -52,14 +52,14 @@ public class LectureController {
     }
 
     @GetMapping("/current/cells/search")
-    public ResponseEntity<ApiResponse<NoOffsetPaginationResponse<LectureWithScheduleResponse>>> searchLectureCells(
+    public ResponseEntity<ApiResponse<NoOffsetPaginationResponse<LectureWithOptionalScheduleResponse>>> searchLectureCells(
             @RequestParam(required = false) Long cursorId,
             @RequestParam(required = false, defaultValue = "20") Integer size,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String major,
             @RequestParam(required = false) Integer grade
     ) {
-        NoOffsetPaginationResponse<LectureWithScheduleResponse> response =
+        NoOffsetPaginationResponse<LectureWithOptionalScheduleResponse> response =
                 lectureService.findPagedLecturesWithSchedule(cursorId, size, keyword, major, grade);
 
         return ResponseEntity.ok(ApiResponse.success(response));

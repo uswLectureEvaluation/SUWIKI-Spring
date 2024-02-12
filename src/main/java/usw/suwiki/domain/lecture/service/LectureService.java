@@ -22,15 +22,12 @@ import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
 import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
-import usw.suwiki.domain.lecture.controller.dto.LectureWithScheduleResponse;
-import usw.suwiki.domain.lecture.controller.dto.OriginalLectureCellResponse;
+import usw.suwiki.domain.lecture.controller.dto.LectureWithOptionalScheduleResponse;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.LectureSchedule;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 import usw.suwiki.domain.lecture.domain.repository.LectureScheduleRepository;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
-import usw.suwiki.domain.lecture.util.LectureStringConverter;
-import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
 import usw.suwiki.global.dto.NoOffsetPaginationResponse;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.LectureException;
@@ -67,34 +64,36 @@ public class LectureService {
         return new LectureDetailResponseDto(lecture);
     }
 
-    public NoOffsetPaginationResponse<LectureWithScheduleResponse> findPagedLecturesWithSchedule(
+    public NoOffsetPaginationResponse<LectureWithOptionalScheduleResponse> findPagedLecturesWithSchedule(
             Long cursorId,
             int limit,
             String keyword,
             String major,
             Integer grade
     ) {
-        Slice<LectureSchedule> lectureScheduleSlice = lectureRepository
-                .findCurrentSemesterLectureSchedules(cursorId, limit, keyword, major, grade);
+        Slice<Lecture> lectureSlice = lectureRepository
+                .findCurrentSemesterLectures(cursorId, limit, keyword, major, grade);
 
-        Slice<LectureWithScheduleResponse> result = lectureScheduleSlice
-                .map(this::convertLectureWithSchedule);
-
-        return NoOffsetPaginationResponse.of(result);
+        List<LectureWithOptionalScheduleResponse> result = buildLectureWithOptionalScheduleResponseList(lectureSlice);
+        return NoOffsetPaginationResponse.of(result, lectureSlice.isLast());
     }
 
-    private LectureWithScheduleResponse convertLectureWithSchedule(LectureSchedule lectureSchedule) {
-        LectureWithScheduleResponse response = LectureWithScheduleResponse.of(lectureSchedule);
-
-        String placeSchedule = lectureSchedule.getPlaceSchedule();
-
-        List<TimetableCellSchedule> scheduleList = LectureStringConverter
-                .convertScheduleChunkIntoTimetableCellScheduleList(placeSchedule);
-
-        scheduleList.forEach(it -> response.addOriginalCellResponse(OriginalLectureCellResponse.of(it)));
-        return response;
+    private static List<LectureWithOptionalScheduleResponse> buildLectureWithOptionalScheduleResponseList(
+            Slice<Lecture> slice
+    ) {
+        List<LectureWithOptionalScheduleResponse> result = new ArrayList<>();
+        for (Lecture lecture : slice) {
+            if (lecture.getScheduleList().isEmpty()) {
+                result.add(LectureWithOptionalScheduleResponse.from(lecture));
+            } else {
+                result.addAll(lecture.getScheduleList()
+                        .stream()
+                        .map(LectureWithOptionalScheduleResponse::from)
+                        .toList());
+            }
+        }
+        return result;
     }
-
 
     /**
      * 공통 메서드
