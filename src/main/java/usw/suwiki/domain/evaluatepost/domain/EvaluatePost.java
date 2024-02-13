@@ -52,7 +52,6 @@ public class EvaluatePost extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;    //주관적인 강의평가 입력내용
 
-    // TODO: 연관관계 편의 메서드로 대체
     public void setLecture(Lecture lecture) {
         this.lecture = lecture;
     }

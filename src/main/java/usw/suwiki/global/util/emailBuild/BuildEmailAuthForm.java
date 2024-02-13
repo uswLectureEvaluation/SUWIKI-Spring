@@ -11,11 +11,9 @@ public class BuildEmailAuthForm {
     private static final String CONFIRMATION_TOKEN_URL = "/v2/confirmation-token/verify/?token=";
     private final ServerProperties serverProperties;
 
-    // TODO: refactor static 메서드 고민. serverProperties를 외부에서 주입받아야 함
     public String buildEmail(ConfirmationToken confirmationToken) {
         String redirectUrl = buildRedirectUrl(confirmationToken);
 
-        // TODO refactor: 반복성 제거. 템플릿 메서드 패턴 혹은 타임 리프 고민
         return "<center>\n" +
                 "\t<img class=\"suwikilogo\"src=\"https://avatars.githubusercontent.com/u/96416159?s=200&v=4\" style=\"display:block; \"alt=\"SUWIKILOGO\">"
                 +

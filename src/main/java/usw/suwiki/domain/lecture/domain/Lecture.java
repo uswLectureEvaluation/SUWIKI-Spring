@@ -27,7 +27,6 @@ public class Lecture extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO refactor: Embeddable 객체로 분리
     @Column(name = "semester_list")
     private String semester;
 

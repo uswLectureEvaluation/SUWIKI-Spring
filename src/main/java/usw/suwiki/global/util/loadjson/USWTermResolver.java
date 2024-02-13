@@ -5,14 +5,12 @@ import org.json.simple.JSONObject;
 public final class USWTermResolver {
     private static final String[] KEYWORDS_TO_REMOVE = {"재수강", "비대면수업", "대면수업", "혼합수업"};
 
-    // TODO refactor: REGEX 검사
     // 변환에 필요한 최소한의 스트링 형식입니다.
     // 해당 형식에 맞지 않는다면 수원대측에서 형식을 바꾼 것이므로 더 이상 호환되지 않기 때문에 예외를 발생시키고 적재를 중단해야 합니다.
-    // https://regexr.com/7rq1g
+    // https://regexr.com/7rq1g     "^([\\s가-힣A-Za-z\\d-]+\\([월화수목금토일]\\d+(?:,\\d+)*.*?\\))+$"
     // pass : "강의실107-1(수6,7,8)" "강의실 B215(화5,6,7 수5,6,7)"
     // pass : "(월1,2)" -> "미정(월1,2)"
     // fail : "강의실(1,2)" "강의실 월1,2" "강의실107(요일아님6,7,8)" "요일없음(1,2)" "강의실103(화5,6),강의실103"
-//    private static final String PLACE_SCHEDULE_REGEX = "^([\\s가-힣A-Za-z\\d-]+\\([월화수목금토일]\\d+(?:,\\d+)*.*?\\))+$";
 
     private static final String ESTABLISHED_YEAR = "subjtEstbYear";
     private static final String ESTABLISHED_SEMESTER = "subjtEstbSmrCd";
