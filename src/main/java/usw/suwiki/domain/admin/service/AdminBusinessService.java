@@ -18,15 +18,16 @@ import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
+import usw.suwiki.domain.user.userIsolation.service.UserIsolationCRUDService;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static usw.suwiki.global.exception.ExceptionType.PASSWORD_ERROR;
 import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.adminLoginResponseForm;
 import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successCapitalFlag;
 
 @Service
@@ -36,6 +37,7 @@ public class AdminBusinessService {
 
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final UserCRUDService userCRUDService;
+    private final UserIsolationCRUDService userIsolationCRUDService;
     private final ReportPostService reportPostService;
     private final EvaluatePostCRUDService evaluatePostCRUDService;
     private final ExamPostCRUDService examPostCRUDService;
@@ -49,11 +51,15 @@ public class AdminBusinessService {
     public Map<String, String> executeAdminLogin(LoginForm loginForm) {
         User user = userCRUDService.loadUserFromLoginId(loginForm.loginId());
         if (user.validatePassword(bCryptPasswordEncoder, loginForm.password())) {
-            if (user.getRole().getKey().equals("ADMIN")) {
-                return new HashMap<>() {{
-                    put("AccessToken", jwtAgent.createAccessToken(user));
-                    put("UserCount", String.valueOf(userCRUDService.findAllUsersSize()));
-                }};
+            if (user.isAdmin()) {
+                final long userCount = userCRUDService.countAllUsers();
+                final long userIsolationCount = userIsolationCRUDService.countAllIsolatedUsers();
+                final long totalUserCount = userCount + userIsolationCount;
+
+                return adminLoginResponseForm(
+                        jwtAgent.createAccessToken(user),
+                        String.valueOf(totalUserCount)
+                );
             }
             throw new AccountException(USER_RESTRICTED);
         }

@@ -1,19 +1,16 @@
 package usw.suwiki.domain.user.userIsolation.service;
 
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 import usw.suwiki.global.exception.errortype.AccountException;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
 
 @Service
 @RequiredArgsConstructor
@@ -59,6 +56,11 @@ public class UserIsolationCRUDService {
     @Transactional(readOnly = true)
     public UserIsolation loadUserFromEmail(String email) {
         return convertOptionalUserToDomainUser(userIsolationRepository.findByEmail(email));
+    }
+
+    @Transactional(readOnly = true)
+    public long countAllIsolatedUsers() {
+        return userIsolationRepository.count();
     }
 
     public void deleteByUserIdx(Long userIdx) {

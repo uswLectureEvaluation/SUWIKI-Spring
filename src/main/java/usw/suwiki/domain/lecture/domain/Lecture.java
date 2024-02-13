@@ -51,10 +51,10 @@ public class Lecture extends BaseTimeEntity {
     private int postsCount = 0;
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LectureSchedule> scheduleList = new ArrayList<>();
+    private final List<LectureSchedule> scheduleList = new ArrayList<>();
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EvaluatePost> evaluatePostList = new ArrayList<>();
+    private final List<EvaluatePost> evaluatePostList = new ArrayList<>();
 
     @Builder
     public Lecture(

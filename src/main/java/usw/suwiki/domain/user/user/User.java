@@ -140,6 +140,9 @@ public class User {
         this.role = Role.USER;
     }
 
+    public boolean isAdmin() {
+        return this.role.getKey().equals(Role.ADMIN);
+    }
 
     /**
      * Auth

@@ -3,6 +3,7 @@ package usw.suwiki.domain.apilogger.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.apilogger.ApiLogger;
@@ -24,6 +25,7 @@ public class ApiLoggerService {
     private final String userOption = "user";
     private final String noticeOption = "notice";
 
+    @Async
     @Transactional
     public void logApi(LocalDate today, Long currentProcessTime, String option) {
         Optional<ApiLogger> apiLogger = apiLoggerRepository.findByCallDate(today);
@@ -43,23 +45,14 @@ public class ApiLoggerService {
             LocalDate today, Long currentProcessTime, String option
     ) {
         ApiLogger newApiLogger = new ApiLogger();
-        switch (option) {
-            case lecturePostsOption:
-                newApiLogger = newApiLogger.saveNewLectureStatistics(today, currentProcessTime);
-                break;
-            case evaluatePostsOption:
-                newApiLogger = newApiLogger.saveNewEvaluatePostsStatistics(today, currentProcessTime);
-                break;
-            case examPostsOption:
-                newApiLogger = newApiLogger.saveNewExamPostsStatistics(today, currentProcessTime);
-                break;
-            case userOption:
-                newApiLogger = newApiLogger.saveNewUserStatistics(today, currentProcessTime);
-                break;
-            case noticeOption:
-                newApiLogger = newApiLogger.saveNewNoticeStatistics(today, currentProcessTime);
-                break;
-        }
+        newApiLogger = switch (option) {
+            case lecturePostsOption -> newApiLogger.saveNewLectureStatistics(today, currentProcessTime);
+            case evaluatePostsOption -> newApiLogger.saveNewEvaluatePostsStatistics(today, currentProcessTime);
+            case examPostsOption -> newApiLogger.saveNewExamPostsStatistics(today, currentProcessTime);
+            case userOption -> newApiLogger.saveNewUserStatistics(today, currentProcessTime);
+            case noticeOption -> newApiLogger.saveNewNoticeStatistics(today, currentProcessTime);
+            default -> newApiLogger;
+        };
         return newApiLogger;
     }
 
@@ -67,21 +60,11 @@ public class ApiLoggerService {
             ApiLogger apiLogger, Long currentProcessTime, String option
     ) {
         switch (option) {
-            case lecturePostsOption:
-                apiLogger.calculateLectureApiStatistics(currentProcessTime);
-                break;
-            case evaluatePostsOption:
-                apiLogger.calculateEvaluatePostsApiStatistics(currentProcessTime);
-                break;
-            case examPostsOption:
-                apiLogger.calculateExamPostsStatistics(currentProcessTime);
-                break;
-            case userOption:
-                apiLogger.calculateUserApiStatistics(currentProcessTime);
-                break;
-            case noticeOption:
-                apiLogger.calculateNoticeApiStatistics(currentProcessTime);
-                break;
+            case lecturePostsOption -> apiLogger.calculateLectureApiStatistics(currentProcessTime);
+            case evaluatePostsOption -> apiLogger.calculateEvaluatePostsApiStatistics(currentProcessTime);
+            case examPostsOption -> apiLogger.calculateExamPostsStatistics(currentProcessTime);
+            case userOption -> apiLogger.calculateUserApiStatistics(currentProcessTime);
+            case noticeOption -> apiLogger.calculateNoticeApiStatistics(currentProcessTime);
         }
         return apiLogger;
     }
