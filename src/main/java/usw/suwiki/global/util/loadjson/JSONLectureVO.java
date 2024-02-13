@@ -64,17 +64,20 @@ public class JSONLectureVO {
     }
 
 
-
     public boolean isPlaceScheduleValid() {
         return !(placeSchedule.equals("null") || placeSchedule.isEmpty());
     }
 
+    public boolean isLectureEqual(Lecture lecture) {
+        return lecture.getName().equals(lectureName)
+                && lecture.getProfessor().equals(professor)
+                && lecture.getMajorType().equals(majorType)
+                && lecture.getLectureDetail().getDiclNo().equals(dividedClassNumber);
+    }
+
     public boolean isLectureAndPlaceScheduleEqual(LectureSchedule lectureSchedule) {
-        return lectureSchedule.getPlaceSchedule().contains(placeSchedule)
-                && lectureSchedule.getLecture().getName().equals(lectureName)
-                && lectureSchedule.getLecture().getProfessor().equals(professor)
-                && lectureSchedule.getLecture().getMajorType().equals(majorType)
-                && lectureSchedule.getLecture().getLectureDetail().getDiclNo().equals(dividedClassNumber);
+        return isLectureEqual(lectureSchedule.getLecture())
+                && lectureSchedule.getPlaceSchedule().contains(placeSchedule);
     }
 
 }

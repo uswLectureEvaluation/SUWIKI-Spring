@@ -137,20 +137,47 @@ public class LectureService {
 
     @Transactional(propagation = Propagation.MANDATORY)
     public void bulkApplyJsonLectureList(List<JSONLectureVO> jsonLectureVOList) {
+        deleteAllRemovedLectures(jsonLectureVOList);
+        deleteAllRemovedLectureSchedules(jsonLectureVOList);
+
+        saveAllLecturesOrLectureSchedules(jsonLectureVOList);
+    }
+
+    private void deleteAllRemovedLectures(List<JSONLectureVO> jsonLectureVOList) {
+        List<Lecture> currentSemeterLectureList = lectureRepository.findAllBySemesterContains(currentSemester);
+        List<Lecture> removedLectureList =
+                currentSemeterLectureList.stream()
+                        .filter(it -> jsonLectureVOList.stream().noneMatch(vo -> vo.isLectureEqual(it)))
+                        .toList();
+
+        for (Lecture lecture : removedLectureList) {
+            if (lecture.isOld()) {
+                lecture.removeSemester(currentSemester);
+            } else {
+                lectureRepository.delete(lecture);
+            }
+        }
+    }
+
+
+    private void deleteAllRemovedLectureSchedules(List<JSONLectureVO> jsonLectureVOList) {
         List<LectureSchedule> currentSemeterLectureScheduleList = lectureRepository
                 .findAllLectureSchedulesByLectureSemesterContains(currentSemester);
 
-        List<LectureSchedule> deletedLectureScheduleList = resolveDeletedLectureScheduleList(
-                jsonLectureVOList,
-                currentSemeterLectureScheduleList
-        );
+        List<LectureSchedule> removedLectureScheduleList = // 기존의 스케줄이 삭제된 케이스 필터링 : O(N^2) 비교
+                currentSemeterLectureScheduleList.stream()
+                        .filter(it -> jsonLectureVOList.stream().noneMatch(vo -> vo.isLectureAndPlaceScheduleEqual(it)))
+                        .toList();
 
-        jsonLectureVOList.forEach(vo -> applyJsonLecture(vo, deletedLectureScheduleList));
+        lectureScheduleRepository.deleteAll(removedLectureScheduleList);
     }
 
-    private void applyJsonLecture(
-            JSONLectureVO jsonLectureVO,
-            List<LectureSchedule> deletedLectureScheduleList
+    private void saveAllLecturesOrLectureSchedules(List<JSONLectureVO> jsonLectureVOList) {
+        jsonLectureVOList.forEach(this::insertJsonLectureOrLectureSchedule);
+    }
+
+    private void insertJsonLectureOrLectureSchedule(
+            JSONLectureVO jsonLectureVO
     ) {
         Optional<Lecture> optionalLecture = lectureRepository.findByExtraUniqueKey(
                 jsonLectureVO.getLectureName(),
@@ -166,24 +193,22 @@ public class LectureService {
             boolean isThereNewSchedule = lecture.getScheduleList().stream()
                     .noneMatch(jsonLectureVO::isLectureAndPlaceScheduleEqual);
             if (isThereNewSchedule) {
-                saveOnlyValidLectureSchedule(jsonLectureVO, lecture);
+                saveLectureSchedule(jsonLectureVO, lecture);
             }
 
-            deletedLectureScheduleList.stream()
-                    .filter(it -> it.getLecture().getId().equals(lecture.getId()))
-                    .forEach(lecture::removeSchedule);
         } else {
             Lecture newLecture = jsonLectureVO.toEntity();
-            saveOnlyValidLectureSchedule(jsonLectureVO, newLecture);
+            saveLectureSchedule(jsonLectureVO, newLecture);
             lectureRepository.save(newLecture);
         }
     }
 
-    private void saveOnlyValidLectureSchedule(JSONLectureVO jsonLectureVO, Lecture newLecture) {
+    private void saveLectureSchedule(JSONLectureVO jsonLectureVO, Lecture lecture) {
         if (jsonLectureVO.isPlaceScheduleValid()) {
             LectureSchedule schedule = LectureSchedule.builder()
-                    .lecture(newLecture)
+                    .lecture(lecture)
                     .placeSchedule(jsonLectureVO.getPlaceSchedule())
+                    .semester(currentSemester)
                     .build();
             lectureScheduleRepository.save(schedule);
         }
