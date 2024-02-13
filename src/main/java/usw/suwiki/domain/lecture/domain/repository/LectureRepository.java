@@ -1,5 +1,6 @@
 package usw.suwiki.domain.lecture.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 import javax.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,5 @@ public interface LectureRepository extends JpaRepository<Lecture, Long>, Lecture
     //    @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value ="10000")})  // timeout: 10s
     Optional<Lecture> findForUpdateById(Long lectureId);
 
+    List<Lecture> findAllBySemesterContains(String semester);
 }
