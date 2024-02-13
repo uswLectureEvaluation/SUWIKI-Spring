@@ -141,11 +141,22 @@ public class Lecture extends BaseTimeEntity {
 
     public void addSemester(String singleSemester) {
         validateSingleSemester(singleSemester);
-        if (this.semester.contains(singleSemester)) {
+        if (this.semester.isEmpty() || this.semester.contains(singleSemester)) {
             return;
         }
 
-        this.semester = buildAddedSemester(this.semester, singleSemester);
+        this.semester = extendSemester(this.semester, singleSemester);
+    }
+
+    public boolean isOld() {// DEPRECATED
+        return this.semester.length() > 9;
+    }
+
+    public void removeSemester(String singleSemester) {
+        validateSingleSemester(singleSemester);
+        if (this.semester.contains(singleSemester)) {
+            this.semester = this.semester.replace(buildAddedSingleSemester(singleSemester), "");
+        }
     }
 
     private void validateSingleSemester(String candidate) {
@@ -155,8 +166,12 @@ public class Lecture extends BaseTimeEntity {
         }
     }
 
-    private static String buildAddedSemester(String originalSemesters, String semester) {
-        return originalSemesters + ", " + semester;
+    private static String extendSemester(String originalSemesters, String semester) {
+        return originalSemesters + buildAddedSingleSemester(semester);
+    }
+
+    private static String buildAddedSingleSemester(String semester) {
+        return ", " + semester;
     }
 
 }
