@@ -8,15 +8,9 @@ import javax.persistence.PersistenceContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Slice;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.fixture.EvaluatePostFixture;
@@ -28,14 +22,9 @@ import usw.suwiki.domain.lecture.fixture.LectureFixture;
 import usw.suwiki.domain.user.fixture.UserFixture;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
-import usw.suwiki.global.config.TestJpaConfig;
+import usw.suwiki.global.annotation.SuwikiJpaTest;
 
-// TODO: RepositoryTest 슈퍼 클래스로 공통 설정 상속
-// TODO refactor: 테스트 독립성 보장. TRUNCATE 실행
-@DataJpaTest
-@Import(TestJpaConfig.class)
-@TestMethodOrder(MethodOrderer.DisplayName.class)
-@AutoConfigureTestDatabase(replace = Replace.NONE)
+@SuwikiJpaTest
 public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 보면서 동시성 테스트하는 방법 공부
     @Autowired
     private LectureRepository lectureRepository;
