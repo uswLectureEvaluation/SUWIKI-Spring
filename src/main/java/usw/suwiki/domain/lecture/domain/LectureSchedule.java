@@ -24,13 +24,17 @@ public class LectureSchedule {
     @Column(name = "place_schedule", nullable = false)
     private String placeSchedule;
 
+    @Column(nullable = false, updatable = false)
+    private String semester;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Lecture lecture;
 
     @Builder
-    public LectureSchedule(String placeSchedule, Lecture lecture) {
+    public LectureSchedule(String placeSchedule, String semester, Lecture lecture) {
         this.placeSchedule = placeSchedule;
-        associateLecture(lecture);
+        this.semester = semester;
+        associateLecture(lecture);  // TODO refactor: Lecture - addSchedule 메서드로 책임 분리
     }
 
     //-------------------------------------------------------------------------
