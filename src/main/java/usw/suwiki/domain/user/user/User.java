@@ -1,7 +1,22 @@
 package usw.suwiki.domain.user.user;
 
+import static usw.suwiki.global.exception.ExceptionType.EMAIL_NOT_AUTHED;
+import static usw.suwiki.global.exception.ExceptionType.USER_POINT_LACK;
+import static usw.suwiki.global.util.passwordfactory.PasswordRandomizer.randomizePassword;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,14 +28,6 @@ import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.timetable.entity.Timetable;
 import usw.suwiki.global.exception.errortype.AccountException;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static usw.suwiki.global.exception.ExceptionType.EMAIL_NOT_AUTHED;
-import static usw.suwiki.global.exception.ExceptionType.USER_POINT_LACK;
-import static usw.suwiki.global.util.passwordfactory.PasswordRandomizer.randomizePassword;
 
 @Entity
 @Getter
@@ -141,7 +148,7 @@ public class User {
     }
 
     public boolean isAdmin() {
-        return this.role.getKey().equals(Role.ADMIN);
+        return this.role.equals(Role.ADMIN);
     }
 
     /**
