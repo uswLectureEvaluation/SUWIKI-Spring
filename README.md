@@ -9,14 +9,14 @@
         <td>
             <img src="https://github.com/JIWEON-JEONG.png" style="max-width: 10px">
             <br>
-            <a href="https://github.com/JIWEON-JEONG"></a>
+            <a href="https://github.com/JIWEON-JEONG"><I>JIWEON-JEONG</I></a>
             <br>강의평가 CRUD API<br>시험정보 CRUD API<br>홈 API<br>공지사항 API<br>XSS Filter 기능 구현<br>인수 테스트 템플릿 제작
         </td>
         <td>
           <img src="https://github.com/k-diger.png" style="max-width: 10px">
             <br>
             <a href="https://github.com/k-diger"><I>K-Diger</I></a>
-            <br>사용자 인증/인가<br>관리자 페이지 API<br>휴면계정 관련 법률 조항에 따른 스케줄링 기능 구현<br>블랙리스트 && 제재 유저 정책 로직 구현<br>CI/CD 파이프라인 구축<br>인수 테스트 템플릿 제작
+            <br>사용자 인증/인가<br>관리자 페이지 API<br>휴면계정 관련 법률 조항에 따른 스케줄링 기능 구현<br>제재 유저, 블랙리스트 유저 정책 로직 구현<br>CI/CD 파이프라인 구축<br>인수 테스트 템플릿 제작
         </td>
     </tr>
 </table>
