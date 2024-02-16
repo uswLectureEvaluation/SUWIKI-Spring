@@ -1,12 +1,29 @@
+### 역할
+
+<table>
+    <tr align="center">
+        <td><B>정지원<B></td>
+        <td><B>김도현<B></td>
+    </tr>
+    <tr align="center">
+        <td>
+            <img src="https://github.com/JIWEON-JEONG.png" style="max-width: 10px">
+            <br>
+            <a href="https://github.com/JIWEON-JEONG"></a>
+            <br>강의평가 CRUD API<br>시험정보 CRUD API<br>홈 API<br>공지사항 API<br>XSS Filter 기능 구현<br>인수 테스트 템플릿 제작
+        </td>
+        <td>
+          <img src="https://github.com/k-diger.png" style="max-width: 10px">
+            <br>
+            <a href="https://github.com/k-diger"><I>K-Diger</I></a>
+            <br>사용자 인증/인가<br>관리자 페이지 API<br>휴면계정 관련 법률 조항에 따른 스케줄링 기능 구현<br>블랙리스트 && 제재 유저 정책 로직 구현<br>CI/CD 파이프라인 구축<br>인수 테스트 템플릿 제작
+        </td>
+    </tr>
+</table>
+
 ### Infrastructure
 
-![](https://private-user-images.githubusercontent.com/60564431/303929785-4c506402-805c-4016-adcc-ddaa6db74d80.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDc2NjY2MzEsIm5iZiI6MTcwNzY2NjMzMSwicGF0aCI6Ii82MDU2NDQzMS8zMDM5Mjk3ODUtNGM1MDY0MDItODA1Yy00MDE2LWFkY2MtZGRhYTZkYjc0ZDgwLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMTElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjExVDE1NDUzMVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTQ0M2RmOGE3ZTFiYWYyYmYzNTIxNWMzYWRkNjBmNjYyZGYwZmQ3YWFhMDlmZjJiZmZjMTM4NWEzZjRmZDE5M2YmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.MbsHkmyie40fy7XTycRwFwE3hzONsdQ4Qqc7Da9H3FI)
-
----
- 
-### ERD
-
-![image](https://github.com/uswLectureEvaluation/Backend-Remaster/assets/60564431/6f1bb783-aa4d-457d-a6f5-c96a6dcb2aad)
+![image](https://github.com/uswLectureEvaluation/SUWIKI-Spring/assets/60564431/a1bdde38-025b-4415-8be2-ab0b7cf5c94f)
 
 ---
 
@@ -16,15 +33,9 @@
 
 ---
 
-### 역할
+### ERD
 
-| JIWON-JEONG                               | K-Diger                        |
-|-------------------------------------------|--------------------------------|
-| Evaluation API                            | User API                       |
-| Exam API                                  | Authentication / Authorization |
-| Lecture API                               | Admin API                      |
-| Notice API                                | CI/CD                          |
-| 인앱 재화 구현 (POINT), XSS(크로스 사이트 스크립팅) 방지 필터 |                                |
+![image](https://github.com/uswLectureEvaluation/Backend-Remaster/assets/60564431/6f1bb783-aa4d-457d-a6f5-c96a6dcb2aad)
 
 ---
 
