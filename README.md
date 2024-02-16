@@ -20,12 +20,11 @@
             <br>사용자 인증/인가<br>관리자 페이지 API<br>휴면계정 관련 법률 조항에 따른 스케줄링 기능 구현<br>제재 유저, 블랙리스트 유저 정책 로직 구현<br>CI/CD 파이프라인 구축<br>인수 테스트 템플릿 제작
         </td>
         <td>
-          <img src="https://github.com/wonslee.png" style="max-width: 10px">
-            <br>
+          <img src="https://github.com/wonslee.png" style="width: 320px">
             <a href="https://github.com/wonslee"><I>wonslee</I></a>
             <br>강의 시간표
-            <br>강의 적재 로직 유지보수
-            <br>개발 서버 구축 및 CI/CD 파이프라인 구축
+            <br>강의 데이터 적재 로직 유지보수
+            <br>개발 서버 및 CI/CD 파이프라인 구축
         </td>
     </tr>
 </table>
