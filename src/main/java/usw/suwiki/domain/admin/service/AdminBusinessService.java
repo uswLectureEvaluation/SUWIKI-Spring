@@ -146,10 +146,7 @@ public class AdminBusinessService {
 
         return successCapitalFlag();
     }
-
-    /**
-     * 신고된 시험정보 게시물 작성자 블랙리스트 처리
-     */
+    
     public Map<String, Boolean> executeBlackListExamPost(
         ExamPostBlacklistForm examPostBlacklistForm) {
         Long userIdx = examPostCRUDService.loadExamPostFromExamPostIdx(
