@@ -23,7 +23,7 @@ import usw.suwiki.global.annotation.ApiLogger;
 @RequestMapping("/v2/favorite-major")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class FavoriteMajorControllerV2 {
+public class FavoriteMajorController {
 
     private final FavoriteMajorServiceV2 favoriteMajorServiceV2;
 
@@ -31,7 +31,7 @@ public class FavoriteMajorControllerV2 {
     @Operation(summary = "전공 즐겨찾기 등록")
     @ApiLogger(option = "user")
     @PostMapping
-    public String saveFavoriteMajor(
+    public String create(
         @RequestHeader String Authorization,
         @RequestBody FavoriteSaveDto favoriteSaveDto
     ) {
@@ -43,7 +43,7 @@ public class FavoriteMajorControllerV2 {
     @Operation(summary = "전공 즐겨찾기 삭제")
     @ApiLogger(option = "user")
     @DeleteMapping
-    public String deleteFavoriteMajor(
+    public String delete(
         @RequestHeader String Authorization,
         @RequestParam String majorType
     ) {
@@ -55,7 +55,7 @@ public class FavoriteMajorControllerV2 {
     @Operation(summary = "전공 즐겨찾기 불러오기")
     @ApiLogger(option = "user")
     @GetMapping
-    public ResponseForm loadFavoriteMajor(@RequestHeader String Authorization) {
+    public ResponseForm retrieve(@RequestHeader String Authorization) {
         return new ResponseForm(favoriteMajorServiceV2.findAllMajorTypeByUser(Authorization));
     }
 
