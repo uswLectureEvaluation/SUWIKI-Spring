@@ -70,7 +70,8 @@ public class LectureController {
     public ResponseEntity<LectureAndCountResponseForm> findAllLectureApi(
         @RequestParam(required = false) String option,
         @RequestParam(required = false) Integer page,
-        @RequestParam(required = false) String majorType) {
+        @RequestParam(required = false) String majorType
+    ) {
 
         LectureFindOption findOption = new LectureFindOption(option, page, majorType);
         LectureAndCountResponseForm response = lectureService.readAllLecture(findOption);
@@ -81,7 +82,8 @@ public class LectureController {
     @GetMapping
     public ResponseEntity<ResponseForm> findLectureByLectureId(
         @RequestParam Long lectureId,
-        @RequestHeader String Authorization) {
+        @RequestHeader String Authorization
+    ) {
 
         if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
