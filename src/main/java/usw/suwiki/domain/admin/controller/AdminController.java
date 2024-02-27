@@ -136,7 +136,6 @@ public class AdminController {
         return adminBusinessService.executeLoadDetailReportedEvaluatePost(target);
     }
 
-    // 시험정보에 관련된 신고 게시글 자세히 보기
     @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @GetMapping("/report/exam/")
