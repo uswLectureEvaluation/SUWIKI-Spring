@@ -19,9 +19,10 @@ import usw.suwiki.global.exception.errortype.TimetableException;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TimetableCellSchedule {
+
     @NotNull
     @Size(max = 200)
-    private String location;    // blank 가능
+    private String location;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -55,10 +56,9 @@ public class TimetableCellSchedule {
         }
     }
 
-    // 셀끼리 요일이 같은 상태에서 교시가 하나라도 겹치는지 여부
     public boolean isOverlapped(TimetableCellSchedule otherSchedule) {
         return this.day.equals(otherSchedule.day) &&
-                Math.max(this.startPeriod, otherSchedule.startPeriod)
-                        <= Math.min(this.endPeriod, otherSchedule.getEndPeriod());
+            Math.max(this.startPeriod, otherSchedule.startPeriod)
+                <= Math.min(this.endPeriod, otherSchedule.getEndPeriod());
     }
 }

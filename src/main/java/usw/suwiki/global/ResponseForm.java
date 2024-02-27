@@ -26,9 +26,9 @@ public class ResponseForm {
     }
 
     public ResponseForm buildDataStatusCodeMessageForm(
-            Object data,
-            Integer statusCode,
-            String message
+        Object data,
+        Integer statusCode,
+        String message
     ) {
         return new ResponseForm(data, statusCode, message);
     }

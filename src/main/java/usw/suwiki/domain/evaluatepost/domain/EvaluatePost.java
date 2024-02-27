@@ -24,21 +24,18 @@ import usw.suwiki.global.BaseTimeEntity;
 public class EvaluatePost extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //autoIncrement
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String lectureName; //과목
+    private String lectureName;
     private String selectedSemester;
-    private String professor;   //교수
-
-    private float satisfaction;    //수업 만족도
-    private float learning; //배움지수
-    private float honey;    //꿀강지수
-    private float totalAvg;   // 평균지수
-
-    private int team;    //조모임 횟수
-    private int difficulty;   //성적비율
-    private int homework;   //과제량
+    private String professor;
+    private float satisfaction;
+    private float learning;
+    private float honey;
+    private float totalAvg;
+    private int team;
+    private int difficulty;
+    private int homework;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id")
@@ -48,9 +45,8 @@ public class EvaluatePost extends BaseTimeEntity {
     @JoinColumn(name = "user_idx")
     private User user;
 
-
     @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;    //주관적인 강의평가 입력내용
+    private String content;
 
     public void setLecture(Lecture lecture) {
         this.lecture = lecture;
@@ -62,17 +58,17 @@ public class EvaluatePost extends BaseTimeEntity {
 
     @Builder
     public EvaluatePost(
-            String lectureName,
-            String selectedSemester,
-            String professor,
-            String content,
-            float satisfaction,
-            float learning,
-            float honey,
-            float totalAvg,
-            int team,
-            int difficulty,
-            int homework
+        String lectureName,
+        String selectedSemester,
+        String professor,
+        String content,
+        float satisfaction,
+        float learning,
+        float honey,
+        float totalAvg,
+        int team,
+        int difficulty,
+        int homework
     ) {
         this.lectureName = lectureName;
         this.selectedSemester = selectedSemester;
@@ -133,5 +129,4 @@ public class EvaluatePost extends BaseTimeEntity {
         this.lecture = lecture;
         lecture.addEvaluatePost(this);
     }
-
 }

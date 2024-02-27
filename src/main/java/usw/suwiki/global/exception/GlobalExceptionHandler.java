@@ -26,12 +26,12 @@ public class GlobalExceptionHandler {
         String message = e.getMessage();
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .exception(className.substring(className.lastIndexOf(".") + 1))
-                .code(code)
-                .message(message)
-                .status(status.value())
-                .error(status.getReasonPhrase())
-                .build();
+            .exception(className.substring(className.lastIndexOf(".") + 1))
+            .code(code)
+            .message(message)
+            .status(status.value())
+            .error(status.getReasonPhrase())
+            .build();
 
         log.error("code : {}, message : {}", errorResponse.getCode(), errorResponse.getMessage());
 
@@ -44,12 +44,12 @@ public class GlobalExceptionHandler {
         ExceptionType exceptionType = e.getExceptionType();
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .exception(className.substring(className.lastIndexOf(".") + 1))
-                .code(exceptionType.getCode())
-                .message(exceptionType.getMessage())
-                .status(exceptionType.getStatus().value())
-                .error(exceptionType.getStatus().getReasonPhrase())
-                .build();
+            .exception(className.substring(className.lastIndexOf(".") + 1))
+            .code(exceptionType.getCode())
+            .message(exceptionType.getMessage())
+            .status(exceptionType.getStatus().value())
+            .error(exceptionType.getStatus().getReasonPhrase())
+            .build();
 
         log.error("code : {}, message : {}", errorResponse.getCode(), errorResponse.getMessage());
 
@@ -57,22 +57,22 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = {
-            MethodArgumentNotValidException.class,
-            MethodArgumentTypeMismatchException.class,
-            TypeMismatchException.class,
-            MissingServletRequestParameterException.class
+        MethodArgumentNotValidException.class,
+        MethodArgumentTypeMismatchException.class,
+        TypeMismatchException.class,
+        MissingServletRequestParameterException.class
     })
     public ResponseEntity<ErrorResponse> handleRequestValidationException(Exception e) {
 
         ExceptionType exception = PARAM_VALID_ERROR;
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .exception(exception.name())
-                .code(exception.getCode())
-                .message(exception.getMessage())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(exception.getStatus().getReasonPhrase())
-                .build();
+            .exception(exception.name())
+            .code(exception.getCode())
+            .message(exception.getMessage())
+            .status(HttpStatus.BAD_REQUEST.value())
+            .error(exception.getStatus().getReasonPhrase())
+            .build();
 
         log.error("code : {}, message : {}", errorResponse.getCode(), errorResponse.getMessage());
 

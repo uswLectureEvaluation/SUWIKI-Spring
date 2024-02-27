@@ -2,15 +2,14 @@ package usw.suwiki.domain.exampost.controller.dto;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
 public class ReadExamPostResponse {
-    Object data;
 
+    Object data;
     boolean canRead;
     boolean isExamDataExist;
     boolean isWritten = true;
@@ -36,7 +35,7 @@ public class ReadExamPostResponse {
         return response;
     }
 
-    public void  forbiddenToRead() {
+    public void forbiddenToRead() {
         this.data = new ArrayList<>();
         this.canRead = Boolean.FALSE;
     }

@@ -1,7 +1,22 @@
 package usw.suwiki.domain.evaluatepost.controller;
 
+import static org.springframework.http.HttpStatus.OK;
+import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
+
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostResponseByUserIdxDto;
 import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostSaveDto;
 import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostUpdateDto;
@@ -12,12 +27,6 @@ import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.springframework.http.HttpStatus.OK;
-import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,9 +40,9 @@ public class EvaluatePostController {
     @ApiLogger(option = "evaluatePosts")
     @GetMapping
     public FindByLectureToJson readEvaluatePostsByLectureApi(
-            @RequestHeader String Authorization,
-            @RequestParam Long lectureId,
-            @RequestParam(required = false) Optional<Integer> page) {
+        @RequestHeader String Authorization,
+        @RequestParam Long lectureId,
+        @RequestParam(required = false) Optional<Integer> page) {
 
         jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) {
@@ -42,9 +51,9 @@ public class EvaluatePostController {
         Long userIdx = jwtAgent.getId(Authorization);
 
         FindByLectureToJson response = evaluatePostService.readEvaluatePostsByLectureId(
-                new PageOption(page),
-                userIdx,
-                lectureId
+            new PageOption(page),
+            userIdx,
+            lectureId
         );
 
         return response;
@@ -53,9 +62,9 @@ public class EvaluatePostController {
     @ApiLogger(option = "evaluatePosts")
     @PutMapping
     public String updateEvaluatePosts(
-            @RequestParam Long evaluateIdx,
-            @RequestHeader String Authorization,
-            @RequestBody EvaluatePostUpdateDto requestBody
+        @RequestParam Long evaluateIdx,
+        @RequestHeader String Authorization,
+        @RequestBody EvaluatePostUpdateDto requestBody
     ) {
         jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) {
@@ -69,9 +78,9 @@ public class EvaluatePostController {
     @ApiLogger(option = "evaluatePosts")
     @PostMapping
     public String writeEvaluatePostApi(
-            @RequestParam Long lectureId,
-            @RequestHeader String Authorization,
-            @RequestBody EvaluatePostSaveDto requestBody) {
+        @RequestParam Long lectureId,
+        @RequestHeader String Authorization,
+        @RequestBody EvaluatePostSaveDto requestBody) {
 
         jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) {
@@ -89,8 +98,8 @@ public class EvaluatePostController {
     @ResponseStatus(OK)
     @GetMapping("/written")
     public ResponseForm findByUser(
-            @RequestHeader String Authorization,
-            @RequestParam(required = false) Optional<Integer> page
+        @RequestHeader String Authorization,
+        @RequestParam(required = false) Optional<Integer> page
     ) {
         jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) {
@@ -98,8 +107,8 @@ public class EvaluatePostController {
         }
 
         List<EvaluatePostResponseByUserIdxDto> list = evaluatePostService.readEvaluatePostsByUserId(
-                new PageOption(page),
-                jwtAgent.getId(Authorization)
+            new PageOption(page),
+            jwtAgent.getId(Authorization)
         );
 
         ResponseForm response = new ResponseForm(list);
@@ -110,8 +119,8 @@ public class EvaluatePostController {
     @ResponseStatus(OK)
     @DeleteMapping
     public String deleteEvaluatePosts(
-            @RequestParam Long evaluateIdx,
-            @RequestHeader String Authorization
+        @RequestParam Long evaluateIdx,
+        @RequestHeader String Authorization
     ) {
         jwtAgent.validateJwt(Authorization);
         if (jwtAgent.getUserIsRestricted(Authorization)) {

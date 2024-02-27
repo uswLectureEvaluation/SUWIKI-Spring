@@ -21,9 +21,9 @@ public enum TimetableDay implements KeyValueEnumModel<String> {
 
     public static TimetableDay ofString(String param) {
         return Arrays.stream(TimetableDay.values())
-                .filter(v -> v.getValue().equals(param.toUpperCase()))
-                .findFirst()
-                .orElseThrow(() -> new TimetableException(ExceptionType.INVALID_TIMETABLE_CELL_DAY));
+            .filter(v -> v.getValue().equals(param.toUpperCase()))
+            .findFirst()
+            .orElseThrow(() -> new TimetableException(ExceptionType.INVALID_TIMETABLE_CELL_DAY));
     }
 
     public static TimetableDay ofKorean(String param) {

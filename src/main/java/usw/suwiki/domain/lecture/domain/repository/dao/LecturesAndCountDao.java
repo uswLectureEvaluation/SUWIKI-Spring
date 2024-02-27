@@ -1,10 +1,9 @@
 package usw.suwiki.domain.lecture.domain.repository.dao;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import usw.suwiki.domain.lecture.domain.Lecture;
-
-import java.util.List;
 
 @Getter
 public class LecturesAndCountDao {
@@ -17,5 +16,4 @@ public class LecturesAndCountDao {
         this.lectureList = lectureList;
         this.count = count;
     }
-
 }

@@ -1,5 +1,7 @@
 package usw.suwiki.domain.user.userIsolation.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -9,19 +11,16 @@ import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
-import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.refreshtoken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
+import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.global.util.emailBuild.BuildSoonDormantTargetForm;
 import usw.suwiki.global.util.emailBuild.UserAutoDeletedWarningForm;
 import usw.suwiki.global.util.mailsender.EmailSender;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -64,13 +63,13 @@ public class UserIsolationSchedulingService {
         for (User user : users) {
             if (userIsolationCRUDService.loadUserFromUserIdx(user.getId()) == null) {
                 UserIsolation userIsolation = UserIsolation.builder()
-                        .userIdx(user.getId())
-                        .loginId(user.getLoginId())
-                        .password(user.getPassword())
-                        .email(user.getEmail())
-                        .lastLogin(user.getLastLogin())
-                        .requestedQuitDate(user.getRequestedQuitDate())
-                        .build();
+                    .userIdx(user.getId())
+                    .loginId(user.getLoginId())
+                    .password(user.getPassword())
+                    .email(user.getEmail())
+                    .lastLogin(user.getLastLogin())
+                    .requestedQuitDate(user.getRequestedQuitDate())
+                    .build();
                 userIsolationCRUDService.saveUserIsolation(userIsolation);
                 userCRUDService.softDeleteForIsolation(user.getId());
             }
@@ -90,7 +89,6 @@ public class UserIsolationSchedulingService {
         log.info("{} - 자동 삭제 이메일 전송 종료", LocalDateTime.now());
     }
 
-    // 3년간 로그인 하지 않으면 계정 자동 삭제
     @Scheduled(cron = "8 0 0 * * *")
     public void autoDeleteTargetIsThreeYears() {
         log.info("{} - 자동 삭제 시작", LocalDateTime.now());

@@ -1,19 +1,24 @@
 package usw.suwiki.domain.refreshtoken.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-import usw.suwiki.domain.user.user.service.UserBusinessService;
-import usw.suwiki.global.ResponseForm;
-import usw.suwiki.global.annotation.ApiLogger;
+import static org.springframework.http.HttpStatus.OK;
 
+import io.swagger.v3.oas.annotations.Operation;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.springframework.http.HttpStatus.OK;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import usw.suwiki.domain.user.user.service.UserBusinessService;
+import usw.suwiki.global.ResponseForm;
+import usw.suwiki.global.annotation.ApiLogger;
 
 @RestController
 @RequestMapping("/v2/refreshtoken")
@@ -28,11 +33,11 @@ public class RefreshTokenControllerV2 {
     @ApiLogger(option = "user")
     @PostMapping("/web-client/refresh")
     public ResponseForm clientTokenRefresh(
-            @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
-            HttpServletResponse response
+        @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
+        HttpServletResponse response
     ) {
         Map<String, String> tokenPair = userBusinessService.executeJWTRefreshForWebClient(
-                requestRefreshCookie
+            requestRefreshCookie
         );
         Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
         refreshCookie.setMaxAge(14 * 24 * 60 * 60);
@@ -49,7 +54,7 @@ public class RefreshTokenControllerV2 {
     @ApiLogger(option = "user")
     @PostMapping("/mobile-client/refresh")
     public ResponseForm tokenRefresh(
-            @Valid @RequestHeader String Authorization
+        @Valid @RequestHeader String Authorization
     ) {
         return ResponseForm.success(userBusinessService.executeJWTRefreshForMobileClient(Authorization));
     }

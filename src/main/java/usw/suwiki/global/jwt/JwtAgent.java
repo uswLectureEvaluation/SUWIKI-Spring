@@ -29,6 +29,7 @@ import usw.suwiki.global.exception.errortype.AccountException;
 @Component
 @RequiredArgsConstructor
 public class JwtAgent {
+
     @Value("${spring.secret-key}")
     private String key;
 
@@ -44,13 +45,12 @@ public class JwtAgent {
     @Transactional
     public String provideRefreshTokenInLogin(User user) {
         Optional<RefreshToken> wrappedRefreshToken =
-                refreshTokenCRUDService.loadRefreshTokenFromUserIdx(user.getId());
-        // 생애 첫 로그인 시 리프레시 토큰 신규 발급
+            refreshTokenCRUDService.loadRefreshTokenFromUserIdx(user.getId());
+
         if (wrappedRefreshToken.isEmpty()) {
             return createRefreshToken(user);
         }
 
-        // 그렇지 않으면 DB에서 꺼내기
         RefreshToken refreshToken = wrappedRefreshToken.get();
         if (isRefreshTokenExpired(refreshToken.getPayload())) {
             String payload = reIssueRefreshToken(refreshToken);
@@ -65,7 +65,6 @@ public class JwtAgent {
         // TODO: Security 공부하면서 정말 필요한 로직만 넣자.
         // TODO: 레디스 캐싱 성능 개선
 
-        // RefreshToken 엔티티 조회
         RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
 
         // TODO: 애초에 payload로 찾은건데 여기서 비교할 필요가 있나?
@@ -76,7 +75,6 @@ public class JwtAgent {
         Claims body = resolveBodyFromRefreshToken(payload);
 
         // TODO: isRefreshTokenNotExpired 리팩토링 후 추가
-
         String newPayload = reIssueRefreshToken(refreshToken);
         refreshToken.updatePayload(newPayload);
         return newPayload;
@@ -85,7 +83,7 @@ public class JwtAgent {
     @Transactional
     public String reIssueRefreshToken(RefreshToken refreshToken) {
         refreshToken.updatePayload(
-                buildRefreshToken(new Date(new Date().getTime() + refreshTokenExpireTime))
+            buildRefreshToken(new Date(new Date().getTime() + refreshTokenExpireTime))
         );
         return refreshToken.getPayload();
     }
@@ -93,8 +91,8 @@ public class JwtAgent {
     public void validateJwt(String token) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey()).build()
-                    .parseClaimsJws(token);
+                .setSigningKey(getSigningKey()).build()
+                .parseClaimsJws(token);
         } catch (MalformedJwtException | IllegalArgumentException ex) {
             throw new AccountException(LOGIN_REQUIRED);
         } catch (ExpiredJwtException exception) {
@@ -104,8 +102,8 @@ public class JwtAgent {
 
     public String createAccessToken(User user) {
         return buildAccessToken(
-                setAccessTokenClaimsByUser(user),
-                new Date(new Date().getTime() + accessTokenExpireTime)
+            setAccessTokenClaimsByUser(user),
+            new Date(new Date().getTime() + accessTokenExpireTime)
         );
     }
 
@@ -119,39 +117,39 @@ public class JwtAgent {
     public Long getId(String token) {
         validateJwt(token);
         Object id = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody().get("id");
+            .setSigningKey(getSigningKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody().get("id");
         return Long.valueOf(String.valueOf(id));
     }
 
     public String getUserRole(String token) {
         validateJwt(token);
         return (String) Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody().get("role");
+            .setSigningKey(getSigningKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody().get("role");
     }
 
     public Boolean getUserIsRestricted(String token) {
         validateJwt(token);
         return (Boolean) Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody().get("restricted");
+            .setSigningKey(getSigningKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody().get("restricted");
     }
 
     private Boolean isRefreshTokenExpired(String payload) {
         Date date;
         try {
             date = Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(payload)
-                    .getBody().getExpiration();
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(payload)
+                .getBody().getExpiration();
         } catch (ExpiredJwtException expiredJwtException) {
             return true;
         }
@@ -161,28 +159,23 @@ public class JwtAgent {
     private Claims resolveBodyFromRefreshToken(String refreshToken) {
         try {
             return Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(refreshToken)
-                    .getBody();
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(refreshToken)
+                .getBody();
         } catch (ExpiredJwtException expiredJwtException) {
             throw new AccountException(TOKEN_IS_EXPIRED);
         }
     }
 
     // TODO: 만료시한까지 7일 이하 남았을 때만 -> 1/4 남았을 때만.
-    private static boolean isRefreshTokenNotExpired(Date date) {   // 기존 만료일자 날짜 비교 로직
-        // Jwt Claims LocalDateTime 으로 형변환
+    private static boolean isRefreshTokenNotExpired(Date date) {
         LocalDateTime tokenExpiredAt = date
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
+            .toInstant()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDateTime();
 
-        // 만료 시간 > 현재 시간 => 정상
-
-        // 현재시간 - 7일(초단위) 를 한 피연산자 할당
         LocalDateTime subDetractedDateTime = LocalDateTime.now().plusSeconds(604800);
-        // 피연산자 보다 이전 이면 True 반환 및 갱신해줘야함
         return tokenExpiredAt.isBefore(LocalDateTime.now());
     }
 
@@ -204,18 +197,18 @@ public class JwtAgent {
     // TODO: body 값 정보 추가하기 (type:ac,re , subject:유저 식별자)
     private String buildAccessToken(Claims claims, Date accessTokenExpireIn) {
         return Jwts.builder()
-                .signWith(getSigningKey())
-                .setHeaderParam("type", "JWT")
-                .setClaims(claims)
-                .setExpiration(accessTokenExpireIn)
-                .compact();
+            .signWith(getSigningKey())
+            .setHeaderParam("type", "JWT")
+            .setClaims(claims)
+            .setExpiration(accessTokenExpireIn)
+            .compact();
     }
 
     private String buildRefreshToken(Date refreshTokenExpireIn) {
         return Jwts.builder()
-                .signWith(getSigningKey())
-                .setHeaderParam("type", "JWT")
-                .setExpiration(refreshTokenExpireIn)
-                .compact();
+            .signWith(getSigningKey())
+            .setHeaderParam("type", "JWT")
+            .setExpiration(refreshTokenExpireIn)
+            .compact();
     }
 }

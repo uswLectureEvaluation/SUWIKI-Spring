@@ -10,6 +10,7 @@ import usw.suwiki.domain.timetable.entity.Timetable;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SimpleTimetableResponse {
+
     long id;
     int year;
     String semester;
@@ -17,10 +18,10 @@ public class SimpleTimetableResponse {
 
     public static SimpleTimetableResponse of(Timetable timetable) {
         return SimpleTimetableResponse.builder()
-                .id(timetable.getId())
-                .year(timetable.getYear())
-                .semester(timetable.getSemester().getValue())
-                .name(timetable.getName())
-                .build();
+            .id(timetable.getId())
+            .year(timetable.getYear())
+            .semester(timetable.getSemester().getValue())
+            .name(timetable.getName())
+            .build();
     }
 }

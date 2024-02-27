@@ -95,16 +95,16 @@ public class User {
 
     public static User makeUser(String loginId, String password, String email) {
         return User.builder()
-                .loginId(loginId)
-                .password(password)
-                .email(email)
-                .restricted(true)
-                .restrictedCount(0)
-                .writtenEvaluation(0)
-                .writtenExam(0)
-                .point(0)
-                .viewExamCount(0)
-                .build();
+            .loginId(loginId)
+            .password(password)
+            .email(email)
+            .restricted(true)
+            .restrictedCount(0)
+            .writtenEvaluation(0)
+            .writtenExam(0)
+            .point(0)
+            .viewExamCount(0)
+            .build();
     }
 
     /**
@@ -151,10 +151,10 @@ public class User {
         return this.role.equals(Role.ADMIN);
     }
 
-    /**
-     * Auth
-     */
-    public void updatePassword(BCryptPasswordEncoder bCryptPasswordEncoder, String newPassword) {
+    public void updatePassword(
+        BCryptPasswordEncoder bCryptPasswordEncoder,
+        String newPassword
+    ) {
         this.password = bCryptPasswordEncoder.encode(newPassword);
     }
 
@@ -165,7 +165,7 @@ public class User {
     }
 
     public boolean validatePassword(
-            BCryptPasswordEncoder bCryptPasswordEncoder, String inputPassword
+        BCryptPasswordEncoder bCryptPasswordEncoder, String inputPassword
     ) {
         return bCryptPasswordEncoder.matches(inputPassword, this.password);
     }
@@ -183,11 +183,6 @@ public class User {
     public void updateLastLoginDate() {
         this.lastLogin = LocalDateTime.now();
     }
-
-
-    /**
-     * EvaluatePost
-     */
 
     public void addEvaluatePost(EvaluatePost evaluatePost) {
         this.evaluatePostList.add(evaluatePost);
@@ -212,9 +207,6 @@ public class User {
         this.writtenEvaluation -= 1;
     }
 
-    /**
-     * ExamPost
-     */
     public void increasePointByWritingExamPost() {
         this.point += 20;
         this.writtenExam += 1;
@@ -238,9 +230,6 @@ public class User {
         this.writtenExam -= 1;
     }
 
-    /**
-     * Report
-     */
     public void increaseRestrictedCountByReportedPost() {
         this.restrictedCount += 1;
     }
@@ -249,9 +238,6 @@ public class User {
         this.point += 1;
     }
 
-    /**
-     * Timetable
-     */
     public void addTimetable(Timetable timetable) {
         this.timetableList.add(timetable);
     }

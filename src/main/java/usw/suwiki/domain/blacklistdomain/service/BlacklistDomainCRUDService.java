@@ -1,24 +1,24 @@
 package usw.suwiki.domain.blacklistdomain.service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.blacklistdomain.BlacklistDomain;
 import usw.suwiki.domain.blacklistdomain.repository.BlacklistRepository;
-import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
 import usw.suwiki.domain.user.user.User;
+import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class BlacklistDomainCRUDService {
+
     private static final Long BANNED_PERIOD = 365L;
     private static final Integer NESTED_RESTRICTED_TIME = 3;
 
@@ -31,22 +31,22 @@ public class BlacklistDomainCRUDService {
         List<LoadMyBlackListReasonResponseForm> finalResultForm = new ArrayList<>();
         if (loadedDomain.isPresent()) {
             LoadMyBlackListReasonResponseForm loadMyBlackListReasonResponseForm =
-                    LoadMyBlackListReasonResponseForm.builder()
-                            .blackListReason(loadedDomain.get().getBannedReason())
-                            .judgement(loadedDomain.get().getJudgement())
-                            .createdAt(loadedDomain.get().getCreatedAt())
-                            .expiredAt(loadedDomain.get().getExpiredAt())
-                            .build();
+                LoadMyBlackListReasonResponseForm.builder()
+                    .blackListReason(loadedDomain.get().getBannedReason())
+                    .judgement(loadedDomain.get().getJudgement())
+                    .createdAt(loadedDomain.get().getCreatedAt())
+                    .expiredAt(loadedDomain.get().getExpiredAt())
+                    .build();
             finalResultForm.add(loadMyBlackListReasonResponseForm);
         }
         return finalResultForm;
     }
 
     public void saveBlackListDomain(
-            Long userIdx,
-            Long bannedPeriod,
-            String bannedReason,
-            String judgement
+        Long userIdx,
+        Long bannedPeriod,
+        String bannedReason,
+        String judgement
     ) {
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         user.editRestricted(true);
@@ -56,14 +56,14 @@ public class BlacklistDomainCRUDService {
         }
 
         BlacklistDomain blacklistDomain = BlacklistDomain.builder()
-                .userIdx(user.getId())
-                .bannedReason(bannedReason)
-                .hashedEmail(hashTargetEmail)
-                .judgement(judgement)
-                .expiredAt(LocalDateTime.now().plusDays(bannedPeriod))
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
+            .userIdx(user.getId())
+            .bannedReason(bannedReason)
+            .hashedEmail(hashTargetEmail)
+            .judgement(judgement)
+            .expiredAt(LocalDateTime.now().plusDays(bannedPeriod))
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .build();
 
         blacklistRepository.save(blacklistDomain);
     }

@@ -1,18 +1,22 @@
 package usw.suwiki.domain.notice.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.notice.domain.Notice;
 
-import java.time.LocalDateTime;
-
 @Getter
 @NoArgsConstructor
 public class NoticeDetailResponseDto {
+
     private Long id;
     private String title;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(
+        shape = JsonFormat.Shape.STRING,
+        pattern = "yyyy-MM-dd'T'HH:mm:ss",
+        timezone = "Asia/Seoul"
+    )
     private LocalDateTime modifiedDate;
     private String content;
 

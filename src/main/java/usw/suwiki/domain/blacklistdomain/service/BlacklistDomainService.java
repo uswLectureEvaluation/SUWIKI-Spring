@@ -1,17 +1,15 @@
 package usw.suwiki.domain.blacklistdomain.service;
 
+import static usw.suwiki.global.exception.ExceptionType.YOU_ARE_IN_BLACKLIST;
+
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.blacklistdomain.BlacklistDomain;
 import usw.suwiki.domain.blacklistdomain.repository.BlacklistRepository;
-import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.global.exception.errortype.AccountException;
-
-import java.util.List;
-
-import static usw.suwiki.global.exception.ExceptionType.YOU_ARE_IN_BLACKLIST;
 
 
 @Service

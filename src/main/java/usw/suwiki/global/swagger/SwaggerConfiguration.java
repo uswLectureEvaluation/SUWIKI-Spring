@@ -8,13 +8,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfiguration {
+
     @Bean
     public OpenAPI openApi() {
         return new OpenAPI()
-                .addServersItem(new Server().url("/"))
-                .info(new Info()
-                        .title("SUWIKI API")
-                        .description("Description By Richard With Diger"));
+            .addServersItem(new Server().url("/"))
+            .info(new Info()
+                .title("SUWIKI API")
+                .description("Description By Richard With Diger"));
     }
-
 }

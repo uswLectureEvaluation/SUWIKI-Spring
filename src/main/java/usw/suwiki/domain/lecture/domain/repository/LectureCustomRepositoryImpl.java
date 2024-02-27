@@ -37,20 +37,20 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
 
     @Override
     public Slice<Lecture> findCurrentSemesterLectures(
-            final Long cursorId,
-            final int limit,
-            final String keyword,
-            final String majorType,
-            final Integer grade
+        final Long cursorId,
+        final int limit,
+        final String keyword,
+        final String majorType,
+        final Integer grade
     ) {
         JPAQuery<Lecture> query = queryFactory.selectFrom(lecture)
-                .where(gtLectureCursorId(cursorId))
-                .where(containsKeywordInNameOrProfessor(keyword))
-                .where(eqMajorType(majorType))
-                .where(eqGrade(grade))
-                .where(endsWithCurrentSemester())
-                .orderBy(lecture.id.asc())
-                .limit(SlicePaginationUtils.increaseSliceLimit(limit));
+            .where(gtLectureCursorId(cursorId))
+            .where(containsKeywordInNameOrProfessor(keyword))
+            .where(eqMajorType(majorType))
+            .where(eqGrade(grade))
+            .where(endsWithCurrentSemester())
+            .orderBy(lecture.id.asc())
+            .limit(SlicePaginationUtils.increaseSliceLimit(limit));
 
         return SlicePaginationUtils.buildSlice(query.fetch(), limit);
     }
@@ -58,23 +58,24 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
     @Override
     public List<LectureSchedule> findAllLectureSchedulesByLectureSemesterContains(String semester) {
         return queryFactory.selectFrom(lectureSchedule)
-                .join(lectureSchedule.lecture).fetchJoin()
-                .where(lectureSchedule.lecture.semester.contains(semester))
-                .fetch();
+            .join(lectureSchedule.lecture).fetchJoin()
+            .where(lectureSchedule.lecture.semester.contains(semester))
+            .fetch();
     }
 
 
     @Override
-    public Optional<Lecture> findByExtraUniqueKey(String lectureName, String professorName, String majorType, String dividedClassNumber) {
+    public Optional<Lecture> findByExtraUniqueKey(String lectureName, String professorName, String majorType,
+        String dividedClassNumber) {
         Lecture result = queryFactory
-                .selectFrom(lecture)
-                .where(
-                        lecture.name.eq(lectureName),
-                        lecture.professor.eq(professorName),
-                        lecture.majorType.eq(majorType),
-                        lecture.lectureDetail.diclNo.eq(dividedClassNumber)
-                )
-                .fetchOne();
+            .selectFrom(lecture)
+            .where(
+                lecture.name.eq(lectureName),
+                lecture.professor.eq(professorName),
+                lecture.majorType.eq(majorType),
+                lecture.lectureDetail.diclNo.eq(dividedClassNumber)
+            )
+            .fetchOne();
 
         return Optional.ofNullable(result);
     }
@@ -90,29 +91,29 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
         Integer page = initializePageNumber(option.getPageNumber());
 
         BooleanExpression searchCondition = lecture.name
-                .likeIgnoreCase("%" + searchValue + "%")
-                .or(lecture.professor.likeIgnoreCase("%" + searchValue + "%"));
+            .likeIgnoreCase("%" + searchValue + "%")
+            .or(lecture.professor.likeIgnoreCase("%" + searchValue + "%"));
 
         OrderSpecifier<?> orderSpecifier = getOrderSpecifier(orderOption);
 
         Pageable pageable = PageRequest.of(page - 1, DEFAULT_LIMIT);
         QueryResults<Lecture> queryResults = queryFactory
-                .selectFrom(lecture)
-                .where(searchCondition)
-                .orderBy(
-                        createPostCountOption(),
-                        orderSpecifier
-                )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetchResults();
+            .selectFrom(lecture)
+            .where(searchCondition)
+            .orderBy(
+                createPostCountOption(),
+                orderSpecifier
+            )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetchResults();
 
         Long count = queryResults.getTotal();
 
         return LecturesAndCountDao.builder()
-                .lectureList(queryResults.getResults())
-                .count(count)
-                .build();
+            .lectureList(queryResults.getResults())
+            .count(count)
+            .build();
     }
 
     @Override
@@ -122,31 +123,31 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
         String majorType = option.getMajorType();
 
         BooleanExpression searchCondition = lecture.majorType.eq(majorType)
-                .and(lecture.name.likeIgnoreCase("%" + searchValue + "%")
-                        .or(lecture.professor.likeIgnoreCase("%" + searchValue + "%")));
+            .and(lecture.name.likeIgnoreCase("%" + searchValue + "%")
+                .or(lecture.professor.likeIgnoreCase("%" + searchValue + "%")));
 
         OrderSpecifier<?> orderSpecifier = getOrderSpecifier(orderOption);
 
         QueryResults<Lecture> queryResults = queryFactory
-                .selectFrom(lecture)
-                .where(searchCondition)
-                .orderBy(
-                        createPostCountOption(),
-                        orderSpecifier
-                )
-                .offset((long) (page - 1) * DEFAULT_LIMIT)
-                .limit(DEFAULT_LIMIT)
-                .fetchResults();
+            .selectFrom(lecture)
+            .where(searchCondition)
+            .orderBy(
+                createPostCountOption(),
+                orderSpecifier
+            )
+            .offset((long) (page - 1) * DEFAULT_LIMIT)
+            .limit(DEFAULT_LIMIT)
+            .fetchResults();
 
         long count = queryFactory
-                .selectFrom(lecture)
-                .where(searchCondition)
-                .fetchCount();
+            .selectFrom(lecture)
+            .where(searchCondition)
+            .fetchCount();
 
         return LecturesAndCountDao.builder()
-                .lectureList(queryResults.getResults())
-                .count(count)
-                .build();
+            .lectureList(queryResults.getResults())
+            .count(count)
+            .build();
     }
 
 
@@ -158,23 +159,23 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
         OrderSpecifier<?> orderSpecifier = getOrderSpecifier(orderOption);
 
         QueryResults<Lecture> queryResults = queryFactory
-                .selectFrom(lecture)
-                .orderBy(
-                        createPostCountOption(),
-                        orderSpecifier
-                )
-                .offset((long) (page - 1) * DEFAULT_LIMIT)
-                .limit(DEFAULT_LIMIT)
-                .fetchResults();
+            .selectFrom(lecture)
+            .orderBy(
+                createPostCountOption(),
+                orderSpecifier
+            )
+            .offset((long) (page - 1) * DEFAULT_LIMIT)
+            .limit(DEFAULT_LIMIT)
+            .fetchResults();
 
         long count = queryFactory
-                .selectFrom(lecture)
-                .fetchCount();
+            .selectFrom(lecture)
+            .fetchCount();
 
         return LecturesAndCountDao.builder()
-                .lectureList(queryResults.getResults())
-                .count(count)
-                .build();
+            .lectureList(queryResults.getResults())
+            .count(count)
+            .build();
     }
 
     @Override
@@ -187,33 +188,33 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
         OrderSpecifier<?> orderSpecifier = getOrderSpecifier(orderOption);
 
         QueryResults<Lecture> queryResults = queryFactory
-                .selectFrom(lecture)
-                .where(searchCondition)
-                .orderBy(
-                        createPostCountOption(),
-                        orderSpecifier
-                )
-                .offset((long) (page - 1) * DEFAULT_LIMIT)
-                .limit(DEFAULT_LIMIT)
-                .fetchResults();
+            .selectFrom(lecture)
+            .where(searchCondition)
+            .orderBy(
+                createPostCountOption(),
+                orderSpecifier
+            )
+            .offset((long) (page - 1) * DEFAULT_LIMIT)
+            .limit(DEFAULT_LIMIT)
+            .fetchResults();
 
         long count = queryFactory
-                .selectFrom(lecture)
-                .where(searchCondition)
-                .fetchCount();
+            .selectFrom(lecture)
+            .where(searchCondition)
+            .fetchCount();
 
         return LecturesAndCountDao.builder()
-                .lectureList(queryResults.getResults())
-                .count(count)
-                .build();
+            .lectureList(queryResults.getResults())
+            .count(count)
+            .build();
     }
 
     @Override
     public List<String> findAllMajorType() {
         return queryFactory
-                .selectDistinct(lecture.majorType)
-                .from(lecture)
-                .fetch();
+            .selectDistinct(lecture.majorType)
+            .from(lecture)
+            .fetch();
     }
 
     private BooleanExpression gtLectureCursorId(Long cursorId) {
@@ -228,7 +229,7 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
             return null;
         }
         return lecture.name.contains(keyword)
-                .or(lecture.professor.contains(keyword));
+            .or(lecture.professor.contains(keyword));
     }
 
     private BooleanExpression eqMajorType(String majorType) {
@@ -266,9 +267,9 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
 
     private OrderSpecifier<Integer> createPostCountOption() {
         return new CaseBuilder()
-                .when(lecture.postsCount.gt(0)).then(1)
-                .otherwise(2)
-                .asc();
+            .when(lecture.postsCount.gt(0)).then(1)
+            .otherwise(2)
+            .asc();
     }
 
     private String initializeOrderOption(String option) {

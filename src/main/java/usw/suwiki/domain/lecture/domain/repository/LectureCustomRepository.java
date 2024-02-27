@@ -10,23 +10,35 @@ import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 
 
 public interface LectureCustomRepository {
+
     Slice<Lecture> findCurrentSemesterLectures(
-            final Long cursorId,
-            final int limit,
-            final String keyword,
-            final String majorType,
-            final Integer grade
+        final Long cursorId,
+        final int limit,
+        final String keyword,
+        final String majorType,
+        final Integer grade
     );
 
     List<LectureSchedule> findAllLectureSchedulesByLectureSemesterContains(String semester);
 
-    Optional<Lecture> findByExtraUniqueKey(String lectureName, String ProfessorName, String majorType, String dividedClassNumber);
+    Optional<Lecture> findByExtraUniqueKey(
+        String lectureName,
+        String ProfessorName,
+        String majorType,
+        String dividedClassNumber
+    );
 
     List<String> findAllMajorType();
 
-    LecturesAndCountDao findLectureByFindOption(String searchValue, LectureFindOption lectureFindOption);
+    LecturesAndCountDao findLectureByFindOption(
+        String searchValue,
+        LectureFindOption lectureFindOption
+    );
 
-    LecturesAndCountDao findLectureByMajorType(String searchValue, LectureFindOption lectureFindOption);
+    LecturesAndCountDao findLectureByMajorType(
+        String searchValue,
+        LectureFindOption lectureFindOption
+    );
 
     LecturesAndCountDao findAllLectureByFindOption(LectureFindOption lectureFindOption);
 

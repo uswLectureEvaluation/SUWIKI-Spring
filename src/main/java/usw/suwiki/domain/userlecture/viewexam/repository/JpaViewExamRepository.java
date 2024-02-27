@@ -1,11 +1,10 @@
 package usw.suwiki.domain.userlecture.viewexam.repository;
 
-import org.springframework.stereotype.Repository;
-import usw.suwiki.domain.userlecture.viewexam.ViewExam;
-
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
+import org.springframework.stereotype.Repository;
+import usw.suwiki.domain.userlecture.viewexam.ViewExam;
 
 @Repository
 public class JpaViewExamRepository implements ViewExamRepository {
@@ -33,12 +32,15 @@ public class JpaViewExamRepository implements ViewExamRepository {
 
     @Override
     public List<ViewExam> findByUserId(Long userIdx) {
-        List<ViewExam> resultList = em.createQuery("SELECT v FROM ViewExam v JOIN v.user u WHERE u.id = :idx ORDER BY v.createDate")
-                .setParameter("idx", userIdx)
-                .getResultList();     //refactoring 해야한다
+        List<ViewExam> resultList = em.createQuery(
+                "SELECT v FROM ViewExam v JOIN v.user u WHERE u.id = :idx ORDER BY v.createDate")
+            .setParameter("idx", userIdx)
+            .getResultList();     //refactoring 해야한다
         if (resultList.isEmpty()) {
             return new ArrayList<>();
-        } else return resultList;
+        } else {
+            return resultList;
+        }
     }
 
     @Override

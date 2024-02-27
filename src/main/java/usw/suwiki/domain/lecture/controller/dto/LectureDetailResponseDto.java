@@ -7,14 +7,13 @@ import usw.suwiki.domain.lecture.domain.Lecture;
 @Getter
 @NoArgsConstructor
 public class LectureDetailResponseDto {
-    private Long id;    //필요한가?
 
+    private Long id;
     private String semesterList;
     private String professor;
-    private String lectureType; //이수 구분
+    private String lectureType;
     private String lectureName;
     private String majorType;
-
     private float lectureTotalAvg;
     private float lectureSatisfactionAvg;
     private float lectureHoneyAvg;

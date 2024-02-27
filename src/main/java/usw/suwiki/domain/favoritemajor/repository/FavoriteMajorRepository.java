@@ -1,10 +1,10 @@
 package usw.suwiki.domain.favoritemajor.repository;
 
+import java.util.List;
 import usw.suwiki.domain.favoritemajor.FavoriteMajor;
 
-import java.util.List;
-
 public interface FavoriteMajorRepository {
+
     FavoriteMajor findById(Long id);
 
     List<FavoriteMajor> findAllByUser(Long userIdx);

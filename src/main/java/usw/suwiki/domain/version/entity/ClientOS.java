@@ -18,9 +18,9 @@ public enum ClientOS implements KeyValueEnumModel<String> {
             throw new VersionException(ExceptionType.INVALID_CLIENT_OS);
         }
         return Arrays.stream(ClientOS.values())
-                .filter(v -> v.getValue().equals(param.toUpperCase()))
-                .findFirst()
-                .orElseThrow(() -> new VersionException(ExceptionType.COMMON_CLIENT_ERROR));
+            .filter(v -> v.getValue().equals(param.toUpperCase()))
+            .findFirst()
+            .orElseThrow(() -> new VersionException(ExceptionType.COMMON_CLIENT_ERROR));
     }
 
     @Override

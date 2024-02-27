@@ -12,16 +12,15 @@ public class EvaluatePostResponseByUserIdxDto {
     private final String majorType;
     private final String selectedSemester;
     private String semesterList;
-    private final float totalAvg;   // 평균지수
-    private final float satisfaction;    //수업 만족도
-    private final float learning; //배움지수
-    private final float honey;    //꿀강지수
-
-    private final int team;    //조모임 횟수
-    private final int difficulty;   //학점비율
+    private final float totalAvg;
+    private final float satisfaction;
+    private final float learning;
+    private final float honey;
+    private final int team;
+    private final int difficulty;
     private final int homework;
 
-    private final String content;    //주관적인 강의평가 입력내용
+    private final String content;
 
     public void setSemesterList(String semesterList) {
         this.semesterList = semesterList;

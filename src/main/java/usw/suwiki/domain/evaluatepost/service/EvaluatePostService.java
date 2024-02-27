@@ -57,14 +57,14 @@ public class EvaluatePostService {
 
     @Transactional(readOnly = true)
     public FindByLectureToJson readEvaluatePostsByLectureId(
-            PageOption option,
-            Long userIdx,
-            Long lectureId
+        PageOption option,
+        Long userIdx,
+        Long lectureId
     ) {
         List<EvaluatePostResponseByLectureIdDto> data = new ArrayList<>();
         List<EvaluatePost> evaluatePosts = evaluatePostCRUDService.loadEvaluatePostsFromLectureIdx(
-                option,
-                lectureId
+            option,
+            lectureId
         );
         for (EvaluatePost post : evaluatePosts) {
             data.add(new EvaluatePostResponseByLectureIdDto(post));
@@ -75,9 +75,9 @@ public class EvaluatePostService {
     }
 
     private FindByLectureToJson setWrittenInformation(
-            List<EvaluatePostResponseByLectureIdDto> data,
-            Long userIdx,
-            Long lectureId
+        List<EvaluatePostResponseByLectureIdDto> data,
+        Long userIdx,
+        Long lectureId
     ) {
         FindByLectureToJson response = new FindByLectureToJson(data);
         if (verifyIsUserCanWriteEvaluatePost(userIdx, lectureId)) {
@@ -88,13 +88,13 @@ public class EvaluatePostService {
 
     @Transactional(readOnly = true)
     public List<EvaluatePostResponseByUserIdxDto> readEvaluatePostsByUserId(
-            PageOption option,
-            Long userId
+        PageOption option,
+        Long userId
     ) {
         List<EvaluatePostResponseByUserIdxDto> response = new ArrayList<>();
         List<EvaluatePost> evaluatePosts = evaluatePostCRUDService.loadEvaluatePostsFromUserIdxAndOption(
-                option,
-                userId
+            option,
+            userId
         );
         for (EvaluatePost post : evaluatePosts) {
             EvaluatePostResponseByUserIdxDto data = new EvaluatePostResponseByUserIdxDto(post);
@@ -124,8 +124,8 @@ public class EvaluatePostService {
     }
 
     public void updateLectureEvaluationIfUpdatePost(
-            EvaluatePostsToLecture beforeUpdatePost,
-            EvaluatePostsToLecture post
+        EvaluatePostsToLecture beforeUpdatePost,
+        EvaluatePostsToLecture post
     ) {
         Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(post.getLectureId());
         lecture.handleLectureEvaluationIfUpdatePost(beforeUpdatePost, post);

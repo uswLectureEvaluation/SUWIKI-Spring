@@ -19,6 +19,7 @@ import usw.suwiki.domain.timetable.entity.TimetableDay;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateTimetableCellRequest {
+
     public static final int MAX_LECTURE_NAME_LENGTH = 150;
     public static final int MAX_PROFESSOR_NAME_LENGTH = 130;
     public static final int MAX_COLOR_LENGTH = 50;
@@ -51,31 +52,31 @@ public class CreateTimetableCellRequest {
 
     public TimetableCell toEntity(Timetable timetable) {
         TimetableCell timetableCell = TimetableCell.builder()
-                .lectureName(lectureName)
-                .professorName(professorName)
-                .color(TimetableCellColor.ofString(color))
-                .schedule(extractTimetableCellSchedule())
-                .build();
+            .lectureName(lectureName)
+            .professorName(professorName)
+            .color(TimetableCellColor.ofString(color))
+            .schedule(extractTimetableCellSchedule())
+            .build();
         timetableCell.associateTimetable(timetable);
         return timetableCell;
     }
 
     public TimetableCell toEntity() {
         return TimetableCell.builder()
-                .lectureName(lectureName)
-                .professorName(professorName)
-                .color(TimetableCellColor.ofString(color))
-                .schedule(extractTimetableCellSchedule())
-                .build();
+            .lectureName(lectureName)
+            .professorName(professorName)
+            .color(TimetableCellColor.ofString(color))
+            .schedule(extractTimetableCellSchedule())
+            .build();
     }
 
 
     public TimetableCellSchedule extractTimetableCellSchedule() {
         return TimetableCellSchedule.builder()
-                .location(location)
-                .day(TimetableDay.ofString(day))
-                .startPeriod(startPeriod)
-                .endPeriod(endPeriod)
-                .build();
+            .location(location)
+            .day(TimetableDay.ofString(day))
+            .startPeriod(startPeriod)
+            .endPeriod(endPeriod)
+            .build();
     }
 }

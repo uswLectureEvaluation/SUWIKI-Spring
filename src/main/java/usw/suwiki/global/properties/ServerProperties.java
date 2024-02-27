@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @ConstructorBinding
 @ConfigurationProperties(prefix = "server")
 public class ServerProperties {
+
     private final String domain;
     private final int port;
 }

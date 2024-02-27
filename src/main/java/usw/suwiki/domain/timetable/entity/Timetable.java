@@ -32,6 +32,7 @@ import usw.suwiki.global.exception.errortype.TimetableException;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Timetable extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "timetable_id")
@@ -43,7 +44,7 @@ public class Timetable extends BaseTimeEntity {
 
     @NotNull
     @Size(max = 200)
-    private String name;    // 중복 가능 (UNIQUE 제약 조건 없음)
+    private String name;
 
     @NotNull
     @Min(value = 1023)
@@ -64,7 +65,6 @@ public class Timetable extends BaseTimeEntity {
         this.semester = semester;
     }
 
-    // 연관관계 메서드
     public void associateUser(User user) {
         if (Objects.nonNull(this.user)) {
             this.user.removeTimetable(this);
@@ -86,20 +86,20 @@ public class Timetable extends BaseTimeEntity {
         this.cellList.remove(cell);
     }
 
-    // 비즈니스 메서드
     public void validateCellScheduleOverlapBeforeAssociation(TimetableCellSchedule schedule) {
         boolean isOverlapped = cellList.stream()
-                .anyMatch(it -> it.getSchedule().isOverlapped(schedule));
+            .anyMatch(it -> it.getSchedule().isOverlapped(schedule));
 
         if (isOverlapped) {
             throw new TimetableException(ExceptionType.OVERLAPPED_TIMETABLE_CELL_SCHEDULE);
         }
     }
 
-    public void validateCellScheduleOverlapAfterAssociation(TimetableCellSchedule schedule, TimetableCell timetableCell) {
+    public void validateCellScheduleOverlapAfterAssociation(TimetableCellSchedule schedule,
+        TimetableCell timetableCell) {
         boolean isOverlapped = cellList.stream()
-                .filter(it -> !it.equals(timetableCell))
-                .anyMatch(it -> it.getSchedule().isOverlapped(schedule));
+            .filter(it -> !it.equals(timetableCell))
+            .anyMatch(it -> it.getSchedule().isOverlapped(schedule));
 
         if (isOverlapped) {
             throw new TimetableException(ExceptionType.OVERLAPPED_TIMETABLE_CELL_SCHEDULE);

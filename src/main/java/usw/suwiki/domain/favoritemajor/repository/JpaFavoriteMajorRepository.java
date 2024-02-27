@@ -1,10 +1,9 @@
 package usw.suwiki.domain.favoritemajor.repository;
 
+import java.util.List;
+import javax.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import usw.suwiki.domain.favoritemajor.FavoriteMajor;
-
-import javax.persistence.EntityManager;
-import java.util.List;
 
 @Repository
 public class JpaFavoriteMajorRepository implements FavoriteMajorRepository {
@@ -24,8 +23,8 @@ public class JpaFavoriteMajorRepository implements FavoriteMajorRepository {
     @Override
     public List<FavoriteMajor> findAllByUser(Long userIdx) {
         List resultList = em.createQuery("SELECT f from FavoriteMajor f join f.user u WHERE u.id = :id")
-                .setParameter("id", userIdx)
-                .getResultList();
+            .setParameter("id", userIdx)
+            .getResultList();
 
         return resultList;
     }
@@ -33,18 +32,19 @@ public class JpaFavoriteMajorRepository implements FavoriteMajorRepository {
     @Override
     public List<String> findOnlyMajorTypeByUser(Long userIdx) {
         List resultList = em.createQuery("SELECT f.majorType from FavoriteMajor f join f.user u WHERE u.id = :id")
-                .setParameter("id", userIdx)
-                .getResultList();
+            .setParameter("id", userIdx)
+            .getResultList();
 
         return resultList;
     }
 
     @Override
     public FavoriteMajor findByUserAndMajorType(Long userIdx, String majorType) {
-        List resultList = em.createQuery("SELECT f from FavoriteMajor f join f.user u WHERE u.id = :id AND f.majorType = :majorType")
-                .setParameter("id", userIdx)
-                .setParameter("majorType", majorType)
-                .getResultList();
+        List resultList = em.createQuery(
+                "SELECT f from FavoriteMajor f join f.user u WHERE u.id = :id AND f.majorType = :majorType")
+            .setParameter("id", userIdx)
+            .setParameter("majorType", majorType)
+            .getResultList();
 
         FavoriteMajor result = (FavoriteMajor) resultList.get(0);
 

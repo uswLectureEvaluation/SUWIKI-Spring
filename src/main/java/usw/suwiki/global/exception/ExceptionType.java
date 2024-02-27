@@ -41,7 +41,7 @@ public enum ExceptionType {
     EMAIL_NOT_AUTHED("CONFIRMATION_TOKEN001", "이메일 인증을 받지 않은 사용자 입니다.", UNAUTHORIZED),
     EMAIL_VALIDATED_ERROR("CONFIRMATION_TOKEN002", "이메일 인증에 실패했습니다.", BAD_REQUEST),
     EMAIL_VALIDATED_ERROR_RETRY("CONFIRMATION_TOKEN003",
-            "이메일 인증 만료기간이 지나거나, 예기치 못한 오류로 이메일 인증에 실패했습니다. 회원가입을 다시 진행해주세요", BAD_REQUEST),
+        "이메일 인증 만료기간이 지나거나, 예기치 못한 오류로 이메일 인증에 실패했습니다. 회원가입을 다시 진행해주세요", BAD_REQUEST),
     EMAIL_AUTH_TOKEN_ALREADY_USED("CONFIRMATION_TOKEN004", "이미 사용된 인증 토큰 입니다.", BAD_REQUEST),
 
     /**
@@ -120,7 +120,6 @@ public enum ExceptionType {
      */
     CLIENT_VERSION_NOT_FOUND("VERSION001", "존재하지 않는 클라이언트 버전입니다.", NOT_FOUND),
     INVALID_CLIENT_OS("VERSION110", "유효하지 않은 클라이언트 OS 입니다.", BAD_REQUEST),
-
 
     /**
      * 공통

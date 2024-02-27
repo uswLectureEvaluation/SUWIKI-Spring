@@ -7,29 +7,28 @@ import usw.suwiki.domain.lecture.domain.Lecture;
 @Getter
 @NoArgsConstructor
 public class LectureResponseDto {
-    private Long id;
 
+    private Long id;
     private String semesterList;
     private String professor;
-    private String lectureType; //이수 구분
+    private String lectureType;
     private String lectureName;
     private String majorType;
-
     private float lectureTotalAvg;
     private float lectureSatisfactionAvg;
     private float lectureHoneyAvg;
     private float lectureLearningAvg;
 
-    public LectureResponseDto(Lecture entity) {
-        this.id = entity.getId();
-        this.semesterList = entity.getSemester();
-        this.professor = entity.getProfessor();
-        this.lectureType = entity.getType();
-        this.lectureName = entity.getName();
-        this.majorType = entity.getMajorType();
-        this.lectureTotalAvg = entity.getLectureEvaluationInfo().getLectureTotalAvg();
-        this.lectureSatisfactionAvg = entity.getLectureEvaluationInfo().getLectureSatisfactionAvg();
-        this.lectureHoneyAvg = entity.getLectureEvaluationInfo().getLectureHoneyAvg();
-        this.lectureLearningAvg = entity.getLectureEvaluationInfo().getLectureLearningAvg();
+    public LectureResponseDto(Lecture lecture) {
+        this.id = lecture.getId();
+        this.semesterList = lecture.getSemester();
+        this.professor = lecture.getProfessor();
+        this.lectureType = lecture.getType();
+        this.lectureName = lecture.getName();
+        this.majorType = lecture.getMajorType();
+        this.lectureTotalAvg = lecture.getLectureEvaluationInfo().getLectureTotalAvg();
+        this.lectureSatisfactionAvg = lecture.getLectureEvaluationInfo().getLectureSatisfactionAvg();
+        this.lectureHoneyAvg = lecture.getLectureEvaluationInfo().getLectureHoneyAvg();
+        this.lectureLearningAvg = lecture.getLectureEvaluationInfo().getLectureLearningAvg();
     }
 }

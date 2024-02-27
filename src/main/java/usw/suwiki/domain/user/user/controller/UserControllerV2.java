@@ -1,21 +1,36 @@
 package usw.suwiki.domain.user.user.controller;
 
+import static org.springframework.http.HttpStatus.OK;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.CheckEmailForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.CheckLoginIdForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.EditMyPasswordForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.FindIdForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.FindPasswordForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.JoinForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
+import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.UserQuitForm;
+
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.user.user.service.UserBusinessService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.annotation.JWTVerify;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.springframework.http.HttpStatus.OK;
-import static usw.suwiki.domain.user.user.controller.dto.UserRequestDto.*;
 
 @RestController
 @RequestMapping("/v2/user")
@@ -29,9 +44,7 @@ public class UserControllerV2 {
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/loginId/check")
-    public ResponseForm overlapId(
-            @Valid @RequestBody CheckLoginIdForm checkLoginIdForm
-    ) {
+    public ResponseForm overlapId(@Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
         return ResponseForm.success(userBusinessService.executeCheckId(checkLoginIdForm.loginId()));
     }
 
@@ -39,9 +52,7 @@ public class UserControllerV2 {
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/email/check")
-    public ResponseForm overlapEmail(
-            @Valid @RequestBody CheckEmailForm checkEmailForm
-    ) {
+    public ResponseForm overlapEmail(@Valid @RequestBody CheckEmailForm checkEmailForm) {
         return ResponseForm.success(userBusinessService.executeCheckEmail(checkEmailForm.email()));
     }
 
@@ -49,13 +60,11 @@ public class UserControllerV2 {
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping
-    public ResponseForm join(
-            @Valid @RequestBody JoinForm joinForm
-    ) {
+    public ResponseForm join(@Valid @RequestBody JoinForm joinForm) {
         return ResponseForm.success(userBusinessService.executeJoin(
-                joinForm.loginId(),
-                joinForm.password(),
-                joinForm.email()
+            joinForm.loginId(),
+            joinForm.password(),
+            joinForm.email()
         ));
     }
 
@@ -71,12 +80,10 @@ public class UserControllerV2 {
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("inquiry-password")
-    public ResponseForm findPw(
-            @Valid @RequestBody FindPasswordForm findPasswordForm
-    ) {
+    public ResponseForm findPw(@Valid @RequestBody FindPasswordForm findPasswordForm) {
         return ResponseForm.success(userBusinessService.executeFindPw(
-                findPasswordForm.loginId(),
-                findPasswordForm.email())
+            findPasswordForm.loginId(),
+            findPasswordForm.email())
         );
     }
 
@@ -85,13 +92,13 @@ public class UserControllerV2 {
     @ApiLogger(option = "user")
     @PatchMapping("password")
     public ResponseForm resetPw(
-            @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
-            @RequestHeader String Authorization
+        @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
+        @RequestHeader String Authorization
     ) {
         return ResponseForm.success(userBusinessService.executeEditPassword(
-                Authorization,
-                editMyPasswordForm.prePassword(),
-                editMyPasswordForm.newPassword())
+            Authorization,
+            editMyPasswordForm.prePassword(),
+            editMyPasswordForm.newPassword())
         );
     }
 
@@ -99,12 +106,10 @@ public class UserControllerV2 {
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("mobile-login")
-    public ResponseForm mobileLogin(
-            @Valid @RequestBody LoginForm loginForm
-    ) {
+    public ResponseForm mobileLogin(@Valid @RequestBody LoginForm loginForm) {
         return ResponseForm.success(userBusinessService.executeLogin(
-                loginForm.loginId(),
-                loginForm.password())
+            loginForm.loginId(),
+            loginForm.password())
         );
     }
 
@@ -113,15 +118,15 @@ public class UserControllerV2 {
     @ApiLogger(option = "user")
     @PostMapping("web-login")
     public ResponseForm webLogin(
-            @Valid @RequestBody LoginForm loginForm,
-            HttpServletResponse response
+        @Valid @RequestBody LoginForm loginForm,
+        HttpServletResponse response
     ) {
         Map<String, String> tokenPair = userBusinessService.executeLogin(
-                loginForm.loginId(),
-                loginForm.password()
+            loginForm.loginId(),
+            loginForm.password()
         );
         Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
-        refreshCookie.setMaxAge(270 * 24 * 60 * 60); // expires in 14 days
+        refreshCookie.setMaxAge(270 * 24 * 60 * 60);
         refreshCookie.setSecure(true);
         refreshCookie.setHttpOnly(true);
         response.addCookie(refreshCookie);
@@ -160,8 +165,8 @@ public class UserControllerV2 {
     @ApiLogger(option = "user")
     @DeleteMapping
     public ResponseForm userQuit(
-            @Valid @RequestBody UserQuitForm userQuitForm,
-            @Valid @RequestHeader String Authorization
+        @Valid @RequestBody UserQuitForm userQuitForm,
+        @Valid @RequestHeader String Authorization
     ) {
         return ResponseForm.success(userBusinessService.executeQuit(Authorization, userQuitForm.password()));
     }

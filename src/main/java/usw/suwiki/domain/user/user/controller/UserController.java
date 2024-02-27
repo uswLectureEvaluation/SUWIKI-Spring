@@ -52,47 +52,43 @@ public class UserController {
     private final UserBusinessService userBusinessService;
     private final ConfirmationTokenBusinessService confirmationTokenBusinessService;
 
-    //아이디 중복확인
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/check-id")
-    public Map<String, Boolean> overlapId(
-            @Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
+    public Map<String, Boolean> overlapId(@Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
         return userBusinessService.executeCheckId(checkLoginIdForm.loginId());
     }
 
-    //이메일 중복 확인
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/check-email")
-    public Map<String, Boolean> overlapEmail(
-            @Valid @RequestBody CheckEmailForm checkEmailForm) {
+    public Map<String, Boolean> overlapEmail(@Valid @RequestBody CheckEmailForm checkEmailForm) {
         return userBusinessService.executeCheckEmail(checkEmailForm.email());
     }
 
-    //회원가입 버튼 클릭 시 -> 유저 저장, 인증 이메일 발송
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("join")
     public Map<String, Boolean> join(
-            @Valid @RequestBody JoinForm joinForm
+        @Valid @RequestBody JoinForm joinForm
     ) {
         return userBusinessService.executeJoin(
-                joinForm.loginId(),
-                joinForm.password(),
-                joinForm.email()
+            joinForm.loginId(),
+            joinForm.password(),
+            joinForm.email()
         );
     }
 
-    // 이메일 인증 링크를 눌렀을 때
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
-    @GetMapping(value = "verify-email", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
+    @GetMapping(
+        value = "verify-email",
+        produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8"
+    )
     public String confirmEmail(@RequestParam("token") String token) {
         return confirmationTokenBusinessService.confirmToken(token);
     }
 
-    //아이디 찾기 요청 시
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("find-id")
@@ -100,57 +96,53 @@ public class UserController {
         return userBusinessService.executeFindId(findIdForm.email());
     }
 
-    //비밀번호 찾기 요청 시
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("find-pw")
-    public Map<String, Boolean> findPw(
-            @Valid @RequestBody FindPasswordForm findPasswordForm) {
+    public Map<String, Boolean> findPw(@Valid @RequestBody FindPasswordForm findPasswordForm) {
         return userBusinessService.executeFindPw(
-                findPasswordForm.loginId(),
-                findPasswordForm.email()
+            findPasswordForm.loginId(),
+            findPasswordForm.email()
         );
     }
 
-    //비밀번호 재설정 요청 시
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("reset-pw")
     public Map<String, Boolean> resetPw(
-            @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
-            @RequestHeader String Authorization) {
+        @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
+        @RequestHeader String Authorization
+    ) {
         return userBusinessService.executeEditPassword(
-                Authorization,
-                editMyPasswordForm.prePassword(),
-                editMyPasswordForm.newPassword());
+            Authorization,
+            editMyPasswordForm.prePassword(),
+            editMyPasswordForm.newPassword());
     }
 
-    // 안드, IOS 로그인 요청 시
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("login")
     public Map<String, String> mobileLogin(
-            @Valid @RequestBody LoginForm loginForm) {
+        @Valid @RequestBody LoginForm loginForm) {
         return userBusinessService.executeLogin(
-                loginForm.loginId(),
-                loginForm.password()
+            loginForm.loginId(),
+            loginForm.password()
         );
     }
 
-    // 프론트 로그인 요청 시 --> RefreshToken, AccessToken 쿠키로 셋팅
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("client-login")
     public Map<String, String> clientLogin(
-            @Valid @RequestBody LoginForm loginForm,
-            HttpServletResponse response
+        @Valid @RequestBody LoginForm loginForm,
+        HttpServletResponse response
     ) {
         Map<String, String> tokenPair = userBusinessService.executeLogin(
-                loginForm.loginId(),
-                loginForm.password()
+            loginForm.loginId(),
+            loginForm.password()
         );
         Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
-        refreshCookie.setMaxAge(270 * 24 * 60 * 60); // expires in 14 days
+        refreshCookie.setMaxAge(270 * 24 * 60 * 60);
         refreshCookie.setSecure(true);
         refreshCookie.setHttpOnly(true);
         response.addCookie(refreshCookie);
@@ -160,7 +152,6 @@ public class UserController {
         }};
     }
 
-    // 프론트 로그아웃
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("client-logout")
@@ -180,19 +171,18 @@ public class UserController {
         return userBusinessService.executeLoadMyPage(Authorization);
     }
 
-    // Web 토큰 갱신
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/client-refresh")
     public Map<String, String> clientTokenRefresh(
-            @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
-            HttpServletResponse response
+        @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
+        HttpServletResponse response
     ) {
         Map<String, String> tokenPair = userBusinessService.executeJWTRefreshForWebClient(
-                requestRefreshCookie
+            requestRefreshCookie
         );
         Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
-        refreshCookie.setMaxAge(14 * 24 * 60 * 60); // expires in 7 days
+        refreshCookie.setMaxAge(14 * 24 * 60 * 60);
         refreshCookie.setSecure(true);
         refreshCookie.setHttpOnly(true);
         response.addCookie(refreshCookie);
@@ -201,12 +191,11 @@ public class UserController {
         }};
     }
 
-    // Mobile 토큰 갱신
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/refresh")
     public Map<String, String> tokenRefresh(
-            @Valid @RequestHeader String Authorization
+        @Valid @RequestHeader String Authorization
     ) {
         return userBusinessService.executeJWTRefreshForMobileClient(Authorization);
     }
@@ -216,8 +205,8 @@ public class UserController {
     @ApiLogger(option = "user")
     @PostMapping("quit")
     public Map<String, Boolean> userQuit(
-            @Valid @RequestBody UserQuitForm userQuitForm,
-            @Valid @RequestHeader String Authorization
+        @Valid @RequestBody UserQuitForm userQuitForm,
+        @Valid @RequestHeader String Authorization
     ) {
 //        return userBusinessService.executeQuit(
 //                Authorization,
@@ -228,51 +217,46 @@ public class UserController {
         throw new AccountException(ExceptionType.SERVER_ERROR);
     }
 
-    // 강의평가 신고
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/report/evaluate")
     public Map<String, Boolean> reportEvaluate(
-            @Valid @RequestBody EvaluateReportForm evaluateReportForm,
-            @Valid @RequestHeader String Authorization
+        @Valid @RequestBody EvaluateReportForm evaluateReportForm,
+        @Valid @RequestHeader String Authorization
     ) {
         return userBusinessService.executeReportEvaluatePost(evaluateReportForm, Authorization);
     }
 
-    // 시험정보 신고
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/report/exam")
     public Map<String, Boolean> reportExam(
-            @Valid @RequestBody ExamReportForm examReportForm,
-            @Valid @RequestHeader String Authorization) {
+        @Valid @RequestBody ExamReportForm examReportForm,
+        @Valid @RequestHeader String Authorization) {
         return userBusinessService.executeReportExamPost(examReportForm, Authorization);
     }
 
-    // 전공 즐겨찾기 등록하기
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @PostMapping("/favorite-major")
     public String saveFavoriteMajor(
-            @RequestHeader String Authorization,
-            @RequestBody FavoriteSaveDto favoriteSaveDto
+        @RequestHeader String Authorization,
+        @RequestBody FavoriteSaveDto favoriteSaveDto
     ) {
         userBusinessService.executeFavoriteMajorSave(Authorization, favoriteSaveDto);
         return "success";
     }
 
-    // 전공 즐겨찾기 삭제하기
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @DeleteMapping("/favorite-major")
     public String deleteFavoriteMajor(
-            @RequestHeader String Authorization,
-            @RequestParam String majorType) {
+        @RequestHeader String Authorization,
+        @RequestParam String majorType) {
         userBusinessService.executeFavoriteMajorDelete(Authorization, majorType);
         return "success";
     }
 
-    // 전공 즐겨찾기 불러오기
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("/favorite-major")
@@ -280,37 +264,34 @@ public class UserController {
         return userBusinessService.executeFavoriteMajorLoad(Authorization);
     }
 
-    // 땡큐 영수형
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping(value = "/suki", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
     public String thanksToSuki() {
         return
-                "<center>\uD83D\uDE00 Thank You Suki! \uD83D\uDE00 <br><br> You gave to me a lot of knowledge <br><br>"
-                        +
-                        "He is my Tech-Mentor <br><br>" +
-                        "If you wanna contact him <br><br>" +
-                        "<a href = https://github.com/0xsuky> " +
-                        "<b>https://github.com/0xsuky<b>" +
-                        "</center>";
+            "<center>\uD83D\uDE00 Thank You Suki! \uD83D\uDE00 <br><br> You gave to me a lot of knowledge <br><br>"
+                +
+                "He is my Tech-Mentor <br><br>" +
+                "If you wanna contact him <br><br>" +
+                "<a href = https://github.com/0xsuky> " +
+                "<b>https://github.com/0xsuky<b>" +
+                "</center>";
     }
 
-    // 정지 사유 불러오기
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("/restricted-reason")
     public List<LoadMyRestrictedReasonResponseForm> loadRestrictedReason(
-            @Valid @RequestHeader String Authorization
+        @Valid @RequestHeader String Authorization
     ) {
         return userBusinessService.executeLoadRestrictedReason(Authorization);
     }
 
-    // 블랙리스트 사유 불러오기
     @ResponseStatus(OK)
     @ApiLogger(option = "user")
     @GetMapping("/blacklist-reason")
     public List<LoadMyBlackListReasonResponseForm> loadBlacklistReason(
-            @Valid @RequestHeader String Authorization) {
+        @Valid @RequestHeader String Authorization) {
         return userBusinessService.executeLoadBlackListReason(Authorization);
     }
 }

@@ -21,7 +21,7 @@ public class BulkRequest<T> {
 
     public static <T> BulkRequest<T> of(List<T> bulk) {
         return BulkRequest.<T>builder()
-                .bulk(bulk)
-                .build();
+            .bulk(bulk)
+            .build();
     }
 }

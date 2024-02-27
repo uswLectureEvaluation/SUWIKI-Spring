@@ -39,8 +39,8 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
 
     @PostMapping
     public ApiResponse<SimpleTimetableResponse> createTimetable(
-            @RequestHeader String authorization,
-            @Valid @RequestBody CreateTimetableRequest request
+        @RequestHeader String authorization,
+        @Valid @RequestBody CreateTimetableRequest request
     ) {
         jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);
@@ -50,8 +50,8 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
 
     @PostMapping("/bulk")
     public ApiResponse<List<TimetableResponse>> bulkCreateTimetables(
-            @RequestHeader String authorization,
-            @Valid @RequestBody BulkRequest<CreateWholeTimetableRequest> request
+        @RequestHeader String authorization,
+        @Valid @RequestBody BulkRequest<CreateWholeTimetableRequest> request
     ) {
         jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);
@@ -61,9 +61,9 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
 
     @PutMapping("/{timetableId}")
     public ApiResponse<SimpleTimetableResponse> updateTimetable(
-            @PathVariable Long timetableId,
-            @RequestHeader String authorization,
-            @Valid @RequestBody UpdateTimetableRequest request
+        @PathVariable Long timetableId,
+        @RequestHeader String authorization,
+        @Valid @RequestBody UpdateTimetableRequest request
     ) {
         jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);
@@ -73,8 +73,8 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
 
     @DeleteMapping("/{timetableId}")
     public ApiResponse<ResultResponse> deleteTimetable(
-            @PathVariable Long timetableId,
-            @RequestHeader String authorization
+        @PathVariable Long timetableId,
+        @RequestHeader String authorization
     ) {
         jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);
@@ -93,8 +93,8 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
 
     @GetMapping("/{timetableId}")
     public ApiResponse<TimetableResponse> getTimetable(
-            @PathVariable Long timetableId,
-            @RequestHeader String authorization
+        @PathVariable Long timetableId,
+        @RequestHeader String authorization
     ) {
         jwtAgent.validateJwt(authorization);
 
@@ -103,9 +103,9 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
 
     @PostMapping("/{timetableId}/cells")
     public ApiResponse<TimetableCellResponse> createTimetableCell(
-            @PathVariable Long timetableId,
-            @RequestHeader String authorization,
-            @Valid @RequestBody CreateTimetableCellRequest request
+        @PathVariable Long timetableId,
+        @RequestHeader String authorization,
+        @Valid @RequestBody CreateTimetableCellRequest request
     ) {
         jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);
@@ -115,9 +115,9 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
 
     @PutMapping("/cells/{cellId}")
     public ApiResponse<TimetableCellResponse> updateTimetableCell(
-            @PathVariable Long cellId,
-            @RequestHeader String authorization,
-            @Valid @RequestBody UpdateTimetableCellRequest request
+        @PathVariable Long cellId,
+        @RequestHeader String authorization,
+        @Valid @RequestBody UpdateTimetableCellRequest request
     ) {
         jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);
@@ -127,8 +127,8 @@ public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체
 
     @DeleteMapping("/cells/{cellId}")
     public ApiResponse<ResultResponse> deleteTimetableCell(
-            @PathVariable Long cellId,
-            @RequestHeader String authorization
+        @PathVariable Long cellId,
+        @RequestHeader String authorization
     ) {
         jwtAgent.validateJwt(authorization);
         Long userId = jwtAgent.getId(authorization);

@@ -3,6 +3,7 @@ package usw.suwiki.global.util.loadjson;
 import org.json.simple.JSONObject;
 
 public final class USWTermResolver {
+
     private static final String[] KEYWORDS_TO_REMOVE = {"재수강", "비대면수업", "대면수업", "혼합수업"};
 
     // 변환에 필요한 최소한의 스트링 형식입니다.
@@ -30,12 +31,15 @@ public final class USWTermResolver {
     public static String getSemester(JSONObject jsonObject) {
         return resolveSemester(extractYear(jsonObject), extractSemester(jsonObject));
     }
+
     public static String getOptionalProfessorName(JSONObject jsonObject) {
         return resolveOptionalProfessorName(extractProfessorName(jsonObject));
     }
+
     public static String getLectureName(JSONObject jsonObject) {
         return resolveDirtyLectureName(extractLectureName(jsonObject));
     }
+
     public static String getMajorType(JSONObject jsonObject) {
         return resolveDirtyMajorType(extractMajorType(jsonObject));
     }
@@ -43,39 +47,51 @@ public final class USWTermResolver {
     public static String extractYear(JSONObject jsonObject) {
         return String.valueOf(jsonObject.get(ESTABLISHED_YEAR));
     }
+
     public static String extractSemester(JSONObject jsonObject) {
         return String.valueOf(jsonObject.get(ESTABLISHED_SEMESTER).toString().charAt(0));
     }
+
     public static String extractPlaceSchedule(JSONObject jsonObject) {
         return String.valueOf(jsonObject.get(PLACE_SCHEDULE));
     }
+
     public static String extractProfessorName(JSONObject jsonObject) {
         return String.valueOf(jsonObject.get(REPRESENT_PROFESSOR_NAME));
     }
+
     public static String extractLectureFacultyType(JSONObject jsonObject) {
         return String.valueOf(jsonObject.get(FACULTY_DIVISION));
     }
+
     public static String extractLectureCode(JSONObject jsonObject) {
         return String.valueOf(jsonObject.get(SUBJECT_CODE));
     }
+
     public static String extractLectureName(JSONObject jsonObject) {
         return String.valueOf(jsonObject.get(SUBJECT_NAME));
     }
+
     public static String extractEvaluationType(JSONObject jsonObject) {
         return String.valueOf(jsonObject.get(EVALUATION_TYPE));
     }
+
     public static String extractDivideClassNumber(JSONObject jsonObject) {
         return String.valueOf(jsonObject.get(DIVIDE_CLASS_NUMBER));
     }
+
     public static String extractMajorType(JSONObject jsonObject) {
         return String.valueOf(jsonObject.get(DEPARTMENT));
     }
+
     public static Double extractLecturePoint(JSONObject jsonObject) {
         return Double.parseDouble(String.valueOf(jsonObject.get(POINT)));
     }
+
     public static String extractCapacityType(JSONObject jsonObject) {
         return String.valueOf(jsonObject.get(CAPACITY_TYPE));
     }
+
     public static Integer extractTargetGrade(JSONObject jsonObject) {
         return Integer.parseInt(String.valueOf(jsonObject.get(TARGET_GRADE)));
     }

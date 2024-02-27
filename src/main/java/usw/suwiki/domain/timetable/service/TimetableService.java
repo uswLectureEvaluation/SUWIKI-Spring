@@ -31,6 +31,7 @@ import usw.suwiki.global.exception.errortype.TimetableException;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class TimetableService {
+
     private final TimetableRepository timetableRepository;
     private final TimetableCellRepository timetableCellRepository;
     private final UserCRUDService userCRUDService;
@@ -48,14 +49,14 @@ public class TimetableService {
         User user = userCRUDService.loadUserById(userId);
 
         List<Timetable> timetableList = timetableRepository.saveAll(
-                requests.stream()
-                        .map(it -> it.toEntity(user))
-                        .toList()
+            requests.stream()
+                .map(it -> it.toEntity(user))
+                .toList()
         );
 
         return timetableList.stream()
-                .map(TimetableResponse::of)
-                .toList();
+            .map(TimetableResponse::of)
+            .toList();
     }
 
     @Transactional
@@ -70,7 +71,7 @@ public class TimetableService {
     public void deleteTimetable(Long timetableId, Long userId) {
         User user = userCRUDService.loadUserById(userId);
         Timetable timetable = timetableRepository.findById(timetableId)
-                .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
+            .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
         timetable.validateIsAuthor(user);
 
         timetable.dissociateUser(user);
@@ -80,20 +81,20 @@ public class TimetableService {
         List<Timetable> timetableList = timetableRepository.findAllByUserId(userId);
 
         return timetableList.stream()
-                .map(SimpleTimetableResponse::of)
-                .toList();
+            .map(SimpleTimetableResponse::of)
+            .toList();
     }
 
     public TimetableResponse getTimetable(Long timetableId) {
         Timetable timetable = timetableRepository.findById(timetableId)
-                .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
+            .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
 
         return TimetableResponse.of(timetable);
     }
 
     @Transactional
     public TimetableCellResponse createTimetableCell(CreateTimetableCellRequest request, Long timetableId,
-                                                     Long userId) {
+        Long userId) {
         Timetable timetable = resolveExactAuthorTimetable(timetableId, userId);
         timetable.validateCellScheduleOverlapBeforeAssociation(request.extractTimetableCellSchedule());
 
@@ -104,16 +105,16 @@ public class TimetableService {
     @Transactional
     public TimetableCellResponse updateTimetableCell(UpdateTimetableCellRequest request, Long cellId, Long userId) {
         TimetableCell timetableCell = timetableCellRepository.findById(cellId)
-                .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_CELL_NOT_FOUND));
+            .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_CELL_NOT_FOUND));
         Timetable timetable = resolveExactAuthorTimetable(timetableCell.bringTimetableId(), userId);
         TimetableCellSchedule cellSchedule = request.extractTimetableCellSchedule();
         timetable.validateCellScheduleOverlapAfterAssociation(cellSchedule, timetableCell);
 
         timetableCell.update(
-                request.getLectureName(),
-                request.getProfessorName(),
-                TimetableCellColor.ofString(request.getColor()),
-                cellSchedule
+            request.getLectureName(),
+            request.getProfessorName(),
+            TimetableCellColor.ofString(request.getColor()),
+            cellSchedule
         );
         return TimetableCellResponse.of(timetableCell);
     }
@@ -121,18 +122,17 @@ public class TimetableService {
     @Transactional
     public void deleteTimetableCell(Long cellId, Long userId) {
         TimetableCell timetableCell = timetableCellRepository.findById(cellId)
-                .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_CELL_NOT_FOUND));
+            .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_CELL_NOT_FOUND));
         Timetable timetable = resolveExactAuthorTimetable(timetableCell.bringTimetableId(), userId);
 
         timetableCell.dissociateTimetable(timetable);
     }
 
 
-
     private Timetable resolveExactAuthorTimetable(Long timetableId, Long userId) {
         User user = userCRUDService.loadUserById(userId);
         Timetable timetable = timetableRepository.findById(timetableId)
-                .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
+            .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
         timetable.validateIsAuthor(user);
         return timetable;
     }

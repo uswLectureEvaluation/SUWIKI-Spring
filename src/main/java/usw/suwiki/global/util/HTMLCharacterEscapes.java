@@ -15,14 +15,11 @@ public class HTMLCharacterEscapes extends CharacterEscapes {
     }
 
     @Override
-    //2.xss 방지 처리 특수 문자 인코딩 값 지정
     public SerializableString getEscapeSequence(int ch) {
         return new SerializedString(StringEscapeUtils.escapeHtml4(Character.toString((char) ch)));
     }
 
     public HTMLCharacterEscapes() {
-
-        //1. xss 방지 처리할 특수 문자 지정
         asciiEscapes = CharacterEscapes.standardAsciiEscapesForJSON();
         asciiEscapes['<'] = CharacterEscapes.ESCAPE_CUSTOM;
         asciiEscapes['>'] = CharacterEscapes.ESCAPE_CUSTOM;

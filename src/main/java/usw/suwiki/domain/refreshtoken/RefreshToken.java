@@ -1,8 +1,15 @@
 package usw.suwiki.domain.refreshtoken;
 
-import lombok.*;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -27,8 +34,8 @@ public class RefreshToken {
 
     public static RefreshToken buildRefreshToken(Long userIdx, String payload) {
         return RefreshToken.builder()
-                .userIdx(userIdx)
-                .payload(payload)
-                .build();
+            .userIdx(userIdx)
+            .payload(payload)
+            .build();
     }
 }

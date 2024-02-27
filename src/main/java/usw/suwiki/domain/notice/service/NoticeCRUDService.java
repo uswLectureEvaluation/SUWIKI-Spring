@@ -1,12 +1,10 @@
 package usw.suwiki.domain.notice.service;
 
-import static usw.suwiki.global.exception.ExceptionType.*;
+import static usw.suwiki.global.exception.ExceptionType.NOTICE_NOT_FOUND;
 
 import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import usw.suwiki.domain.notice.domain.Notice;
 import usw.suwiki.domain.notice.domain.repository.NoticeRepository;
 import usw.suwiki.global.PageOption;
@@ -15,6 +13,7 @@ import usw.suwiki.global.exception.errortype.NoticeException;
 @Service
 @RequiredArgsConstructor
 public class NoticeCRUDService {
+
     private final NoticeRepository noticeRepository;
 
     public void save(Notice notice) {

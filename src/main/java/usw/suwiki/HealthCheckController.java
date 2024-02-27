@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/health")
 @RequiredArgsConstructor
 public class HealthCheckController {
+
     @GetMapping
     @ResponseStatus(OK)
     public String check() {

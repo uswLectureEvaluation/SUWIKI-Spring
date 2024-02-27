@@ -59,6 +59,7 @@ import usw.suwiki.global.util.mailsender.EmailSender;
 @RequiredArgsConstructor
 @Transactional
 public class UserBusinessService {
+
     private static final String MAIL_FORM = "@suwon.ac.kr";
 
     private final UserCRUDService userCRUDService;
@@ -83,7 +84,7 @@ public class UserBusinessService {
     @Transactional(readOnly = true)
     public Map<String, Boolean> executeCheckId(String loginId) {
         if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
-                userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).isPresent()) {
+            userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).isPresent()) {
             return overlapTrueFlag();
         }
         return overlapFalseFlag();
@@ -92,19 +93,23 @@ public class UserBusinessService {
     @Transactional(readOnly = true)
     public Map<String, Boolean> executeCheckEmail(String email) {
         if (userCRUDService.loadWrappedUserFromEmail(email).isPresent() ||
-                userIsolationCRUDService.loadWrappedUserFromEmail(email).isPresent()) {
+            userIsolationCRUDService.loadWrappedUserFromEmail(email).isPresent()) {
             return overlapTrueFlag();
         }
         return overlapFalseFlag();
     }
 
-    public Map<String, Boolean> executeJoin(String loginId, String password, String email) {
+    public Map<String, Boolean> executeJoin(
+        String loginId,
+        String password,
+        String email
+    ) {
         blacklistDomainService.isUserInBlackListThatRequestJoin(email);
 
         if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
-                userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
-                userCRUDService.loadWrappedUserFromEmail(email).isPresent() ||
-                userIsolationCRUDService.loadWrappedUserFromEmail(email).isPresent()) {
+            userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
+            userCRUDService.loadWrappedUserFromEmail(email).isPresent() ||
+            userIsolationCRUDService.loadWrappedUserFromEmail(email).isPresent()) {
             throw new AccountException(LOGIN_ID_OR_EMAIL_OVERLAP);
         }
 
@@ -127,21 +132,24 @@ public class UserBusinessService {
         Optional<UserIsolation> requestIsolationUser = userIsolationCRUDService.loadWrappedUserFromEmail(email);
         if (requestUser.isPresent()) {
             emailSender.send(
-                    email,
-                    BuildFindLoginIdForm.buildEmail(requestUser.get().getLoginId())
+                email,
+                BuildFindLoginIdForm.buildEmail(requestUser.get().getLoginId())
             );
             return successFlag();
         } else if (requestIsolationUser.isPresent()) {
             emailSender.send(
-                    email,
-                    BuildFindLoginIdForm.buildEmail(requestIsolationUser.get().getLoginId())
+                email,
+                BuildFindLoginIdForm.buildEmail(requestIsolationUser.get().getLoginId())
             );
             return successFlag();
         }
         throw new AccountException(USER_NOT_EXISTS);
     }
 
-    public Map<String, Boolean> executeFindPw(String loginId, String email) {
+    public Map<String, Boolean> executeFindPw(
+        String loginId,
+        String email
+    ) {
         Optional<User> userByLoginId = userCRUDService.loadWrappedUserFromLoginId(loginId);
         if (userByLoginId.isEmpty()) {
             throw new AccountException(USER_NOT_FOUND_BY_LOGINID);
@@ -153,33 +161,36 @@ public class UserBusinessService {
         }
 
         Optional<UserIsolation> isolationUserByLoginId =
-                userIsolationCRUDService.loadWrappedUserFromLoginId(loginId);
+            userIsolationCRUDService.loadWrappedUserFromLoginId(loginId);
         Optional<UserIsolation> isolationUserByEmail =
-                userIsolationCRUDService.loadWrappedUserFromEmail(email);
+            userIsolationCRUDService.loadWrappedUserFromEmail(email);
 
         if (userByLoginId.equals(userByEmail) &&
-                userByLoginId.isPresent() &&
-                userByEmail.isPresent()) {
+            userByLoginId.isPresent() &&
+            userByEmail.isPresent()) {
             User user = userByLoginId.get();
             emailSender.send(
-                    email,
-                    BuildFindPasswordForm.buildEmail(user.updateRandomPassword(bCryptPasswordEncoder))
+                email,
+                BuildFindPasswordForm.buildEmail(user.updateRandomPassword(bCryptPasswordEncoder))
             );
             return successFlag();
         } else if (isolationUserByLoginId.equals(isolationUserByEmail) &&
-                isolationUserByLoginId.isPresent() && isolationUserByEmail.isPresent()
+            isolationUserByLoginId.isPresent() && isolationUserByEmail.isPresent()
         ) {
             UserIsolation userIsolation = isolationUserByEmail.get();
             emailSender.send(
-                    email,
-                    BuildFindPasswordForm.buildEmail(userIsolation.updateRandomPassword(bCryptPasswordEncoder))
+                email,
+                BuildFindPasswordForm.buildEmail(userIsolation.updateRandomPassword(bCryptPasswordEncoder))
             );
             return successFlag();
         }
         throw new AccountException(USER_NOT_FOUND_BY_EMAIL);
     }
 
-    public Map<String, String> executeLogin(String loginId, String inputPassword) {
+    public Map<String, String> executeLogin(
+        String loginId,
+        String inputPassword
+    ) {
         if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent()) {
             User user = userCRUDService.loadUserFromLoginId(loginId);
             user.isUserEmailAuthed(confirmationTokenCRUDService.loadConfirmationTokenFromUserIdx(user.getId()));
@@ -191,10 +202,10 @@ public class UserBusinessService {
             UserIsolation userIsolation = userIsolationCRUDService.loadWrappedUserFromLoginId(loginId).get();
             if (userIsolation.validatePassword(bCryptPasswordEncoder, inputPassword)) {
                 rollBackUserFromSleeping(
-                        userIsolation.getUserIdx(),
-                        userIsolation.getLoginId(),
-                        userIsolation.getPassword(),
-                        userIsolation.getEmail()
+                    userIsolation.getUserIdx(),
+                    userIsolation.getLoginId(),
+                    userIsolation.getPassword(),
+                    userIsolation.getEmail()
                 );
                 userIsolationCRUDService.deleteByLoginId(loginId);
                 User user = userCRUDService.loadUserFromLoginId(loginId);
@@ -207,7 +218,9 @@ public class UserBusinessService {
 
 
     public Map<String, Boolean> executeEditPassword(
-            String Authorization, String prePassword, String newPassword
+        String Authorization,
+        String prePassword,
+        String newPassword
     ) {
         User user = userCRUDService.loadUserFromUserIdx(jwtAgent.getId(Authorization));
         if (!bCryptPasswordEncoder.matches(prePassword, user.getPassword())) {
@@ -238,7 +251,10 @@ public class UserBusinessService {
         return refreshUserJWT(user, refreshToken.getPayload());
     }
 
-    public Map<String, Boolean> executeQuit(String Authorization, String inputPassword) {
+    public Map<String, Boolean> executeQuit(
+        String Authorization,
+        String inputPassword
+    ) {
         User user = userCRUDService.loadUserFromUserIdx(jwtAgent.getId(Authorization));
         if (!user.validatePassword(bCryptPasswordEncoder, inputPassword)) {
             throw new AccountException(PASSWORD_ERROR);
@@ -253,44 +269,44 @@ public class UserBusinessService {
     }
 
     public Map<String, Boolean> executeReportEvaluatePost(
-            EvaluateReportForm evaluateReportForm,
-            String Authorization
+        EvaluateReportForm evaluateReportForm,
+        String Authorization
     ) {
         if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
         Long reportingUserIdx = jwtAgent.getId(Authorization);
         EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(
-                evaluateReportForm.evaluateIdx());
+            evaluateReportForm.evaluateIdx());
         Long reportedUserIdx = evaluatePost.getUser().getId();
 
         reportPostService.saveEvaluatePostReport(
-                buildEvaluatePostReport(
-                        evaluateReportForm,
-                        evaluatePost,
-                        reportedUserIdx,
-                        reportingUserIdx)
+            buildEvaluatePostReport(
+                evaluateReportForm,
+                evaluatePost,
+                reportedUserIdx,
+                reportingUserIdx)
         );
         return successFlag();
     }
 
     public Map<String, Boolean> executeReportExamPost(
-            ExamReportForm examReportForm,
-            String Authorization
+        ExamReportForm examReportForm,
+        String Authorization
     ) {
         if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(USER_RESTRICTED);
         }
         Long reportingUserIdx = jwtAgent.getId(Authorization);
         ExamPost examPost = examPostCRUDService.loadExamPostFromExamPostIdx(
-                examReportForm.examIdx());
+            examReportForm.examIdx());
         Long reportedUserIdx = examPost.getUser().getId();
         reportPostService.saveExamPostReport(
-                buildExamPostReport(
-                        examReportForm,
-                        examPost,
-                        reportedUserIdx,
-                        reportingUserIdx)
+            buildExamPostReport(
+                examReportForm,
+                examPost,
+                reportedUserIdx,
+                reportingUserIdx)
         );
         return successFlag();
     }
@@ -332,10 +348,10 @@ public class UserBusinessService {
     }
 
     private void rollBackUserFromSleeping(
-            Long userIdx,
-            String loginId,
-            String password,
-            String email
+        Long userIdx,
+        String loginId,
+        String password,
+        String email
     ) {
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         user.awake(loginId, password, email);

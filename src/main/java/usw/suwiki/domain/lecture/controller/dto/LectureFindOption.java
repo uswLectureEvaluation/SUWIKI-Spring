@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class LectureFindOption {
+
     private String orderOption;
     private Integer pageNumber;
     private String majorType;

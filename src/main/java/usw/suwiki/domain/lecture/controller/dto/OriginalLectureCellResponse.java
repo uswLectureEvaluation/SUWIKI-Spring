@@ -12,6 +12,7 @@ import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class OriginalLectureCellResponse {
+
     private String location;
     private String day;
     private Integer startPeriod;
@@ -19,10 +20,10 @@ public class OriginalLectureCellResponse {
 
     public static OriginalLectureCellResponse of(TimetableCellSchedule schedule) {
         return OriginalLectureCellResponse.builder()
-                .location(schedule.getLocation())
-                .day(schedule.getDay().getValue())
-                .startPeriod(schedule.getStartPeriod())
-                .endPeriod(schedule.getEndPeriod())
-                .build();
+            .location(schedule.getLocation())
+            .day(schedule.getDay().getValue())
+            .startPeriod(schedule.getStartPeriod())
+            .endPeriod(schedule.getEndPeriod())
+            .build();
     }
 }

@@ -11,6 +11,7 @@ import usw.suwiki.domain.timetable.entity.Timetable;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class TimetableResponse {
+
     long id;
     int year;
     String semester;
@@ -19,14 +20,14 @@ public class TimetableResponse {
 
     public static TimetableResponse of(Timetable timetable) {
         return TimetableResponse.builder()
-                .id(timetable.getId())
-                .year(timetable.getYear())
-                .semester(timetable.getSemester().getValue())
-                .name(timetable.getName())
-                .cellList(
-                        timetable.getCellList().stream()
-                                .map(TimetableCellResponse::of)
-                                .toList())
-                .build();
+            .id(timetable.getId())
+            .year(timetable.getYear())
+            .semester(timetable.getSemester().getValue())
+            .name(timetable.getName())
+            .cellList(
+                timetable.getCellList().stream()
+                    .map(TimetableCellResponse::of)
+                    .toList())
+            .build();
     }
 }

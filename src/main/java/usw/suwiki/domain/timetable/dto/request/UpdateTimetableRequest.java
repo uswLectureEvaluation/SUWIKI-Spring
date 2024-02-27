@@ -1,6 +1,5 @@
 package usw.suwiki.domain.timetable.dto.request;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -13,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class UpdateTimetableRequest {
+
     public static final int MAX_NAME_LENGTH = 150;
     public static final int MAX_SEMESTER_LENGTH = 50;
 

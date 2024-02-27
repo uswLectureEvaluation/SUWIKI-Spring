@@ -1,5 +1,10 @@
 package usw.suwiki.domain.favoritemajor.service;
 
+import static usw.suwiki.global.exception.ExceptionType.FAVORITE_MAJOR_DUPLICATE_REQUEST;
+import static usw.suwiki.global.exception.ExceptionType.FAVORITE_MAJOR_NOT_FOUND;
+
+import java.util.List;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import usw.suwiki.domain.favoritemajor.FavoriteMajor;
@@ -11,15 +16,11 @@ import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.exception.errortype.FavoriteMajorException;
 import usw.suwiki.global.jwt.JwtAgent;
 
-import javax.transaction.Transactional;
-import java.util.List;
-
-import static usw.suwiki.global.exception.ExceptionType.*;
-
 @Transactional
 @RequiredArgsConstructor
 @Service
 public class FavoriteMajorServiceV2 {
+
     private final UserCRUDService userCRUDService;
     private final UserBusinessService userBusinessService;
     private final FavoriteMajorRepositoryV2 favoriteMajorRepositoryV2;
@@ -32,17 +33,16 @@ public class FavoriteMajorServiceV2 {
         String majorType = favoriteSaveDto.getMajorType();
         validateDuplicateFavoriteMajor(loginUser, majorType);
         FavoriteMajor favoriteMajor = FavoriteMajor.builder()
-                .user(loginUser)
-                .majorType(majorType)
-                .build();
+            .user(loginUser)
+            .majorType(majorType)
+            .build();
         favoriteMajorRepositoryV2.save(favoriteMajor);
     }
 
     private void validateDuplicateFavoriteMajor(User loginUser, String majorType) {
-        boolean exists = favoriteMajorRepositoryV2.existsByUserIdAndMajorType(loginUser.getId(), majorType);
-        if (!exists) return;
-
-        throw new FavoriteMajorException(FAVORITE_MAJOR_DUPLICATE_REQUEST);
+        if (favoriteMajorRepositoryV2.existsByUserIdAndMajorType(loginUser.getId(), majorType)) {
+            throw new FavoriteMajorException(FAVORITE_MAJOR_DUPLICATE_REQUEST);
+        }
     }
 
     public List<String> findAllMajorTypeByUser(String authorization) {
@@ -53,12 +53,14 @@ public class FavoriteMajorServiceV2 {
         return favoriteMajors.stream().map(FavoriteMajor::getMajorType).toList();
     }
 
-    public void delete(String authorization,  String majorType) {
+    public void delete(String authorization, String majorType) {
         userBusinessService.validateRestrictedUser(authorization);
         User loginUser = userCRUDService.loadUserById(jwtAgent.getId(authorization));
 
-        FavoriteMajor favoriteMajor = favoriteMajorRepositoryV2.findByUserIdAndMajorType(loginUser.getId(), majorType)
-                .orElseThrow(() -> new FavoriteMajorException(FAVORITE_MAJOR_NOT_FOUND));
+        FavoriteMajor favoriteMajor = favoriteMajorRepositoryV2.findByUserIdAndMajorType(
+                loginUser.getId(),
+                majorType
+            ).orElseThrow(() -> new FavoriteMajorException(FAVORITE_MAJOR_NOT_FOUND));
 
         favoriteMajorRepositoryV2.delete(favoriteMajor);
     }
