@@ -9,11 +9,12 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class CheckUpdateMandatoryResponse {
+
     private final Boolean isUpdateMandatory;
 
     public static CheckUpdateMandatoryResponse from(boolean isUpdateMandatory) {
         return CheckUpdateMandatoryResponse.builder()
-                .isUpdateMandatory(isUpdateMandatory)
-                .build();
+            .isUpdateMandatory(isUpdateMandatory)
+            .build();
     }
 }

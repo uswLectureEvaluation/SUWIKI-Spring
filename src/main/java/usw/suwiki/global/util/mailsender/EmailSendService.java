@@ -1,16 +1,15 @@
 package usw.suwiki.global.util.mailsender;
 
+import static usw.suwiki.global.exception.ExceptionType.SEND_MAIL_FAILED;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import usw.suwiki.global.exception.errortype.MailException;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
-import static usw.suwiki.global.exception.ExceptionType.SEND_MAIL_FAILED;
 
 @Service
 @AllArgsConstructor

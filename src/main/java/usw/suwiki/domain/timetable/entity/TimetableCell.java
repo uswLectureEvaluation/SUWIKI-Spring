@@ -25,19 +25,19 @@ import usw.suwiki.global.BaseTimeEntity;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TimetableCell extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "timetable_cell_id")
     private Long id;
 
-    // (lectureName, professorName) 중복 가능
     @NotNull
     @Size(max = 200)
-    private String lectureName;     // blank 가능
+    private String lectureName;
 
     @NotNull
     @Size(max = 100)
-    private String professorName;   // blank 가능
+    private String professorName;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -52,10 +52,9 @@ public class TimetableCell extends BaseTimeEntity {
     private Timetable timetable;
 
     // TODO 고민: 오버랩 검증 로직 및 연관관계 편의 메서드 호출을 생성자로 이동
-    // timetable을 받게 되면, timetable의 null 여부에 따른 분기 처리를 해야 함. 무조건 검증을 하면 복잡해질 듯
     @Builder
     public TimetableCell(String lectureName, String professorName, TimetableCellColor color,
-                         TimetableCellSchedule schedule) {
+        TimetableCellSchedule schedule) {
         this.lectureName = lectureName;
         this.professorName = professorName;
         this.color = color;
@@ -82,8 +81,8 @@ public class TimetableCell extends BaseTimeEntity {
 
     // 비즈니스 메서드
     public void update(
-            String lectureName, String professorName, TimetableCellColor color,
-            TimetableCellSchedule schedule
+        String lectureName, String professorName, TimetableCellColor color,
+        TimetableCellSchedule schedule
     ) {
         this.lectureName = lectureName;
         this.professorName = professorName;

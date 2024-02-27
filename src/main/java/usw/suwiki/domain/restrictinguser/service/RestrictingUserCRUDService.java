@@ -1,15 +1,14 @@
 package usw.suwiki.domain.restrictinguser.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.restrictinguser.RestrictingUser;
 import usw.suwiki.domain.restrictinguser.repository.RestrictingUserRepository;
 import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,12 +26,12 @@ public class RestrictingUserCRUDService {
         if (wrappedRestrictingUser.isPresent()) {
             RestrictingUser RestrictingUser = wrappedRestrictingUser.get();
             LoadMyRestrictedReasonResponseForm resultForm = LoadMyRestrictedReasonResponseForm
-                    .builder()
-                    .restrictedReason(RestrictingUser.getRestrictingReason())
-                    .judgement(RestrictingUser.getJudgement())
-                    .createdAt(RestrictingUser.getCreatedAt())
-                    .restrictingDate(RestrictingUser.getRestrictingDate())
-                    .build();
+                .builder()
+                .restrictedReason(RestrictingUser.getRestrictingReason())
+                .judgement(RestrictingUser.getJudgement())
+                .createdAt(RestrictingUser.getCreatedAt())
+                .restrictingDate(RestrictingUser.getRestrictingDate())
+                .build();
             finalResultForm.add(resultForm);
         }
 

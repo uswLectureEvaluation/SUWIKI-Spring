@@ -1,5 +1,8 @@
 package usw.suwiki.domain.postreport.service;
 
+import static usw.suwiki.global.exception.ExceptionType.REPORTED_POST_NOT_FOUND;
+
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,10 +11,6 @@ import usw.suwiki.domain.postreport.ExamPostReport;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
 import usw.suwiki.global.exception.errortype.ReportedPostException;
-
-import java.util.List;
-
-import static usw.suwiki.global.exception.ExceptionType.REPORTED_POST_NOT_FOUND;
 
 @Service
 @Transactional
@@ -31,12 +30,12 @@ public class ReportPostService {
 
     public EvaluatePostReport loadDetailEvaluateReportFromReportingEvaluatePostId(Long reportingEvaluatePostId) {
         return evaluateReportRepository.findById(reportingEvaluatePostId)
-                .orElseThrow(() -> new ReportedPostException(REPORTED_POST_NOT_FOUND));
+            .orElseThrow(() -> new ReportedPostException(REPORTED_POST_NOT_FOUND));
     }
 
     public ExamPostReport loadDetailEvaluateReportFromReportingExamPostId(Long reportingExamPostId) {
         return examReportRepository.findById(reportingExamPostId)
-                .orElseThrow(() -> new ReportedPostException(REPORTED_POST_NOT_FOUND));
+            .orElseThrow(() -> new ReportedPostException(REPORTED_POST_NOT_FOUND));
     }
 
     public void deleteFromUserIdx(Long userId) {

@@ -2,9 +2,6 @@ package usw.suwiki.global.version;
 
 import lombok.Getter;
 
-/**
- * effective java item4 적용.
- */
 @Getter
 public class SuwikiVersion {
 

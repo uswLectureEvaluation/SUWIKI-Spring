@@ -14,9 +14,8 @@ public class ExamResponseByUserIdxDto {
     private String semesterList;
     private final String examType;
     private final String examInfo;
-    private final String examDifficulty;    //난이도
-
-    private final String content;    //주관적인 강의평가 입력내용
+    private final String examDifficulty;
+    private final String content;
 
     public void setSemesterList(String semesterList) {
         this.semesterList = semesterList;

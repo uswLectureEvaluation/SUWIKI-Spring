@@ -24,7 +24,7 @@ public class LectureCRUDService {
 
     public Lecture loadLectureFromIdPessimisticLock(Long id) {
         return lectureRepository.findForUpdateById(id)
-                .orElseThrow(() -> new LectureException(LECTURE_NOT_FOUND));
+            .orElseThrow(() -> new LectureException(LECTURE_NOT_FOUND));
     }
 
     public LecturesAndCountDao loadLectureByKeywordAndOption(String keyword, LectureFindOption option) {

@@ -1,5 +1,7 @@
 package usw.suwiki.domain.user.user.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -9,7 +11,6 @@ import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepositor
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
 import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
-import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.refreshtoken.repository.RefreshTokenRepository;
 import usw.suwiki.domain.restrictinguser.repository.RestrictingUserRepository;
@@ -17,11 +18,9 @@ import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.domain.user.userIsolation.UserIsolation;
 import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
+import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.global.util.emailBuild.BuildPersonalInformationUsingNotifyForm;
 import usw.suwiki.global.util.mailsender.EmailSendService;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Transactional
@@ -54,9 +53,8 @@ public class UserSchedulingService {
         log.info("{} - 개인정보 처리 방침 안내 발송 종료", LocalDateTime.now());
     }
 
-    // 회원탈퇴 요청 후 30일 뒤 테이블에서 제거
     @Transactional
-    @Scheduled(cron = "14 * * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void deleteRequestQuitUserAfter30Days() {
         log.info("{} - 회원탈퇴 유저 제거 시작", LocalDateTime.now());
         LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
@@ -65,44 +63,27 @@ public class UserSchedulingService {
         if (targetUser.size() > 0) {
             for (int index = 0; index < targetUser.toArray().length; index++) {
                 Long userId = targetUser.get(index).getId();
-                // 삭제 예정 유저의 구매한 시험 정보 삭제
                 viewExamCRUDService.deleteAllFromUserIdx(userId);
-                // 리프레시 토큰 삭제
                 refreshTokenRepository.deleteByUserIdx(userId);
-                // 신고된 게시글 삭제
                 reportPostService.deleteFromUserIdx(userId);
-                // 삭제 예정 유저의 강의평가 삭제
                 evaluatePostCRUDService.deleteFromUserIdx(userId);
-                // 삭제 예정 유저의 시험정보 삭제
                 examPostCRUDService.deleteFromUserIdx(userId);
-                // 즐겨찾기 게시글 삭제
                 favoriteMajorService.deleteFromUserIdx(userId);
-                // 제한 테이블에서 삭제
                 restrictingUserRepository.deleteByUserIdx(userId);
-                // 이메일 인증 토큰 삭제
                 confirmationTokenRepository.deleteByUserIdx(userId);
-                // 본 테이블에서 유저 삭제
                 userRepository.deleteById(userId);
             }
         } else if (targetUser.size() == 0) {
             for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
                 Long userIdx = targetUserIsolation.get(i).getUserIdx();
-                // 삭제 예정 유저의 구매한 시험 정보 삭제
                 viewExamCRUDService.deleteAllFromUserIdx(userIdx);
-                // 리프레시 토큰 삭제
                 refreshTokenRepository.deleteByUserIdx(userIdx);
                 reportPostService.deleteFromUserIdx(userIdx);
-                // 삭제 예정 유저의 강의평가 삭제
                 evaluatePostCRUDService.deleteFromUserIdx(userIdx);
-                // 삭제 예정 유저의 시험정보 삭제
                 examPostCRUDService.deleteFromUserIdx(userIdx);
-                // 즐겨찾기 게시글 삭제
                 favoriteMajorService.deleteFromUserIdx(userIdx);
-                // 제한 테이블에서 삭제
                 restrictingUserRepository.deleteByUserIdx(userIdx);
-                // 이메일 인증 토큰 삭제
                 confirmationTokenRepository.deleteByUserIdx(userIdx);
-                // 휴면계정에서 유저 삭제
                 userIsolationRepository.deleteByLoginId(targetUserIsolation.get(i).getLoginId());
             }
         }

@@ -24,10 +24,10 @@ import usw.suwiki.global.exception.errortype.VersionException;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {
-        @UniqueConstraint(
-                name = "UNIQUE_OS_AND_VERSION_CODE",
-                columnNames = {"os", "version_code"}
-        )
+    @UniqueConstraint(
+        name = "UNIQUE_OS_AND_VERSION_CODE",
+        columnNames = {"os", "version_code"}
+    )
 })
 public class ClientAppVersion extends BaseTimeEntity {
 

@@ -9,17 +9,18 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ResultResponse {
+
     boolean success;
 
     public static ResultResponse of(boolean result) {
         return ResultResponse.builder()
-                .success(result)
-                .build();
+            .success(result)
+            .build();
     }
 
     public static ResultResponse complete() {
         return ResultResponse.builder()
-                .success(true)
-                .build();
+            .success(true)
+            .build();
     }
 }

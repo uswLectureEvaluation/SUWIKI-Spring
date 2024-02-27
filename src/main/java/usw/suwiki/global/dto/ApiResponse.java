@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ApiResponse<T> {
+
     private String code;
     private T data;
     private String message;
@@ -25,24 +26,24 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> success(T data) {
         return ApiResponse.<T>builder()
-                .data(data)
-                .build();
+            .data(data)
+            .build();
     }
 
     public static ApiResponse error(String code, String message) {
         HashMap<String, String> empty = new HashMap<>();
         return ApiResponse.builder()
-                .code(code)
-                .data(empty)
-                .message(message)
-                .build();
+            .code(code)
+            .data(empty)
+            .message(message)
+            .build();
     }
 
     public static <T> ApiResponse<T> error(String code, T data, String message) {
         return ApiResponse.<T>builder()
-                .code(code)
-                .data(data)
-                .message(message)
-                .build();
+            .code(code)
+            .data(data)
+            .message(message)
+            .build();
     }
 }

@@ -17,13 +17,14 @@ import usw.suwiki.global.exception.errortype.VersionException;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ClientAppVersionService {
+
     private final ClientAppVersionRepository clientAppVersionRepository;
 
     public CheckUpdateMandatoryResponse checkIsUpdateMandatory(String os, int versionCode) {
         ClientOS clientOS = ClientOS.ofString(os);
         ClientAppVersion clientAppVersion = clientAppVersionRepository
-                .findFirstByOsAndIsVitalTrueOrderByVersionCodeDesc(clientOS)
-                .orElseThrow(() -> new VersionException(ExceptionType.SERVER_ERROR));
+            .findFirstByOsAndIsVitalTrueOrderByVersionCodeDesc(clientOS)
+            .orElseThrow(() -> new VersionException(ExceptionType.SERVER_ERROR));
 
         boolean isUpdateMandatory = clientAppVersion.judgeIsUpdateMandatory(clientOS, versionCode);
         return CheckUpdateMandatoryResponse.from(isUpdateMandatory);

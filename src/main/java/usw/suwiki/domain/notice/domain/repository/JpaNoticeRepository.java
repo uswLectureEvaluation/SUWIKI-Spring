@@ -1,12 +1,11 @@
 package usw.suwiki.domain.notice.domain.repository;
 
+import java.util.List;
+import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import usw.suwiki.domain.notice.domain.Notice;
 import usw.suwiki.global.PageOption;
-
-import javax.persistence.EntityManager;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class JpaNoticeRepository implements NoticeRepository {
@@ -26,9 +25,9 @@ public class JpaNoticeRepository implements NoticeRepository {
     public List findByNoticeList(PageOption page) {
         Optional<Integer> pageNumber = page.getPageNumber();
         return em.createQuery("SELECT n from Notice n ORDER BY n.modifiedDate DESC")
-                .setFirstResult((pageNumber.get()) * 10)
-                .setMaxResults(10)
-                .getResultList();
+            .setFirstResult((pageNumber.get()) * 10)
+            .setMaxResults(10)
+            .getResultList();
     }
 
     @Override

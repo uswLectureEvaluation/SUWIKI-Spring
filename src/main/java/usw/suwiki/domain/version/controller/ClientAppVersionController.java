@@ -15,12 +15,13 @@ import usw.suwiki.domain.version.service.ClientAppVersionService;
 @RequestMapping("/client/version")
 @RequiredArgsConstructor
 public class ClientAppVersionController {
+
     private final ClientAppVersionService clientAppVersionService;
 
     @GetMapping("/update-mandatory")
     public ResponseEntity<CheckUpdateMandatoryResponse> checkIsUpdateMandatory(
-            @RequestParam String os,
-            @RequestParam Integer versionCode
+        @RequestParam String os,
+        @RequestParam Integer versionCode
     ) {
         return ResponseEntity.ok(clientAppVersionService.checkIsUpdateMandatory(os, versionCode));
     }

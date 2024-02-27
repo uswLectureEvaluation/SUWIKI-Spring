@@ -6,8 +6,8 @@ import java.util.Map;
 public class ApiResponseFactory {
 
     public static Map<String, String> adminLoginResponseForm(
-            final String accessToken,
-            final String userCount
+        final String accessToken,
+        final String userCount
     ) {
         return new HashMap<>() {{
             put("AccessToken", accessToken);

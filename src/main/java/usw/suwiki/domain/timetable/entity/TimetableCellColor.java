@@ -15,16 +15,15 @@ public enum TimetableCellColor implements KeyValueEnumModel<String> {
     GREEN("GREEN"), GREEN_LIGHT("GREEN_LIGHT"), GREEN_DARK("GREEN_DARK"),
     NAVY("NAVY"), NAVY_LIGHT("NAVY_LIGHT"), NAVY_DARK("NAVY_DARK"),
     VIOLET("VIOLET"), VIOLET_LIGHT("VIOLET_LIGHT"),
-    GRAY("GRAY"), GRAY_DARK("GRAY_DARK")
-    ;
+    GRAY("GRAY"), GRAY_DARK("GRAY_DARK");
 
     private final String value;
 
     public static TimetableCellColor ofString(String param) {
         return Arrays.stream(TimetableCellColor.values())
-                .filter(v -> v.getValue().equals(param.toUpperCase()))
-                .findFirst()
-                .orElseThrow(() -> new TimetableException(ExceptionType.INVALID_TIMETABLE_CELL_COLOR));
+            .filter(v -> v.getValue().equals(param.toUpperCase()))
+            .findFirst()
+            .orElseThrow(() -> new TimetableException(ExceptionType.INVALID_TIMETABLE_CELL_COLOR));
     }
 
     @Override

@@ -16,6 +16,7 @@ import usw.suwiki.domain.timetable.entity.TimetableDay;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UpdateTimetableCellRequest {
+
     public static final int MAX_LECTURE_NAME_LENGTH = 150;
     public static final int MAX_PROFESSOR_NAME_LENGTH = 130;
     public static final int MAX_COLOR_LENGTH = 50;
@@ -48,10 +49,10 @@ public class UpdateTimetableCellRequest {
 
     public TimetableCellSchedule extractTimetableCellSchedule() {
         return TimetableCellSchedule.builder()
-                .location(location)
-                .day(TimetableDay.ofString(day))
-                .startPeriod(startPeriod)
-                .endPeriod(endPeriod)
-                .build();
+            .location(location)
+            .day(TimetableDay.ofString(day))
+            .startPeriod(startPeriod)
+            .endPeriod(endPeriod)
+            .build();
     }
 }

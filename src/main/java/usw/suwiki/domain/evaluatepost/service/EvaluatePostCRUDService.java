@@ -1,5 +1,9 @@
 package usw.suwiki.domain.evaluatepost.service;
 
+import static usw.suwiki.global.exception.ExceptionType.EVALUATE_POST_NOT_FOUND;
+
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +14,6 @@ import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.exception.errortype.EvaluatePostException;
-
-import java.util.List;
-import java.util.Optional;
-
-import static usw.suwiki.global.exception.ExceptionType.EVALUATE_POST_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -38,23 +37,23 @@ public class EvaluatePostCRUDService {
     }
 
     public List<EvaluatePost> loadEvaluatePostsFromLectureIdx(
-            PageOption option, Long lectureId
+        PageOption option, Long lectureId
     ) {
         return evaluatePostRepository.findAllByLectureIdAndPageOption(
-                lectureId,
-                option.getOffset(),
-                LIMIT_PAGE_SIZE
+            lectureId,
+            option.getOffset(),
+            LIMIT_PAGE_SIZE
         );
     }
 
     public List<EvaluatePost> loadEvaluatePostsFromUserIdxAndOption(
-            PageOption option,
-            Long userId
+        PageOption option,
+        Long userId
     ) {
         return evaluatePostRepository.findByUserIdxAndPagePotion(
-                userId,
-                option.getOffset(),
-                LIMIT_PAGE_SIZE
+            userId,
+            option.getOffset(),
+            LIMIT_PAGE_SIZE
         );
     }
 

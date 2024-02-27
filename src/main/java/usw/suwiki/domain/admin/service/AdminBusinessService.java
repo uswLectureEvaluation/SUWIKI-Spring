@@ -1,10 +1,22 @@
 package usw.suwiki.domain.admin.service;
 
+import static usw.suwiki.global.exception.ExceptionType.PASSWORD_ERROR;
+import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.adminLoginResponseForm;
+import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successCapitalFlag;
+
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.*;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostBlacklistForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostNoProblemForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostBlacklistForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostNoProblemForm;
+import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostRestrictForm;
 import usw.suwiki.domain.admin.controller.dto.UserAdminResponseDto.LoadAllReportedPostForm;
 import usw.suwiki.domain.blacklistdomain.service.BlacklistDomainCRUDService;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
@@ -22,18 +34,12 @@ import usw.suwiki.domain.user.userIsolation.service.UserIsolationCRUDService;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
 
-import java.util.List;
-import java.util.Map;
-
-import static usw.suwiki.global.exception.ExceptionType.PASSWORD_ERROR;
-import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
-import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.adminLoginResponseForm;
-import static usw.suwiki.global.util.apiresponse.ApiResponseFactory.successCapitalFlag;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class AdminBusinessService {
+
+    private static final long BANNED_PERIOD = 365L;
 
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final UserCRUDService userCRUDService;
@@ -45,9 +51,6 @@ public class AdminBusinessService {
     private final JwtAgent jwtAgent;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    /**
-     * 관리자 로그인
-     */
     public Map<String, String> executeAdminLogin(LoginForm loginForm) {
         User user = userCRUDService.loadUserFromLoginId(loginForm.loginId());
         if (user.validatePassword(bCryptPasswordEncoder, loginForm.password())) {
@@ -57,8 +60,8 @@ public class AdminBusinessService {
                 final long totalUserCount = userCount + userIsolationCount;
 
                 return adminLoginResponseForm(
-                        jwtAgent.createAccessToken(user),
-                        String.valueOf(totalUserCount)
+                    jwtAgent.createAccessToken(user),
+                    String.valueOf(totalUserCount)
                 );
             }
             throw new AccountException(USER_RESTRICTED);
@@ -66,94 +69,78 @@ public class AdminBusinessService {
         throw new AccountException(PASSWORD_ERROR);
     }
 
-    /**
-     * 신고된 모든 게시글 조회
-     */
     public LoadAllReportedPostForm executeLoadAllReportedPosts() {
         List<EvaluatePostReport> evaluatePostReports = reportPostService.loadAllEvaluateReports();
         List<ExamPostReport> examPostReports = reportPostService.loadAllExamReports();
 
         return LoadAllReportedPostForm
-                .builder()
-                .evaluatePostReports(evaluatePostReports)
-                .examPostReports(examPostReports)
-                .build();
+            .builder()
+            .evaluatePostReports(evaluatePostReports)
+            .examPostReports(examPostReports)
+            .build();
     }
 
-    /**
-     * 신고된 강의평가 게시물 자세히 보기
-     */
     public EvaluatePostReport executeLoadDetailReportedEvaluatePost(Long evaluatePostReportId) {
-        return reportPostService.loadDetailEvaluateReportFromReportingEvaluatePostId(evaluatePostReportId);
+        return reportPostService.loadDetailEvaluateReportFromReportingEvaluatePostId(
+            evaluatePostReportId);
     }
 
-    /**
-     * 신고된 시험정보 게시물 자세히 보기
-     */
     public ExamPostReport executeLoadDetailReportedExamPost(Long examPostReportId) {
         return reportPostService.loadDetailEvaluateReportFromReportingExamPostId(examPostReportId);
     }
 
-    /**
-     * 신고된 강의평가 게시물 삭제
-     */
-    public Map<String, Boolean> executeNoProblemEvaluatePost(EvaluatePostNoProblemForm evaluatePostNoProblemForm) {
+    public Map<String, Boolean> executeNoProblemEvaluatePost(
+        EvaluatePostNoProblemForm evaluatePostNoProblemForm) {
         reportPostService.deleteByEvaluateIdx(evaluatePostNoProblemForm.evaluateIdx());
         return successCapitalFlag();
     }
 
-    /**
-     * 신고된 시험정보 게시물 삭제
-     */
-    public Map<String, Boolean> executeNoProblemExamPost(ExamPostNoProblemForm examPostRestrictForm) {
+    public Map<String, Boolean> executeNoProblemExamPost(
+        ExamPostNoProblemForm examPostRestrictForm) {
         reportPostService.deleteByExamIdx(examPostRestrictForm.examIdx());
         return successCapitalFlag();
     }
 
-    /**
-     * 신고된 강의평가 게시물 작성자 이용 정지 처리
-     */
-    public Map<String, Boolean> executeRestrictEvaluatePost(EvaluatePostRestrictForm evaluatePostRestrictForm) {
-        EvaluatePostReport evaluatePostReport = reportPostService.loadDetailEvaluateReportFromReportingEvaluatePostId(evaluatePostRestrictForm.evaluateIdx());
+    public Map<String, Boolean> executeRestrictEvaluatePost(
+        EvaluatePostRestrictForm evaluatePostRestrictForm) {
+        EvaluatePostReport evaluatePostReport = reportPostService.loadDetailEvaluateReportFromReportingEvaluatePostId(
+            evaluatePostRestrictForm.evaluateIdx());
         plusReportingUserPoint(evaluatePostReport.getReportingUserIdx());
         plusRestrictCount(evaluatePostReport.getReportedUserIdx());
         restrictingUserService.executeRestrictUserFromEvaluatePost(
-                evaluatePostRestrictForm, evaluatePostReport.getReportedUserIdx()
+            evaluatePostRestrictForm, evaluatePostReport.getReportedUserIdx()
         );
         deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostReport.getEvaluateIdx());
         return successCapitalFlag();
     }
 
-    /**
-     * 신고된 시험정보 게시물 작성자 이용 정지 처리
-     */
     public Map<String, Boolean> executeRestrictExamPost(ExamPostRestrictForm examPostRestrictForm) {
-        ExamPostReport examPostReport = reportPostService.loadDetailEvaluateReportFromReportingExamPostId(examPostRestrictForm.examIdx());
+        ExamPostReport examPostReport = reportPostService.loadDetailEvaluateReportFromReportingExamPostId(
+            examPostRestrictForm.examIdx());
         plusReportingUserPoint(examPostReport.getReportingUserIdx());
         plusRestrictCount(examPostReport.getReportedUserIdx());
         restrictingUserService.executeRestrictUserFromExamPost(
-                examPostRestrictForm, examPostReport.getReportedUserIdx()
+            examPostRestrictForm, examPostReport.getReportedUserIdx()
         );
         deleteReportedExamPostFromEvaluateIdx(examPostReport.getExamIdx());
 
         return successCapitalFlag();
     }
 
-    /**
-     * 신고된 강의평가 게시물 작성자 블랙리스트 처리
-     */
-    public Map<String, Boolean> executeBlackListEvaluatePost(EvaluatePostBlacklistForm evaluatePostBlacklistForm) {
+    public Map<String, Boolean> executeBlackListEvaluatePost(
+        EvaluatePostBlacklistForm evaluatePostBlacklistForm) {
         Long userIdx = evaluatePostCRUDService
-                .loadEvaluatePostFromEvaluatePostIdx(evaluatePostBlacklistForm.evaluateIdx())
-                .getUser()
-                .getId();
+            .loadEvaluatePostFromEvaluatePostIdx(evaluatePostBlacklistForm.evaluateIdx())
+            .getUser()
+            .getId();
 
         deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostBlacklistForm.evaluateIdx());
+
         blacklistDomainCRUDService.saveBlackListDomain(
-                userIdx,
-                365L,
-                evaluatePostBlacklistForm.bannedReason(),
-                evaluatePostBlacklistForm.judgement()
+            userIdx,
+            BANNED_PERIOD,
+            evaluatePostBlacklistForm.bannedReason(),
+            evaluatePostBlacklistForm.judgement()
         );
         plusRestrictCount(userIdx);
 
@@ -163,15 +150,17 @@ public class AdminBusinessService {
     /**
      * 신고된 시험정보 게시물 작성자 블랙리스트 처리
      */
-    public Map<String, Boolean> executeBlackListExamPost(ExamPostBlacklistForm examPostBlacklistForm) {
-        Long userIdx = examPostCRUDService.loadExamPostFromExamPostIdx(examPostBlacklistForm.examIdx()).getUser().getId();
+    public Map<String, Boolean> executeBlackListExamPost(
+        ExamPostBlacklistForm examPostBlacklistForm) {
+        Long userIdx = examPostCRUDService.loadExamPostFromExamPostIdx(
+            examPostBlacklistForm.examIdx()).getUser().getId();
 
         deleteReportedExamPostFromEvaluateIdx(examPostBlacklistForm.examIdx());
         blacklistDomainCRUDService.saveBlackListDomain(
-                userIdx,
-                365L,
-                examPostBlacklistForm.bannedReason(),
-                examPostBlacklistForm.judgement()
+            userIdx,
+            365L,
+            examPostBlacklistForm.bannedReason(),
+            examPostBlacklistForm.judgement()
         );
         plusRestrictCount(userIdx);
 
@@ -179,7 +168,8 @@ public class AdminBusinessService {
     }
 
     private void deleteReportedEvaluatePostFromEvaluateIdx(Long evaluateIdx) {
-        EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
+        EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(
+            evaluateIdx);
         reportPostService.deleteByEvaluateIdx(evaluateIdx);
         evaluatePostCRUDService.delete(evaluatePost);
     }

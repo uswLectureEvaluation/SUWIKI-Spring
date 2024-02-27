@@ -1,13 +1,11 @@
 package usw.suwiki.domain.userlecture.viewexam.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.userlecture.viewexam.repository.ViewExamRepository;
 import usw.suwiki.domain.userlecture.viewexam.ViewExam;
-
-import java.util.List;
+import usw.suwiki.domain.userlecture.viewexam.repository.ViewExamRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +14,10 @@ public class ViewExamCRUDService {
 
     private final ViewExamRepository viewExamRepository;
 
-    public boolean isExist(Long userId, Long lectureId) {
+    public boolean isExist(
+        Long userId,
+        Long lectureId
+    ) {
         return viewExamRepository.validateIsExists(userId, lectureId);
     }
 

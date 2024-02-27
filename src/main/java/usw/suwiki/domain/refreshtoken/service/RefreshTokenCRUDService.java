@@ -1,12 +1,11 @@
 package usw.suwiki.domain.refreshtoken.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.refreshtoken.RefreshToken;
 import usw.suwiki.domain.refreshtoken.repository.RefreshTokenRepository;
-
-import java.util.Optional;
 import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
 
@@ -33,6 +32,6 @@ public class RefreshTokenCRUDService {
     @Transactional(readOnly = true)
     public RefreshToken loadRefreshTokenFromPayload(String payload) {
         return refreshTokenRepository.findByPayload(payload)
-                .orElseThrow(()->new AccountException(ExceptionType.TOKEN_IS_BROKEN));
+            .orElseThrow(() -> new AccountException(ExceptionType.TOKEN_IS_BROKEN));
     }
 }

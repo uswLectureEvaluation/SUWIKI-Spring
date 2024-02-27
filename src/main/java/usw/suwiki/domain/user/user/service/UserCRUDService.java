@@ -31,7 +31,7 @@ public class UserCRUDService {
     @Transactional(readOnly = true)
     public User loadUserById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+            .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)

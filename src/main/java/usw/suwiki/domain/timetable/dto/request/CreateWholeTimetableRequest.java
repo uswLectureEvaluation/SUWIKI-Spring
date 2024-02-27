@@ -18,6 +18,7 @@ import usw.suwiki.domain.user.user.User;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateWholeTimetableRequest {
+
     public static final int MAX_NAME_LENGTH = 200;
     public static final int MAX_SEMESTER_LENGTH = 50;
 
@@ -38,18 +39,18 @@ public class CreateWholeTimetableRequest {
 
     public Timetable toEntity(User user) {
         Timetable timetable = Timetable.builder()
-                .year(year)
-                .semester(Semester.of(semester))
-                .name(name)
-                .build();
+            .year(year)
+            .semester(Semester.of(semester))
+            .name(name)
+            .build();
         timetable.associateUser(user);
 
         cellList.stream()
-                .map(cellRequest -> cellRequest.toEntity())
-                .forEach(cell -> {
-                    timetable.validateCellScheduleOverlapBeforeAssociation(cell.getSchedule());
-                    cell.associateTimetable(timetable);
-                });
+            .map(cellRequest -> cellRequest.toEntity())
+            .forEach(cell -> {
+                timetable.validateCellScheduleOverlapBeforeAssociation(cell.getSchedule());
+                cell.associateTimetable(timetable);
+            });
         return timetable;
     }
 }

@@ -1,5 +1,7 @@
 package usw.suwiki.domain.apilogger.service;
 
+import java.time.LocalDate;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -8,9 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.apilogger.ApiLogger;
 import usw.suwiki.domain.apilogger.repository.ApiLoggerRepository;
-
-import java.time.LocalDate;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,7 +32,8 @@ public class ApiLoggerService {
             try {
                 apiLoggerRepository.save(makeNewApiStatistics(today, currentProcessTime, option));
             } catch (DataIntegrityViolationException exception) {
-                log.error("Try to Create Duplicated Unique Key Exception message : {}", exception.getMessage());
+                log.error("Try to Create Duplicated Unique Key Exception message : {}",
+                    exception.getMessage());
                 logApi(today, currentProcessTime, option);
             }
             return;
@@ -42,7 +42,7 @@ public class ApiLoggerService {
     }
 
     private ApiLogger makeNewApiStatistics(
-            LocalDate today, Long currentProcessTime, String option
+        LocalDate today, Long currentProcessTime, String option
     ) {
         ApiLogger newApiLogger = new ApiLogger();
         newApiLogger = switch (option) {
@@ -57,7 +57,7 @@ public class ApiLoggerService {
     }
 
     private ApiLogger makeOldApiStatistics(
-            ApiLogger apiLogger, Long currentProcessTime, String option
+        ApiLogger apiLogger, Long currentProcessTime, String option
     ) {
         switch (option) {
             case lecturePostsOption -> apiLogger.calculateLectureApiStatistics(currentProcessTime);

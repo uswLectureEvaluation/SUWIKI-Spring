@@ -34,11 +34,11 @@ public final class LectureStringConverter {
                     Integer endPeriod = periodList.get(periodList.size() - 1);
 
                     TimetableCellSchedule schedule = TimetableCellSchedule.builder()
-                            .location(location)
-                            .day(TimetableDay.ofKorean(day))
-                            .startPeriod(startPeriod)
-                            .endPeriod(endPeriod)
-                            .build();
+                        .location(location)
+                        .day(TimetableDay.ofKorean(day))
+                        .startPeriod(startPeriod)
+                        .endPeriod(endPeriod)
+                        .build();
                     scheduleList.add(schedule);
                 }
             }
@@ -107,8 +107,8 @@ public final class LectureStringConverter {
         String[] elements = stringList.split(",");
 
         return Arrays.stream(elements)
-                .map(Integer::parseInt)
-                .toList();
+            .map(Integer::parseInt)
+            .toList();
     }
 
 }

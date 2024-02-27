@@ -1,14 +1,13 @@
 package usw.suwiki.domain.confirmationtoken.repository;
 
+import static usw.suwiki.domain.confirmationtoken.QConfirmationToken.confirmationToken;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static usw.suwiki.domain.confirmationtoken.QConfirmationToken.confirmationToken;
 
 
 @Repository
@@ -20,9 +19,9 @@ public class ConfirmationTokenQueryDslRepositoryImpl implements ConfirmationToke
     @Override
     public List<ConfirmationToken> loadNotConfirmedTokensByExpiresAtIsNull(LocalDateTime localDateTime) {
         return query
-                .selectFrom(confirmationToken)
-                .where(confirmationToken.expiresAt.before(localDateTime))
-                .where(confirmationToken.confirmedAt.isNull())
-                .fetch();
+            .selectFrom(confirmationToken)
+            .where(confirmationToken.expiresAt.before(localDateTime))
+            .where(confirmationToken.confirmedAt.isNull())
+            .fetch();
     }
 }

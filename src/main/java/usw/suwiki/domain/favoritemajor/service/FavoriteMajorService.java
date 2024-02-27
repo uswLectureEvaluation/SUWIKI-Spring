@@ -1,5 +1,8 @@
 package usw.suwiki.domain.favoritemajor.service;
 
+import java.util.List;
+import java.util.Optional;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import usw.suwiki.domain.favoritemajor.FavoriteMajor;
@@ -8,14 +11,11 @@ import usw.suwiki.domain.favoritemajor.repository.FavoriteMajorRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
-
 @Transactional
 @RequiredArgsConstructor
 @Service
 public class FavoriteMajorService {
+
     private final FavoriteMajorRepository favoriteMajorRepository;
     private final UserRepository userRepository;
 
@@ -42,5 +42,4 @@ public class FavoriteMajorService {
             favoriteMajorRepository.delete(favorite);
         }
     }
-
 }

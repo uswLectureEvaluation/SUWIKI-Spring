@@ -13,6 +13,7 @@ import usw.suwiki.domain.lecture.domain.LectureSchedule;
 @Builder
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class JSONLectureVO {
+
     private final String selectedSemester;
     private final String placeSchedule;
     private final String professor;
@@ -28,39 +29,39 @@ public class JSONLectureVO {
 
     public static JSONLectureVO from(JSONObject jsonObject) {
         return JSONLectureVO.builder()
-                .selectedSemester(USWTermResolver.getSemester(jsonObject))
-                .placeSchedule(USWTermResolver.extractPlaceSchedule(jsonObject))
-                .professor(USWTermResolver.getOptionalProfessorName(jsonObject))
-                .lectureType(USWTermResolver.extractLectureFacultyType(jsonObject))
-                .lectureCode(USWTermResolver.extractLectureCode(jsonObject))
-                .lectureName(USWTermResolver.getLectureName(jsonObject))
-                .evaluateType(USWTermResolver.extractEvaluationType(jsonObject))
-                .dividedClassNumber(USWTermResolver.extractDivideClassNumber(jsonObject))
-                .majorType(USWTermResolver.getMajorType(jsonObject))
-                .point(USWTermResolver.extractLecturePoint(jsonObject))
-                .capacityPresentationType(USWTermResolver.extractCapacityType(jsonObject))
-                .grade(USWTermResolver.extractTargetGrade(jsonObject))
-                .build();
+            .selectedSemester(USWTermResolver.getSemester(jsonObject))
+            .placeSchedule(USWTermResolver.extractPlaceSchedule(jsonObject))
+            .professor(USWTermResolver.getOptionalProfessorName(jsonObject))
+            .lectureType(USWTermResolver.extractLectureFacultyType(jsonObject))
+            .lectureCode(USWTermResolver.extractLectureCode(jsonObject))
+            .lectureName(USWTermResolver.getLectureName(jsonObject))
+            .evaluateType(USWTermResolver.extractEvaluationType(jsonObject))
+            .dividedClassNumber(USWTermResolver.extractDivideClassNumber(jsonObject))
+            .majorType(USWTermResolver.getMajorType(jsonObject))
+            .point(USWTermResolver.extractLecturePoint(jsonObject))
+            .capacityPresentationType(USWTermResolver.extractCapacityType(jsonObject))
+            .grade(USWTermResolver.extractTargetGrade(jsonObject))
+            .build();
     }
 
     public Lecture toEntity() {
         LectureDetail lectureDetail = LectureDetail.builder()
-                .code(lectureCode)
-                .grade(grade)
-                .point(point)
-                .diclNo(dividedClassNumber)
-                .evaluateType(evaluateType)
-                .capprType(capacityPresentationType)
-                .build();
+            .code(lectureCode)
+            .grade(grade)
+            .point(point)
+            .diclNo(dividedClassNumber)
+            .evaluateType(evaluateType)
+            .capprType(capacityPresentationType)
+            .build();
 
         return Lecture.builder()
-                .name(lectureName)
-                .type(lectureType)
-                .professor(professor)
-                .semester(selectedSemester)
-                .majorType(majorType)
-                .lectureDetail(lectureDetail)
-                .build();
+            .name(lectureName)
+            .type(lectureType)
+            .professor(professor)
+            .semester(selectedSemester)
+            .majorType(majorType)
+            .lectureDetail(lectureDetail)
+            .build();
     }
 
 
@@ -70,14 +71,14 @@ public class JSONLectureVO {
 
     public boolean isLectureEqual(Lecture lecture) {
         return lecture.getName().equals(lectureName)
-                && lecture.getProfessor().equals(professor)
-                && lecture.getMajorType().equals(majorType)
-                && lecture.getLectureDetail().getDiclNo().equals(dividedClassNumber);
+            && lecture.getProfessor().equals(professor)
+            && lecture.getMajorType().equals(majorType)
+            && lecture.getLectureDetail().getDiclNo().equals(dividedClassNumber);
     }
 
     public boolean isLectureAndPlaceScheduleEqual(LectureSchedule lectureSchedule) {
         return isLectureEqual(lectureSchedule.getLecture())
-                && lectureSchedule.getPlaceSchedule().contains(placeSchedule);
+            && lectureSchedule.getPlaceSchedule().contains(placeSchedule);
     }
 
 }

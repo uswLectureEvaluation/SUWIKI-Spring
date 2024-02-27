@@ -9,23 +9,30 @@ import lombok.NoArgsConstructor;
 @Builder
 public class EvaluatePostSaveDto {
 
-    private String lectureName; //과목
+    private String lectureName;
     private String selectedSemester;
-    private String professor;   //교수
-
-    private float satisfaction;    //수업 만족도
-    private float learning; //배움지수
-    private float honey;    //꿀강지수
-
-    private int team;    //조모임 횟수
-    private int difficulty;   //성적비율
+    private String professor;
+    private float satisfaction;
+    private float learning;
+    private float honey;
+    private int team;
+    private int difficulty;
     private int homework;
-
-    private String content;    //주관적인 강의평가 입력내용
+    private String content;
 
     @Builder
-    public EvaluatePostSaveDto(String lectureName, String selectedSemester, String professor, float satisfaction,
-                               float learning, float honey, int team, int difficulty, int homework, String content) {
+    public EvaluatePostSaveDto(
+        String lectureName,
+        String selectedSemester,
+        String professor,
+        float satisfaction,
+        float learning,
+        float honey,
+        int team,
+        int difficulty,
+        int homework,
+        String content
+    ) {
         this.lectureName = lectureName;
         this.selectedSemester = selectedSemester;
         this.professor = professor;
@@ -37,5 +44,4 @@ public class EvaluatePostSaveDto {
         this.homework = homework;
         this.content = content;
     }
-
 }

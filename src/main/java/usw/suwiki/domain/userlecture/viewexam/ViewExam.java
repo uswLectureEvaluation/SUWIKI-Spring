@@ -1,5 +1,12 @@
 package usw.suwiki.domain.userlecture.viewexam;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,8 +14,6 @@ import lombok.NoArgsConstructor;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.global.BaseTimeEntity;
-
-import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
@@ -19,7 +24,7 @@ public class ViewExam extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //Auto Increment
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")

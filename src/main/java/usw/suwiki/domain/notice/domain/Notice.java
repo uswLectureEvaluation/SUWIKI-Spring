@@ -13,10 +13,10 @@ import usw.suwiki.global.BaseTimeEntity;
 @NoArgsConstructor
 @Entity
 public class Notice extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String title;
     private String content;
 

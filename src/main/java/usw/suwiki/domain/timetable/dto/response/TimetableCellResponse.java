@@ -10,6 +10,7 @@ import usw.suwiki.domain.timetable.entity.TimetableCell;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class TimetableCellResponse {
+
     long id;
     String lectureName;
     String professorName;
@@ -21,14 +22,14 @@ public class TimetableCellResponse {
 
     public static TimetableCellResponse of(TimetableCell cell) {
         return TimetableCellResponse.builder()
-                .id(cell.getId())
-                .lectureName(cell.getLectureName())
-                .professorName(cell.getProfessorName())
-                .color(cell.getColor().getValue())
-                .location(cell.getSchedule().getLocation())
-                .day(cell.getSchedule().getDay().getValue())
-                .startPeriod(cell.getSchedule().getStartPeriod())
-                .endPeriod(cell.getSchedule().getEndPeriod())
-                .build();
+            .id(cell.getId())
+            .lectureName(cell.getLectureName())
+            .professorName(cell.getProfessorName())
+            .color(cell.getColor().getValue())
+            .location(cell.getSchedule().getLocation())
+            .day(cell.getSchedule().getDay().getValue())
+            .startPeriod(cell.getSchedule().getStartPeriod())
+            .endPeriod(cell.getSchedule().getEndPeriod())
+            .build();
     }
 }

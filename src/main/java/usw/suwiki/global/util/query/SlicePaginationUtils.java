@@ -6,6 +6,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 public class SlicePaginationUtils {
+
     public static final int SLICE_LIMIT_PLUS_AMOUNT = 1;
 
     public static <T> Slice<T> buildSlice(List<T> content, int size) {

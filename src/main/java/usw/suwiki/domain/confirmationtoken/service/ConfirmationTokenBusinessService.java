@@ -1,24 +1,17 @@
 package usw.suwiki.domain.confirmationtoken.service;
 
+import java.util.Optional;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
-import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthFailedForm;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthSuccessForm;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
 @Service
 @AllArgsConstructor
 @Transactional
-@Slf4j
 public class ConfirmationTokenBusinessService {
 
     private final UserCRUDService userCRUDService;
@@ -28,7 +21,7 @@ public class ConfirmationTokenBusinessService {
 
     public String confirmToken(String token) {
         Optional<ConfirmationToken> wrappedConfirmationToken =
-                confirmationTokenCRUDService.loadConfirmationTokenFromPayload(token);
+            confirmationTokenCRUDService.loadConfirmationTokenFromPayload(token);
         if (wrappedConfirmationToken.isPresent()) {
             ConfirmationToken confirmationToken = wrappedConfirmationToken.get();
             if (confirmationToken.isTokenExpired()) {
@@ -43,19 +36,4 @@ public class ConfirmationTokenBusinessService {
         return buildEmailAuthFailedForm.internalError();
     }
 
-    // 이메일 인증 안한 유저는 매 분마다 검사하여 삭제
-    @Transactional
-    @Scheduled(cron = "0 * * * * * ")
-    public void isNotConfirmedEmail() {
-        log.info("{} - 이메일 인증을 수행하지 않은 유저 검증 시작", LocalDateTime.now());
-        List<ConfirmationToken> confirmationTokens = confirmationTokenCRUDService.loadNotConfirmedTokens(
-                LocalDateTime.now().minusMinutes(30)
-        );
-        for (ConfirmationToken confirmationToken : confirmationTokens) {
-            User targetUser = userCRUDService.loadUserFromUserIdx(confirmationToken.getUserIdx());
-            confirmationTokenCRUDService.deleteFromId(confirmationToken.getId());
-            userCRUDService.deleteFromUserIdx(targetUser.getId());
-        }
-        log.info("{} - 이메일 인증을 수행하지 않은 유저 검증 종료", LocalDateTime.now());
-    }
 }

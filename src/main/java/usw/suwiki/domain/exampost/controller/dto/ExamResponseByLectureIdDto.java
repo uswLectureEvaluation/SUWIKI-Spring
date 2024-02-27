@@ -8,12 +8,10 @@ public class ExamResponseByLectureIdDto {
 
     private final Long id;
     private final String selectedSemester;
-
     private final String examType;
-    private final String examInfo;    //시험방식
-    private final String examDifficulty;    //난이도
-
-    private final String content;    //주관적인 강의평가 입력내용
+    private final String examInfo;
+    private final String examDifficulty;
+    private final String content;
 
     public ExamResponseByLectureIdDto(ExamPost entity) {
         this.id = entity.getId();

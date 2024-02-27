@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class NoticeSaveOrUpdateDto {
+
     private String title;
     private String content;
 

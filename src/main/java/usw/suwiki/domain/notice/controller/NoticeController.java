@@ -1,12 +1,18 @@
 package usw.suwiki.domain.notice.controller;
 
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.notice.controller.dto.NoticeDetailResponseDto;
 import usw.suwiki.domain.notice.controller.dto.NoticeResponseDto;
 import usw.suwiki.domain.notice.controller.dto.NoticeSaveOrUpdateDto;
@@ -18,100 +24,90 @@ import usw.suwiki.global.exception.ExceptionType;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(value = "/notice")
 public class NoticeController {
 
-	private final NoticeService noticeService;
-	private final JwtAgent jwtAgent;
+    private final NoticeService noticeService;
+    private final JwtAgent jwtAgent;
 
-	@ApiLogger(option = "notice")
-	@GetMapping("/all")
-	public ResponseForm findNoticesApi(
-			@RequestParam(required = false) Optional<Integer> page) {
+    @ApiLogger(option = "notice")
+    @GetMapping("/all")
+    public ResponseForm findNoticesApi(@RequestParam(required = false) Optional<Integer> page) {
+        PageOption option = new PageOption(page);
+        List<NoticeResponseDto> response = noticeService.readAllNotice(option);
+        return new ResponseForm(response);
+    }
 
-		PageOption option = new PageOption(page);
-		List<NoticeResponseDto> response = noticeService.readAllNotice(option);
-		return new ResponseForm(response);
-	}
+    @ApiLogger(option = "notice")
+    @GetMapping("/")
+    public ResponseForm findNoticeApi(@RequestParam Long noticeId) {
+        NoticeDetailResponseDto response = noticeService.readNotice(noticeId);
+        return new ResponseForm(response);
+    }
 
-	@ApiLogger(option = "notice")
-	@GetMapping("/")
-	public ResponseForm findNoticeApi(
-			@RequestParam Long noticeId) {
+    @ApiLogger(option = "notice")
+    @GetMapping("/v2/all")
+    public ResponseForm findNoticesApiV2(@RequestParam(required = false) Optional<Integer> page) {
+        PageOption option = new PageOption(page);
+        List<NoticeResponseDto> response = noticeService.readAllNotice(option);
+        return new ResponseForm(response);
+    }
 
-		NoticeDetailResponseDto response = noticeService.readNotice(noticeId);
-		return new ResponseForm(response);
-	}
+    @ApiLogger(option = "notice")
+    @GetMapping("/v2/")
+    public ResponseForm findNoticeApiV2(@RequestParam Long noticeId) {
+        NoticeDetailResponseDto response = noticeService.readNotice(noticeId);
+        return new ResponseForm(response);
+    }
 
+    @ApiLogger(option = "notice")
+    @PostMapping("/")
+    public String writeNoticeApi(
+        @RequestBody NoticeSaveOrUpdateDto requestBody,
+        @RequestHeader String Authorization
+    ) {
+        jwtAgent.validateJwt(Authorization);
+        validateAdmin(Authorization);
+        noticeService.write(requestBody);
 
-	@ApiLogger(option = "notice")
-	@GetMapping("/v2/all")
-	public ResponseForm findNoticesApiV2(
-		@RequestParam(required = false) Optional<Integer> page) {
+        return "success";
+    }
 
-		PageOption option = new PageOption(page);
-		List<NoticeResponseDto> response = noticeService.readAllNotice(option);
-		return new ResponseForm(response);
-	}
+    @ApiLogger(option = "notice")
+    @PutMapping("/")
+    public String updateNotice(
+        @RequestParam Long noticeId,
+        @RequestBody NoticeSaveOrUpdateDto dto,
+        @RequestHeader String Authorization
+    ) {
+        jwtAgent.validateJwt(Authorization);
+        validateAdmin(Authorization);
+        noticeService.update(dto, noticeId);
 
-	@ApiLogger(option = "notice")
-	@GetMapping("/v2/")
-	public ResponseForm findNoticeApiV2(
-		@RequestParam Long noticeId) {
+        return "success";
+    }
 
-		NoticeDetailResponseDto response = noticeService.readNotice(noticeId);
-		return new ResponseForm(response);
-	}
+    @ApiLogger(option = "notice")
+    @DeleteMapping("/")
+    public String deleteNotice(
+        @RequestParam Long noticeId,
+        @RequestHeader String Authorization
+    ) {
+        jwtAgent.validateJwt(Authorization);
+        validateAdmin(Authorization);
+        noticeService.delete(noticeId);
 
-	@ApiLogger(option = "notice")
-	@PostMapping("/")
-	public String writeNoticeApi(
-		@RequestBody NoticeSaveOrUpdateDto requestBody,
-		@RequestHeader String Authorization) {
+        return "success";
+    }
 
-		jwtAgent.validateJwt(Authorization);
-		validateAdmin(Authorization);
-		noticeService.write(requestBody);
-
-		return "success";
-	}
-
-	@ApiLogger(option = "notice")
-	@PutMapping("/")
-	public String updateNotice(
-		@RequestParam Long noticeId,
-		@RequestBody NoticeSaveOrUpdateDto dto,
-		@RequestHeader String Authorization
-	) {
-		jwtAgent.validateJwt(Authorization);
-		validateAdmin(Authorization);
-		noticeService.update(dto, noticeId);
-
-		return "success";
-	}
-
-	@ApiLogger(option = "notice")
-	@DeleteMapping("/")
-	public String deleteNotice(@RequestParam Long noticeId,
-		@RequestHeader String Authorization) {
-		jwtAgent.validateJwt(Authorization);
-		validateAdmin(Authorization);
-		noticeService.delete(noticeId);
-
-		return "success";
-	}
-
-	private void validateAdmin(String authorization) {
-		if (!(jwtAgent.getUserRole(authorization).equals("ADMIN"))) {
-			throw new AccountException(ExceptionType.USER_RESTRICTED);
-		}
-	}
+    private void validateAdmin(String authorization) {
+        if (!(jwtAgent.getUserRole(authorization).equals("ADMIN"))) {
+            throw new AccountException(ExceptionType.USER_RESTRICTED);
+        }
+    }
 }
 
 

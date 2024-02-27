@@ -1,5 +1,14 @@
 package usw.suwiki.global.interceptor;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
+
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -11,20 +20,11 @@ import usw.suwiki.global.annotation.JWTVerify;
 import usw.suwiki.global.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtInterceptor extends HandlerInterceptorAdaptor {
+
     private static final String ADMIN = "ADMIN";
 
     private final ApiLoggerService apiLoggerService;
@@ -34,9 +34,9 @@ public class JwtInterceptor extends HandlerInterceptorAdaptor {
 
     @Override
     public boolean preHandle(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Object handler
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Object handler
     ) {
         startCount();
 
@@ -65,8 +65,7 @@ public class JwtInterceptor extends HandlerInterceptorAdaptor {
     }
 
     /**
-     * JWT를 request에서 추출한 뒤, getUserRole()를 호출한다.
-     * getUserRole()로 JWT를 검증하고 역할을 추출한다.
+     * JWT를 request에서 추출한 뒤, getUserRole()를 호출한다. getUserRole()로 JWT를 검증하고 역할을 추출한다.
      */
     private String validateTokenAndExtractRole(HttpServletRequest request) {
         String jwt = request.getHeader(AUTHORIZATION);
@@ -79,10 +78,10 @@ public class JwtInterceptor extends HandlerInterceptorAdaptor {
 
     @Override
     public void afterCompletion(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Object handler,
-            Exception ex
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Object handler,
+        Exception ex
     ) {
         LocalDateTime end = LocalDateTime.now();
         log.info("{} Api Call startTime = {}, endTime = {}", request.getRequestURI(), start, end);

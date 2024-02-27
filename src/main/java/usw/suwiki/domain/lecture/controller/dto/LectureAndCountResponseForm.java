@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class LectureAndCountResponseForm {
+
     Object data;
 
     Long count;
@@ -14,5 +15,4 @@ public class LectureAndCountResponseForm {
         this.data = data;
         this.count = count;
     }
-
 }

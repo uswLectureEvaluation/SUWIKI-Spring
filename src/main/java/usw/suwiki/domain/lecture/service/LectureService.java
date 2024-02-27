@@ -65,21 +65,21 @@ public class LectureService {
     }
 
     public NoOffsetPaginationResponse<LectureWithOptionalScheduleResponse> findPagedLecturesWithSchedule(
-            Long cursorId,
-            int limit,
-            String keyword,
-            String major,
-            Integer grade
+        Long cursorId,
+        int limit,
+        String keyword,
+        String major,
+        Integer grade
     ) {
         Slice<Lecture> lectureSlice = lectureRepository
-                .findCurrentSemesterLectures(cursorId, limit, keyword, major, grade);
+            .findCurrentSemesterLectures(cursorId, limit, keyword, major, grade);
 
         List<LectureWithOptionalScheduleResponse> result = buildLectureWithOptionalScheduleResponseList(lectureSlice);
         return NoOffsetPaginationResponse.of(result, lectureSlice.isLast());
     }
 
     private static List<LectureWithOptionalScheduleResponse> buildLectureWithOptionalScheduleResponseList(
-            Slice<Lecture> slice
+        Slice<Lecture> slice
     ) {
         List<LectureWithOptionalScheduleResponse> result = new ArrayList<>();
         for (Lecture lecture : slice) {
@@ -87,20 +87,17 @@ public class LectureService {
                 result.add(LectureWithOptionalScheduleResponse.from(lecture));
             } else {
                 result.addAll(lecture.getScheduleList()
-                        .stream()
-                        .map(LectureWithOptionalScheduleResponse::from)
-                        .toList());
+                    .stream()
+                    .map(LectureWithOptionalScheduleResponse::from)
+                    .toList());
             }
         }
         return result;
     }
 
-    /**
-     * 공통 메서드
-     */
     public Lecture findLectureById(Long id) {
         return lectureRepository.findById(id)
-                .orElseThrow(() -> new LectureException(LECTURE_NOT_FOUND));
+            .orElseThrow(() -> new LectureException(LECTURE_NOT_FOUND));
     }
 
 
@@ -146,9 +143,9 @@ public class LectureService {
     private void deleteAllRemovedLectures(List<JSONLectureVO> jsonLectureVOList) {
         List<Lecture> currentSemeterLectureList = lectureRepository.findAllBySemesterContains(currentSemester);
         List<Lecture> removedLectureList =
-                currentSemeterLectureList.stream()
-                        .filter(it -> jsonLectureVOList.stream().noneMatch(vo -> vo.isLectureEqual(it)))
-                        .toList();
+            currentSemeterLectureList.stream()
+                .filter(it -> jsonLectureVOList.stream().noneMatch(vo -> vo.isLectureEqual(it)))
+                .toList();
 
         for (Lecture lecture : removedLectureList) {
             if (lecture.isOld()) {
@@ -162,12 +159,12 @@ public class LectureService {
 
     private void deleteAllRemovedLectureSchedules(List<JSONLectureVO> jsonLectureVOList) {
         List<LectureSchedule> currentSemeterLectureScheduleList = lectureRepository
-                .findAllLectureSchedulesByLectureSemesterContains(currentSemester);
+            .findAllLectureSchedulesByLectureSemesterContains(currentSemester);
 
         List<LectureSchedule> removedLectureScheduleList = // 기존의 스케줄이 삭제된 케이스 필터링 : O(N^2) 비교
-                currentSemeterLectureScheduleList.stream()
-                        .filter(it -> jsonLectureVOList.stream().noneMatch(vo -> vo.isLectureAndPlaceScheduleEqual(it)))
-                        .toList();
+            currentSemeterLectureScheduleList.stream()
+                .filter(it -> jsonLectureVOList.stream().noneMatch(vo -> vo.isLectureAndPlaceScheduleEqual(it)))
+                .toList();
 
         lectureScheduleRepository.deleteAll(removedLectureScheduleList);
     }
@@ -177,13 +174,13 @@ public class LectureService {
     }
 
     private void insertJsonLectureOrLectureSchedule(
-            JSONLectureVO jsonLectureVO
+        JSONLectureVO jsonLectureVO
     ) {
         Optional<Lecture> optionalLecture = lectureRepository.findByExtraUniqueKey(
-                jsonLectureVO.getLectureName(),
-                jsonLectureVO.getProfessor(),
-                jsonLectureVO.getMajorType(),
-                jsonLectureVO.getDividedClassNumber()
+            jsonLectureVO.getLectureName(),
+            jsonLectureVO.getProfessor(),
+            jsonLectureVO.getMajorType(),
+            jsonLectureVO.getDividedClassNumber()
         );
 
         if (optionalLecture.isPresent()) {
@@ -191,7 +188,7 @@ public class LectureService {
             lecture.addSemester(jsonLectureVO.getSelectedSemester());
 
             boolean isThereNewSchedule = lecture.getScheduleList().stream()
-                    .noneMatch(jsonLectureVO::isLectureAndPlaceScheduleEqual);
+                .noneMatch(jsonLectureVO::isLectureAndPlaceScheduleEqual);
             if (isThereNewSchedule) {
                 saveLectureSchedule(jsonLectureVO, lecture);
             }
@@ -206,22 +203,22 @@ public class LectureService {
     private void saveLectureSchedule(JSONLectureVO jsonLectureVO, Lecture lecture) {
         if (jsonLectureVO.isPlaceScheduleValid()) {
             LectureSchedule schedule = LectureSchedule.builder()
-                    .lecture(lecture)
-                    .placeSchedule(jsonLectureVO.getPlaceSchedule())
-                    .semester(currentSemester)
-                    .build();
+                .lecture(lecture)
+                .placeSchedule(jsonLectureVO.getPlaceSchedule())
+                .semester(currentSemester)
+                .build();
             lectureScheduleRepository.save(schedule);
         }
     }
 
     private static List<LectureSchedule> resolveDeletedLectureScheduleList(
-            List<JSONLectureVO> jsonLectureVOList,
-            List<LectureSchedule> currentSemeterLectureScheduleList
+        List<JSONLectureVO> jsonLectureVOList,
+        List<LectureSchedule> currentSemeterLectureScheduleList
     ) {
         // 기존의 스케줄이 삭제된 케이스 필터링 : O(N^2) 비교
         return currentSemeterLectureScheduleList.stream()
-                .filter(it -> jsonLectureVOList.stream().noneMatch(vo -> vo.isLectureAndPlaceScheduleEqual(it)))
-                .toList();
+            .filter(it -> jsonLectureVOList.stream().noneMatch(vo -> vo.isLectureAndPlaceScheduleEqual(it)))
+            .toList();
     }
 
     private LectureAndCountResponseForm readLectureByKeywordAndOption(String keyword, LectureFindOption option) {
