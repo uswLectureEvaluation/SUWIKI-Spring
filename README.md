@@ -8,26 +8,28 @@
     </tr>
     <tr align="center">
         <td>
-            <img src="https://github.com/JIWEON-JEONG.png" style="max-width: 10px">
-            <br>
-            <a href="https://github.com/JIWEON-JEONG"><I>JIWEON-JEONG</I></a>
-            <br>강의평가 CRUD API<br>시험정보 CRUD API<br>홈 API<br>공지사항 API<br>XSS Filter 기능 구현<br>인수 테스트 템플릿 제작
+            <p><img src="https://github.com/JIWEON-JEONG.png" width="70%"/></p>
         </td>
         <td>
-          <img src="https://github.com/k-diger.png" style="max-width: 10px">
-            <br>
-            <a href="https://github.com/k-diger"><I>K-Diger</I></a>
-            <br>사용자 인증/인가<br>관리자 페이지 API<br>휴면계정 관련 법률 조항에 따른 스케줄링 기능 구현<br>제재 유저, 블랙리스트 유저 정책 로직 구현<br>CI/CD 파이프라인 구축<br>인수 테스트 템플릿 제작
+            <p><img src="https://github.com/k-diger.png" width="70%" alt=""/></p>
         </td>
         <td>
-          <img src="https://github.com/wonslee.png" style="width: 320px">
-            <a href="https://github.com/wonslee"><I>wonslee</I></a>
-            <br>강의 시간표
-            <br>강의 데이터 적재 로직 유지보수
-            <br>개발 서버 및 CI/CD 파이프라인 구축
+            <p><img src="https://github.com/wonslee.png" width="70%" alt=""/></p>
+        </td>
+    </tr>
+    <tr align="center">
+        <td>
+            강의평가 CRUD API<br>시험정보 CRUD API<br>홈 API<br>공지사항 API<br>XSS Filter 기능 구현<br>인수 테스트 템플릿 제작
+        </td>
+        <td>
+            사용자 인증/인가<br>관리자 페이지 API<br>휴면계정 관련 법률 조항에 따른 스케줄링 기능 구현<br>제재 유저, 블랙리스트 유저 정책 로직 구현<br>CI/CD 파이프라인 구축<br>인수 테스트 템플릿 제작
+        </td>
+        <td>
+            강의 시간표<br>강의 데이터 적재 로직 유지보수<br>개발 서버 및 CI/CD 파이프라인 구축
         </td>
     </tr>
 </table>
+
 
 ### Infrastructure
 
