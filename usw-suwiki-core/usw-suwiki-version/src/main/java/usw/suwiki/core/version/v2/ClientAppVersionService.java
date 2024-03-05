@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.VersionException;
+import usw.suwiki.core.exception.errortype.VersionException;
 
 
 @Service

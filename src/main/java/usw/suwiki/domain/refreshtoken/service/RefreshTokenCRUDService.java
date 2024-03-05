@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.refreshtoken.RefreshToken;
 import usw.suwiki.domain.refreshtoken.repository.RefreshTokenRepository;
 import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.core.exception.errortype.AccountException;
 
 @Service
 @Transactional

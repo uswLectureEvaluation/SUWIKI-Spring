@@ -40,7 +40,7 @@ import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.annotation.SuwikiMockitoTest;
 import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.TimetableException;
+import usw.suwiki.core.exception.errortype.TimetableException;
 
 @SuwikiMockitoTest
 public class TimetableServiceTest {

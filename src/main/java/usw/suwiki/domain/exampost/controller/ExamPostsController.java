@@ -16,8 +16,8 @@ import usw.suwiki.global.PageOption;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.annotation.JWTVerify;
-import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.exception.errortype.ExamPostException;
+import usw.suwiki.core.exception.errortype.AccountException;
+import usw.suwiki.core.exception.errortype.ExamPostException;
 import usw.suwiki.global.jwt.JwtAgent;
 
 import java.util.List;

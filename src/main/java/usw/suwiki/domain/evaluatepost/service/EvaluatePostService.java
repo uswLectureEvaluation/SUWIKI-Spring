@@ -20,7 +20,7 @@ import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.PageOption;
-import usw.suwiki.global.exception.errortype.EvaluatePostException;
+import usw.suwiki.core.exception.errortype.EvaluatePostException;
 
 @Service
 @RequiredArgsConstructor

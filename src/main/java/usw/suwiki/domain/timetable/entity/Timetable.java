@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.global.BaseTimeEntity;
 import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.TimetableException;
+import usw.suwiki.core.exception.errortype.TimetableException;
 
 @Entity
 @Getter

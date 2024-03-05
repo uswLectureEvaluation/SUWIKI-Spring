@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import usw.suwiki.auth.annotation.JWTVerify;
 import usw.suwiki.auth.jwt.JwtAgent;
-import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.core.exception.errortype.AccountException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

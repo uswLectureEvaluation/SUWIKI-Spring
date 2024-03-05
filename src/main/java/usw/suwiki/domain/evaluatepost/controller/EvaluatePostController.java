@@ -25,7 +25,7 @@ import usw.suwiki.domain.evaluatepost.service.dto.FindByLectureToJson;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
-import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.core.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
 
 @RestController

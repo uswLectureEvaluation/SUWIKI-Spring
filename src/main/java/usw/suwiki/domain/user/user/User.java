@@ -27,7 +27,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.timetable.entity.Timetable;
-import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.core.exception.errortype.AccountException;
 
 @Entity
 @Getter

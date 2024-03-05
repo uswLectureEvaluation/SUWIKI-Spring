@@ -17,7 +17,7 @@ import usw.suwiki.domain.version.repository.ClientAppVersionRepository;
 import usw.suwiki.domain.version.service.ClientAppVersionService;
 import usw.suwiki.global.annotation.SuwikiMockitoTest;
 import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.VersionException;
+import usw.suwiki.core.exception.errortype.VersionException;
 
 @SuwikiMockitoTest
 public class ClientAppVersionServiceTest {

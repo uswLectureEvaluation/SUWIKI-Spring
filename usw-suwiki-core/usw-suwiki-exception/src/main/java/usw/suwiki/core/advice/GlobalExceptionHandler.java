@@ -1,7 +1,4 @@
-package usw.suwiki.global.exception;
-
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static usw.suwiki.global.exception.ExceptionType.PARAM_VALID_ERROR;
+package usw.suwiki.core.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TypeMismatchException;
@@ -12,7 +9,10 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import usw.suwiki.global.exception.errortype.BaseException;
+import usw.suwiki.core.exception.BaseException;
+import usw.suwiki.core.exception.ExceptionType;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
 @ControllerAdvice
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
     })
     public ResponseEntity<ErrorResponse> handleRequestValidationException(Exception e) {
 
-        ExceptionType exception = PARAM_VALID_ERROR;
+        ExceptionType exception = ExceptionType.PARAM_VALID_ERROR;
 
         ErrorResponse errorResponse = ErrorResponse.builder()
             .exception(exception.name())

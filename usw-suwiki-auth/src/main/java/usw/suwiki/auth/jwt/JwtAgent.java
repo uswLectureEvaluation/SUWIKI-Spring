@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.refreshtoken.RefreshToken;
 import usw.suwiki.domain.refreshtoken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.user.user.User;
-import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.core.exception.errortype.AccountException;
 
 import java.security.Key;
 import java.time.LocalDateTime;

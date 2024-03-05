@@ -30,7 +30,7 @@ import usw.suwiki.domain.lecture.domain.repository.LectureScheduleRepository;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 import usw.suwiki.global.dto.NoOffsetPaginationResponse;
 import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.LectureException;
+import usw.suwiki.core.exception.errortype.LectureException;
 import usw.suwiki.global.util.loadjson.JSONLectureVO;
 
 @Service

@@ -1,4 +1,8 @@
-package usw.suwiki.global.exception;
+package usw.suwiki.core.exception;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -8,12 +12,9 @@ import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
-
+// todo: package, naming 고려하기 (24.03.06 Hejow)
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public enum ExceptionType {
 
     /**

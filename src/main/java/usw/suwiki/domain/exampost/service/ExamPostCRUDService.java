@@ -10,8 +10,8 @@ import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.exception.errortype.ExamPostException;
+import usw.suwiki.core.exception.errortype.AccountException;
+import usw.suwiki.core.exception.errortype.ExamPostException;
 
 import java.util.List;
 import java.util.Optional;

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import usw.suwiki.domain.notice.domain.Notice;
 import usw.suwiki.domain.notice.domain.repository.NoticeRepository;
 import usw.suwiki.global.PageOption;
-import usw.suwiki.global.exception.errortype.NoticeException;
+import usw.suwiki.core.exception.errortype.NoticeException;
 
 @Service
 @RequiredArgsConstructor

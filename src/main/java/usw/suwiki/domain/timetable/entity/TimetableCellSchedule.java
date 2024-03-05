@@ -13,7 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.TimetableException;
+import usw.suwiki.core.exception.errortype.TimetableException;
 
 @Embeddable
 @Getter

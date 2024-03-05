@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.global.BaseTimeEntity;
 import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.VersionException;
+import usw.suwiki.core.exception.errortype.VersionException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

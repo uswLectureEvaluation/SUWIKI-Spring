@@ -13,7 +13,7 @@ import usw.suwiki.domain.favoritemajor.repository.FavoriteMajorRepositoryV2;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserBusinessService;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
-import usw.suwiki.global.exception.errortype.FavoriteMajorException;
+import usw.suwiki.core.exception.errortype.FavoriteMajorException;
 import usw.suwiki.global.jwt.JwtAgent;
 
 @Transactional

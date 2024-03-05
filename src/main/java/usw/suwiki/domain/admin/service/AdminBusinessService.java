@@ -31,7 +31,7 @@ import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.domain.user.userIsolation.service.UserIsolationCRUDService;
-import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.core.exception.errortype.AccountException;
 import usw.suwiki.global.jwt.JwtAgent;
 
 @Service

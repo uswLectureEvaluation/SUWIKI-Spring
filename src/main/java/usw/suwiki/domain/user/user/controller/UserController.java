@@ -41,7 +41,7 @@ import usw.suwiki.domain.user.user.service.UserBusinessService;
 import usw.suwiki.global.ResponseForm;
 import usw.suwiki.global.annotation.ApiLogger;
 import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.AccountException;
+import usw.suwiki.core.exception.errortype.AccountException;
 
 @RestController
 @RequestMapping("/user")

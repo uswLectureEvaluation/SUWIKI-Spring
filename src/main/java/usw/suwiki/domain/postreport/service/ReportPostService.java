@@ -10,7 +10,7 @@ import usw.suwiki.domain.postreport.EvaluatePostReport;
 import usw.suwiki.domain.postreport.ExamPostReport;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
-import usw.suwiki.global.exception.errortype.ReportedPostException;
+import usw.suwiki.core.exception.errortype.ReportedPostException;
 
 @Service
 @Transactional

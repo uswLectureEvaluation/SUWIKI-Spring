@@ -1,6 +1,4 @@
-package usw.suwiki.global.exception.errortype;
-
-import usw.suwiki.global.exception.ExceptionType;
+package usw.suwiki.core.exception;
 
 public class FavoriteMajorException extends BaseException{
     public FavoriteMajorException(ExceptionType exceptionType) {

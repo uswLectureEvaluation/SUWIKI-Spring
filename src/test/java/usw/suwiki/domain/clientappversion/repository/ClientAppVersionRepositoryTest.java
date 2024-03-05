@@ -17,7 +17,7 @@ import usw.suwiki.domain.version.entity.ClientAppVersion;
 import usw.suwiki.domain.version.entity.ClientOS;
 import usw.suwiki.domain.version.repository.ClientAppVersionRepository;
 import usw.suwiki.global.annotation.SuwikiJpaTest;
-import usw.suwiki.global.exception.errortype.VersionException;
+import usw.suwiki.core.exception.errortype.VersionException;
 
 @SuwikiJpaTest
 public class ClientAppVersionRepositoryTest {

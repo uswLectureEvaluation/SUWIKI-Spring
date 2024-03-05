@@ -9,7 +9,7 @@ import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
-import usw.suwiki.global.exception.errortype.LectureException;
+import usw.suwiki.core.exception.errortype.LectureException;
 
 @Service
 @RequiredArgsConstructor

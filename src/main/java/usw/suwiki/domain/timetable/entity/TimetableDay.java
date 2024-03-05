@@ -3,7 +3,7 @@ package usw.suwiki.domain.timetable.entity;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.TimetableException;
+import usw.suwiki.core.exception.errortype.TimetableException;
 import usw.suwiki.global.util.enums.KeyValueEnumModel;
 
 @RequiredArgsConstructor

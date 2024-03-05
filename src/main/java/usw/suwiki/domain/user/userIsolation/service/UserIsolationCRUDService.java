@@ -1,20 +1,21 @@
 package usw.suwiki.domain.user.userIsolation.service;
 
-import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.core.exception.errortype.AccountException;
+import usw.suwiki.domain.user.userIsolation.UserIsolation;
+import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.user.userIsolation.UserIsolation;
-import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
-import usw.suwiki.global.exception.errortype.AccountException;
+
+import static usw.suwiki.global.exception.ExceptionType.USER_NOT_EXISTS;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class UserIsolationCRUDService {
 
     private final UserIsolationRepository userIsolationRepository;

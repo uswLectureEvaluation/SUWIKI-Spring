@@ -1,7 +1,6 @@
-package usw.suwiki.global.exception.errortype;
+package usw.suwiki.core.exception;
 
 import lombok.Getter;
-import usw.suwiki.global.exception.ExceptionType;
 
 public class BaseException extends RuntimeException {
 
