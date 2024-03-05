@@ -25,3 +25,4 @@ include 'usw-suwiki-infra:usw-suwiki-caffeine'
 
 include 'usw-suwiki-statistics'
 
+include 'usw-suwiki-scheduler'

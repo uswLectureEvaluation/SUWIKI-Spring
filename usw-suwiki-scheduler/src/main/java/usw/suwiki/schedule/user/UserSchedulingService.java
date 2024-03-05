@@ -1,7 +1,5 @@
-package usw.suwiki.domain.user.user.service;
+package usw.suwiki.schedule.user;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,10 +20,13 @@ import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.global.util.emailBuild.BuildPersonalInformationUsingNotifyForm;
 import usw.suwiki.global.util.mailsender.EmailSendService;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class UserSchedulingService {
 
     private final UserRepository userRepository;
@@ -45,22 +46,24 @@ public class UserSchedulingService {
     @Scheduled(cron = "0 1 0 1 3 *")
     public void sendPrivacyPolicyMail() {
         log.info("{} - 개인정보 처리 방침 안내 발송 시작", LocalDateTime.now());
-        List<User> users = userRepository.findAll();
+
         String emailContent = buildPersonalInformationUsingNotifyForm.buildEmail();
-        for (User user : users) {
+        for (User user : userRepository.findAll()) {
             emailSendService.send(user.getEmail(), emailContent);
         }
+
         log.info("{} - 개인정보 처리 방침 안내 발송 종료", LocalDateTime.now());
     }
 
-    @Transactional
     @Scheduled(cron = "0 0 * * * *")
     public void deleteRequestQuitUserAfter30Days() {
         log.info("{} - 회원탈퇴 유저 제거 시작", LocalDateTime.now());
+
         LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
         List<User> targetUser = userRepository.findByRequestedQuitDateBefore(targetTime);
         List<UserIsolation> targetUserIsolation = userIsolationRepository.findByRequestedQuitDateBefore(targetTime);
-        if (targetUser.size() > 0) {
+
+        if (!targetUser.isEmpty()) {
             for (int index = 0; index < targetUser.toArray().length; index++) {
                 Long userId = targetUser.get(index).getId();
                 viewExamCRUDService.deleteAllFromUserIdx(userId);
@@ -73,7 +76,7 @@ public class UserSchedulingService {
                 confirmationTokenRepository.deleteByUserIdx(userId);
                 userRepository.deleteById(userId);
             }
-        } else if (targetUser.size() == 0) {
+        } else {
             for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
                 Long userIdx = targetUserIsolation.get(i).getUserIdx();
                 viewExamCRUDService.deleteAllFromUserIdx(userIdx);
@@ -87,6 +90,7 @@ public class UserSchedulingService {
                 userIsolationRepository.deleteByLoginId(targetUserIsolation.get(i).getLoginId());
             }
         }
+
         log.info("{} - 회원탈퇴 유저 제거 종료", LocalDateTime.now());
     }
 }

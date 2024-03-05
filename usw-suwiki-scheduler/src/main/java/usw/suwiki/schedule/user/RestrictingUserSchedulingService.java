@@ -1,7 +1,5 @@
-package usw.suwiki.domain.restrictinguser.service;
+package usw.suwiki.schedule.user;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,10 +10,13 @@ import usw.suwiki.domain.restrictinguser.repository.RestrictingUserRepository;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 
-@Service
-@RequiredArgsConstructor
-@Transactional
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Slf4j
+@Service
+@Transactional
+@RequiredArgsConstructor
 public class RestrictingUserSchedulingService {
 
     private final UserCRUDService userCRUDService;
@@ -26,11 +27,13 @@ public class RestrictingUserSchedulingService {
         log.info("{} - 정지 유저 출소 시작", LocalDateTime.now());
         List<RestrictingUser> restrictingUsers =
             restrictingUserRepository.findByRestrictingDateBefore(LocalDateTime.now());
+
         for (RestrictingUser restrictingUser : restrictingUsers) {
             User user = userCRUDService.loadUserFromUserIdx(restrictingUser.getUserIdx());
             user.editRestricted(false);
             restrictingUserRepository.deleteByUserIdx(user.getId());
         }
+
         log.info("{} - 정지 유저 출소 종료", LocalDateTime.now());
     }
 
