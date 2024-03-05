@@ -1,4 +1,4 @@
-package usw.suwiki.global.util.emailBuild;
+package usw.suwiki.external.mail.form;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

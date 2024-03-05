@@ -1,24 +1,23 @@
-package usw.suwiki.global.util.mailsender;
+package usw.suwiki.external.mail;
 
-import static usw.suwiki.global.exception.ExceptionType.SEND_MAIL_FAILED;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import usw.suwiki.global.exception.errortype.MailException;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class EmailSendService implements EmailSender {
 
     private final JavaMailSender javaMailSender;
 
-    @Override
     @Async
+    @Override
     public void send(String to, String email) {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -29,7 +28,7 @@ public class EmailSendService implements EmailSender {
             mimeMessageHelper.setFrom("uswsuwiki.gmail.com");
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new MailException(SEND_MAIL_FAILED);
+            throw new MailException(ExceptionType.SEND_MAIL_FAILED);
         }
     }
 }
