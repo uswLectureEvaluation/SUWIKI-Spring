@@ -1,4 +1,4 @@
-package usw.suwiki.global.version;
+package usw.suwiki.core.version.v1;
 
 import lombok.Getter;
 
@@ -7,7 +7,7 @@ public class SuwikiVersion {
 
     public static final float version = 1.01f;
 
-    //never instantiated
     private SuwikiVersion() {
+        throw new IllegalStateException("never instantiated");
     }
 }

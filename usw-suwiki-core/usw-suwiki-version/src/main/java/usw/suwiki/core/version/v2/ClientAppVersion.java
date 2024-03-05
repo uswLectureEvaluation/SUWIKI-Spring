@@ -1,4 +1,12 @@
-package usw.suwiki.domain.version.entity;
+package usw.suwiki.core.version.v2;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import usw.suwiki.global.BaseTimeEntity;
+import usw.suwiki.global.exception.ExceptionType;
+import usw.suwiki.global.exception.errortype.VersionException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,13 +20,6 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import usw.suwiki.global.BaseTimeEntity;
-import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.exception.errortype.VersionException;
 
 @Entity
 @Getter
@@ -51,7 +52,6 @@ public class ClientAppVersion extends BaseTimeEntity {
 
     @Size(max = 2000)
     private String description;
-
 
     @Builder
     public ClientAppVersion(ClientOS os, Integer versionCode, Boolean isVital, String description) {

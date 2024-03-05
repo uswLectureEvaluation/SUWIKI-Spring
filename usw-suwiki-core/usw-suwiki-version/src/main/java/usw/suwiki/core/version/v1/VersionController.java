@@ -1,6 +1,5 @@
-package usw.suwiki.global.version;
+package usw.suwiki.core.version.v1;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,10 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.lecture.service.LectureCRUDService;
 import usw.suwiki.global.ResponseForm;
 
-@RequiredArgsConstructor
+import java.util.List;
+
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/suwiki")
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@RequiredArgsConstructor
 public class VersionController {
 
     private final LectureCRUDService lectureCRUDService;

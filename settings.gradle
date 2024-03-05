@@ -8,6 +8,9 @@ pluginManagement {
 
 rootProject.name = 'suwiki'
 
+include 'usw-suwiki-core'
+include 'usw-suwiki-core:usw-suwiki-version'
+
 include 'usw-suwiki-common'
 
 include 'usw-suwiki-infra'

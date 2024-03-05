@@ -1,16 +1,12 @@
-package usw.suwiki.domain.version.controller;
+package usw.suwiki.core.version.v2;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.domain.version.dto.response.CheckUpdateMandatoryResponse;
-import usw.suwiki.domain.version.service.ClientAppVersionService;
 
-@Slf4j
 @RestController
 @RequestMapping("/client/version")
 @RequiredArgsConstructor
