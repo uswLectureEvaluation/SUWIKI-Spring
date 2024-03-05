@@ -1,8 +1,4 @@
-package usw.suwiki.global.jwt;
-
-import static usw.suwiki.global.exception.ExceptionType.LOGIN_REQUIRED;
-import static usw.suwiki.global.exception.ExceptionType.TOKEN_IS_BROKEN;
-import static usw.suwiki.global.exception.ExceptionType.TOKEN_IS_EXPIRED;
+package usw.suwiki.auth.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -10,11 +6,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import java.security.Key;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +15,12 @@ import usw.suwiki.domain.refreshtoken.RefreshToken;
 import usw.suwiki.domain.refreshtoken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.global.exception.errortype.AccountException;
+
+import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -69,7 +66,7 @@ public class JwtAgent {
 
         // TODO: 애초에 payload로 찾은건데 여기서 비교할 필요가 있나?
         if (!refreshToken.getPayload().equals(payload)) {
-            throw new AccountException(TOKEN_IS_BROKEN);
+            throw new AccountException(ExceptionType.TOKEN_IS_BROKEN);
         }
 
         Claims body = resolveBodyFromRefreshToken(payload);
@@ -94,9 +91,9 @@ public class JwtAgent {
                 .setSigningKey(getSigningKey()).build()
                 .parseClaimsJws(token);
         } catch (MalformedJwtException | IllegalArgumentException ex) {
-            throw new AccountException(LOGIN_REQUIRED);
+            throw new AccountException(ExceptionType.LOGIN_REQUIRED);
         } catch (ExpiredJwtException exception) {
-            throw new AccountException(TOKEN_IS_EXPIRED);
+            throw new AccountException(ExceptionType.TOKEN_IS_EXPIRED);
         }
     }
 
@@ -164,7 +161,7 @@ public class JwtAgent {
                 .parseClaimsJws(refreshToken)
                 .getBody();
         } catch (ExpiredJwtException expiredJwtException) {
-            throw new AccountException(TOKEN_IS_EXPIRED);
+            throw new AccountException(ExceptionType.TOKEN_IS_EXPIRED);
         }
     }
 

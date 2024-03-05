@@ -21,3 +21,5 @@ include 'usw-suwiki-external'
 include 'usw-suwiki-external:usw-suwiki-mail'
 
 include 'usw-suwiki-statistics'
+include 'usw-suwiki-auth'
+

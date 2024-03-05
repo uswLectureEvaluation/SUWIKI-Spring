@@ -1,4 +1,4 @@
-package usw.suwiki.global.annotation;
+package usw.suwiki.auth.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

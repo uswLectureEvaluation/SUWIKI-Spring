@@ -1,34 +1,32 @@
-package usw.suwiki.global.interceptor;
+package usw.suwiki.auth.interceptor;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static usw.suwiki.global.exception.ExceptionType.USER_RESTRICTED;
-
-import java.lang.reflect.Method;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
-import usw.suwiki.domain.apilogger.service.ApiLoggerService;
-import usw.suwiki.global.annotation.ApiLogger;
-import usw.suwiki.global.annotation.JWTVerify;
+import usw.suwiki.auth.annotation.JWTVerify;
+import usw.suwiki.auth.jwt.JwtAgent;
 import usw.suwiki.global.exception.errortype.AccountException;
-import usw.suwiki.global.jwt.JwtAgent;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtInterceptor extends HandlerInterceptorAdaptor {
-
     private static final String ADMIN = "ADMIN";
 
     private final ApiLoggerService apiLoggerService;
     private final JwtAgent jwtAgent;
+
     private LocalDateTime start;
     private String apiLoggerOption = "";
 
@@ -56,7 +54,7 @@ public class JwtInterceptor extends HandlerInterceptorAdaptor {
                         return true;
                     }
 
-                    throw new AccountException(USER_RESTRICTED);
+                    throw new AccountException(ExceptionType.USER_RESTRICTED);
                 }
             }
         }

@@ -1,10 +1,10 @@
-package usw.suwiki.global.config;
+package usw.suwiki.auth.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import usw.suwiki.global.interceptor.JwtInterceptor;
+import usw.suwiki.auth.interceptor.JwtInterceptor;
 
 @Configuration
 @RequiredArgsConstructor
