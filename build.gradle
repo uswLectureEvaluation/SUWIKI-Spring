@@ -15,16 +15,21 @@ allprojects {
     }
 }
 
-apply from: 'gradle/querydsl.gradle'
-apply from: 'gradle/test-support.gradle'
 apply from: 'gradle/spring.gradle'
 apply from: 'gradle/lombok.gradle'
 
-dependencies {
-    // Swagger
-    implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.6.14'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
+subprojects {
+    test {
+        useJUnitPlatform()
+    }
+}
 
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 17 // Java 17을 사용할 경우 release 17로 설정
+}
+
+dependencies {
     // Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -37,15 +42,8 @@ dependencies {
 
     // Utils
     implementation 'org.modelmapper:modelmapper:3.1.1'
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
     // configuration
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-    options.release = 17 // Java 17을 사용할 경우 release 17로 설정
 }
 
