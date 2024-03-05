@@ -1,8 +1,9 @@
-package usw.suwiki.global;
+package usw.suwiki.infra.pagination;
 
-import java.util.Optional;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Optional;
 
 @Getter
 @NoArgsConstructor

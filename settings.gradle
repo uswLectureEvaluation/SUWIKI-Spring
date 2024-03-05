@@ -9,3 +9,7 @@ pluginManagement {
 rootProject.name = 'suwiki'
 
 include 'usw-suwiki-statistics'
+
+include 'usw-suwiki-infra'
+include 'usw-suwiki-infra:usw-suwiki-db'
+include 'usw-suwiki-infra:usw-suwiki-caffeine'

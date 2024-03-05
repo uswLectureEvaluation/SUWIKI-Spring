@@ -1,11 +1,12 @@
-package usw.suwiki.global.util.query;
+package usw.suwiki.infra.pagination;
 
-import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
-public class SlicePaginationUtils {
+import java.util.List;
+
+public final class SlicePaginationUtils {
 
     public static final int SLICE_LIMIT_PLUS_AMOUNT = 1;
 
