@@ -21,9 +21,6 @@ apply from: 'gradle/spring.gradle'
 apply from: 'gradle/lombok.gradle'
 
 dependencies {
-    // Actuator
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.6.14'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
