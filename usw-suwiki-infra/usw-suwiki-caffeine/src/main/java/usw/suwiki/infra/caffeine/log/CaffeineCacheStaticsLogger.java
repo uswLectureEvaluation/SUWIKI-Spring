@@ -1,4 +1,4 @@
-package usw.suwiki.statistics.util;
+package usw.suwiki.infra.caffeine.log;
 
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import lombok.RequiredArgsConstructor;
@@ -6,14 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.stereotype.Component;
+import usw.suwiki.statistics.aspect.CacheStaticsLogger;
 
 import java.util.Objects;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CacheStaticsLogger {
-
+class CaffeineCacheStaticsLogger implements CacheStaticsLogger {
     private final CacheManager cacheManager;
 
     public void getCachesStats(String cacheKeys) {

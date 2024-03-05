@@ -20,48 +20,45 @@ apply from: 'gradle/test-support.gradle'
 apply from: 'gradle/spring.gradle'
 apply from: 'gradle/lombok.gradle'
 
-subprojects {
-    dependencies {
-        // Actuator
-        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+dependencies {
+    // Actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-        // Caffeine
-        implementation 'org.springframework.boot:spring-boot-starter-cache'
-        implementation 'com.github.ben-manes.caffeine:caffeine'
+    // Caffeine
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
 
-        // Swagger
-        implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.6.14'
-        implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.6.14'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
 
-        // Web
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'org.springframework.boot:spring-boot-starter-security'
-        implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-        // JWT
-        implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-        implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-        implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-        // DB
-        implementation 'mysql:mysql-connector-java:8.0.32'
-        testImplementation 'com.h2database:h2'
+    // DB
+    implementation 'mysql:mysql-connector-java:8.0.32'
+    testImplementation 'com.h2database:h2'
 
-        // JPA
-        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-        // SMTP
-        implementation 'org.springframework.boot:spring-boot-starter-mail'
+    // SMTP
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-        // Utils
-        developmentOnly 'org.springframework.boot:spring-boot-devtools'
-        implementation 'org.modelmapper:modelmapper:3.1.1'
-        implementation 'org.apache.commons:commons-lang3:3.12.0'
-        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    // Utils
+    implementation 'org.modelmapper:modelmapper:3.1.1'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
-        // configuration
-        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    }
+    // configuration
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 }
 
 tasks.withType(JavaCompile).configureEach {

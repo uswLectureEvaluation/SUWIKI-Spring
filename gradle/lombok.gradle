@@ -1,5 +1,7 @@
-configurations {
-    compileOnly.extendsFrom annotationProcessor
+allprojects {
+    configurations {
+        compileOnly.extendsFrom annotationProcessor
+    }
 }
 
 subprojects {
