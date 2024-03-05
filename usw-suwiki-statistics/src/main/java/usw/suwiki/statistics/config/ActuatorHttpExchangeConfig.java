@@ -1,4 +1,4 @@
-package usw.suwiki.global.config;
+package usw.suwiki.statistics.config;
 
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
 import org.springframework.context.annotation.Bean;
