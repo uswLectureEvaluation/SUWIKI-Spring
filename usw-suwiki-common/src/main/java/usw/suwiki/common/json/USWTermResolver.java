@@ -1,4 +1,4 @@
-package usw.suwiki.global.util.loadjson;
+package usw.suwiki.common.json;
 
 import org.json.simple.JSONObject;
 

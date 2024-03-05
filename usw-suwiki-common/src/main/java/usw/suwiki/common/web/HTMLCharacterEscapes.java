@@ -1,4 +1,4 @@
-package usw.suwiki.global.util;
+package usw.suwiki.common.web;
 
 import com.fasterxml.jackson.core.SerializableString;
 import com.fasterxml.jackson.core.io.CharacterEscapes;

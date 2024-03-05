@@ -1,12 +1,12 @@
-package usw.suwiki.global;
+package usw.suwiki.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ResponseForm {
 
     private Object data;

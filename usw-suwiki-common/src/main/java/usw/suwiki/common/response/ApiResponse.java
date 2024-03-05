@@ -1,12 +1,13 @@
-package usw.suwiki.global.dto;
+package usw.suwiki.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import java.util.HashMap;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.HashMap;
 
 @Getter
 @JsonInclude(Include.NON_NULL)
@@ -32,7 +33,7 @@ public class ApiResponse<T> {
 
     public static ApiResponse error(String code, String message) {
         HashMap<String, String> empty = new HashMap<>();
-        return ApiResponse.builder()
+        return builder()
             .code(code)
             .data(empty)
             .message(message)

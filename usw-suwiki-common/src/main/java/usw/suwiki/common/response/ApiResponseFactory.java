@@ -1,9 +1,9 @@
-package usw.suwiki.global.util.apiresponse;
+package usw.suwiki.common.response;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ApiResponseFactory {
+public final class ApiResponseFactory {
 
     public static Map<String, String> adminLoginResponseForm(
         final String accessToken,

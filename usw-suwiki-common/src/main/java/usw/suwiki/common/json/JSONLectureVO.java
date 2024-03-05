@@ -1,4 +1,4 @@
-package usw.suwiki.global.util.loadjson;
+package usw.suwiki.common.json;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,7 +13,6 @@ import usw.suwiki.domain.lecture.domain.LectureSchedule;
 @Builder
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class JSONLectureVO {
-
     private final String selectedSemester;
     private final String placeSchedule;
     private final String professor;
@@ -28,7 +27,7 @@ public class JSONLectureVO {
     private final String capacityPresentationType;
 
     public static JSONLectureVO from(JSONObject jsonObject) {
-        return JSONLectureVO.builder()
+        return builder()
             .selectedSemester(USWTermResolver.getSemester(jsonObject))
             .placeSchedule(USWTermResolver.extractPlaceSchedule(jsonObject))
             .professor(USWTermResolver.getOptionalProfessorName(jsonObject))
@@ -80,5 +79,4 @@ public class JSONLectureVO {
         return isLectureEqual(lectureSchedule.getLecture())
             && lectureSchedule.getPlaceSchedule().contains(placeSchedule);
     }
-
 }

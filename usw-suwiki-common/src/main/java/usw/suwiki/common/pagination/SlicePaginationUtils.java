@@ -1,4 +1,4 @@
-package usw.suwiki.infra.pagination;
+package usw.suwiki.common.pagination;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

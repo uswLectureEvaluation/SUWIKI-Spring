@@ -1,4 +1,4 @@
-package usw.suwiki.infra.pagination;
+package usw.suwiki.common.pagination;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

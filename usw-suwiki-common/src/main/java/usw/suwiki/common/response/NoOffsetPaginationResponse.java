@@ -1,6 +1,5 @@
-package usw.suwiki.global.dto;
+package usw.suwiki.common.response;
 
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,9 +7,11 @@ import lombok.Getter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 
+import java.util.List;
+
+@Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter
 public class NoOffsetPaginationResponse<T> {
 
     Boolean isLast;
