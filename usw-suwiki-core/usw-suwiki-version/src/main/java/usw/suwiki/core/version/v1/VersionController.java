@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.domain.lecture.service.LectureCRUDService;
-import usw.suwiki.global.ResponseForm;
+import usw.suwiki.common.response.ResponseForm;
 
 import java.util.List;
 
@@ -18,7 +17,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class VersionController {
-
     private final LectureCRUDService lectureCRUDService;
 
     @GetMapping("/version")

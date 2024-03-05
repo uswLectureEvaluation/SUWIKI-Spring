@@ -4,9 +4,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.global.BaseTimeEntity;
-import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.core.exception.errortype.VersionException;
+import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.exception.VersionException;
+import usw.suwiki.infra.jpa.BaseTimeEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

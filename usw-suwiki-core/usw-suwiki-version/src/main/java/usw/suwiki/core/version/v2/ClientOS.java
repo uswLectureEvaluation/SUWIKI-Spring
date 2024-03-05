@@ -1,9 +1,9 @@
 package usw.suwiki.core.version.v2;
 
 import lombok.RequiredArgsConstructor;
-import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.core.exception.errortype.VersionException;
-import usw.suwiki.global.util.enums.KeyValueEnumModel;
+import usw.suwiki.common.data.KeyValueEnumModel;
+import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.exception.VersionException;
 
 import java.util.Objects;
 

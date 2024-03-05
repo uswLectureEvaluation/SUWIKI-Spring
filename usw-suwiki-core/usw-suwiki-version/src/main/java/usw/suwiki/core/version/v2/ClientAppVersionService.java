@@ -3,9 +3,8 @@ package usw.suwiki.core.version.v2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.core.exception.errortype.VersionException;
-
+import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.exception.VersionException;
 
 @Service
 @Transactional(readOnly = true)
