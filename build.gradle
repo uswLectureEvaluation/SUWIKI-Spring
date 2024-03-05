@@ -1,73 +1,70 @@
 plugins {
-    id 'java'
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
+    id 'java-library'
+    id 'org.springframework.boot' apply false
+    id 'io.spring.dependency-management'
     id 'com.ewerk.gradle.plugins.querydsl'
 }
 
-group = "${projectGroup}"
-version = "${applicationVersion}"
-sourceCompatibility = "${javaVersion}"
+allprojects {
+    group = "${projectGroup}"
+    version = "${applicationVersion}"
+    sourceCompatibility = "${javaVersion}"
 
-jar.enabled = false
+    repositories {
+        mavenCentral()
+    }
+}
 
-apply from: 'gradle/lombok.gradle'
 apply from: 'gradle/querydsl.gradle'
-apply from: 'gradle/testsupport.gradle'
+apply from: 'gradle/test-support.gradle'
+apply from: 'gradle/spring.gradle'
+apply from: 'gradle/lombok.gradle'
 
-repositories {
-    mavenCentral()
+subprojects {
+    dependencies {
+        // Actuator
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+        // Caffeine
+        implementation 'org.springframework.boot:spring-boot-starter-cache'
+        implementation 'com.github.ben-manes.caffeine:caffeine'
+
+        // Swagger
+        implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.6.14'
+        implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
+
+        // Web
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+        // JWT
+        implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+        implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+        implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+        // DB
+        implementation 'mysql:mysql-connector-java:8.0.32'
+        testImplementation 'com.h2database:h2'
+
+        // JPA
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+        // SMTP
+        implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+        // Utils
+        developmentOnly 'org.springframework.boot:spring-boot-devtools'
+        implementation 'org.modelmapper:modelmapper:3.1.1'
+        implementation 'org.apache.commons:commons-lang3:3.12.0'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+        // configuration
+        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    }
 }
 
-dependencies {
-
-    // Actuator
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-
-    // Caffeine
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
-    implementation 'com.github.ben-manes.caffeine:caffeine'
-
-    // Swagger
-    implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.6.14'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
-
-    // Web
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    // JWT
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
-    // DB
-    implementation 'mysql:mysql-connector-java:8.0.32'
-    testImplementation 'com.h2database:h2'
-
-    // JPA
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
-    // SMTP
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
-
-    // Utils
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    implementation 'org.modelmapper:modelmapper:3.1.1'
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-
-    // configuration
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-
-}
-
-test {
-    useJUnitPlatform()
-}
-
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.release = 17 // Java 17을 사용할 경우 release 17로 설정
 }

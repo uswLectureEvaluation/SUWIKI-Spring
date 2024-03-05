@@ -1,20 +1,19 @@
-package usw.suwiki.domain.apilogger.service;
+package usw.suwiki.statistics.log;
 
-import java.time.LocalDate;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.apilogger.ApiLogger;
-import usw.suwiki.domain.apilogger.repository.ApiLoggerRepository;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-@Slf4j
 public class ApiLoggerService {
 
     private final ApiLoggerRepository apiLoggerRepository;

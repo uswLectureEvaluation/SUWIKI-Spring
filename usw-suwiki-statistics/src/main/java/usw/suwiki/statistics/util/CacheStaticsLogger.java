@@ -1,16 +1,17 @@
-package usw.suwiki.global.util;
+package usw.suwiki.statistics.util;
 
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class CacheStaticsLogger {
 
     private final CacheManager cacheManager;

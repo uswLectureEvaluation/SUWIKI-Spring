@@ -1,29 +1,30 @@
-package usw.suwiki.domain.apilogger;
+package usw.suwiki.statistics.log;
 
-import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.time.LocalDate;
+
 @Entity
 @Builder
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ApiLogger {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column()
+    @Column
     private Long lectureApiCallTime;
 
     @Column
@@ -57,7 +58,7 @@ public class ApiLogger {
     private LocalDate callDate;
 
     public ApiLogger saveNewLectureStatistics(LocalDate today, Long currentProcessTime) {
-        return ApiLogger.builder()
+        return builder()
             .callDate(today)
             .lectureApiCallTime(1L)
             .lectureApiProcessAvg(currentProcessTime)
@@ -73,7 +74,7 @@ public class ApiLogger {
     }
 
     public ApiLogger saveNewEvaluatePostsStatistics(LocalDate today, Long currentProcessTime) {
-        return ApiLogger.builder()
+        return builder()
             .callDate(today)
             .lectureApiCallTime(0L)
             .lectureApiProcessAvg(0L)
@@ -89,7 +90,7 @@ public class ApiLogger {
     }
 
     public ApiLogger saveNewExamPostsStatistics(LocalDate today, Long currentProcessTime) {
-        return ApiLogger.builder()
+        return builder()
             .callDate(today)
             .lectureApiCallTime(0L)
             .lectureApiProcessAvg(0L)
@@ -105,7 +106,7 @@ public class ApiLogger {
     }
 
     public ApiLogger saveNewUserStatistics(LocalDate today, Long currentProcessTime) {
-        return ApiLogger.builder()
+        return builder()
             .callDate(today)
             .lectureApiCallTime(0L)
             .lectureApiProcessAvg(0L)
@@ -121,7 +122,7 @@ public class ApiLogger {
     }
 
     public ApiLogger saveNewNoticeStatistics(LocalDate today, Long currentProcessTime) {
-        return ApiLogger.builder()
+        return builder()
             .callDate(today)
             .lectureApiCallTime(0L)
             .lectureApiProcessAvg(0L)
