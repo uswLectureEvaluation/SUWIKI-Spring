@@ -1,4 +1,4 @@
-package usw.suwiki.global.util.enums;
+package usw.suwiki.common.data;
 
 public interface KeyValueEnumModel<V> {
 
