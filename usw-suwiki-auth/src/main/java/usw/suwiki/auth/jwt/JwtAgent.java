@@ -11,10 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.core.exception.AccountException;
+import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.refreshtoken.RefreshToken;
 import usw.suwiki.domain.refreshtoken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.user.user.User;
-import usw.suwiki.core.exception.errortype.AccountException;
 
 import java.security.Key;
 import java.time.LocalDateTime;
