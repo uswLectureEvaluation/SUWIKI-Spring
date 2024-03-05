@@ -1,4 +1,4 @@
-package usw.suwiki.global.config;
+package usw.suwiki.infra.caffeine.config;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -10,9 +10,8 @@ public class ETagConfig {
 
     @Bean
     public ShallowEtagHeaderFilter shallowEtagHeaderFilter() {
-        FilterRegistrationBean<ShallowEtagHeaderFilter> filterFilterRegistrationBean = new FilterRegistrationBean<>(
-            new ShallowEtagHeaderFilter()
-        );
+        FilterRegistrationBean<ShallowEtagHeaderFilter> filterFilterRegistrationBean =
+          new FilterRegistrationBean<>(new ShallowEtagHeaderFilter());
 
         filterFilterRegistrationBean.addUrlPatterns("/lecture/all");
         filterFilterRegistrationBean.setName("etagFilter");
