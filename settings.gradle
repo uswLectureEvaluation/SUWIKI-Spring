@@ -18,6 +18,11 @@ include 'usw-suwiki-lecture'
 include 'usw-suwiki-lecture:usw-suwiki-schedule'
 include 'usw-suwiki-lecture:usw-suwiki-timetable'
 
+include 'usw-suwiki-post'
+include 'usw-suwiki-post:usw-suwiki-notice'
+include 'usw-suwiki-post:usw-suwiki-exampost'
+include 'usw-suwiki-post:usw-suwiki-evaluatepost'
+
 include 'usw-suwiki-report'
 
 include 'usw-suwiki-core'
