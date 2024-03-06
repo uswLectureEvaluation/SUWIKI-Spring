@@ -1,7 +1,6 @@
 package usw.suwiki.domain.evaluatepost.fixture;
 
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
-import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.user.User;
 
 public class EvaluatePostFixture {

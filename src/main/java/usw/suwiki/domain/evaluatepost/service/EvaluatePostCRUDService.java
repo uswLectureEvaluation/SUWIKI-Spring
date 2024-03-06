@@ -1,19 +1,19 @@
 package usw.suwiki.domain.evaluatepost.service;
 
-import static usw.suwiki.global.exception.ExceptionType.EVALUATE_POST_NOT_FOUND;
-
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.core.exception.errortype.EvaluatePostException;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.domain.repository.EvaluatePostRepository;
-import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.PageOption;
-import usw.suwiki.core.exception.errortype.EvaluatePostException;
+
+import java.util.List;
+import java.util.Optional;
+
+import static usw.suwiki.global.exception.ExceptionType.EVALUATE_POST_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

@@ -1,10 +1,5 @@
 package usw.suwiki.domain.lecture.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,8 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Slice;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.fixture.EvaluatePostFixture;
-import usw.suwiki.domain.lecture.domain.Lecture;
-import usw.suwiki.domain.lecture.domain.LectureDetail;
 import usw.suwiki.domain.lecture.domain.LectureSchedule;
 import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
 import usw.suwiki.domain.lecture.fixture.LectureFixture;
@@ -23,6 +16,12 @@ import usw.suwiki.domain.user.fixture.UserFixture;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.global.annotation.SuwikiJpaTest;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SuwikiJpaTest
 public class LectureRepositoryTest {    // TODO: https://7357.tistory.com/339 보면서 동시성 테스트하는 방법 공부

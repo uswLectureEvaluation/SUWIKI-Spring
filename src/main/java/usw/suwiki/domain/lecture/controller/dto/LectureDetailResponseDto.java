@@ -2,7 +2,6 @@ package usw.suwiki.domain.lecture.controller.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.lecture.domain.Lecture;
 
 @Getter
 @NoArgsConstructor

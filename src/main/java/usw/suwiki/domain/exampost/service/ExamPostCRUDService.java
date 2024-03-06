@@ -3,15 +3,13 @@ package usw.suwiki.domain.exampost.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.core.exception.errortype.ExamPostException;
 import usw.suwiki.domain.exampost.domain.ExamPost;
 import usw.suwiki.domain.exampost.domain.repository.ExamPostRepository;
-import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.repository.UserRepository;
 import usw.suwiki.global.PageOption;
 import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.core.exception.errortype.AccountException;
-import usw.suwiki.core.exception.errortype.ExamPostException;
 
 import java.util.List;
 import java.util.Optional;

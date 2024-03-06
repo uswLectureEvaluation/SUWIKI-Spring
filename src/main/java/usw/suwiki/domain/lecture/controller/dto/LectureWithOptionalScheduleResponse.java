@@ -1,17 +1,17 @@
 package usw.suwiki.domain.lecture.controller.dto;
 
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.domain.LectureSchedule;
 import usw.suwiki.domain.lecture.util.LectureStringConverter;
 import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
 import usw.suwiki.global.util.apiresponse.ResponseFieldManipulationUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Builder

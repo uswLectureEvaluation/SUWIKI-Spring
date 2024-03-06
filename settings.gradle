@@ -34,3 +34,8 @@ include 'usw-suwiki-external:usw-suwiki-mail'
 include 'usw-suwiki-infra'
 include 'usw-suwiki-infra:usw-suwiki-db'
 include 'usw-suwiki-infra:usw-suwiki-caffeine'
+
+include 'usw-suwiki-lecture'
+include 'usw-suwiki-lecture:usw-suwiki-schedule'
+include 'usw-suwiki-lecture:usw-suwiki-timetable'
+

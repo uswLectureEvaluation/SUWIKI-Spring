@@ -1,8 +1,5 @@
 package usw.suwiki.domain.lecture.fixture;
 
-import usw.suwiki.domain.lecture.domain.Lecture;
-import usw.suwiki.domain.lecture.domain.LectureDetail;
-
 public class LectureFixture {
     public static final String SEMESTER = "2022-1, 2023-1";
     public static final String PROFESSOR = "신호진";

@@ -1,7 +1,5 @@
 package usw.suwiki.domain.exampost.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,13 +10,15 @@ import usw.suwiki.domain.exampost.controller.dto.ExamResponseByUserIdxDto;
 import usw.suwiki.domain.exampost.controller.dto.ReadExamPostResponse;
 import usw.suwiki.domain.exampost.controller.dto.viewexam.PurchaseHistoryDto;
 import usw.suwiki.domain.exampost.domain.ExamPost;
-import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.domain.userlecture.viewexam.ViewExam;
 import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.global.PageOption;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

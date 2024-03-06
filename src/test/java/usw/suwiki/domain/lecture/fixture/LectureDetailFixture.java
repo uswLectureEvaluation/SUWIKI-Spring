@@ -1,7 +1,5 @@
 package usw.suwiki.domain.lecture.fixture;
 
-import usw.suwiki.domain.lecture.domain.LectureDetail;
-
 public class LectureDetailFixture {
     public static final String CODE = "01760";
     public static final double POINT = 0;

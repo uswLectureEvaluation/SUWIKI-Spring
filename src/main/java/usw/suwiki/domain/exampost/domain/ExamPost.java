@@ -1,5 +1,14 @@
 package usw.suwiki.domain.exampost.domain;
 
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import usw.suwiki.domain.exampost.controller.dto.ExamPostUpdateDto;
+import usw.suwiki.domain.exampost.controller.dto.ExamPostsSaveDto;
+import usw.suwiki.domain.user.user.User;
+import usw.suwiki.global.BaseTimeEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,15 +17,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import usw.suwiki.domain.exampost.controller.dto.ExamPostUpdateDto;
-import usw.suwiki.domain.exampost.controller.dto.ExamPostsSaveDto;
-import usw.suwiki.domain.lecture.domain.Lecture;
-import usw.suwiki.domain.user.user.User;
-import usw.suwiki.global.BaseTimeEntity;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

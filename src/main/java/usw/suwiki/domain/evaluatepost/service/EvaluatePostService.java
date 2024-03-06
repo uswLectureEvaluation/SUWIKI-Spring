@@ -1,12 +1,9 @@
 package usw.suwiki.domain.evaluatepost.service;
 
-import static usw.suwiki.global.exception.ExceptionType.POSTS_WRITE_OVERLAP;
-
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.core.exception.errortype.EvaluatePostException;
 import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostResponseByLectureIdDto;
 import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostResponseByUserIdxDto;
 import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostSaveDto;
@@ -14,13 +11,16 @@ import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostUpdateDto;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.service.dto.EvaluatePostsToLecture;
 import usw.suwiki.domain.evaluatepost.service.dto.FindByLectureToJson;
-import usw.suwiki.domain.lecture.domain.Lecture;
 import usw.suwiki.domain.lecture.service.LectureCRUDService;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.user.User;
 import usw.suwiki.domain.user.user.service.UserCRUDService;
 import usw.suwiki.global.PageOption;
-import usw.suwiki.core.exception.errortype.EvaluatePostException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static usw.suwiki.global.exception.ExceptionType.POSTS_WRITE_OVERLAP;
 
 @Service
 @RequiredArgsConstructor
