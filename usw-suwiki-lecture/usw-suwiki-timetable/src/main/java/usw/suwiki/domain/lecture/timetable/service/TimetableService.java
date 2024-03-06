@@ -4,7 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.core.exception.errortype.TimetableException;
+import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.exception.TimetableException;
+import usw.suwiki.domain.lecture.timetable.Semester;
+import usw.suwiki.domain.lecture.timetable.Timetable;
+import usw.suwiki.domain.lecture.timetable.TimetableCell;
+import usw.suwiki.domain.lecture.timetable.TimetableCellColor;
+import usw.suwiki.domain.lecture.timetable.TimetableCellRepository;
+import usw.suwiki.domain.lecture.timetable.TimetableCellSchedule;
+import usw.suwiki.domain.lecture.timetable.TimetableRepository;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableCellRequest;
 import usw.suwiki.domain.timetable.dto.request.CreateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.request.CreateWholeTimetableRequest;
@@ -13,29 +21,19 @@ import usw.suwiki.domain.timetable.dto.request.UpdateTimetableRequest;
 import usw.suwiki.domain.timetable.dto.response.SimpleTimetableResponse;
 import usw.suwiki.domain.timetable.dto.response.TimetableCellResponse;
 import usw.suwiki.domain.timetable.dto.response.TimetableResponse;
-import usw.suwiki.domain.timetable.entity.Semester;
-import usw.suwiki.domain.timetable.entity.Timetable;
-import usw.suwiki.domain.timetable.entity.TimetableCell;
-import usw.suwiki.domain.timetable.entity.TimetableCellColor;
-import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
-import usw.suwiki.domain.timetable.repository.TimetableCellRepository;
-import usw.suwiki.domain.timetable.repository.TimetableRepository;
-import usw.suwiki.domain.user.user.User;
-import usw.suwiki.domain.user.user.service.UserCRUDService;
-import usw.suwiki.global.exception.ExceptionType;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.service.UserCRUDService;
 
 import java.util.List;
-
 
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class TimetableService {
-
+    private final UserCRUDService userCRUDService;
     private final TimetableRepository timetableRepository;
     private final TimetableCellRepository timetableCellRepository;
-    private final UserCRUDService userCRUDService;
 
     @Transactional
     public SimpleTimetableResponse createTimetable(CreateTimetableRequest request, Long userId) {
@@ -71,10 +69,11 @@ public class TimetableService {
     @Transactional
     public void deleteTimetable(Long timetableId, Long userId) {
         User user = userCRUDService.loadUserById(userId);
+
         Timetable timetable = timetableRepository.findById(timetableId)
             .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_NOT_FOUND));
-        timetable.validateIsAuthor(user);
 
+        timetable.validateIsAuthor(user);
         timetable.dissociateUser(user);
     }
 
@@ -94,8 +93,7 @@ public class TimetableService {
     }
 
     @Transactional
-    public TimetableCellResponse createTimetableCell(CreateTimetableCellRequest request, Long timetableId,
-        Long userId) {
+    public TimetableCellResponse createTimetableCell(CreateTimetableCellRequest request, Long timetableId, Long userId) {
         Timetable timetable = resolveExactAuthorTimetable(timetableId, userId);
         timetable.validateCellScheduleOverlapBeforeAssociation(request.extractTimetableCellSchedule());
 
@@ -107,6 +105,7 @@ public class TimetableService {
     public TimetableCellResponse updateTimetableCell(UpdateTimetableCellRequest request, Long cellId, Long userId) {
         TimetableCell timetableCell = timetableCellRepository.findById(cellId)
             .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_CELL_NOT_FOUND));
+
         Timetable timetable = resolveExactAuthorTimetable(timetableCell.bringTimetableId(), userId);
         TimetableCellSchedule cellSchedule = request.extractTimetableCellSchedule();
         timetable.validateCellScheduleOverlapAfterAssociation(cellSchedule, timetableCell);
@@ -124,8 +123,8 @@ public class TimetableService {
     public void deleteTimetableCell(Long cellId, Long userId) {
         TimetableCell timetableCell = timetableCellRepository.findById(cellId)
             .orElseThrow(() -> new TimetableException(ExceptionType.TIMETABLE_CELL_NOT_FOUND));
-        Timetable timetable = resolveExactAuthorTimetable(timetableCell.bringTimetableId(), userId);
 
+        Timetable timetable = resolveExactAuthorTimetable(timetableCell.bringTimetableId(), userId);
         timetableCell.dissociateTimetable(timetable);
     }
 
@@ -137,5 +136,4 @@ public class TimetableService {
         timetable.validateIsAuthor(user);
         return timetable;
     }
-
 }

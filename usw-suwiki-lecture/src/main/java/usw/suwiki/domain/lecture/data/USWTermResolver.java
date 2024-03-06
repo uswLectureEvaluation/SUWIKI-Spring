@@ -1,8 +1,8 @@
-package usw.suwiki.common.json;
+package usw.suwiki.domain.lecture.data;
 
 import org.json.simple.JSONObject;
 
-public final class USWTermResolver {
+final class USWTermResolver {
 
     private static final String[] KEYWORDS_TO_REMOVE = {"재수강", "비대면수업", "대면수업", "혼합수업"};
 

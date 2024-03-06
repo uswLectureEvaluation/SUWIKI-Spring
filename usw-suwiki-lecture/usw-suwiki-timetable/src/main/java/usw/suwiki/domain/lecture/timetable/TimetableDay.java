@@ -1,34 +1,30 @@
 package usw.suwiki.domain.lecture.timetable;
 
-import lombok.RequiredArgsConstructor;
-import usw.suwiki.core.exception.errortype.TimetableException;
-import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.util.enums.KeyValueEnumModel;
+import usw.suwiki.common.data.KeyValueEnumModel;
+import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.exception.TimetableException;
 
-import java.util.Arrays;
-
-@RequiredArgsConstructor
 public enum TimetableDay implements KeyValueEnumModel<String> {
-    MON("MON"),
-    TUE("TUE"),
-    WED("WED"),
-    THU("THU"),
-    FRI("FRI"),
-    SAT("SAT"),
-    SUN("SUN"),
-    E_LEARNING("E_LEARNING");
-
-    private final String value;
+    MON,
+    TUE,
+    WED,
+    THU,
+    FRI,
+    SAT,
+    SUN,
+    E_LEARNING
+    ;
 
     public static TimetableDay ofString(String param) {
-        return Arrays.stream(TimetableDay.values())
-            .filter(v -> v.getValue().equals(param.toUpperCase()))
-            .findFirst()
-            .orElseThrow(() -> new TimetableException(ExceptionType.INVALID_TIMETABLE_CELL_DAY));
+        try {
+            return Enum.valueOf(TimetableDay.class, param.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new TimetableException(ExceptionType.INVALID_TIMETABLE_CELL_DAY);
+        }
     }
 
     public static TimetableDay ofKorean(String param) {
-        return switch (param) {
+        return switch (param) { // todo: e-러닝이 들어오면 예외? 파라미터랑 메서드 이름 수정
             case "월" -> MON;
             case "화" -> TUE;
             case "수" -> WED;
@@ -48,6 +44,6 @@ public enum TimetableDay implements KeyValueEnumModel<String> {
 
     @Override
     public String getValue() {
-        return this.value;
+        return this.name();
     }
 }

@@ -1,8 +1,8 @@
 apply plugin: 'com.ewerk.gradle.plugins.querydsl'
 
 dependencies {
-    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+    api "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    api "com.querydsl:querydsl-apt:${queryDslVersion}"
 }
 
 // Querydsl 추가 설정.

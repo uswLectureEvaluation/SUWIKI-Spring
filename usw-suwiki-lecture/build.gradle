@@ -1,0 +1,19 @@
+allprojects {
+    dependencies {
+        implementation project(':usw-suwiki-core:usw-suwiki-exception')
+        implementation project(':usw-suwiki-infra:usw-suwiki-db')
+        implementation project(':usw-suwiki-common')
+    }
+}
+
+dependencies {
+    implementation project(':usw-suwiki-post:usw-suwiki-evaluatepost')
+
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+}
+
+subprojects {
+    dependencies {
+        implementation project(':usw-suwiki-lecture')
+    }
+}

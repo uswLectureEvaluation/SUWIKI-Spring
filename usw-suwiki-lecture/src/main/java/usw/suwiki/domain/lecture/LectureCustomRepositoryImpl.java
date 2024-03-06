@@ -11,25 +11,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import usw.suwiki.common.pagination.SlicePaginationUtils;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
-import usw.suwiki.domain.lecture.domain.LectureSchedule;
-import usw.suwiki.global.util.query.SlicePaginationUtils;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static usw.suwiki.domain.lecture.domain.QLecture.lecture;
-import static usw.suwiki.domain.lecture.domain.QLectureSchedule.lectureSchedule;
-
-
 @RequiredArgsConstructor
 public class LectureCustomRepositoryImpl implements LectureCustomRepository { // TODO style: Repository명 변경
+    private static final String DEFAULT_ORDER = "modifiedDate";
+    private static final Integer DEFAULT_LIMIT = 10;
+    private static final Integer DEFAULT_PAGE = 1;
 
     private final JPAQueryFactory queryFactory;
-    private final String DEFAULT_ORDER = "modifiedDate";
-    private final Integer DEFAULT_PAGE = 1;
-    private final Integer DEFAULT_LIMIT = 10;
 
     @Value("${business.current-semester}")
     private String currentSemester;

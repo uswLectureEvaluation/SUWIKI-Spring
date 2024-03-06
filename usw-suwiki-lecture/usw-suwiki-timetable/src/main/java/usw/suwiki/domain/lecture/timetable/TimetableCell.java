@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.global.BaseTimeEntity;
+import usw.suwiki.infra.jpa.BaseTimeEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -40,8 +40,8 @@ public class TimetableCell extends BaseTimeEntity {
     @Size(max = 100)
     private String professorName;
 
-    @Enumerated(EnumType.STRING)
     @NotNull
+    @Enumerated(EnumType.STRING)
     private TimetableCellColor color;
 
     @Valid
@@ -54,8 +54,7 @@ public class TimetableCell extends BaseTimeEntity {
 
     // TODO 고민: 오버랩 검증 로직 및 연관관계 편의 메서드 호출을 생성자로 이동
     @Builder
-    public TimetableCell(String lectureName, String professorName, TimetableCellColor color,
-        TimetableCellSchedule schedule) {
+    public TimetableCell(String lectureName, String professorName, TimetableCellColor color, TimetableCellSchedule schedule) {
         this.lectureName = lectureName;
         this.professorName = professorName;
         this.color = color;
@@ -80,11 +79,7 @@ public class TimetableCell extends BaseTimeEntity {
         return this.timetable.getId();
     }
 
-    // 비즈니스 메서드
-    public void update(
-        String lectureName, String professorName, TimetableCellColor color,
-        TimetableCellSchedule schedule
-    ) {
+    public void update(String lectureName, String professorName, TimetableCellColor color, TimetableCellSchedule schedule) {
         this.lectureName = lectureName;
         this.professorName = professorName;
         this.color = color;

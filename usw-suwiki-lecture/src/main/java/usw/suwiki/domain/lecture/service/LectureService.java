@@ -10,19 +10,18 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.core.exception.errortype.LectureException;
+import usw.suwiki.common.response.NoOffsetPaginationResponse;
+import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.exception.LectureException;
+import usw.suwiki.domain.lecture.Lecture;
+import usw.suwiki.domain.lecture.LectureRepository;
+import usw.suwiki.domain.lecture.LecturesAndCountDao;
 import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
 import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
 import usw.suwiki.domain.lecture.controller.dto.LectureWithOptionalScheduleResponse;
-import usw.suwiki.domain.lecture.domain.LectureSchedule;
-import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
-import usw.suwiki.domain.lecture.domain.repository.LectureScheduleRepository;
-import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
-import usw.suwiki.global.dto.NoOffsetPaginationResponse;
-import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.global.util.loadjson.JSONLectureVO;
+import usw.suwiki.domain.lecture.data.JSONLectureVO;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -31,13 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static usw.suwiki.global.exception.ExceptionType.LECTURE_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LectureService {
-
     private final LectureCRUDService lectureCRUDService;
     private final LectureRepository lectureRepository;
     private final LectureScheduleRepository lectureScheduleRepository;
@@ -82,6 +79,7 @@ public class LectureService {
         Slice<Lecture> slice
     ) {
         List<LectureWithOptionalScheduleResponse> result = new ArrayList<>();
+
         for (Lecture lecture : slice) {
             if (lecture.getScheduleList().isEmpty()) {
                 result.add(LectureWithOptionalScheduleResponse.from(lecture));
@@ -97,9 +95,8 @@ public class LectureService {
 
     public Lecture findLectureById(Long id) {
         return lectureRepository.findById(id)
-            .orElseThrow(() -> new LectureException(LECTURE_NOT_FOUND));
+            .orElseThrow(() -> new LectureException(ExceptionType.LECTURE_NOT_FOUND));
     }
-
 
     @Transactional
     public void bulkApplyLectureJsonFile(String filePath) {
@@ -107,7 +104,6 @@ public class LectureService {
         List<JSONLectureVO> jsonLectureVOList = convertJSONArrayToVOList(jsonArray);
         bulkApplyJsonLectureList(jsonLectureVOList);
     }
-
 
     private static JSONArray resolveJsonArrayFromJsonFile(String filePath) {
         try {
@@ -215,9 +211,8 @@ public class LectureService {
         List<JSONLectureVO> jsonLectureVOList,
         List<LectureSchedule> currentSemeterLectureScheduleList
     ) {
-        // 기존의 스케줄이 삭제된 케이스 필터링 : O(N^2) 비교
-        return currentSemeterLectureScheduleList.stream()
-            .filter(it -> jsonLectureVOList.stream().noneMatch(vo -> vo.isLectureAndPlaceScheduleEqual(it)))
+        return currentSemeterLectureScheduleList.stream() // 기존의 스케줄이 삭제된 케이스 필터링 : O(N^2) 비교
+            .filter(it -> jsonLectureVOList.stream().noneMatch(vo -> vo.isLectureAndPlaceScheduleEqual(it))) // todo: flatmap
             .toList();
     }
 

@@ -4,9 +4,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
+import usw.suwiki.domain.evaluatepost.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.service.dto.EvaluatePostsToLecture;
-import usw.suwiki.global.BaseTimeEntity;
+import usw.suwiki.infra.jpa.BaseTimeEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -101,8 +101,10 @@ public class Lecture extends BaseTimeEntity {
         this.calculateAverage();
     }
 
-    public void handleLectureEvaluationIfUpdatePost(EvaluatePostsToLecture beforeUpdatePost,
-                                                    EvaluatePostsToLecture updatePost) {
+    public void handleLectureEvaluationIfUpdatePost(
+      EvaluatePostsToLecture beforeUpdatePost,
+      EvaluatePostsToLecture updatePost
+    ) {
         this.cancelLectureEvaluation(beforeUpdatePost);
         this.addLectureEvaluation(updatePost);
         this.calculateAverage();

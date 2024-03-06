@@ -4,8 +4,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.core.exception.errortype.TimetableException;
-import usw.suwiki.global.exception.ExceptionType;
+import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.exception.TimetableException;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -16,8 +16,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-@Embeddable
 @Getter
+@Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TimetableCellSchedule {
 
@@ -39,10 +39,9 @@ public class TimetableCellSchedule {
 
     @Builder
     public TimetableCellSchedule(String location, TimetableDay day, Integer startPeriod, Integer endPeriod) {
+        validatePeriods(startPeriod, endPeriod);
         this.location = location;
         this.day = day;
-
-        validatePeriods(startPeriod, endPeriod);
         this.startPeriod = startPeriod;
         this.endPeriod = endPeriod;
     }

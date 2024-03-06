@@ -2,29 +2,29 @@ package usw.suwiki.domain.lecture.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import usw.suwiki.core.exception.errortype.LectureException;
+import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.exception.LectureException;
+import usw.suwiki.domain.lecture.Lecture;
+import usw.suwiki.domain.lecture.LectureRepository;
+import usw.suwiki.domain.lecture.LecturesAndCountDao;
 import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
-import usw.suwiki.domain.lecture.domain.repository.LectureRepository;
-import usw.suwiki.domain.lecture.domain.repository.dao.LecturesAndCountDao;
 
 import java.util.List;
 
-import static usw.suwiki.global.exception.ExceptionType.LECTURE_NOT_FOUND;
-
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LectureCRUDService {
-
     private final LectureRepository lectureRepository;
 
     public List<String> loadMajorTypes() {
-        List<String> majors = lectureRepository.findAllMajorType();
-        return majors;
+      return lectureRepository.findAllMajorType();
     }
 
     public Lecture loadLectureFromIdPessimisticLock(Long id) {
         return lectureRepository.findForUpdateById(id)
-            .orElseThrow(() -> new LectureException(LECTURE_NOT_FOUND));
+            .orElseThrow(() -> new LectureException(ExceptionType.LECTURE_NOT_FOUND));
     }
 
     public LecturesAndCountDao loadLectureByKeywordAndOption(String keyword, LectureFindOption option) {

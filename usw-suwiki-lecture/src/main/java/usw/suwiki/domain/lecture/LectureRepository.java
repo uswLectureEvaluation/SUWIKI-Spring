@@ -2,13 +2,11 @@ package usw.suwiki.domain.lecture;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
-import org.springframework.stereotype.Repository;
 
 import javax.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public interface LectureRepository extends JpaRepository<Lecture, Long>, LectureCustomRepository {
 
     // TODO: 낙관적 락은 어떨지 고민해보기 (김영한님의 추천은 READ COMMITTED + 낙관적 락)

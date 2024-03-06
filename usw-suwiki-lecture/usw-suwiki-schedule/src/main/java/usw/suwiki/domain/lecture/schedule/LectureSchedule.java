@@ -4,7 +4,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.global.BaseTimeEntity;
+import usw.suwiki.domain.lecture.Lecture;
+import usw.suwiki.infra.jpa.BaseTimeEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,9 +40,6 @@ public class LectureSchedule extends BaseTimeEntity {
         associateLecture(lecture);  // TODO refactor: Lecture - addSchedule 메서드로 책임 분리
     }
 
-    //-------------------------------------------------------------------------
-    // 연관관계 메서드
-    //-------------------------------------------------------------------------
     private void associateLecture(Lecture lecture) {
         if (Objects.nonNull(this.lecture)) {
             this.lecture.removeSchedule(this);
@@ -49,10 +47,4 @@ public class LectureSchedule extends BaseTimeEntity {
         this.lecture = lecture;
         lecture.addSchedule(this);
     }
-
-    //-------------------------------------------------------------------------
-    // 비즈니스 메서드
-    //-------------------------------------------------------------------------
-
-
 }

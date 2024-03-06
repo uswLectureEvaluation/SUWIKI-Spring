@@ -1,18 +1,17 @@
-package usw.suwiki.common.json;
+package usw.suwiki.domain.lecture.data;
 
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
-import usw.suwiki.domain.lecture.domain.Lecture;
-import usw.suwiki.domain.lecture.domain.LectureDetail;
-import usw.suwiki.domain.lecture.domain.LectureSchedule;
+import usw.suwiki.domain.lecture.Lecture;
+import usw.suwiki.domain.lecture.LectureDetail;
 
 @Getter
 @Builder
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class JSONLectureVO {
+public class JSONLectureVO { // todo: vo..?
     private final String selectedSemester;
     private final String placeSchedule;
     private final String professor;
@@ -68,7 +67,7 @@ public class JSONLectureVO {
         return !(placeSchedule.equals("null") || placeSchedule.isEmpty());
     }
 
-    public boolean isLectureEqual(Lecture lecture) {
+    public boolean isLectureEqual(Lecture lecture) { // todo: 주객전도
         return lecture.getName().equals(lectureName)
             && lecture.getProfessor().equals(professor)
             && lecture.getMajorType().equals(majorType)
@@ -76,7 +75,6 @@ public class JSONLectureVO {
     }
 
     public boolean isLectureAndPlaceScheduleEqual(LectureSchedule lectureSchedule) {
-        return isLectureEqual(lectureSchedule.getLecture())
-            && lectureSchedule.getPlaceSchedule().contains(placeSchedule);
+        return isLectureEqual(lectureSchedule.getLecture()) && lectureSchedule.getPlaceSchedule().contains(placeSchedule); // todo: 디미터의 법칙
     }
 }

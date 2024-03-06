@@ -79,34 +79,6 @@ public class LectureEvaluationInfo {
 		this.lectureHomeworkValue -= dto.getLectureHomework();
 	}
 
-	public float getLectureTotalAvg() {
-		return this.lectureTotalAvg;
-	}
-
-	public float getLectureSatisfactionAvg() {
-		return this.lectureSatisfactionAvg;
-	}
-
-	public float getLectureHoneyAvg() {
-		return this.lectureHoneyAvg;
-	}
-
-	public float getLectureLearningAvg() {
-		return this.lectureLearningAvg;
-	}
-
-	public float getLectureTeamAvg() {
-		return this.lectureTeamAvg;
-	}
-
-	public float getLectureDifficultyAvg() {
-		return this.lectureDifficultyAvg;
-	}
-
-	public float getLectureHomeworkAvg() {
-		return this.lectureHomeworkAvg;
-	}
-
 	public float calculateAvg(float amountValue, int count) {
 		return amountValue / count;
 	}
