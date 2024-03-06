@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.domain.user.blacklist.BlacklistDomain;
 import usw.suwiki.domain.user.blacklist.BlacklistRepository;
 import usw.suwiki.domain.user.service.BlacklistDomainService;
-import usw.suwiki.secure.encode.PasswordEncoder;
 
 import java.util.List;
 

@@ -9,11 +9,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.secure.PasswordEncoder;
+import usw.suwiki.core.secure.PasswordRandomizer;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
 import usw.suwiki.domain.timetable.entity.Timetable;
-import usw.suwiki.secure.encode.PasswordEncoder;
-import usw.suwiki.secure.random.PasswordRandomizer;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

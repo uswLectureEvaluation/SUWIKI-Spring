@@ -1,7 +1,7 @@
 package usw.suwiki.domain.user.service;
 
+import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.domain.user.User;
-import usw.suwiki.secure.encode.PasswordEncoder;
 
 import java.util.Optional;
 

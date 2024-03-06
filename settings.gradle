@@ -32,6 +32,8 @@ include 'usw-suwiki-core:usw-suwiki-version'
 include 'usw-suwiki-core:usw-suwiki-exception'
 
 include 'usw-suwiki-auth'
+include 'usw-suwiki-auth:usw-suwiki-auth-core'
+include 'usw-suwiki-auth:usw-suwiki-auth-token'
 
 include 'usw-suwiki-common'
 

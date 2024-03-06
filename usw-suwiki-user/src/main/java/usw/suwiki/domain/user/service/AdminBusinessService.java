@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostBlacklistForm;
 import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostNoProblemForm;
 import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
@@ -22,7 +23,6 @@ import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
 import usw.suwiki.global.jwt.JwtAgent;
-import usw.suwiki.secure.encode.PasswordEncoder;
 
 import java.util.List;
 import java.util.Map;

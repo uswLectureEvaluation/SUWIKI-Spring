@@ -5,12 +5,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.isolated.UserIsolation;
 import usw.suwiki.domain.user.isolated.UserIsolationRepository;
 import usw.suwiki.domain.user.service.UserCRUDService;
 import usw.suwiki.domain.user.service.UserIsolationCRUDService;
-import usw.suwiki.secure.encode.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;

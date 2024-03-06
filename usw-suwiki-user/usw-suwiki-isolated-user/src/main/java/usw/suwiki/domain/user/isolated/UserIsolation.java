@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.secure.encode.PasswordEncoder;
-import usw.suwiki.secure.random.PasswordRandomizer;
+import usw.suwiki.core.secure.PasswordEncoder;
+import usw.suwiki.core.secure.PasswordRandomizer;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
