@@ -1,11 +1,5 @@
-package usw.suwiki.domain.postreport;
+package usw.suwiki.report.exampost;
 
-import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.exampost.domain.ExamPost;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.ExamReportForm;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -54,8 +55,7 @@ public class ExamPostReport {
         Long reportedUserIdx,
         Long reportingUserIdx
     ) {
-        return ExamPostReport
-            .builder()
+        return builder()
             .examIdx(examReportForm.examIdx())
             .lectureName(examPost.getLectureName())
             .professor(examPost.getProfessor())

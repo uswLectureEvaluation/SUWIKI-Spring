@@ -1,16 +1,17 @@
-package usw.suwiki.domain.postreport.service;
+package usw.suwiki.report;
 
-import static usw.suwiki.global.exception.ExceptionType.REPORTED_POST_NOT_FOUND;
-
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.core.exception.errortype.ReportedPostException;
 import usw.suwiki.domain.postreport.EvaluatePostReport;
 import usw.suwiki.domain.postreport.ExamPostReport;
 import usw.suwiki.domain.postreport.repository.EvaluateReportRepository;
 import usw.suwiki.domain.postreport.repository.ExamReportRepository;
-import usw.suwiki.core.exception.errortype.ReportedPostException;
+
+import java.util.List;
+
+import static usw.suwiki.global.exception.ExceptionType.REPORTED_POST_NOT_FOUND;
 
 @Service
 @Transactional
@@ -52,7 +53,6 @@ public class ReportPostService {
     public void deleteByExamIdx(Long examIdx) {
         examReportRepository.deleteByExamIdx(examIdx);
     }
-
 
     public void saveEvaluatePostReport(EvaluatePostReport evaluatePostReport) {
         evaluateReportRepository.save(evaluatePostReport);
