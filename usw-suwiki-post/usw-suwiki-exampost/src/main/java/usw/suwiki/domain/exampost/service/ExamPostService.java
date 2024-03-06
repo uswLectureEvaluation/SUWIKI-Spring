@@ -3,6 +3,7 @@ package usw.suwiki.domain.exampost.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.domain.exampost.ExamPost;
 import usw.suwiki.domain.exampost.controller.dto.ExamPostUpdateDto;
 import usw.suwiki.domain.exampost.controller.dto.ExamPostsSaveDto;
@@ -10,24 +11,20 @@ import usw.suwiki.domain.exampost.controller.dto.ExamResponseByLectureIdDto;
 import usw.suwiki.domain.exampost.controller.dto.ExamResponseByUserIdxDto;
 import usw.suwiki.domain.exampost.controller.dto.ReadExamPostResponse;
 import usw.suwiki.domain.exampost.controller.dto.viewexam.PurchaseHistoryDto;
-import usw.suwiki.domain.lecture.service.LectureService;
-import usw.suwiki.domain.user.user.User;
-import usw.suwiki.domain.user.user.service.UserCRUDService;
-import usw.suwiki.domain.userlecture.viewexam.ViewExam;
-import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
-import usw.suwiki.global.PageOption;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.service.UserCRUDService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ExamPostService {
-
-    private final ExamPostCRUDService examPostCRUDService;
-    private final ViewExamCRUDService viewExamCRUDService;
     private final LectureService lectureService;
     private final UserCRUDService userCRUDService;
+    private final ExamPostCRUDService examPostCRUDService;
+    private final ViewExamCRUDService viewExamCRUDService;
 
     @Transactional
     public void write(ExamPostsSaveDto examData, Long userIdx, Long lectureId) {
@@ -46,23 +43,20 @@ public class ExamPostService {
         Lecture lecture =lectureService.findLectureById(lectureIdx);
         user.purchaseExamPost();
 
-        ViewExam viewExam = ViewExam.builder()
-            .user(user)
-            .lecture(lecture)
-            .build();
-        viewExamCRUDService.save(viewExam);
+        viewExamCRUDService.save(ViewExam.builder()
+          .user(user)
+          .lecture(lecture)
+          .build());
     }
 
-    @Transactional(readOnly = true)
     public boolean canRead(Long userId, Long lectureId) {
         return viewExamCRUDService.isExist(userId, lectureId);
     }
 
-    @Transactional(readOnly = true)
     public List<PurchaseHistoryDto> readPurchaseHistory(Long userIdx) {
         List<PurchaseHistoryDto> response = new ArrayList<>();
-        List<ViewExam> viewExams = viewExamCRUDService.loadViewExamsFromUserIdx(userIdx);
-        for (ViewExam viewExam : viewExams) {
+
+        for (ViewExam viewExam : viewExamCRUDService.loadViewExamsFromUserIdx(userIdx)) {
             PurchaseHistoryDto data = PurchaseHistoryDto.builder()
                 .id(viewExam.getId())
                 .lectureName(viewExam.getLecture().getName())
@@ -81,22 +75,24 @@ public class ExamPostService {
         examPost.update(examUpdateData);
     }
 
-    @Transactional(readOnly = true)
     public ReadExamPostResponse readExamPost(Long userId, Long lectureId, PageOption option) {
         List<ExamResponseByLectureIdDto> response = new ArrayList<>();
+
         List<ExamPost> examPosts = examPostCRUDService.loadExamPostsFromLectureIdx(lectureId, option);
         boolean isWrite = isWrite(userId, lectureId);
+
         for (ExamPost post : examPosts) {
             response.add(new ExamResponseByLectureIdDto(post));
         }
+
         if (response.isEmpty()) {
             return ReadExamPostResponse.hasNotExamPost(isWrite);
         }
+
         return ReadExamPostResponse.hasExamPost(response, isWrite);
     }
 
 
-    @Transactional(readOnly = true)
     public List<ExamResponseByUserIdxDto> readExamPostByUserIdAndOption(PageOption option, Long userId) {
         List<ExamResponseByUserIdxDto> response = new ArrayList<>();
         List<ExamPost> examPosts = examPostCRUDService.loadExamPostsFromUserIdxAndPageOption(userId, option);
@@ -108,7 +104,6 @@ public class ExamPostService {
         return response;
     }
 
-    @Transactional(readOnly = true)
     public boolean isWrite(Long userIdx, Long lectureIdx) {
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         Lecture lecture = lectureService.findLectureById(lectureIdx);
@@ -127,7 +122,6 @@ public class ExamPostService {
         ExamPost examPost = new ExamPost(examData);
         examPost.setLecture(lecture);
         examPost.setUser(user);
-
         return examPost;
     }
 }

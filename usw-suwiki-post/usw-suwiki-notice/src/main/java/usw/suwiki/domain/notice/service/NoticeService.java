@@ -3,11 +3,11 @@ package usw.suwiki.domain.notice.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.domain.notice.Notice;
 import usw.suwiki.domain.notice.controller.dto.NoticeDetailResponseDto;
 import usw.suwiki.domain.notice.controller.dto.NoticeResponseDto;
 import usw.suwiki.domain.notice.controller.dto.NoticeSaveOrUpdateDto;
-import usw.suwiki.global.PageOption;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +37,7 @@ public class NoticeService {
 
     public NoticeDetailResponseDto readNotice(Long noticeId) {
         Notice notice = noticeCRUDService.loadNoticeFromId(noticeId);
-        NoticeDetailResponseDto response = new NoticeDetailResponseDto(notice);
-        return response;
+      return new NoticeDetailResponseDto(notice);
     }
 
     @Transactional
@@ -46,7 +45,6 @@ public class NoticeService {
         Notice notice = noticeCRUDService.loadNoticeFromId(noticeId);
         notice.update(noticeSaveOrUpdateDto);
     }
-
 
     @Transactional
     public void delete(Long noticeId) {

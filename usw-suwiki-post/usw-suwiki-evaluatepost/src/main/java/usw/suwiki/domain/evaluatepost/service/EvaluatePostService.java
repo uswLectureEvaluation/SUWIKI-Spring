@@ -3,7 +3,9 @@ package usw.suwiki.domain.evaluatepost.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.core.exception.errortype.EvaluatePostException;
+import usw.suwiki.common.pagination.PageOption;
+import usw.suwiki.core.exception.EvaluatePostException;
+import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.evaluatepost.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostResponseByLectureIdDto;
 import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostResponseByUserIdxDto;
@@ -13,19 +15,15 @@ import usw.suwiki.domain.evaluatepost.dto.EvaluatePostsToLecture;
 import usw.suwiki.domain.evaluatepost.dto.FindByLectureToJson;
 import usw.suwiki.domain.lecture.service.LectureCRUDService;
 import usw.suwiki.domain.lecture.service.LectureService;
-import usw.suwiki.domain.user.user.User;
-import usw.suwiki.domain.user.user.service.UserCRUDService;
-import usw.suwiki.global.PageOption;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.service.UserCRUDService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static usw.suwiki.global.exception.ExceptionType.POSTS_WRITE_OVERLAP;
-
 @Service
 @RequiredArgsConstructor
 public class EvaluatePostService {
-
     private final EvaluatePostCRUDService evaluatePostCRUDService;
     private final LectureCRUDService lectureCRUDService;
     private final LectureService lectureService;
@@ -71,9 +69,11 @@ public class EvaluatePostService {
 
     private FindByLectureToJson setWrittenInformation(List<EvaluatePostResponseByLectureIdDto> data, Long userIdx, Long lectureId) {
         FindByLectureToJson response = new FindByLectureToJson(data);
+
         if (verifyIsUserCanWriteEvaluatePost(userIdx, lectureId)) {
             response.setWritten(Boolean.FALSE);
         }
+
         return response;
     }
 
@@ -123,7 +123,7 @@ public class EvaluatePostService {
 
     private void checkAlreadyWrite(Long userIdx, Long lectureIdx) {
         if (!(verifyIsUserCanWriteEvaluatePost(userIdx, lectureIdx))) {
-            throw new EvaluatePostException(POSTS_WRITE_OVERLAP);
+            throw new EvaluatePostException(ExceptionType.POSTS_WRITE_OVERLAP);
         }
     }
 

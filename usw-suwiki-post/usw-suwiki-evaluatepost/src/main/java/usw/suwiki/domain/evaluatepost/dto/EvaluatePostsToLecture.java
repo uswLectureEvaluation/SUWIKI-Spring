@@ -3,7 +3,7 @@ package usw.suwiki.domain.evaluatepost.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
+import usw.suwiki.domain.evaluatepost.EvaluatePost;
 
 @Getter
 @NoArgsConstructor

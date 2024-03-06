@@ -1,9 +1,10 @@
 package usw.suwiki.domain.notice;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.notice.controller.dto.NoticeSaveOrUpdateDto;
-import usw.suwiki.global.BaseTimeEntity;
+import usw.suwiki.infra.jpa.BaseTimeEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +13,7 @@ import javax.persistence.Id;
 
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notice extends BaseTimeEntity {
 
     @Id

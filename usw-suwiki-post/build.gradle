@@ -1,0 +1,7 @@
+subprojects {
+    dependencies {
+        implementation project(':usw-suwiki-common')
+        implementation project(':usw-suwiki-infra:usw-suwiki-db')
+        implementation project(':usw-suwiki-core:usw-suwiki-exception')
+    }
+}

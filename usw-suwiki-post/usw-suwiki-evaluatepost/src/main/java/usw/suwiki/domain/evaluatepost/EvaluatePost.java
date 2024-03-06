@@ -4,10 +4,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostSaveDto;
-import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostUpdateDto;
-import usw.suwiki.domain.user.user.User;
-import usw.suwiki.global.BaseTimeEntity;
+import lombok.Setter;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.infra.jpa.BaseTimeEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,24 +37,18 @@ public class EvaluatePost extends BaseTimeEntity {
     private int difficulty;
     private int homework;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id")
     private Lecture lecture;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
     private User user;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
-
-    public void setLecture(Lecture lecture) {
-        this.lecture = lecture;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     @Builder
     public EvaluatePost(

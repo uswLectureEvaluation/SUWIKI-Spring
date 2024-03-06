@@ -1,6 +1,6 @@
 package usw.suwiki.domain.notice;
 
-import usw.suwiki.global.PageOption;
+import usw.suwiki.common.pagination.PageOption;
 
 import java.util.List;
 
