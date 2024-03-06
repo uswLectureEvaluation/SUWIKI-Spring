@@ -9,9 +9,14 @@ pluginManagement {
 rootProject.name = 'suwiki'
 
 include 'usw-suwiki-user'
+include 'usw-suwiki-user:usw-suwiki-viewexam'
 include 'usw-suwiki-user:usw-suwiki-blacklist'
 include 'usw-suwiki-user:usw-suwiki-restricted'
 include 'usw-suwiki-user:usw-suwiki-isolated-user'
+
+include 'usw-suwiki-lecture'
+include 'usw-suwiki-lecture:usw-suwiki-schedule'
+include 'usw-suwiki-lecture:usw-suwiki-timetable'
 
 include 'usw-suwiki-report'
 
@@ -34,8 +39,3 @@ include 'usw-suwiki-external:usw-suwiki-mail'
 include 'usw-suwiki-infra'
 include 'usw-suwiki-infra:usw-suwiki-db'
 include 'usw-suwiki-infra:usw-suwiki-caffeine'
-
-include 'usw-suwiki-lecture'
-include 'usw-suwiki-lecture:usw-suwiki-schedule'
-include 'usw-suwiki-lecture:usw-suwiki-timetable'
-

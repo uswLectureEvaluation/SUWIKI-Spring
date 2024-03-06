@@ -1,11 +1,12 @@
-package usw.suwiki.domain.userlecture.viewexam;
+package usw.suwiki.domain.user.viewexam;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.user.user.User;
-import usw.suwiki.global.BaseTimeEntity;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.infra.jpa.BaseTimeEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,10 +17,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Getter
-@NoArgsConstructor
 @Entity
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ViewExam extends BaseTimeEntity {
 
     @Id

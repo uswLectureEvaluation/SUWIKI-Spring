@@ -1,14 +1,15 @@
-package usw.suwiki.domain.userlecture.viewexam.repository;
+package usw.suwiki.domain.user.viewexam;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.EntityManager;
-import org.springframework.stereotype.Repository;
-import usw.suwiki.domain.userlecture.viewexam.ViewExam;
 
 @Repository
+@Transactional(readOnly = true)
 public class JpaViewExamRepository implements ViewExamRepository {
-
     private final EntityManager em;
 
     public JpaViewExamRepository(EntityManager em) {
