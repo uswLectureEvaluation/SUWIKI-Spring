@@ -5,20 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
-import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
-import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
-import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
-import usw.suwiki.domain.postreport.service.ReportPostService;
-import usw.suwiki.domain.refreshtoken.service.RefreshTokenCRUDService;
-import usw.suwiki.domain.restrictinguser.service.RestrictingUserService;
-import usw.suwiki.domain.user.user.User;
-import usw.suwiki.domain.user.user.service.UserCRUDService;
-import usw.suwiki.domain.user.userIsolation.UserIsolation;
-import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
-import usw.suwiki.global.util.emailBuild.BuildSoonDormantTargetForm;
-import usw.suwiki.global.util.emailBuild.UserAutoDeletedWarningForm;
-import usw.suwiki.global.util.mailsender.EmailSender;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.service.RestrictingUserService;
+import usw.suwiki.domain.user.service.UserCRUDService;
+import usw.suwiki.domain.user.service.UserIsolationCRUDService;
+import usw.suwiki.external.mail.EmailSender;
 
 import java.time.LocalDateTime;
 
@@ -27,17 +18,18 @@ import java.time.LocalDateTime;
 @Transactional
 @RequiredArgsConstructor
 public class UserIsolationSchedulingService {
+    private final EmailSender emailSender;
 
     private final UserCRUDService userCRUDService;
     private final RestrictingUserService restrictingUserService;
-    private final RefreshTokenCRUDService refreshTokenCRUDService;
+    private final UserIsolationCRUDService userIsolationCRUDService;
+
     private final ReportPostService reportPostService;
+    private final RefreshTokenCRUDService refreshTokenCRUDService;
     private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
     private final FavoriteMajorService favoriteMajorService;
-    private final UserIsolationCRUDService userIsolationCRUDService;
     private final BuildSoonDormantTargetForm buildSoonDormantTargetForm;
     private final UserAutoDeletedWarningForm userAutoDeletedWarningForm;
-    private final EmailSender emailSender;
     private final EvaluatePostCRUDService evaluatePostCRUDService;
     private final ViewExamCRUDService viewExamCRUDService;
     private final ExamPostCRUDService examPostCRUDService;

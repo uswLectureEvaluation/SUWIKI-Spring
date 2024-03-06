@@ -6,8 +6,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
-import usw.suwiki.domain.user.user.User;
-import usw.suwiki.domain.user.user.service.UserCRUDService;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.service.UserCRUDService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +17,6 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class ConfirmationTokenSchedulingService {
-
     private final UserCRUDService userCRUDService;
     private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
 

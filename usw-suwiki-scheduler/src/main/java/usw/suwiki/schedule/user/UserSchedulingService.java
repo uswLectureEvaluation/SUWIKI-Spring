@@ -5,20 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.confirmationtoken.repository.ConfirmationTokenRepository;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
-import usw.suwiki.domain.favoritemajor.service.FavoriteMajorService;
-import usw.suwiki.domain.postreport.service.ReportPostService;
-import usw.suwiki.domain.refreshtoken.repository.RefreshTokenRepository;
-import usw.suwiki.domain.restrictinguser.repository.RestrictingUserRepository;
-import usw.suwiki.domain.user.user.User;
-import usw.suwiki.domain.user.user.repository.UserRepository;
-import usw.suwiki.domain.user.userIsolation.UserIsolation;
-import usw.suwiki.domain.user.userIsolation.repository.UserIsolationRepository;
-import usw.suwiki.domain.userlecture.viewexam.service.ViewExamCRUDService;
-import usw.suwiki.global.util.emailBuild.BuildPersonalInformationUsingNotifyForm;
-import usw.suwiki.global.util.mailsender.EmailSendService;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.UserRepository;
+import usw.suwiki.domain.user.isolated.UserIsolation;
+import usw.suwiki.domain.user.isolated.UserIsolationRepository;
+import usw.suwiki.domain.user.major.service.FavoriteMajorService;
+import usw.suwiki.domain.user.restricted.RestrictingUserRepository;
+import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDService;
+import usw.suwiki.external.mail.EmailSender;
+import usw.suwiki.report.ReportPostService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,19 +25,21 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class UserSchedulingService {
-
+    private final EmailSender emailSender;
     private final UserRepository userRepository;
-    private final BuildPersonalInformationUsingNotifyForm buildPersonalInformationUsingNotifyForm;
-    private final EmailSendService emailSendService;
-    private final FavoriteMajorService favoriteMajorService;
-    private final ConfirmationTokenRepository confirmationTokenRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final UserIsolationRepository userIsolationRepository;
     private final ViewExamCRUDService viewExamCRUDService;
-    private final EvaluatePostCRUDService evaluatePostCRUDService;
-    private final ExamPostCRUDService examPostCRUDService;
+    private final FavoriteMajorService favoriteMajorService;
+    private final UserIsolationRepository userIsolationRepository;
     private final RestrictingUserRepository restrictingUserRepository;
+
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
+
     private final ReportPostService reportPostService;
+    private final ExamPostCRUDService examPostCRUDService;
+    private final EvaluatePostCRUDService evaluatePostCRUDService;
+
+    private final BuildPersonalInformationUsingNotifyForm buildPersonalInformationUsingNotifyForm;
 
     @Transactional(readOnly = true)
     @Scheduled(cron = "0 1 0 1 3 *")
@@ -49,7 +48,7 @@ public class UserSchedulingService {
 
         String emailContent = buildPersonalInformationUsingNotifyForm.buildEmail();
         for (User user : userRepository.findAll()) {
-            emailSendService.send(user.getEmail(), emailContent);
+            emailSender.send(user.getEmail(), emailContent);
         }
 
         log.info("{} - 개인정보 처리 방침 안내 발송 종료", LocalDateTime.now());

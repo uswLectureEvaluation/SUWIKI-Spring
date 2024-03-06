@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.restrictinguser.RestrictingUser;
-import usw.suwiki.domain.restrictinguser.repository.RestrictingUserRepository;
-import usw.suwiki.domain.user.user.User;
-import usw.suwiki.domain.user.user.service.UserCRUDService;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.restricted.RestrictingUser;
+import usw.suwiki.domain.user.restricted.RestrictingUserRepository;
+import usw.suwiki.domain.user.service.UserCRUDService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +18,6 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class RestrictingUserSchedulingService {
-
     private final UserCRUDService userCRUDService;
     private final RestrictingUserRepository restrictingUserRepository;
 
