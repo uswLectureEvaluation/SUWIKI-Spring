@@ -1,21 +1,21 @@
-package usw.suwiki.domain.favoritemajor.service;
+package usw.suwiki.domain.user.major.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.UserRepository;
+import usw.suwiki.domain.user.major.FavoriteMajor;
+import usw.suwiki.domain.user.major.FavoriteMajorRepository;
 
 import java.util.List;
 import java.util.Optional;
-import javax.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import usw.suwiki.domain.favoritemajor.FavoriteMajor;
-import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
-import usw.suwiki.domain.favoritemajor.repository.FavoriteMajorRepository;
-import usw.suwiki.domain.user.user.User;
-import usw.suwiki.domain.user.user.repository.UserRepository;
 
+@Service
 @Transactional
 @RequiredArgsConstructor
-@Service
 public class FavoriteMajorService {
-
     private final FavoriteMajorRepository favoriteMajorRepository;
     private final UserRepository userRepository;
 
@@ -26,9 +26,9 @@ public class FavoriteMajorService {
         favoriteMajorRepository.save(favorite);
     }
 
+    @Transactional(readOnly = true)
     public List<String> findMajorTypeByUser(Long userIdx) {
-        List<String> list = favoriteMajorRepository.findOnlyMajorTypeByUser(userIdx);
-        return list;
+        return favoriteMajorRepository.findOnlyMajorTypeByUser(userIdx);
     }
 
     public void delete(Long userIdx, String majorType) {

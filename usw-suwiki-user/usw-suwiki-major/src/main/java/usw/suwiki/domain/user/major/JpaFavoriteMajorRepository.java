@@ -1,18 +1,15 @@
-package usw.suwiki.domain.favoritemajor.repository;
+package usw.suwiki.domain.user.major;
 
-import java.util.List;
-import javax.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import usw.suwiki.domain.favoritemajor.FavoriteMajor;
+
+import javax.persistence.EntityManager;
+import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class JpaFavoriteMajorRepository implements FavoriteMajorRepository {
-
     private final EntityManager em;
-
-    public JpaFavoriteMajorRepository(EntityManager em) {
-        this.em = em;
-    }
 
     @Override
     public FavoriteMajor findById(Long id) {
@@ -60,5 +57,4 @@ public class JpaFavoriteMajorRepository implements FavoriteMajorRepository {
     public void delete(FavoriteMajor favoriteMajor) {
         em.remove(favoriteMajor);
     }
-
 }

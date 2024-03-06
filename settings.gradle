@@ -9,6 +9,7 @@ pluginManagement {
 rootProject.name = 'suwiki'
 
 include 'usw-suwiki-user'
+include 'usw-suwiki-user:usw-suwiki-major'
 include 'usw-suwiki-user:usw-suwiki-viewexam'
 include 'usw-suwiki-user:usw-suwiki-blacklist'
 include 'usw-suwiki-user:usw-suwiki-restricted'
