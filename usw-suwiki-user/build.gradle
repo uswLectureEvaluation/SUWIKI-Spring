@@ -1,0 +1,14 @@
+allprojects {
+    dependencies {
+        implementation project(':usw-suwiki-core:usw-suwiki-exception')
+        implementation project(':usw-suwiki-core:usw-suwiki-secure')
+        implementation project(':usw-suwiki-infra:usw-suwiki-db')
+        implementation project(':usw-suwiki-common')
+    }
+}
+
+subprojects {
+    dependencies {
+        implementation project(':usw-suwiki-user')
+    }
+}

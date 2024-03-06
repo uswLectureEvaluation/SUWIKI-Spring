@@ -9,6 +9,7 @@ pluginManagement {
 rootProject.name = 'suwiki'
 
 include 'usw-suwiki-core'
+include 'usw-suwiki-core:usw-suwiki-secure'
 include 'usw-suwiki-core:usw-suwiki-version'
 include 'usw-suwiki-core:usw-suwiki-exception'
 
@@ -26,3 +27,9 @@ include 'usw-suwiki-infra:usw-suwiki-caffeine'
 include 'usw-suwiki-statistics'
 
 include 'usw-suwiki-scheduler'
+
+include 'usw-suwiki-user'
+include 'usw-suwiki-user:usw-suwiki-blacklist'
+include 'usw-suwiki-user:usw-suwiki-restricted'
+include 'usw-suwiki-user:usw-suwiki-isolated-user'
+

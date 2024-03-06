@@ -1,5 +1,6 @@
 dependencies {
     implementation project(':usw-suwiki-core:usw-suwiki-exception')
+    implementation project(':usw-suwiki-core:usw-suwiki-secure')
     implementation project(':usw-suwiki-statistics')
 
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
