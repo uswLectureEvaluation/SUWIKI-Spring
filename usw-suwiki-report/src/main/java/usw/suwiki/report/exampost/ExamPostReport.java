@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.exampost.domain.ExamPost;
+import usw.suwiki.domain.exampost.ExamPost;
 import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.ExamReportForm;
 
 import javax.persistence.Column;
@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Builder(access = AccessLevel.PRIVATE)
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExamPostReport {
 
     @Id
@@ -65,5 +65,4 @@ public class ExamPostReport {
             .reportedDate(LocalDateTime.now())
             .build();
     }
-
 }
