@@ -5,11 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.domain.notice.Notice;
-import usw.suwiki.domain.notice.controller.dto.NoticeDetailResponseDto;
-import usw.suwiki.domain.notice.controller.dto.NoticeResponseDto;
-import usw.suwiki.domain.notice.controller.dto.NoticeSaveOrUpdateDto;
+import usw.suwiki.domain.notice.dto.NoticeDetailResponseDto;
+import usw.suwiki.domain.notice.dto.NoticeResponseDto;
+import usw.suwiki.domain.notice.dto.NoticeSaveOrUpdateDto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,30 +19,25 @@ public class NoticeService {
 
     @Transactional
     public void write(NoticeSaveOrUpdateDto noticeSaveOrUpdateDto) {
-        Notice notice = new Notice(noticeSaveOrUpdateDto);
+        Notice notice = new Notice(noticeSaveOrUpdateDto.getTitle(), noticeSaveOrUpdateDto.getContent());
         noticeCRUDService.save(notice);
     }
 
     public List<NoticeResponseDto> readAllNotice(PageOption option) {
-        List<NoticeResponseDto> response = new ArrayList<>();
-
-        List<Notice> notices = noticeCRUDService.loadNotices(option);
-
-        for (Notice notice : notices) {
-            response.add(new NoticeResponseDto(notice));
-        }
-        return response;
+        return noticeCRUDService.loadNotices(option).stream()
+          .map(NoticeResponseDto::new)
+          .toList();
     }
 
     public NoticeDetailResponseDto readNotice(Long noticeId) {
         Notice notice = noticeCRUDService.loadNoticeFromId(noticeId);
-      return new NoticeDetailResponseDto(notice);
+        return new NoticeDetailResponseDto(notice);
     }
 
     @Transactional
     public void update(NoticeSaveOrUpdateDto noticeSaveOrUpdateDto, Long noticeId) {
         Notice notice = noticeCRUDService.loadNoticeFromId(noticeId);
-        notice.update(noticeSaveOrUpdateDto);
+        notice.update(noticeSaveOrUpdateDto.getTitle(), noticeSaveOrUpdateDto.getContent());
     }
 
     @Transactional

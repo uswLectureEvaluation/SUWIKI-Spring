@@ -1,7 +1,8 @@
-package usw.suwiki.domain.exampost.controller.dto;
+package usw.suwiki.domain.exampost.dto;
 
 import lombok.Getter;
-import usw.suwiki.domain.exampost.domain.ExamPost;
+import lombok.Setter;
+import usw.suwiki.domain.exampost.ExamPost;
 
 @Getter
 public class ExamResponseByUserIdxDto {
@@ -11,15 +12,14 @@ public class ExamResponseByUserIdxDto {
     private final String professor;
     private final String majorType;
     private final String selectedSemester;
+
+    @Setter
     private String semesterList;
+
     private final String examType;
     private final String examInfo;
     private final String examDifficulty;
     private final String content;
-
-    public void setSemesterList(String semesterList) {
-        this.semesterList = semesterList;
-    }
 
     public ExamResponseByUserIdxDto(ExamPost entity) {
         this.id = entity.getId();

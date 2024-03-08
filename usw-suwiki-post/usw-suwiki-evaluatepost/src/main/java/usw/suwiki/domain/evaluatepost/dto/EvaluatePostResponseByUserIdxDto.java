@@ -1,7 +1,8 @@
-package usw.suwiki.domain.evaluatepost.controller.dto;
+package usw.suwiki.domain.evaluatepost.dto;
 
 import lombok.Getter;
-import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
+import lombok.Setter;
+import usw.suwiki.domain.evaluatepost.EvaluatePost;
 
 @Getter
 public class EvaluatePostResponseByUserIdxDto {
@@ -11,7 +12,10 @@ public class EvaluatePostResponseByUserIdxDto {
     private final String professor;
     private final String majorType;
     private final String selectedSemester;
+
+    @Setter
     private String semesterList;
+
     private final float totalAvg;
     private final float satisfaction;
     private final float learning;
@@ -21,10 +25,6 @@ public class EvaluatePostResponseByUserIdxDto {
     private final int homework;
 
     private final String content;
-
-    public void setSemesterList(String semesterList) {
-        this.semesterList = semesterList;
-    }
 
     public EvaluatePostResponseByUserIdxDto(EvaluatePost entity) {
         this.id = entity.getId();

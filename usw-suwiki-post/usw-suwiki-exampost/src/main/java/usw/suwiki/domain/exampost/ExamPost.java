@@ -4,10 +4,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.exampost.controller.dto.ExamPostUpdateDto;
-import usw.suwiki.domain.exampost.controller.dto.ExamPostsSaveDto;
-import usw.suwiki.domain.user.user.User;
-import usw.suwiki.global.BaseTimeEntity;
+import lombok.Setter;
+import usw.suwiki.domain.exampost.dto.ExamPostUpdateDto;
+import usw.suwiki.domain.exampost.dto.ExamPostsSaveDto;
+import usw.suwiki.domain.user.User;
+import usw.suwiki.infra.jpa.BaseTimeEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,21 +38,15 @@ public class ExamPost extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id")
     private Lecture lecture;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
     private User user;
-
-    public void setLecture(Lecture lecture) {
-        this.lecture = lecture;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     @Builder
     public ExamPost(ExamPostsSaveDto dto) {

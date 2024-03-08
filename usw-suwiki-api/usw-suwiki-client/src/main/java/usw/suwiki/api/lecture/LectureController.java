@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import usw.suwiki.auth.core.jwt.JwtAgent;
 import usw.suwiki.common.response.ApiResponse;
 import usw.suwiki.common.response.NoOffsetPaginationResponse;
 import usw.suwiki.common.response.ResponseForm;
@@ -19,7 +20,6 @@ import usw.suwiki.domain.lecture.dto.LectureDetailResponseDto;
 import usw.suwiki.domain.lecture.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.dto.LectureWithOptionalScheduleResponse;
 import usw.suwiki.domain.lecture.service.LectureService;
-import usw.suwiki.global.jwt.JwtAgent;
 import usw.suwiki.statistics.annotation.ApiLogger;
 import usw.suwiki.statistics.annotation.CacheStatics;
 
@@ -40,10 +40,7 @@ public class LectureController {
         @RequestParam(required = false) String majorType
     ) {
         LectureFindOption findOption = new LectureFindOption(option, page, majorType);
-        LectureAndCountResponseForm response = lectureService.readLectureByKeyword(
-            searchValue, findOption);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(lectureService.readLectureByKeyword(searchValue, findOption));
     }
 
     @GetMapping("/current/cells/search")
@@ -69,7 +66,6 @@ public class LectureController {
         @RequestParam(required = false) Integer page,
         @RequestParam(required = false) String majorType
     ) {
-
         LectureFindOption findOption = new LectureFindOption(option, page, majorType);
         LectureAndCountResponseForm response = lectureService.readAllLecture(findOption);
         return ResponseEntity.ok(response);
@@ -77,10 +73,7 @@ public class LectureController {
 
     @ApiLogger(option = "lecture")
     @GetMapping
-    public ResponseEntity<ResponseForm> findLectureByLectureId(
-        @RequestParam Long lectureId,
-        @RequestHeader String Authorization
-    ) {
+    public ResponseEntity<ResponseForm> findLectureByLectureId(@RequestParam Long lectureId, @RequestHeader String Authorization) {
         if (jwtAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(ExceptionType.USER_RESTRICTED);
         }

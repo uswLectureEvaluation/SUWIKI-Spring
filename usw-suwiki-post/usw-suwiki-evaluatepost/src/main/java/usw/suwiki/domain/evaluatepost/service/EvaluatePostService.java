@@ -7,14 +7,12 @@ import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.core.exception.EvaluatePostException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.evaluatepost.EvaluatePost;
-import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostResponseByLectureIdDto;
-import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostResponseByUserIdxDto;
-import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostSaveDto;
-import usw.suwiki.domain.evaluatepost.controller.dto.EvaluatePostUpdateDto;
+import usw.suwiki.domain.evaluatepost.dto.EvaluatePostResponseByLectureIdDto;
+import usw.suwiki.domain.evaluatepost.dto.EvaluatePostResponseByUserIdxDto;
+import usw.suwiki.domain.evaluatepost.dto.EvaluatePostSaveDto;
+import usw.suwiki.domain.evaluatepost.dto.EvaluatePostUpdateDto;
 import usw.suwiki.domain.evaluatepost.dto.EvaluatePostsToLecture;
 import usw.suwiki.domain.evaluatepost.dto.FindByLectureToJson;
-import usw.suwiki.domain.lecture.service.LectureCRUDService;
-import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.service.UserCRUDService;
 

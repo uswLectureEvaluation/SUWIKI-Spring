@@ -1,7 +1,5 @@
-package usw.suwiki.domain.notice.controller;
+package usw.suwiki.api.notice;
 
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,23 +11,25 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.domain.notice.controller.dto.NoticeDetailResponseDto;
-import usw.suwiki.domain.notice.controller.dto.NoticeResponseDto;
-import usw.suwiki.domain.notice.controller.dto.NoticeSaveOrUpdateDto;
+import usw.suwiki.auth.core.jwt.JwtAgent;
+import usw.suwiki.common.pagination.PageOption;
+import usw.suwiki.common.response.ResponseForm;
+import usw.suwiki.core.exception.AccountException;
+import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.domain.notice.dto.NoticeDetailResponseDto;
+import usw.suwiki.domain.notice.dto.NoticeResponseDto;
+import usw.suwiki.domain.notice.dto.NoticeSaveOrUpdateDto;
 import usw.suwiki.domain.notice.service.NoticeService;
-import usw.suwiki.global.PageOption;
-import usw.suwiki.global.ResponseForm;
-import usw.suwiki.global.annotation.ApiLogger;
-import usw.suwiki.global.exception.ExceptionType;
-import usw.suwiki.core.exception.errortype.AccountException;
-import usw.suwiki.global.jwt.JwtAgent;
+import usw.suwiki.statistics.annotation.ApiLogger;
 
-@RestController
-@RequiredArgsConstructor
+import java.util.List;
+import java.util.Optional;
+
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@RestController
 @RequestMapping(value = "/notice")
+@RequiredArgsConstructor
 public class NoticeController {
-
     private final NoticeService noticeService;
     private final JwtAgent jwtAgent;
 
@@ -65,13 +65,10 @@ public class NoticeController {
 
     @ApiLogger(option = "notice")
     @PostMapping("/")
-    public String writeNoticeApi(
-        @RequestBody NoticeSaveOrUpdateDto requestBody,
-        @RequestHeader String Authorization
-    ) {
+    public String writeNoticeApi(@RequestBody NoticeSaveOrUpdateDto request, @RequestHeader String Authorization) {
         jwtAgent.validateJwt(Authorization);
         validateAdmin(Authorization);
-        noticeService.write(requestBody);
+        noticeService.write(request);
 
         return "success";
     }
@@ -92,10 +89,7 @@ public class NoticeController {
 
     @ApiLogger(option = "notice")
     @DeleteMapping("/")
-    public String deleteNotice(
-        @RequestParam Long noticeId,
-        @RequestHeader String Authorization
-    ) {
+    public String deleteNotice(@RequestParam Long noticeId, @RequestHeader String Authorization) {
         jwtAgent.validateJwt(Authorization);
         validateAdmin(Authorization);
         noticeService.delete(noticeId);

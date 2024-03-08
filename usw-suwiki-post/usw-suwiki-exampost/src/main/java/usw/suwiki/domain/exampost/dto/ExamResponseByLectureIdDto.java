@@ -1,11 +1,10 @@
-package usw.suwiki.domain.exampost.controller.dto;
+package usw.suwiki.domain.exampost.dto;
 
 import lombok.Getter;
-import usw.suwiki.domain.exampost.domain.ExamPost;
+import usw.suwiki.domain.exampost.ExamPost;
 
 @Getter
 public class ExamResponseByLectureIdDto {
-
     private final Long id;
     private final String selectedSemester;
     private final String examType;
@@ -21,5 +20,4 @@ public class ExamResponseByLectureIdDto {
         this.examDifficulty = entity.getExamDifficulty();
         this.content = entity.getContent();
     }
-
 }

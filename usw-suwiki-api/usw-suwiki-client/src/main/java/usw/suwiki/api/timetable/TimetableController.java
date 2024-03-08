@@ -1,4 +1,4 @@
-package usw.suwiki.api.lecture;
+package usw.suwiki.api.timetable;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import usw.suwiki.auth.core.jwt.JwtAgent;
 import usw.suwiki.common.request.BulkRequest;
 import usw.suwiki.common.response.ApiResponse;
 import usw.suwiki.common.response.ResultResponse;
@@ -22,7 +23,7 @@ import usw.suwiki.domain.lecture.dto.TimetableCellResponse;
 import usw.suwiki.domain.lecture.dto.TimetableResponse;
 import usw.suwiki.domain.lecture.dto.UpdateTimetableCellRequest;
 import usw.suwiki.domain.lecture.dto.UpdateTimetableRequest;
-import usw.suwiki.global.jwt.JwtAgent;
+import usw.suwiki.domain.lecture.timetable.service.TimetableService;
 
 import javax.validation.Valid;
 import java.util.List;

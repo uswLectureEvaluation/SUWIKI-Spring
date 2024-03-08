@@ -1,7 +1,7 @@
-package usw.suwiki.domain.evaluatepost.controller.dto;
+package usw.suwiki.domain.evaluatepost.dto;
 
 import lombok.Getter;
-import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
+import usw.suwiki.domain.evaluatepost.EvaluatePost;
 
 @Getter
 public class EvaluatePostResponseByLectureIdDto {

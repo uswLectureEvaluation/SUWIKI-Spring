@@ -1,9 +1,10 @@
-package usw.suwiki.domain.exampost.controller.dto;
+package usw.suwiki.domain.exampost.dto;
+
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
 
 @Setter
 @Getter

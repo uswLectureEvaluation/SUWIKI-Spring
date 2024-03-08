@@ -13,5 +13,4 @@ public class ToJsonArrayExam {
         this.data = data;
         this.isExamDataExist = true;
     }
-
 }

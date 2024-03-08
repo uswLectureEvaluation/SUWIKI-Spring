@@ -5,14 +5,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.domain.exampost.ExamPost;
-import usw.suwiki.domain.exampost.controller.dto.ExamPostUpdateDto;
-import usw.suwiki.domain.exampost.controller.dto.ExamPostsSaveDto;
-import usw.suwiki.domain.exampost.controller.dto.ExamResponseByLectureIdDto;
-import usw.suwiki.domain.exampost.controller.dto.ExamResponseByUserIdxDto;
-import usw.suwiki.domain.exampost.controller.dto.ReadExamPostResponse;
-import usw.suwiki.domain.exampost.controller.dto.viewexam.PurchaseHistoryDto;
+import usw.suwiki.domain.exampost.dto.ExamPostUpdateDto;
+import usw.suwiki.domain.exampost.dto.ExamPostsSaveDto;
+import usw.suwiki.domain.exampost.dto.ExamResponseByLectureIdDto;
+import usw.suwiki.domain.exampost.dto.ExamResponseByUserIdxDto;
+import usw.suwiki.domain.exampost.dto.ReadExamPostResponse;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.service.UserCRUDService;
+import usw.suwiki.domain.user.viewexam.ViewExam;
+import usw.suwiki.domain.user.viewexam.dto.PurchaseHistoryDto;
+import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +42,14 @@ public class ExamPostService {
     @Transactional
     public void purchase(Long lectureIdx, Long userIdx) {
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
-        Lecture lecture =lectureService.findLectureById(lectureIdx);
+        Lecture lecture = lectureService.findLectureById(lectureIdx);
         user.purchaseExamPost();
 
         viewExamCRUDService.save(ViewExam.builder()
           .user(user)
           .lecture(lecture)
-          .build());
+          .build()
+        );
     }
 
     public boolean canRead(Long userId, Long lectureId) {
@@ -57,14 +60,13 @@ public class ExamPostService {
         List<PurchaseHistoryDto> response = new ArrayList<>();
 
         for (ViewExam viewExam : viewExamCRUDService.loadViewExamsFromUserIdx(userIdx)) {
-            PurchaseHistoryDto data = PurchaseHistoryDto.builder()
-                .id(viewExam.getId())
-                .lectureName(viewExam.getLecture().getName())
-                .professor(viewExam.getLecture().getProfessor())
-                .majorType(viewExam.getLecture().getMajorType())
-                .createDate(viewExam.getCreateDate())
-                .build();
-            response.add(data);
+            response.add(PurchaseHistoryDto.builder()
+              .id(viewExam.getId())
+              .lectureName(viewExam.getLecture().getName())
+              .professor(viewExam.getLecture().getProfessor())
+              .majorType(viewExam.getLecture().getMajorType())
+              .createDate(viewExam.getCreateDate())
+              .build());
         }
         return response;
     }
@@ -95,12 +97,13 @@ public class ExamPostService {
 
     public List<ExamResponseByUserIdxDto> readExamPostByUserIdAndOption(PageOption option, Long userId) {
         List<ExamResponseByUserIdxDto> response = new ArrayList<>();
-        List<ExamPost> examPosts = examPostCRUDService.loadExamPostsFromUserIdxAndPageOption(userId, option);
-        for (ExamPost examPost : examPosts) {
+
+        for (ExamPost examPost : examPostCRUDService.loadExamPostsFromUserIdxAndPageOption(userId, option)) {
             ExamResponseByUserIdxDto data = new ExamResponseByUserIdxDto(examPost);
             data.setSemesterList(examPost.getLecture().getSemester());
             response.add(data);
         }
+
         return response;
     }
 

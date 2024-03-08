@@ -1,13 +1,9 @@
 package usw.suwiki.domain.evaluatepost.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import usw.suwiki.domain.evaluatepost.EvaluatePost;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class EvaluatePostsToLecture {
 
     private Long lectureId;
