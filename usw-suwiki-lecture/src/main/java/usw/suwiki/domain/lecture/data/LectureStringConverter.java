@@ -1,10 +1,8 @@
-package usw.suwiki.domain.lecture.util;
+package usw.suwiki.domain.lecture.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
-import usw.suwiki.domain.timetable.entity.TimetableDay;
 
 public final class LectureStringConverter {
 

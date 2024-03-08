@@ -1,36 +1,27 @@
-package usw.suwiki.domain.timetable.dto.request;
+package usw.suwiki.domain.lecture.dto;
 
-import java.util.List;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import usw.suwiki.domain.timetable.entity.Semester;
-import usw.suwiki.domain.timetable.entity.Timetable;
-import usw.suwiki.domain.user.user.User;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateWholeTimetableRequest {
-
-    public static final int MAX_NAME_LENGTH = 200;
-    public static final int MAX_SEMESTER_LENGTH = 50;
-
     @NotNull
     private Integer year;
 
     @NotNull
-    @Size(max = MAX_SEMESTER_LENGTH)
+    @Size(max = 50)
     private String semester;
 
     @NotNull
-    @Size(max = MAX_NAME_LENGTH)
+    @Size(max = 200)
     private String name;
 
     @Valid

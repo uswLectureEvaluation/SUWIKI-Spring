@@ -1,7 +1,7 @@
 package usw.suwiki.domain.lecture;
 
 import org.springframework.data.domain.Slice;
-import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
+import usw.suwiki.domain.lecture.dto.LectureFindOption;
 
 import java.util.List;
 import java.util.Optional;

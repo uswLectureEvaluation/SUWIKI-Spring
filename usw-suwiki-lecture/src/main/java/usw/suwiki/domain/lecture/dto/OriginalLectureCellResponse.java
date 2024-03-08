@@ -1,16 +1,13 @@
-package usw.suwiki.domain.lecture.controller.dto;
+package usw.suwiki.domain.lecture.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import usw.suwiki.domain.timetable.entity.TimetableCellSchedule;
 
+@Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class OriginalLectureCellResponse {
 
     private String location;
@@ -19,7 +16,7 @@ public class OriginalLectureCellResponse {
     private Integer endPeriod;
 
     public static OriginalLectureCellResponse of(TimetableCellSchedule schedule) {
-        return OriginalLectureCellResponse.builder()
+        return builder()
             .location(schedule.getLocation())
             .day(schedule.getDay().getValue())
             .startPeriod(schedule.getStartPeriod())

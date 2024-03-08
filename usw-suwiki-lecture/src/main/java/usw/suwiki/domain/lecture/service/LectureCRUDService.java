@@ -8,7 +8,7 @@ import usw.suwiki.core.exception.LectureException;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.lecture.LectureRepository;
 import usw.suwiki.domain.lecture.LecturesAndCountDao;
-import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
+import usw.suwiki.domain.lecture.dto.LectureFindOption;
 
 import java.util.List;
 

@@ -1,14 +1,13 @@
-package usw.suwiki.domain.timetable.dto.response;
+package usw.suwiki.domain.lecture.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import usw.suwiki.domain.timetable.entity.TimetableCell;
 
+@Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter
 public class TimetableCellResponse {
 
     long id;
@@ -21,7 +20,7 @@ public class TimetableCellResponse {
     int endPeriod;
 
     public static TimetableCellResponse of(TimetableCell cell) {
-        return TimetableCellResponse.builder()
+        return builder()
             .id(cell.getId())
             .lectureName(cell.getLectureName())
             .professorName(cell.getProfessorName())

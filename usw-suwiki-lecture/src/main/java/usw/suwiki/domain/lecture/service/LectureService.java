@@ -16,12 +16,12 @@ import usw.suwiki.core.exception.LectureException;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.lecture.LectureRepository;
 import usw.suwiki.domain.lecture.LecturesAndCountDao;
-import usw.suwiki.domain.lecture.controller.dto.LectureAndCountResponseForm;
-import usw.suwiki.domain.lecture.controller.dto.LectureDetailResponseDto;
-import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
-import usw.suwiki.domain.lecture.controller.dto.LectureResponseDto;
-import usw.suwiki.domain.lecture.controller.dto.LectureWithOptionalScheduleResponse;
 import usw.suwiki.domain.lecture.data.JSONLectureVO;
+import usw.suwiki.domain.lecture.dto.LectureAndCountResponseForm;
+import usw.suwiki.domain.lecture.dto.LectureDetailResponseDto;
+import usw.suwiki.domain.lecture.dto.LectureFindOption;
+import usw.suwiki.domain.lecture.dto.LectureResponseDto;
+import usw.suwiki.domain.lecture.dto.LectureWithOptionalScheduleResponse;
 
 import java.io.FileReader;
 import java.io.IOException;

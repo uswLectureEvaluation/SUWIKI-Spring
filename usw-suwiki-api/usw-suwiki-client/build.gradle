@@ -1,5 +1,6 @@
 dependencies {
     implementation project(':usw-suwiki-user')
+    implementation project(':usw-suwiki-lecture')
 
     implementation project(':usw-suwiki-common')
 
