@@ -9,7 +9,8 @@ pluginManagement {
 rootProject.name = 'suwiki'
 
 include 'usw-suwiki-api'
-include 'usw-suwiki-api:usw-suwiki-client'
+include 'usw-suwiki-api:usw-suwiki-admin-api'
+include 'usw-suwiki-api:usw-suwiki-client-api'
 
 include 'usw-suwiki-user'
 include 'usw-suwiki-user:usw-suwiki-major'

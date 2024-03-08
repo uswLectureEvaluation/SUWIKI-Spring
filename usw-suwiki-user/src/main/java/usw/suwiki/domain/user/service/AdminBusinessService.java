@@ -6,29 +6,21 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.secure.PasswordEncoder;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostBlacklistForm;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostNoProblemForm;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostBlacklistForm;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostNoProblemForm;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostRestrictForm;
-import usw.suwiki.domain.admin.controller.dto.UserAdminResponseDto.LoadAllReportedPostForm;
-import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
-import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
-import usw.suwiki.domain.exampost.domain.ExamPost;
-import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
-import usw.suwiki.domain.postreport.EvaluatePostReport;
-import usw.suwiki.domain.postreport.ExamPostReport;
-import usw.suwiki.domain.postreport.service.ReportPostService;
 import usw.suwiki.domain.user.User;
-import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
-import usw.suwiki.global.jwt.JwtAgent;
 
 import java.util.List;
 import java.util.Map;
 
 import static usw.suwiki.common.response.ApiResponseFactory.adminLoginResponseForm;
 import static usw.suwiki.common.response.ApiResponseFactory.successCapitalFlag;
+import static usw.suwiki.domain.user.dto.UserAdminRequestDto.EvaluatePostBlacklistForm;
+import static usw.suwiki.domain.user.dto.UserAdminRequestDto.EvaluatePostNoProblemForm;
+import static usw.suwiki.domain.user.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
+import static usw.suwiki.domain.user.dto.UserAdminRequestDto.ExamPostBlacklistForm;
+import static usw.suwiki.domain.user.dto.UserAdminRequestDto.ExamPostNoProblemForm;
+import static usw.suwiki.domain.user.dto.UserAdminRequestDto.ExamPostRestrictForm;
+import static usw.suwiki.domain.user.dto.UserAdminResponseDto.LoadAllReportedPostForm;
+import static usw.suwiki.domain.user.dto.UserRequestDto.LoginForm;
 
 @Service
 @Transactional
@@ -67,16 +59,14 @@ public class AdminBusinessService {
         List<EvaluatePostReport> evaluatePostReports = reportPostService.loadAllEvaluateReports();
         List<ExamPostReport> examPostReports = reportPostService.loadAllExamReports();
 
-        return LoadAllReportedPostForm
-            .builder()
+        return LoadAllReportedPostForm.builder()
             .evaluatePostReports(evaluatePostReports)
             .examPostReports(examPostReports)
             .build();
     }
 
     public EvaluatePostReport executeLoadDetailReportedEvaluatePost(Long evaluatePostReportId) {
-        return reportPostService.loadDetailEvaluateReportFromReportingEvaluatePostId(
-            evaluatePostReportId);
+        return reportPostService.loadDetailEvaluateReportFromReportingEvaluatePostId(evaluatePostReportId);
     }
 
     public ExamPostReport executeLoadDetailReportedExamPost(Long examPostReportId) {
@@ -96,11 +86,14 @@ public class AdminBusinessService {
     public Map<String, Boolean> executeRestrictEvaluatePost(EvaluatePostRestrictForm evaluatePostRestrictForm) {
         EvaluatePostReport evaluatePostReport =
           reportPostService.loadDetailEvaluateReportFromReportingEvaluatePostId(evaluatePostRestrictForm.evaluateIdx());
+
         plusReportingUserPoint(evaluatePostReport.getReportingUserIdx());
         plusRestrictCount(evaluatePostReport.getReportedUserIdx());
+
         restrictingUserService.executeRestrictUserFromEvaluatePost(
             evaluatePostRestrictForm, evaluatePostReport.getReportedUserIdx()
         );
+
         deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostReport.getEvaluateIdx());
         return successCapitalFlag();
     }
@@ -108,13 +101,15 @@ public class AdminBusinessService {
     public Map<String, Boolean> executeRestrictExamPost(ExamPostRestrictForm examPostRestrictForm) {
         ExamPostReport examPostReport =
           reportPostService.loadDetailEvaluateReportFromReportingExamPostId(examPostRestrictForm.examIdx());
+
         plusReportingUserPoint(examPostReport.getReportingUserIdx());
         plusRestrictCount(examPostReport.getReportedUserIdx());
+
         restrictingUserService.executeRestrictUserFromExamPost(
             examPostRestrictForm, examPostReport.getReportedUserIdx()
         );
-        deleteReportedExamPostFromEvaluateIdx(examPostReport.getExamIdx());
 
+        deleteReportedExamPostFromEvaluateIdx(examPostReport.getExamIdx());
         return successCapitalFlag();
     }
 
@@ -154,9 +149,7 @@ public class AdminBusinessService {
     }
 
     private void deleteReportedEvaluatePostFromEvaluateIdx(Long evaluateIdx) {
-        EvaluatePost evaluatePost =
-          evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
-
+        EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
         reportPostService.deleteByEvaluateIdx(evaluateIdx);
         evaluatePostCRUDService.delete(evaluatePost);
     }

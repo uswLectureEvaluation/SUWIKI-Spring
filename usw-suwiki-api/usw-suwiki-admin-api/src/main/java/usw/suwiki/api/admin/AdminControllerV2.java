@@ -1,9 +1,5 @@
-package usw.suwiki.domain.admin.controller;
+package usw.suwiki.api.admin;
 
-import static org.springframework.http.HttpStatus.OK;
-
-import java.util.Map;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,42 +11,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostBlacklistForm;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostNoProblemForm;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostBlacklistForm;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostNoProblemForm;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostRestrictForm;
-import usw.suwiki.domain.admin.controller.dto.UserAdminResponseDto.LoadAllReportedPostForm;
-import usw.suwiki.domain.admin.service.AdminBusinessService;
-import usw.suwiki.domain.postreport.EvaluatePostReport;
-import usw.suwiki.domain.postreport.ExamPostReport;
-import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.LoginForm;
-import usw.suwiki.global.annotation.ApiLogger;
-import usw.suwiki.global.annotation.JWTVerify;
+import usw.suwiki.auth.core.annotation.JWTVerify;
+import usw.suwiki.domain.user.dto.UserAdminResponseDto;
+import usw.suwiki.domain.user.service.AdminBusinessService;
+import usw.suwiki.statistics.annotation.ApiLogger;
 
+import javax.validation.Valid;
+import java.util.Map;
 
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/v2/admin")
+import static org.springframework.http.HttpStatus.OK;
+import static usw.suwiki.domain.user.dto.UserAdminRequestDto.EvaluatePostBlacklistForm;
+import static usw.suwiki.domain.user.dto.UserAdminRequestDto.EvaluatePostNoProblemForm;
+import static usw.suwiki.domain.user.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
+import static usw.suwiki.domain.user.dto.UserAdminRequestDto.ExamPostBlacklistForm;
+import static usw.suwiki.domain.user.dto.UserAdminRequestDto.ExamPostNoProblemForm;
+import static usw.suwiki.domain.user.dto.UserAdminRequestDto.ExamPostRestrictForm;
+import static usw.suwiki.domain.user.dto.UserRequestDto.LoginForm;
+
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@RestController
+@RequestMapping("/v2/admin")
+@RequiredArgsConstructor
 public class AdminControllerV2 {
-
     private final AdminBusinessService adminBusinessService;
 
-    @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @PostMapping("/login")
-    public Map<String, String> administratorLogin(
-        @Valid @RequestBody LoginForm loginForm
-    ) {
+    @ResponseStatus(OK)
+    public Map<String, String> administratorLogin(@Valid @RequestBody LoginForm loginForm) {
         return adminBusinessService.executeAdminLogin(loginForm);
     }
 
     @JWTVerify(option = "ADMIN")
-    @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @PostMapping("/evaluate-posts/restrict")
+    @ResponseStatus(OK)
     public Map<String, Boolean> restrictEvaluatePost(
         @Valid @RequestHeader String Authorization,
         @Valid @RequestBody EvaluatePostRestrictForm evaluatePostRestrictForm
@@ -115,34 +110,26 @@ public class AdminControllerV2 {
     }
 
     @JWTVerify(option = "ADMIN")
-    @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @GetMapping("/reported-posts")
-    public LoadAllReportedPostForm loadReportedPost(
-        @Valid @RequestHeader String Authorization
-    ) {
+    @ResponseStatus(OK)
+    public UserAdminResponseDto.LoadAllReportedPostForm loadReportedPost(@RequestHeader String Authorization) {
         return adminBusinessService.executeLoadAllReportedPosts();
     }
 
 
     @JWTVerify(option = "ADMIN")
-    @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @GetMapping("/reported-evaluate/")
-    public EvaluatePostReport loadDetailReportedEvaluatePost(
-        @Valid @RequestHeader String Authorization,
-        @Valid @RequestParam Long target
-    ) {
+    @ResponseStatus(OK)
+    public EvaluatePostReport loadDetailReportedEvaluatePost(@RequestHeader String Authorization, @RequestParam Long target) {
         return adminBusinessService.executeLoadDetailReportedEvaluatePost(target);
     }
 
-    @ResponseStatus(OK)
     @ApiLogger(option = "admin")
     @GetMapping("/reported-exam/")
-    public ExamPostReport loadDetailReportedExamPost(
-        @Valid @RequestHeader String Authorization,
-        @Valid @RequestParam Long target
-    ) {
+    @ResponseStatus(OK)
+    public ExamPostReport loadDetailReportedExamPost(@RequestHeader String Authorization, @RequestParam Long target) {
         return adminBusinessService.executeLoadDetailReportedExamPost(target);
     }
 }
