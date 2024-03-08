@@ -3,21 +3,17 @@ package usw.suwiki.domain.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
-import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
 import usw.suwiki.domain.refreshtoken.RefreshToken;
 import usw.suwiki.domain.refreshtoken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.user.User;
-import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.EvaluateReportForm;
-import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.ExamReportForm;
-import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
-import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
-import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.UserInformationResponseForm;
+import usw.suwiki.domain.user.dto.FavoriteSaveDto;
 import usw.suwiki.external.mail.EmailSender;
 import usw.suwiki.global.jwt.JwtAgent;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
@@ -33,10 +29,15 @@ import java.util.Optional;
 import static usw.suwiki.common.response.ApiResponseFactory.overlapFalseFlag;
 import static usw.suwiki.common.response.ApiResponseFactory.overlapTrueFlag;
 import static usw.suwiki.common.response.ApiResponseFactory.successFlag;
+import static usw.suwiki.domain.user.dto.UserRequestDto.EvaluateReportForm;
+import static usw.suwiki.domain.user.dto.UserRequestDto.ExamReportForm;
+import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
+import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
+import static usw.suwiki.domain.user.dto.UserResponseDto.UserInformationResponseForm;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class UserBusinessService {
     private static final String MAIL_FORM = "@suwon.ac.kr";
 
@@ -44,8 +45,9 @@ public class UserBusinessService {
     private final PasswordEncoder passwordEncoder;
 
     private final UserCRUDService userCRUDService;
-    private final UserIsolationCRUDService userIsolationCRUDService;
+    private final FavoriteMajorService favoriteMajorService;
     private final BlacklistDomainService blacklistDomainService;
+    private final UserIsolationCRUDService userIsolationCRUDService;
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final RestrictingUserCRUDService restrictingUserCRUDService;
 
@@ -57,7 +59,6 @@ public class UserBusinessService {
     private final BuildFindPasswordForm buildFindPasswordForm;
 
     private final EvaluatePostCRUDService evaluatePostCRUDService;
-    private final FavoriteMajorService favoriteMajorService;
     private final ViewExamCRUDService viewExamCRUDService;
     private final ExamPostCRUDService examPostCRUDService;
     private final ReportPostService reportPostService;
@@ -206,9 +207,11 @@ public class UserBusinessService {
 
     public Map<String, Boolean> executeQuit(String Authorization, String inputPassword) {
         User user = userCRUDService.loadUserFromUserIdx(jwtAgent.getId(Authorization));
+
         if (!user.validatePassword(passwordEncoder, inputPassword)) {
             throw new AccountException(ExceptionType.PASSWORD_ERROR);
         }
+
         reportPostService.deleteFromUserIdx(user.getId());
         favoriteMajorService.deleteFromUserIdx(user.getId());
         viewExamCRUDService.deleteAllFromUserIdx(user.getId());

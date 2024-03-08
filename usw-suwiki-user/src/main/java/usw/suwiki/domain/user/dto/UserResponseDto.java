@@ -1,11 +1,12 @@
-package usw.suwiki.domain.user.user.controller.dto;
+package usw.suwiki.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import java.time.LocalDateTime;
 import lombok.Builder;
-import usw.suwiki.domain.user.user.User;
+import usw.suwiki.domain.user.User;
 
-public class UserResponseDto {
+import java.time.LocalDateTime;
+
+public final class UserResponseDto {
 
     @Builder
     public record UserInformationResponseForm(
@@ -16,9 +17,8 @@ public class UserResponseDto {
         Integer writtenExam,
         Integer viewExam
     ) {
-
         public static UserInformationResponseForm buildMyPageResponseForm(User user) {
-            return UserInformationResponseForm.builder()
+            return builder()
                 .loginId(user.getLoginId())
                 .email(user.getEmail())
                 .point(user.getPoint())
@@ -38,7 +38,6 @@ public class UserResponseDto {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         LocalDateTime restrictingDate
     ) {
-
     }
 
     @Builder
@@ -50,6 +49,5 @@ public class UserResponseDto {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         LocalDateTime expiredAt
     ) {
-
     }
 }

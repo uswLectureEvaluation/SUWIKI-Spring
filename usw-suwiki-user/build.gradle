@@ -7,6 +7,10 @@ allprojects {
     }
 }
 
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}
+
 subprojects {
     dependencies {
         implementation project(':usw-suwiki-user')

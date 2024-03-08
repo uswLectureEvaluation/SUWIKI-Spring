@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.exception.FavoriteMajorException;
-import usw.suwiki.domain.favoritemajor.dto.FavoriteSaveDto;
-≤import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.major.FavoriteMajor;
 import usw.suwiki.domain.user.major.FavoriteMajorRepositoryV2;
+import usw.suwiki.domain.user.service.FavoriteMajorServiceV2;
 import usw.suwiki.domain.user.service.UserBusinessService;
 import usw.suwiki.domain.user.service.UserCRUDService;
 import usw.suwiki.global.jwt.JwtAgent;
@@ -18,18 +18,18 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class FavoriteMajorServiceV2 {
+public class FavoriteMajorServiceV2Impl implements FavoriteMajorServiceV2 {
     private final UserCRUDService userCRUDService;
     private final UserBusinessService userBusinessService;
     private final FavoriteMajorRepositoryV2 favoriteMajorRepositoryV2;
 
     private final JwtAgent jwtAgent;
 
-    public void save(String authorization, FavoriteSaveDto favoriteSaveDto) {
+    @Override
+    public void save(String authorization, String majorType) {
         userBusinessService.validateRestrictedUser(authorization);
         User loginUser = userCRUDService.loadUserById(jwtAgent.getId(authorization));
 
-        String majorType = favoriteSaveDto.getMajorType();
         validateDuplicateFavoriteMajor(loginUser, majorType);
 
         favoriteMajorRepositoryV2.save(FavoriteMajor.builder()
@@ -44,6 +44,7 @@ public class FavoriteMajorServiceV2 {
         }
     }
 
+    @Override
     public List<String> findAllMajorTypeByUser(String authorization) {
         userBusinessService.validateRestrictedUser(authorization);
         User loginUser = userCRUDService.loadUserById(jwtAgent.getId(authorization));
@@ -52,6 +53,7 @@ public class FavoriteMajorServiceV2 {
         return favoriteMajors.stream().map(FavoriteMajor::getMajorType).toList();
     }
 
+    @Override
     public void delete(String authorization, String majorType) {
         userBusinessService.validateRestrictedUser(authorization);
         User loginUser = userCRUDService.loadUserById(jwtAgent.getId(authorization));
@@ -62,6 +64,7 @@ public class FavoriteMajorServiceV2 {
         favoriteMajorRepositoryV2.delete(favoriteMajor);
     }
 
+    @Override
     public void deleteAllFromUserIdx(Long userIdx) {
         User loginUser = userCRUDService.loadUserById(userIdx);
         List<FavoriteMajor> favoriteMajors = favoriteMajorRepositoryV2.findAllByUserId(loginUser.getId());
