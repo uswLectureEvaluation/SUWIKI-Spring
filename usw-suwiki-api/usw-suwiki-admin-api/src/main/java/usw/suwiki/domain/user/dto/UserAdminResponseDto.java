@@ -1,8 +1,8 @@
 package usw.suwiki.domain.user.dto;
 
 import lombok.Builder;
-import usw.suwiki.domain.postreport.EvaluatePostReport;
-import usw.suwiki.domain.postreport.ExamPostReport;
+import usw.suwiki.report.evaluatepost.EvaluatePostReport;
+import usw.suwiki.report.exampost.ExamPostReport;
 
 import java.util.List;
 

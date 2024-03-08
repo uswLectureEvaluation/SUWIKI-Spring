@@ -6,6 +6,8 @@ import usw.suwiki.domain.user.User;
 import java.util.Optional;
 
 public interface UserIsolationCRUDService {
+  long countAllIsolatedUsers();
+
   boolean isIsolatedByEmail(String email);
 
   boolean isIsolatedByLoginId(String loginId);

@@ -3,10 +3,18 @@ package usw.suwiki.domain.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.auth.core.jwt.JwtAgent;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.secure.PasswordEncoder;
+import usw.suwiki.domain.evaluatepost.EvaluatePost;
+import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
+import usw.suwiki.domain.exampost.ExamPost;
+import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
 import usw.suwiki.domain.user.User;
+import usw.suwiki.report.ReportPostService;
+import usw.suwiki.report.evaluatepost.EvaluatePostReport;
+import usw.suwiki.report.exampost.ExamPostReport;
 
 import java.util.List;
 import java.util.Map;
@@ -90,9 +98,7 @@ public class AdminBusinessService {
         plusReportingUserPoint(evaluatePostReport.getReportingUserIdx());
         plusRestrictCount(evaluatePostReport.getReportedUserIdx());
 
-        restrictingUserService.executeRestrictUserFromEvaluatePost(
-            evaluatePostRestrictForm, evaluatePostReport.getReportedUserIdx()
-        );
+        restrictingUserService.executeRestrictUserFromEvaluatePost(evaluatePostRestrictForm, evaluatePostReport.getReportedUserIdx());
 
         deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostReport.getEvaluateIdx());
         return successCapitalFlag();
@@ -105,9 +111,7 @@ public class AdminBusinessService {
         plusReportingUserPoint(examPostReport.getReportingUserIdx());
         plusRestrictCount(examPostReport.getReportedUserIdx());
 
-        restrictingUserService.executeRestrictUserFromExamPost(
-            examPostRestrictForm, examPostReport.getReportedUserIdx()
-        );
+        restrictingUserService.executeRestrictUserFromExamPost(examPostRestrictForm, examPostReport.getReportedUserIdx());
 
         deleteReportedExamPostFromEvaluateIdx(examPostReport.getExamIdx());
         return successCapitalFlag();

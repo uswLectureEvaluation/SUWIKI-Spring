@@ -1,15 +1,6 @@
 dependencies {
-    implementation project(':usw-suwiki-user')
+    implementation project(':usw-suwiki-report')
+    implementation project(':usw-suwiki-core:usw-suwiki-secure')
 
-    implementation project(':usw-suwiki-common')
-
-    implementation project(':usw-suwiki-statistics')
-
-    implementation project(':usw-suwiki-core:usw-suwiki-exception')
-
-    implementation project(':usw-suwiki-auth:usw-suwiki-auth-core')
-    implementation project(':usw-suwiki-auth:usw-suwiki-auth-token')
-
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework:spring-tx' // todo: 필요한지 확인하기 (24.03.08 Hejow)
 }

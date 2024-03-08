@@ -117,6 +117,7 @@ class UserIsolationCRUDServiceImpl implements UserIsolationCRUDService {
         return convertOptionalUserToDomainUser(userIsolationRepository.findByEmail(email));
     }
 
+    @Override
     public long countAllIsolatedUsers() {
         return userIsolationRepository.count();
     }
