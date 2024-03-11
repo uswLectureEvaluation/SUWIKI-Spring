@@ -5,3 +5,16 @@ subprojects {
         implementation project(':usw-suwiki-core:usw-suwiki-exception')
     }
 }
+
+project(':usw-suwiki-post:usw-suwiki-evaluatepost') {
+    dependencies {
+        implementation project(':usw-suwiki-user')
+    }
+}
+
+project(':usw-suwiki-post:usw-suwiki-exampost') {
+    dependencies {
+        implementation project(':usw-suwiki-user')
+        implementation project(':usw-suwiki-user:usw-suwiki-viewexam')
+    }
+}

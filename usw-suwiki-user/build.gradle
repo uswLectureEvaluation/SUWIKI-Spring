@@ -7,14 +7,16 @@ allprojects {
     }
 }
 
-dependencies {
-    implementation project(':usw-suwiki-report')
-
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-}
-
 subprojects {
     dependencies {
         implementation project(':usw-suwiki-user')
+    }
+}
+
+project(':usw-suwiki-user') {
+    dependencies {
+        implementation project(':usw-suwiki-report')
+
+        implementation 'org.springframework.boot:spring-boot-starter-web'
     }
 }

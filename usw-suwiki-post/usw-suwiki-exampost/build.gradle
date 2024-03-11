@@ -1,4 +1,0 @@
-dependencies {
-    implementation project(':usw-suwiki-user')
-    implementation project(':usw-suwiki-user:usw-suwiki-viewexam')
-}

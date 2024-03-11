@@ -1,0 +1,8 @@
+project(':usw-suwiki-external:usw-suwiki-mail') {
+    dependencies {
+        implementation project(':usw-suwiki-user')
+        implementation project(':usw-suwiki-core:usw-suwiki-exception')
+
+        implementation 'org.springframework.boot:spring-boot-starter-mail'
+    }
+}
