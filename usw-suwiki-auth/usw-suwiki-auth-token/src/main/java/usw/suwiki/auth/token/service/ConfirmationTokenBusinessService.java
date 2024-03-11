@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.auth.token.ConfirmationToken;
-import usw.suwiki.domain.user.service.UserCRUDService;
 
 import java.util.Optional;
 
@@ -12,7 +11,7 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class ConfirmationTokenBusinessService {
-    private final UserCRUDService userCRUDService;
+    private final ConfirmUserService confirmUserService;
     private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
 
     private final BuildEmailAuthFailedForm buildEmailAuthFailedForm;
@@ -26,11 +25,11 @@ public class ConfirmationTokenBusinessService {
             ConfirmationToken confirmationToken = wrappedConfirmationToken.get();
             if (confirmationToken.isTokenExpired()) {
                 confirmationTokenCRUDService.deleteFromId(confirmationToken.getId());
-                userCRUDService.deleteFromUserIdx(confirmationToken.getUserIdx());
+                confirmUserService.delete(confirmationToken.getUserIdx());
                 return buildEmailAuthFailedForm.tokenIsExpired();
             }
             confirmationToken.updateConfirmedAt();
-            userCRUDService.loadUserFromUserIdx(confirmationToken.getUserIdx()).activateUser();
+            confirmUserService.activated(confirmationToken.getUserIdx());
             return buildEmailAuthSuccessForm.buildEmail();
         }
         return buildEmailAuthFailedForm.internalError();

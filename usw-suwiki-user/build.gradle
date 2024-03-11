@@ -16,6 +16,7 @@ subprojects {
 project(':usw-suwiki-user') {
     dependencies {
         implementation project(':usw-suwiki-report')
+        implementation project(':usw-suwiki-auth:usw-suwiki-auth-token')
 
         implementation 'org.springframework.boot:spring-boot-starter-web'
     }

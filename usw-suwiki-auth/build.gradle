@@ -1,7 +1,5 @@
 subprojects {
     dependencies {
-        implementation project(':usw-suwiki-user')
-        implementation project(':usw-suwiki-infra:usw-suwiki-db')
         implementation project(':usw-suwiki-core:usw-suwiki-exception')
     }
 }
@@ -20,5 +18,13 @@ project(':usw-suwiki-auth:usw-suwiki-auth-core') {
 
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-security'
+
+        implementation 'org.springframework:spring-tx' // todo: 토큰 수정 후 삭제될 예정
+    }
+}
+
+project(':usw-suwiki-auth:usw-suwiki-auth-token') {
+    dependencies {
+        implementation project(':usw-suwiki-infra:usw-suwiki-db')
     }
 }

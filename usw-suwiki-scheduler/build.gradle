@@ -11,5 +11,7 @@ dependencies {
 
     implementation project(':usw-suwiki-report')
 
+    implementation project(':usw-suwiki-auth:usw-suwiki-auth-token')
+
     implementation project(':usw-suwiki-infra:usw-suwiki-db')
 }

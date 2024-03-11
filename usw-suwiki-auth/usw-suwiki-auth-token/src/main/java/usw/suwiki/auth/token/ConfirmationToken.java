@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.user.User;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,12 +39,12 @@ public class ConfirmationToken {
 
     private LocalDateTime confirmedAt;
 
-    public static ConfirmationToken makeToken(User user) {
+    public static ConfirmationToken makeToken(Long userIdx) {
         return builder()
             .token(UUID.randomUUID().toString())
             .createdAt(LocalDateTime.now())
             .expiresAt(LocalDateTime.now().plusMinutes(15))
-            .userIdx(user.getId())
+            .userIdx(userIdx)
             .build();
     }
 

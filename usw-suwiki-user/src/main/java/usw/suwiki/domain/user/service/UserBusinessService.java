@@ -3,17 +3,16 @@ package usw.suwiki.domain.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.auth.token.ConfirmationToken;
+import usw.suwiki.auth.token.RefreshToken;
+import usw.suwiki.auth.token.service.ConfirmationTokenCRUDService;
+import usw.suwiki.auth.token.service.RefreshTokenCRUDService;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.core.secure.model.Claim;
-import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
-import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
-import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
-import usw.suwiki.domain.refreshtoken.RefreshToken;
-import usw.suwiki.domain.refreshtoken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.model.UserClaim;
@@ -108,7 +107,7 @@ public class UserBusinessService {
         User user = User.makeUser(loginId, passwordEncoder.encode(password), email);
         userCRUDService.saveUser(user);
 
-        ConfirmationToken confirmationToken = ConfirmationToken.makeToken(user);
+        ConfirmationToken confirmationToken = ConfirmationToken.makeToken(user.getId());
         confirmationTokenCRUDService.saveConfirmationToken(confirmationToken);
 
         emailSender.send(email, buildEmailAuthForm.buildEmail(confirmationToken));

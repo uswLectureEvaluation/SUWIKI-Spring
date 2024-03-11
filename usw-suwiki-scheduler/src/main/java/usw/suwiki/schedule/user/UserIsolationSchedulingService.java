@@ -5,11 +5,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.auth.token.service.ConfirmationTokenCRUDService;
+import usw.suwiki.auth.token.service.RefreshTokenCRUDService;
+import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
+import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
 import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.isolated.UserIsolation;
+import usw.suwiki.domain.user.major.service.FavoriteMajorService;
 import usw.suwiki.domain.user.service.RestrictingUserService;
 import usw.suwiki.domain.user.service.UserCRUDService;
 import usw.suwiki.domain.user.service.UserIsolationCRUDService;
+import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.external.mail.EmailSender;
+import usw.suwiki.report.ReportPostService;
 
 import java.time.LocalDateTime;
 
@@ -23,16 +31,19 @@ public class UserIsolationSchedulingService {
     private final UserCRUDService userCRUDService;
     private final RestrictingUserService restrictingUserService;
     private final UserIsolationCRUDService userIsolationCRUDService;
+    private final ViewExamCRUDService viewExamCRUDService;
+    private final FavoriteMajorService favoriteMajorService;
 
     private final ReportPostService reportPostService;
+
+    private final EvaluatePostCRUDService evaluatePostCRUDService;
+    private final ExamPostCRUDService examPostCRUDService;
+
     private final RefreshTokenCRUDService refreshTokenCRUDService;
     private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
-    private final FavoriteMajorService favoriteMajorService;
+
     private final BuildSoonDormantTargetForm buildSoonDormantTargetForm;
     private final UserAutoDeletedWarningForm userAutoDeletedWarningForm;
-    private final EvaluatePostCRUDService evaluatePostCRUDService;
-    private final ViewExamCRUDService viewExamCRUDService;
-    private final ExamPostCRUDService examPostCRUDService;
 
     @Scheduled(cron = "2 0 0 * * *")
     public void sendEmailAboutSleeping() {
