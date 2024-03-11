@@ -7,8 +7,6 @@ public interface TokenAgent {
 
   String reissueRefreshToken(String payload);
 
-  String reIssueRefreshToken(RefreshToken refreshToken);
-
   void validateJwt(String token);
 
   String createAccessToken(Long userId, Claim claim);

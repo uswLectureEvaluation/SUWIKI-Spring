@@ -68,19 +68,13 @@ public class JwtAgent implements TokenAgent {
             throw new AccountException(ExceptionType.TOKEN_IS_BROKEN);
         }
 
-        Claims body = resolveBodyFromRefreshToken(payload);
-
         String newPayload = reIssueRefreshToken(refreshToken);
         refreshToken.updatePayload(newPayload);
         return newPayload;
     }
 
-    @Override
-    @Transactional
-    public String reIssueRefreshToken(RefreshToken refreshToken) {
-        refreshToken.updatePayload(
-            buildRefreshToken(new Date(new Date().getTime() + refreshTokenExpireTime))
-        );
+    private String reIssueRefreshToken(RefreshToken refreshToken) {
+        refreshToken.updatePayload(buildRefreshToken(new Date(new Date().getTime() + refreshTokenExpireTime)));
         return refreshToken.getPayload();
     }
 
