@@ -7,6 +7,8 @@ import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.secure.PasswordEncoder;
+import usw.suwiki.core.secure.TokenAgent;
+import usw.suwiki.core.secure.model.Claim;
 import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
 import usw.suwiki.domain.confirmationtoken.service.ConfirmationTokenCRUDService;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
@@ -14,11 +16,12 @@ import usw.suwiki.domain.refreshtoken.RefreshToken;
 import usw.suwiki.domain.refreshtoken.service.RefreshTokenCRUDService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
+import usw.suwiki.domain.user.model.UserClaim;
 import usw.suwiki.external.mail.EmailSender;
-import usw.suwiki.global.jwt.JwtAgent;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
 import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
 import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
+import usw.suwiki.report.ReportPostService;
 import usw.suwiki.report.evaluatepost.EvaluatePostReport;
 import usw.suwiki.report.exampost.ExamPostReport;
 
@@ -65,7 +68,7 @@ public class UserBusinessService {
     private final ExamPostCRUDService examPostCRUDService;
     private final ReportPostService reportPostService;
 
-    private final JwtAgent jwtAgent;
+    private final TokenAgent tokenAgent;
 
     @Transactional(readOnly = true)
     public Map<String, Boolean> executeCheckId(String loginId) {
@@ -177,7 +180,7 @@ public class UserBusinessService {
 
 
     public Map<String, Boolean> executeEditPassword(String Authorization, String prePassword, String newPassword) {
-        User user = userCRUDService.loadUserFromUserIdx(jwtAgent.getId(Authorization));
+        User user = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
 
         if (!passwordEncoder.matches(prePassword, user.getPassword())) {
             throw new AccountException(ExceptionType.PASSWORD_ERROR);
@@ -189,7 +192,7 @@ public class UserBusinessService {
     }
 
     public UserInformationResponseForm executeLoadMyPage(String Authorization) {
-        Long userIdx = jwtAgent.getId(Authorization);
+        Long userIdx = tokenAgent.getId(Authorization);
         User user = userCRUDService.loadUserFromUserIdx(userIdx);
         return UserInformationResponseForm.buildMyPageResponseForm(user);
     }
@@ -208,7 +211,7 @@ public class UserBusinessService {
     }
 
     public Map<String, Boolean> executeQuit(String Authorization, String inputPassword) {
-        User user = userCRUDService.loadUserFromUserIdx(jwtAgent.getId(Authorization));
+        User user = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
 
         if (!user.validatePassword(passwordEncoder, inputPassword)) {
             throw new AccountException(ExceptionType.PASSWORD_ERROR);
@@ -224,10 +227,10 @@ public class UserBusinessService {
     }
 
     public Map<String, Boolean> executeReportEvaluatePost(EvaluateReportForm evaluateReportForm, String Authorization) {
-        if (jwtAgent.getUserIsRestricted(Authorization)) {
+        if (tokenAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(ExceptionType.USER_RESTRICTED);
         }
-        Long reportingUserIdx = jwtAgent.getId(Authorization);
+        Long reportingUserIdx = tokenAgent.getId(Authorization);
         EvaluatePost evaluatePost =
           evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateReportForm.evaluateIdx());
         Long reportedUserIdx = evaluatePost.getUser().getId();
@@ -243,10 +246,10 @@ public class UserBusinessService {
     }
 
     public Map<String, Boolean> executeReportExamPost(ExamReportForm examReportForm, String Authorization) {
-        if (jwtAgent.getUserIsRestricted(Authorization)) {
+        if (tokenAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(ExceptionType.USER_RESTRICTED);
         }
-        Long reportingUserIdx = jwtAgent.getId(Authorization);
+        Long reportingUserIdx = tokenAgent.getId(Authorization);
         ExamPost examPost = examPostCRUDService.loadExamPostFromExamPostIdx(
             examReportForm.examIdx());
         Long reportedUserIdx = examPost.getUser().getId();
@@ -261,36 +264,36 @@ public class UserBusinessService {
     }
 
     public List<LoadMyBlackListReasonResponseForm> executeLoadBlackListReason(String Authorization) {
-        User requestUser = userCRUDService.loadUserFromUserIdx(jwtAgent.getId(Authorization));
+        User requestUser = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
         return blacklistDomainCRUDService.loadAllBlacklistLog(requestUser.getId());
     }
 
     public List<LoadMyRestrictedReasonResponseForm> executeLoadRestrictedReason(String Authorization) {
-        User requestUser = userCRUDService.loadUserFromUserIdx(jwtAgent.getId(Authorization));
+        User requestUser = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
         return restrictingUserCRUDService.loadRestrictedLog(requestUser.getId());
     }
 
     public void executeFavoriteMajorSave(String Authorization, FavoriteSaveDto favoriteSaveDto) {
-        if (jwtAgent.getUserIsRestricted(Authorization)) {
+        if (tokenAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(ExceptionType.USER_RESTRICTED);
         }
-        Long userIdx = jwtAgent.getId(Authorization);
+        Long userIdx = tokenAgent.getId(Authorization);
         favoriteMajorService.save(favoriteSaveDto, userIdx);
     }
 
     public void executeFavoriteMajorDelete(String Authorization, String majorType) {
-        if (jwtAgent.getUserIsRestricted(Authorization)) {
+        if (tokenAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(ExceptionType.USER_RESTRICTED);
         }
-        Long userIdx = jwtAgent.getId(Authorization);
+        Long userIdx = tokenAgent.getId(Authorization);
         favoriteMajorService.delete(userIdx, majorType);
     }
 
     public ResponseForm executeFavoriteMajorLoad(String Authorization) {
-        if (jwtAgent.getUserIsRestricted(Authorization)) {
+        if (tokenAgent.getUserIsRestricted(Authorization)) {
             throw new AccountException(ExceptionType.USER_RESTRICTED);
         }
-        Long userIdx = jwtAgent.getId(Authorization);
+        Long userIdx = tokenAgent.getId(Authorization);
         List<String> list = favoriteMajorService.findMajorTypeByUser(userIdx);
         return new ResponseForm(list);
     }
@@ -301,21 +304,25 @@ public class UserBusinessService {
     }
 
     private Map<String, String> generateUserJWT(User user) {
+        Claim userClaim = new UserClaim(user.getLoginId(), user.getRole().name(), user.getRestricted());
+
         return new HashMap<>() {{
-            put("AccessToken", jwtAgent.createAccessToken(user));
-            put("RefreshToken", jwtAgent.provideRefreshTokenInLogin(user));
+            put("AccessToken", tokenAgent.createAccessToken(user.getId(), userClaim));
+            put("RefreshToken", tokenAgent.provideRefreshTokenInLogin(user.getId()));
         }};
     }
 
     private Map<String, String> refreshUserJWT(User user, String refreshTokenPayload) {
+        Claim userClaim = new UserClaim(user.getLoginId(), user.getRole().name(), user.getRestricted());
+
         return new HashMap<>() {{
-            put("AccessToken", jwtAgent.createAccessToken(user));
-            put("RefreshToken", jwtAgent.reissueRefreshToken(refreshTokenPayload));
+            put("AccessToken", tokenAgent.createAccessToken(user.getId(), userClaim));
+            put("RefreshToken", tokenAgent.reissueRefreshToken(refreshTokenPayload));
         }};
     }
 
     public void validateRestrictedUser(String authorization) {
-        if (jwtAgent.getUserIsRestricted(authorization)) {
+        if (tokenAgent.getUserIsRestricted(authorization)) {
             throw new AccountException(ExceptionType.USER_RESTRICTED);
         }
     }

@@ -11,9 +11,6 @@ import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.core.secure.PasswordRandomizer;
-import usw.suwiki.domain.confirmationtoken.ConfirmationToken;
-import usw.suwiki.domain.evaluatepost.domain.EvaluatePost;
-import usw.suwiki.domain.timetable.entity.Timetable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

@@ -15,7 +15,8 @@ import usw.suwiki.auth.token.RefreshToken;
 import usw.suwiki.auth.token.service.RefreshTokenCRUDService;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
-import usw.suwiki.domain.user.User;
+import usw.suwiki.core.secure.TokenAgent;
+import usw.suwiki.core.secure.model.Claim;
 
 import java.security.Key;
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ import java.util.Optional;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtAgent {
+public class JwtAgent implements TokenAgent {
 
     @Value("${spring.secret-key}")
     private String key;
@@ -39,13 +40,14 @@ public class JwtAgent {
 
     private final RefreshTokenCRUDService refreshTokenCRUDService;
 
+    @Override
     @Transactional
-    public String provideRefreshTokenInLogin(User user) {
+    public String provideRefreshTokenInLogin(Long userId) {
         Optional<RefreshToken> wrappedRefreshToken =
-            refreshTokenCRUDService.loadRefreshTokenFromUserIdx(user.getId());
+            refreshTokenCRUDService.loadRefreshTokenFromUserIdx(userId);
 
         if (wrappedRefreshToken.isEmpty()) {
-            return createRefreshToken(user);
+            return createRefreshToken(userId);
         }
 
         RefreshToken refreshToken = wrappedRefreshToken.get();
@@ -57,26 +59,23 @@ public class JwtAgent {
         return refreshToken.getPayload();
     }
 
+    @Override
     @Transactional
     public String reissueRefreshToken(String payload) {
-        // TODO: Security 공부하면서 정말 필요한 로직만 넣자.
-        // TODO: 레디스 캐싱 성능 개선
-
         RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
 
-        // TODO: 애초에 payload로 찾은건데 여기서 비교할 필요가 있나?
         if (!refreshToken.getPayload().equals(payload)) {
             throw new AccountException(ExceptionType.TOKEN_IS_BROKEN);
         }
 
         Claims body = resolveBodyFromRefreshToken(payload);
 
-        // TODO: isRefreshTokenNotExpired 리팩토링 후 추가
         String newPayload = reIssueRefreshToken(refreshToken);
         refreshToken.updatePayload(newPayload);
         return newPayload;
     }
 
+    @Override
     @Transactional
     public String reIssueRefreshToken(RefreshToken refreshToken) {
         refreshToken.updatePayload(
@@ -97,20 +96,22 @@ public class JwtAgent {
         }
     }
 
-    public String createAccessToken(User user) {
+    @Override
+    public String createAccessToken(Long userId, Claim claim) {
         return buildAccessToken(
-            setAccessTokenClaimsByUser(user),
+            setAccessTokenClaimsByUser(userId, claim),
             new Date(new Date().getTime() + accessTokenExpireTime)
         );
     }
 
-    public String createRefreshToken(User user) {
+    @Override
+    public String createRefreshToken(Long userId) {
         String buildRefreshToken = buildRefreshToken(new Date(new Date().getTime() + refreshTokenExpireTime));
-        refreshTokenCRUDService.save(RefreshToken.buildRefreshToken(user.getId(), buildRefreshToken));
-
+        refreshTokenCRUDService.save(RefreshToken.buildRefreshToken(userId, buildRefreshToken));
         return buildRefreshToken;
     }
 
+    @Override
     public Long getId(String token) {
         validateJwt(token);
         Object id = Jwts.parserBuilder()
@@ -121,6 +122,7 @@ public class JwtAgent {
         return Long.valueOf(String.valueOf(id));
     }
 
+    @Override
     public String getUserRole(String token) {
         validateJwt(token);
         return (String) Jwts.parserBuilder()
@@ -130,6 +132,7 @@ public class JwtAgent {
             .getBody().get("role");
     }
 
+    @Override
     public Boolean getUserIsRestricted(String token) {
         validateJwt(token);
         return (Boolean) Jwts.parserBuilder()
@@ -181,13 +184,13 @@ public class JwtAgent {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private Claims setAccessTokenClaimsByUser(User user) {
+    private Claims setAccessTokenClaimsByUser(Long userId, Claim claim) {
         Claims claims = Jwts.claims();
-        claims.setSubject(user.getLoginId());
-        claims.put("id", user.getId());
-        claims.put("loginId", user.getLoginId());
-        claims.put("role", user.getRole());
-        claims.put("restricted", user.getRestricted());
+        claims.setSubject(claim.loginId());
+        claims.put("id", userId);
+        claims.put("loginId", claim.loginId());
+        claims.put("role", claim.role());
+        claims.put("restricted", claim.restricted());
         return claims;
     }
 
