@@ -3,11 +3,12 @@ dependencies {
     implementation project(':usw-suwiki-user:usw-suwiki-blacklist')
     implementation project(':usw-suwiki-user:usw-suwiki-restricted')
     implementation project(':usw-suwiki-user:usw-suwiki-isolated-user')
-    implementation project(':usw-suwiki-user:usw-suwiki-major')
     implementation project(':usw-suwiki-user:usw-suwiki-viewexam')
 
     implementation project(':usw-suwiki-post:usw-suwiki-exampost')
     implementation project(':usw-suwiki-post:usw-suwiki-evaluatepost')
+
+    implementation project(':usw-suwiki-lecture:usw-suwiki-major')
 
     implementation project(':usw-suwiki-report')
 

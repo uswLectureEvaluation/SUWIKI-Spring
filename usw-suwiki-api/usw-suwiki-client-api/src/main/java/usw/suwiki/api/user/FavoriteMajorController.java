@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.common.response.ResponseForm;
+import usw.suwiki.domain.lecture.major.service.FavoriteMajorServiceV2;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
-import usw.suwiki.domain.user.service.FavoriteMajorServiceV2;
 import usw.suwiki.statistics.annotation.ApiLogger;
 
 import static org.springframework.http.HttpStatus.OK;

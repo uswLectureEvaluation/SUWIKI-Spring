@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.infra.jpa.BaseTimeEntity;
 

@@ -3,6 +3,7 @@ subprojects {
         implementation project(':usw-suwiki-user')
 
         implementation project(':usw-suwiki-lecture')
+        implementation project(':usw-suwiki-lecture:usw-suwiki-major')
         implementation project(':usw-suwiki-lecture:usw-suwiki-timetable')
 
         implementation project(':usw-suwiki-post:usw-suwiki-notice')

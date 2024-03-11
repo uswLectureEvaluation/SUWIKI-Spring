@@ -1,4 +1,4 @@
-package usw.suwiki.domain.user.major;
+package usw.suwiki.domain.lecture.major;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

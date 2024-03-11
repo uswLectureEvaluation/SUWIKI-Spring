@@ -13,6 +13,7 @@ import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.core.secure.model.Claim;
+import usw.suwiki.domain.lecture.major.service.FavoriteMajorService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.model.UserClaim;
@@ -49,25 +50,27 @@ public class UserBusinessService {
     private final PasswordEncoder passwordEncoder;
 
     private final UserCRUDService userCRUDService;
-    private final FavoriteMajorService favoriteMajorService;
     private final BlacklistDomainService blacklistDomainService;
     private final UserIsolationCRUDService userIsolationCRUDService;
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final RestrictingUserCRUDService restrictingUserCRUDService;
 
-    private final RefreshTokenCRUDService refreshTokenCRUDService;
-    private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
-
-    private final BuildEmailAuthForm buildEmailAuthForm;
-    private final BuildFindLoginIdForm buildFindLoginIdForm;
-    private final BuildFindPasswordForm buildFindPasswordForm;
+    private final FavoriteMajorService favoriteMajorService;
 
     private final EvaluatePostCRUDService evaluatePostCRUDService;
     private final ViewExamCRUDService viewExamCRUDService;
     private final ExamPostCRUDService examPostCRUDService;
+
     private final ReportPostService reportPostService;
 
+    private final RefreshTokenCRUDService refreshTokenCRUDService;
+    private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
+
     private final TokenAgent tokenAgent;
+
+    private final BuildEmailAuthForm buildEmailAuthForm;
+    private final BuildFindLoginIdForm buildFindLoginIdForm;
+    private final BuildFindPasswordForm buildFindPasswordForm;
 
     @Transactional(readOnly = true)
     public Map<String, Boolean> executeCheckId(String loginId) {

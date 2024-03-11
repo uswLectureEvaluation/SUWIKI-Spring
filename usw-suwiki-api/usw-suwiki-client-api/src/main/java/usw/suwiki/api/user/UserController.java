@@ -205,6 +205,7 @@ public class UserController {
         throw new AccountException(ExceptionType.SERVER_ERROR);
     }
 
+    // todo: PostReportControllerV2에도 같은 코드가 존재
     @ApiLogger(option = "user")
     @PostMapping("/report/evaluate")
     @ResponseStatus(OK)
@@ -215,6 +216,7 @@ public class UserController {
         return userBusinessService.executeReportEvaluatePost(evaluateReportForm, Authorization);
     }
 
+    // todo: PostReportControllerV2에도 같은 코드가 존재
     @ApiLogger(option = "user")
     @PostMapping("/report/exam")
     @ResponseStatus(OK)

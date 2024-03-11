@@ -1,13 +1,13 @@
-package usw.suwiki.domain.user.major.service;
+package usw.suwiki.domain.lecture.major.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.lecture.major.FavoriteMajor;
+import usw.suwiki.domain.lecture.major.FavoriteMajorRepository;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
-import usw.suwiki.domain.user.major.FavoriteMajor;
-import usw.suwiki.domain.user.major.FavoriteMajorRepository;
 
 import java.util.List;
 import java.util.Optional;
