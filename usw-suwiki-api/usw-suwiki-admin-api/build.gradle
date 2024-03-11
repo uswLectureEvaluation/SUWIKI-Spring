@@ -1,4 +1,8 @@
 dependencies {
+    implementation project(':usw-suwiki-user:usw-suwiki-blacklist')
+    implementation project(':usw-suwiki-user:usw-suwiki-restricted')
+    implementation project(':usw-suwiki-user:usw-suwiki-isolated-user')
+
     implementation project(':usw-suwiki-report')
     implementation project(':usw-suwiki-core:usw-suwiki-secure')
 

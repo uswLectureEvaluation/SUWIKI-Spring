@@ -38,9 +38,9 @@ public class AdminBusinessService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserCRUDService userCRUDService;
-    private final BlacklistDomainCRUDService blacklistDomainCRUDService;
-    private final UserIsolationCRUDService userIsolationCRUDService;
     private final RestrictingUserService restrictingUserService;
+    private final UserIsolationCRUDService userIsolationCRUDService;
+    private final BlacklistDomainCRUDService blacklistDomainCRUDService;
 
     private final ReportPostService reportPostService;
     private final ExamPostCRUDService examPostCRUDService;
@@ -119,9 +119,7 @@ public class AdminBusinessService {
 
     public Map<String, Boolean> executeBlackListEvaluatePost(EvaluatePostBlacklistForm evaluatePostBlacklistForm) {
         Long userIdx = evaluatePostCRUDService
-            .loadEvaluatePostFromEvaluatePostIdx(evaluatePostBlacklistForm.evaluateIdx())
-            .getUser()
-            .getId();
+          .loadEvaluatePostFromEvaluatePostIdx(evaluatePostBlacklistForm.evaluateIdx()).getUser().getId();
 
         deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostBlacklistForm.evaluateIdx());
 

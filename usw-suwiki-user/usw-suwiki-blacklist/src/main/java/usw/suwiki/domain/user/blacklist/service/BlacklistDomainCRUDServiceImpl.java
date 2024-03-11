@@ -9,12 +9,13 @@ import usw.suwiki.domain.user.blacklist.BlacklistDomain;
 import usw.suwiki.domain.user.blacklist.BlacklistRepository;
 import usw.suwiki.domain.user.service.BlacklistDomainCRUDService;
 import usw.suwiki.domain.user.service.UserCRUDService;
-import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
 
 @Service
 @Transactional

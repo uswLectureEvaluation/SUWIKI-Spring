@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id 'org.springframework.boot' apply false
     id 'io.spring.dependency-management'
-    id 'com.ewerk.gradle.plugins.querydsl'
+    id 'com.ewerk.gradle.plugins.querydsl' apply false
 }
 
 allprojects {

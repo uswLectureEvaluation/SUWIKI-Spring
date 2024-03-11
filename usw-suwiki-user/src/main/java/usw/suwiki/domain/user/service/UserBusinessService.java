@@ -19,6 +19,8 @@ import usw.suwiki.global.jwt.JwtAgent;
 import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
 import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
 import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
+import usw.suwiki.report.evaluatepost.EvaluatePostReport;
+import usw.suwiki.report.exampost.ExamPostReport;
 
 import javax.servlet.http.Cookie;
 import java.util.HashMap;
@@ -232,7 +234,7 @@ public class UserBusinessService {
 
         reportPostService.saveEvaluatePostReport(
             EvaluatePostReport.buildEvaluatePostReport(
-                evaluateReportForm,
+                evaluateReportForm.evaluateIdx(),
                 evaluatePost,
                 reportedUserIdx,
                 reportingUserIdx)
@@ -250,7 +252,7 @@ public class UserBusinessService {
         Long reportedUserIdx = examPost.getUser().getId();
         reportPostService.saveExamPostReport(
             ExamPostReport.buildExamPostReport(
-                examReportForm,
+                examReportForm.examIdx(),
                 examPost,
                 reportedUserIdx,
                 reportingUserIdx)

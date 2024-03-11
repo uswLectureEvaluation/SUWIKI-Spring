@@ -6,11 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.user.restricted.RestrictingUser;
 import usw.suwiki.domain.user.restricted.RestrictingUserRepository;
 import usw.suwiki.domain.user.service.RestrictingUserCRUDService;
-import usw.suwiki.domain.user.user.controller.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
 
 @Service
 @Transactional(readOnly = true)

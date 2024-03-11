@@ -4,9 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.EvaluatePostRestrictForm;
-import usw.suwiki.domain.admin.controller.dto.UserAdminRequestDto.ExamPostRestrictForm;
 import usw.suwiki.domain.user.User;
+import usw.suwiki.domain.user.dto.UserAdminRequestDto;
 import usw.suwiki.domain.user.restricted.RestrictingUser;
 import usw.suwiki.domain.user.restricted.RestrictingUserRepository;
 import usw.suwiki.domain.user.service.BlacklistDomainCRUDService;
@@ -28,7 +27,8 @@ class RestrictingUserServiceImpl implements RestrictingUserService {
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final RestrictingUserRepository restrictingUserRepository;
 
-    public void executeRestrictUserFromEvaluatePost(EvaluatePostRestrictForm evaluatePostRestrictForm, Long reportedUserId) {
+    @Override
+    public void executeRestrictUserFromEvaluatePost(UserAdminRequestDto.EvaluatePostRestrictForm evaluatePostRestrictForm, Long reportedUserId) {
         User user = userCRUDService.loadUserFromUserIdx(reportedUserId);
 
         if (user.getRestrictedCount() >= 2) {
@@ -53,7 +53,8 @@ class RestrictingUserServiceImpl implements RestrictingUserService {
         }
     }
 
-    public void executeRestrictUserFromExamPost(ExamPostRestrictForm examPostRestrictForm, Long reportedUserId) {
+    @Override
+    public void executeRestrictUserFromExamPost(UserAdminRequestDto.ExamPostRestrictForm examPostRestrictForm, Long reportedUserId) {
         User user = userCRUDService.loadUserFromUserIdx(reportedUserId);
 
         if (user.getRestrictedCount() >= 2) {

@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.exampost.ExamPost;
-import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.ExamReportForm;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
-
 
 @Entity
 @Getter
@@ -50,13 +48,13 @@ public class ExamPostReport {
     private LocalDateTime reportedDate;
 
     public static ExamPostReport buildExamPostReport(
-        ExamReportForm examReportForm,
-        ExamPost examPost,
-        Long reportedUserIdx,
-        Long reportingUserIdx
+      Long examIdx,
+      ExamPost examPost,
+      Long reportedUserIdx,
+      Long reportingUserIdx
     ) {
         return builder()
-            .examIdx(examReportForm.examIdx())
+            .examIdx(examIdx)
             .lectureName(examPost.getLectureName())
             .professor(examPost.getProfessor())
             .content(examPost.getContent())

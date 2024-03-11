@@ -8,6 +8,8 @@ allprojects {
 }
 
 dependencies {
+    implementation project(':usw-suwiki-report')
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
 }
 

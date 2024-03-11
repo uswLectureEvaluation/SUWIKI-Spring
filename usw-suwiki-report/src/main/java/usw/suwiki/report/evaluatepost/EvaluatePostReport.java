@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.evaluatepost.EvaluatePost;
-import usw.suwiki.domain.user.user.controller.dto.UserRequestDto.EvaluateReportForm;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -48,13 +47,13 @@ public class EvaluatePostReport {
     private LocalDateTime reportedDate;
 
     public static EvaluatePostReport buildEvaluatePostReport(
-        EvaluateReportForm evaluateReportForm,
-        EvaluatePost evaluatePost,
-        Long reportedUserIdx,
-        Long reportingUserIdx
+      Long evaluateIdx,
+      EvaluatePost evaluatePost,
+      Long reportedUserIdx,
+      Long reportingUserIdx
     ) {
         return builder()
-            .evaluateIdx(evaluateReportForm.evaluateIdx())
+            .evaluateIdx(evaluateIdx)
             .lectureName(evaluatePost.getLectureName())
             .professor(evaluatePost.getProfessor())
             .content(evaluatePost.getContent())

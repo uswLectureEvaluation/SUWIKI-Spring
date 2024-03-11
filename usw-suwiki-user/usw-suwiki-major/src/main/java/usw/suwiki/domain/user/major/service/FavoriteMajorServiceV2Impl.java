@@ -10,7 +10,6 @@ import usw.suwiki.domain.user.major.FavoriteMajorRepositoryV2;
 import usw.suwiki.domain.user.service.FavoriteMajorServiceV2;
 import usw.suwiki.domain.user.service.UserBusinessService;
 import usw.suwiki.domain.user.service.UserCRUDService;
-import usw.suwiki.global.jwt.JwtAgent;
 
 import javax.transaction.Transactional;
 import java.util.List;
