@@ -14,9 +14,6 @@ public class ConfirmationTokenBusinessService {
     private final ConfirmUserService confirmUserService;
     private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
 
-    private final BuildEmailAuthFailedForm buildEmailAuthFailedForm;
-    private final BuildEmailAuthSuccessForm buildEmailAuthSuccessForm;
-
     public String confirmToken(String token) {
         Optional<ConfirmationToken> wrappedConfirmationToken =
             confirmationTokenCRUDService.loadConfirmationTokenFromPayload(token);
@@ -34,5 +31,4 @@ public class ConfirmationTokenBusinessService {
         }
         return buildEmailAuthFailedForm.internalError();
     }
-
 }

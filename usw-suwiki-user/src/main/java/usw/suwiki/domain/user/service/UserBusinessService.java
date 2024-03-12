@@ -18,9 +18,6 @@ import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.model.UserClaim;
 import usw.suwiki.external.mail.EmailSender;
-import usw.suwiki.global.util.emailBuild.BuildEmailAuthForm;
-import usw.suwiki.global.util.emailBuild.BuildFindLoginIdForm;
-import usw.suwiki.global.util.emailBuild.BuildFindPasswordForm;
 import usw.suwiki.report.ReportPostService;
 import usw.suwiki.report.evaluatepost.EvaluatePostReport;
 import usw.suwiki.report.exampost.ExamPostReport;
@@ -39,6 +36,9 @@ import static usw.suwiki.domain.user.dto.UserRequestDto.ExamReportForm;
 import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
 import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
 import static usw.suwiki.domain.user.dto.UserResponseDto.UserInformationResponseForm;
+import static usw.suwiki.external.mail.MailType.EMAIL_AUTH;
+import static usw.suwiki.external.mail.MailType.FIND_ID;
+import static usw.suwiki.external.mail.MailType.FIND_PASSWORD;
 
 @Service
 @Transactional
@@ -67,10 +67,6 @@ public class UserBusinessService {
     private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
 
     private final TokenAgent tokenAgent;
-
-    private final BuildEmailAuthForm buildEmailAuthForm;
-    private final BuildFindLoginIdForm buildFindLoginIdForm;
-    private final BuildFindPasswordForm buildFindPasswordForm;
 
     @Transactional(readOnly = true)
     public Map<String, Boolean> executeCheckId(String loginId) {
@@ -113,7 +109,7 @@ public class UserBusinessService {
         ConfirmationToken confirmationToken = ConfirmationToken.makeToken(user.getId());
         confirmationTokenCRUDService.saveConfirmationToken(confirmationToken);
 
-        emailSender.send(email, buildEmailAuthForm.buildEmail(confirmationToken));
+        emailSender.send(email, EMAIL_AUTH, confirmationToken.getToken());
         return successFlag();
     }
 
@@ -122,16 +118,10 @@ public class UserBusinessService {
         Optional<String> isolatedLoginId = userIsolationCRUDService.getIsolatedLoginIdByEmail(email);
 
         if (requestUser.isPresent()) {
-            emailSender.send(
-                email,
-                buildFindLoginIdForm.buildEmail(requestUser.get().getLoginId())
-            );
+            emailSender.send(email, FIND_ID, requestUser.get().getLoginId());
             return successFlag();
         } else if (isolatedLoginId.isPresent()) {
-            emailSender.send(
-                email,
-                buildFindLoginIdForm.buildEmail(isolatedLoginId.get())
-            );
+            emailSender.send(email, FIND_ID, isolatedLoginId.get());
             return successFlag();
         }
         throw new AccountException(ExceptionType.USER_NOT_EXISTS);
@@ -152,14 +142,11 @@ public class UserBusinessService {
 
         if (userByLoginId.equals(userByEmail)) {
             User user = userByLoginId.get();
-            emailSender.send(
-                email,
-                buildFindPasswordForm.buildEmail(user.updateRandomPassword(passwordEncoder))
-            );
+            emailSender.send(email, FIND_PASSWORD,user.updateRandomPassword(passwordEncoder));
             return successFlag();
         } else if (userIsolationCRUDService.isRetrievedUserEquals(email, loginId)) {
             String newPassword = userIsolationCRUDService.updateIsolatedUserPassword(passwordEncoder, email);
-            emailSender.send(email, buildFindPasswordForm.buildEmail(newPassword));
+            emailSender.send(email, FIND_PASSWORD, newPassword);
             return successFlag();
         }
         throw new AccountException(ExceptionType.USER_NOT_FOUND_BY_EMAIL);

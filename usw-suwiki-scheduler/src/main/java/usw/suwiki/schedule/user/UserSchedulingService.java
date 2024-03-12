@@ -22,6 +22,8 @@ import usw.suwiki.report.ReportPostService;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static usw.suwiki.external.mail.MailType.PRIVACY_POLICY_NOTIFICATION;
+
 @Slf4j
 @Service
 @Transactional
@@ -41,17 +43,13 @@ public class UserSchedulingService {
     private final ExamPostCRUDService examPostCRUDService;
     private final EvaluatePostCRUDService evaluatePostCRUDService;
 
-    private final BuildPersonalInformationUsingNotifyForm buildPersonalInformationUsingNotifyForm;
-
     @Transactional(readOnly = true)
     @Scheduled(cron = "0 1 0 1 3 *")
     public void sendPrivacyPolicyMail() {
         log.info("{} - 개인정보 처리 방침 안내 발송 시작", LocalDateTime.now());
 
-        String emailContent = buildPersonalInformationUsingNotifyForm.buildEmail();
-        for (User user : userRepository.findAll()) {
-            emailSender.send(user.getEmail(), emailContent);
-        }
+        userRepository.findAll()
+          .forEach(user -> emailSender.send(user.getEmail(), PRIVACY_POLICY_NOTIFICATION));
 
         log.info("{} - 개인정보 처리 방침 안내 발송 종료", LocalDateTime.now());
     }

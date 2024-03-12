@@ -10,6 +10,12 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @ConfigurationProperties(prefix = "server")
 @RequiredArgsConstructor
 public class ServerProperties {
+    private static final String CONFIRMATION_TOKEN_URL = "/v2/confirmation-token/verify/?token=";
+
     private final String domain;
     private final int port;
+
+    String redirectUrl(String token) {
+        return domain + CONFIRMATION_TOKEN_URL + token;
+    }
 }

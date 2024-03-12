@@ -21,6 +21,9 @@ import usw.suwiki.report.ReportPostService;
 
 import java.time.LocalDateTime;
 
+import static usw.suwiki.external.mail.MailType.DELETE_WARNING;
+import static usw.suwiki.external.mail.MailType.DORMANT_NOTIFICATION;
+
 @Slf4j
 @Service
 @Transactional
@@ -42,9 +45,6 @@ public class UserIsolationSchedulingService {
     private final RefreshTokenCRUDService refreshTokenCRUDService;
     private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
 
-    private final BuildSoonDormantTargetForm buildSoonDormantTargetForm;
-    private final UserAutoDeletedWarningForm userAutoDeletedWarningForm;
-
     @Scheduled(cron = "2 0 0 * * *")
     public void sendEmailAboutSleeping() {
         log.info("{} - 휴면 계정 대상들에게 이메일 전송 시작", LocalDateTime.now());
@@ -53,7 +53,7 @@ public class UserIsolationSchedulingService {
         LocalDateTime endTime = LocalDateTime.now().minusMonths(11);
 
         for (User user : userCRUDService.loadUsersLastLoginBetweenStartEnd(startTime, endTime)) {
-            emailSender.send(user.getEmail(), buildSoonDormantTargetForm.buildEmail());
+            emailSender.send(user.getEmail(), DORMANT_NOTIFICATION);
         }
 
         log.info("{} - 휴면 계정 대상들에게 이메일 전송 종료", LocalDateTime.now());
@@ -92,7 +92,7 @@ public class UserIsolationSchedulingService {
         LocalDateTime endTime = LocalDateTime.now().minusMonths(35);
 
         for (User user : userCRUDService.loadUsersLastLoginBetweenStartEnd(startTime, endTime)) {
-            emailSender.send(user.getEmail(), userAutoDeletedWarningForm.buildEmail());
+            emailSender.send(user.getEmail(), DELETE_WARNING);
         }
 
         log.info("{} - 자동 삭제 이메일 전송 종료", LocalDateTime.now());

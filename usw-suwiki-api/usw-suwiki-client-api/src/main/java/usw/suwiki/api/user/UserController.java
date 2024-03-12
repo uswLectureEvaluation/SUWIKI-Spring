@@ -73,6 +73,7 @@ public class UserController {
         return userBusinessService.executeJoin(joinForm.loginId(), joinForm.password(), joinForm.email());
     }
 
+    // todo: confirmationControllerV2와 같은 코드
     @ApiLogger(option = "user")
     @GetMapping(value = "verify-email", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
     @ResponseStatus(OK)
