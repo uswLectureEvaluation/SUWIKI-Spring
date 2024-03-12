@@ -3,7 +3,6 @@ package usw.suwiki.domain.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.auth.token.service.ConfirmUserService;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.user.User;
@@ -16,19 +15,8 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserCRUDService implements ConfirmUserService {
+public class UserCRUDService {
     private final UserRepository userRepository;
-
-    @Override
-    public void delete(Long userId) {
-        deleteFromUserIdx(userId);
-    }
-
-    @Override
-    public void activated(Long userId) {
-        User user = loadUserFromUserIdx(userId);
-        user.activateUser();
-    }
 
     public void saveUser(User user) {
         userRepository.save(user);

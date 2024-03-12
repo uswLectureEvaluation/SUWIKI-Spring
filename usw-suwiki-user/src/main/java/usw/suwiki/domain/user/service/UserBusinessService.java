@@ -220,8 +220,7 @@ public class UserBusinessService {
             throw new AccountException(ExceptionType.USER_RESTRICTED);
         }
         Long reportingUserIdx = tokenAgent.getId(Authorization);
-        EvaluatePost evaluatePost =
-          evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateReportForm.evaluateIdx());
+        EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateReportForm.evaluateIdx());
         Long reportedUserIdx = evaluatePost.getUser().getId();
 
         reportPostService.saveEvaluatePostReport(
@@ -239,8 +238,7 @@ public class UserBusinessService {
             throw new AccountException(ExceptionType.USER_RESTRICTED);
         }
         Long reportingUserIdx = tokenAgent.getId(Authorization);
-        ExamPost examPost = examPostCRUDService.loadExamPostFromExamPostIdx(
-            examReportForm.examIdx());
+        ExamPost examPost = examPostCRUDService.loadExamPostFromExamPostIdx(examReportForm.examIdx());
         Long reportedUserIdx = examPost.getUser().getId();
         reportPostService.saveExamPostReport(
             ExamPostReport.buildExamPostReport(
