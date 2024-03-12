@@ -9,6 +9,7 @@ project(':usw-suwiki-core:usw-suwiki-exception') {
 project(':usw-suwiki-core:usw-suwiki-version') {
     dependencies {
         implementation project(':usw-suwiki-common')
+        implementation project(':usw-suwiki-lecture')
         implementation project(':usw-suwiki-infra:usw-suwiki-db')
         implementation project(':usw-suwiki-core:usw-suwiki-exception')
 
