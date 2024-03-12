@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.auth.token.ConfirmationToken;
 
-import java.util.Optional;
+import static usw.suwiki.auth.token.response.ConfirmResponse.ERROR;
+import static usw.suwiki.auth.token.response.ConfirmResponse.EXPIRED;
+import static usw.suwiki.auth.token.response.ConfirmResponse.SUCCESS;
 
 @Service
 @Transactional
@@ -15,20 +17,20 @@ public class ConfirmationTokenBusinessService {
     private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
 
     public String confirmToken(String token) {
-        Optional<ConfirmationToken> wrappedConfirmationToken =
-            confirmationTokenCRUDService.loadConfirmationTokenFromPayload(token);
+        return confirmationTokenCRUDService.loadConfirmationTokenFromPayload(token)
+                 .map(this::confirm)
+                 .orElseGet(ERROR::getContent);
+    }
 
-        if (wrappedConfirmationToken.isPresent()) {
-            ConfirmationToken confirmationToken = wrappedConfirmationToken.get();
-            if (confirmationToken.isTokenExpired()) {
-                confirmationTokenCRUDService.deleteFromId(confirmationToken.getId());
-                confirmUserService.delete(confirmationToken.getUserIdx());
-                return buildEmailAuthFailedForm.tokenIsExpired();
-            }
-            confirmationToken.updateConfirmedAt();
-            confirmUserService.activated(confirmationToken.getUserIdx());
-            return buildEmailAuthSuccessForm.buildEmail();
+    private String confirm(ConfirmationToken token) {
+        if (token.isTokenExpired()) {
+            confirmationTokenCRUDService.deleteFromId(token.getId());
+            confirmUserService.delete(token.getUserIdx());
+            return EXPIRED.getContent();
         }
-        return buildEmailAuthFailedForm.internalError();
+
+        token.updateConfirmedAt();
+        confirmUserService.activated(token.getUserIdx());
+        return SUCCESS.getContent();
     }
 }
