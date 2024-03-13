@@ -7,6 +7,8 @@ import lombok.Getter;
 import usw.suwiki.common.response.ResponseFieldManipulationUtils;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.lecture.data.LectureStringConverter;
+import usw.suwiki.domain.lecture.schedule.LectureSchedule;
+import usw.suwiki.domain.lecture.timetable.TimetableCellSchedule;
 
 import java.util.ArrayList;
 import java.util.List;

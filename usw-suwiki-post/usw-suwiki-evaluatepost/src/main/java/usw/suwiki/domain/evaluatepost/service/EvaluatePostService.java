@@ -13,6 +13,9 @@ import usw.suwiki.domain.evaluatepost.dto.EvaluatePostSaveDto;
 import usw.suwiki.domain.evaluatepost.dto.EvaluatePostUpdateDto;
 import usw.suwiki.domain.evaluatepost.dto.EvaluatePostsToLecture;
 import usw.suwiki.domain.evaluatepost.dto.FindByLectureToJson;
+import usw.suwiki.domain.lecture.Lecture;
+import usw.suwiki.domain.lecture.service.LectureCRUDService;
+import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.service.UserCRUDService;
 

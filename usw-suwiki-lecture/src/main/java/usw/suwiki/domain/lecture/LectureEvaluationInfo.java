@@ -1,6 +1,6 @@
 package usw.suwiki.domain.lecture;
 
-import usw.suwiki.domain.evaluatepost.service.dto.EvaluatePostsToLecture;
+import usw.suwiki.domain.evaluatepost.dto.EvaluatePostsToLecture;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.evaluatepost.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.dto.EvaluatePostsToLecture;
+import usw.suwiki.domain.lecture.schedule.LectureSchedule;
 import usw.suwiki.infra.jpa.BaseTimeEntity;
 
 import javax.persistence.CascadeType;

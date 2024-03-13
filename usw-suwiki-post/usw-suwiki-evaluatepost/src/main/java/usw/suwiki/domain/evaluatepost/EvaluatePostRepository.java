@@ -3,6 +3,7 @@ package usw.suwiki.domain.evaluatepost;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.user.User;
 
 import java.util.List;

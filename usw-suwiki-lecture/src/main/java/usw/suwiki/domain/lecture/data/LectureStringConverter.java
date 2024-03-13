@@ -1,5 +1,8 @@
 package usw.suwiki.domain.lecture.data;
 
+import usw.suwiki.domain.lecture.timetable.TimetableCellSchedule;
+import usw.suwiki.domain.lecture.timetable.TimetableDay;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

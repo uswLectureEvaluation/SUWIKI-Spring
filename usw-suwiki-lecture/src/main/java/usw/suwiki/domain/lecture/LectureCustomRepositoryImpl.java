@@ -12,14 +12,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import usw.suwiki.common.pagination.SlicePaginationUtils;
-import usw.suwiki.domain.lecture.controller.dto.LectureFindOption;
+import usw.suwiki.domain.lecture.dto.LectureFindOption;
+import usw.suwiki.domain.lecture.schedule.LectureSchedule;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class LectureCustomRepositoryImpl implements LectureCustomRepository { // TODO style: Repository명 변경
+public class LectureCustomRepositoryImpl implements LectureCustomRepository {
     private static final String DEFAULT_ORDER = "modifiedDate";
     private static final Integer DEFAULT_LIMIT = 10;
     private static final Integer DEFAULT_PAGE = 1;
@@ -59,19 +60,21 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository { //
 
 
     @Override
-    public Optional<Lecture> findByExtraUniqueKey(String lectureName, String professorName, String majorType,
-        String dividedClassNumber) {
-        Lecture result = queryFactory
+    public Optional<Lecture> findByExtraUniqueKey(
+      String lectureName,
+      String professor,
+      String majorType,
+      String dividedClassNumber
+    ) {
+        return Optional.ofNullable(
+          queryFactory
             .selectFrom(lecture)
             .where(
-                lecture.name.eq(lectureName),
-                lecture.professor.eq(professorName),
-                lecture.majorType.eq(majorType),
-                lecture.lectureDetail.diclNo.eq(dividedClassNumber)
-            )
-            .fetchOne();
-
-        return Optional.ofNullable(result);
+              lecture.name.eq(lectureName),
+              lecture.professor.eq(professor),
+              lecture.majorType.eq(majorType),
+              lecture.lectureDetail.diclNo.eq(dividedClassNumber))
+            .fetchOne());
     }
 
 

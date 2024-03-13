@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import usw.suwiki.domain.lecture.timetable.Timetable;
 
 import java.util.List;
 

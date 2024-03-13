@@ -2,6 +2,7 @@ package usw.suwiki.domain.lecture;
 
 import org.springframework.data.domain.Slice;
 import usw.suwiki.domain.lecture.dto.LectureFindOption;
+import usw.suwiki.domain.lecture.schedule.LectureSchedule;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ public interface LectureCustomRepository {
 
     List<LectureSchedule> findAllLectureSchedulesByLectureSemesterContains(String semester);
 
-    Optional<Lecture> findByExtraUniqueKey(String lectureName, String ProfessorName, String majorType, String dividedClassNumber);
+    Optional<Lecture> findByExtraUniqueKey(String lectureName, String professor, String majorType, String dividedClassNumber);
 
     List<String> findAllMajorType();
 

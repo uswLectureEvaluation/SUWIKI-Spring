@@ -3,6 +3,9 @@ package usw.suwiki.domain.lecture.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import usw.suwiki.domain.lecture.timetable.Semester;
+import usw.suwiki.domain.lecture.timetable.Timetable;
+import usw.suwiki.domain.user.User;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

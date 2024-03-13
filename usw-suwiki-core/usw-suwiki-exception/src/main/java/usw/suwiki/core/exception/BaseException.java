@@ -2,9 +2,8 @@ package usw.suwiki.core.exception;
 
 import lombok.Getter;
 
+@Getter
 public class BaseException extends RuntimeException {
-
-    @Getter
     private final ExceptionType exceptionType;
 
     public BaseException(ExceptionType exceptionType) {

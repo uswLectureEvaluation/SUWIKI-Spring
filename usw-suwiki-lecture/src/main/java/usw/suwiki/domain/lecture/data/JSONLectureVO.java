@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.lecture.LectureDetail;
+import usw.suwiki.domain.lecture.schedule.LectureSchedule;
 
 @Getter
 @Builder

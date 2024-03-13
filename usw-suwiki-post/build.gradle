@@ -9,6 +9,7 @@ subprojects {
 project(':usw-suwiki-post:usw-suwiki-evaluatepost') {
     dependencies {
         implementation project(':usw-suwiki-user')
+        implementation project(':usw-suwiki-lecture')
     }
 }
 
@@ -16,5 +17,7 @@ project(':usw-suwiki-post:usw-suwiki-exampost') {
     dependencies {
         implementation project(':usw-suwiki-user')
         implementation project(':usw-suwiki-user:usw-suwiki-viewexam')
+
+        implementation project(':usw-suwiki-lecture')
     }
 }

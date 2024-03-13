@@ -22,6 +22,8 @@ import usw.suwiki.domain.lecture.dto.LectureDetailResponseDto;
 import usw.suwiki.domain.lecture.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.dto.LectureResponseDto;
 import usw.suwiki.domain.lecture.dto.LectureWithOptionalScheduleResponse;
+import usw.suwiki.domain.lecture.schedule.LectureSchedule;
+import usw.suwiki.domain.lecture.schedule.LectureScheduleRepository;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,7 +31,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 @Transactional(readOnly = true)

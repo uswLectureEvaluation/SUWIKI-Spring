@@ -8,6 +8,7 @@ import usw.suwiki.core.exception.ExamPostException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.exampost.ExamPost;
 import usw.suwiki.domain.exampost.ExamPostRepository;
+import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserRepository;
 

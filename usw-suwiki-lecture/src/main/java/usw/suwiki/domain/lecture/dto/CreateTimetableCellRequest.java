@@ -3,6 +3,11 @@ package usw.suwiki.domain.lecture.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import usw.suwiki.domain.lecture.timetable.Timetable;
+import usw.suwiki.domain.lecture.timetable.TimetableCell;
+import usw.suwiki.domain.lecture.timetable.TimetableCellColor;
+import usw.suwiki.domain.lecture.timetable.TimetableCellSchedule;
+import usw.suwiki.domain.lecture.timetable.TimetableDay;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

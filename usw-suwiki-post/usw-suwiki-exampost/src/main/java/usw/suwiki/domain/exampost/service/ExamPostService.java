@@ -10,6 +10,8 @@ import usw.suwiki.domain.exampost.dto.ExamPostsSaveDto;
 import usw.suwiki.domain.exampost.dto.ExamResponseByLectureIdDto;
 import usw.suwiki.domain.exampost.dto.ExamResponseByUserIdxDto;
 import usw.suwiki.domain.exampost.dto.ReadExamPostResponse;
+import usw.suwiki.domain.lecture.Lecture;
+import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.service.UserCRUDService;
 import usw.suwiki.domain.user.viewexam.ViewExam;

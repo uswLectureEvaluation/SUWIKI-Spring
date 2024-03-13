@@ -8,6 +8,7 @@ import usw.suwiki.core.exception.EvaluatePostException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.evaluatepost.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.EvaluatePostRepository;
+import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.service.UserCRUDService;
 

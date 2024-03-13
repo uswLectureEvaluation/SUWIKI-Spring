@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import usw.suwiki.domain.exampost.dto.ExamPostUpdateDto;
 import usw.suwiki.domain.exampost.dto.ExamPostsSaveDto;
+import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.infra.jpa.BaseTimeEntity;
 
