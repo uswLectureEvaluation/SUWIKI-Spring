@@ -16,7 +16,7 @@ import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.service.UserCRUDService;
 import usw.suwiki.domain.user.viewexam.ViewExam;
 import usw.suwiki.domain.user.viewexam.dto.PurchaseHistoryDto;
-import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDService;
+import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class ExamPostService {
     private final LectureService lectureService;
     private final UserCRUDService userCRUDService;
     private final ExamPostCRUDService examPostCRUDService;
-    private final ViewExamCRUDService viewExamCRUDService;
+    private final ViewExamCRUDServiceImpl viewExamCRUDService;
 
     @Transactional
     public void write(ExamPostsSaveDto examData, Long userIdx, Long lectureId) {

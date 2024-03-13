@@ -15,6 +15,7 @@ subprojects {
         implementation project(':usw-suwiki-statistics')
 
         implementation project(':usw-suwiki-core:usw-suwiki-exception')
+        implementation project(':usw-suwiki-core:usw-suwiki-secure')
 
         implementation project(':usw-suwiki-auth:usw-suwiki-auth-core')
         implementation project(':usw-suwiki-auth:usw-suwiki-auth-token') // todo: 불필요한 의존성. 추후 Token이 도메인 모델로 분리되면 삭제
@@ -31,7 +32,6 @@ project(':usw-suwiki-api:usw-suwiki-admin-api') {
         implementation project(':usw-suwiki-user:usw-suwiki-isolated-user')
 
         implementation project(':usw-suwiki-report')
-        implementation project(':usw-suwiki-core:usw-suwiki-secure')
 
         implementation 'org.springframework:spring-tx' // todo: 필요한지 확인하기 (24.03.08 Hejow)
     }

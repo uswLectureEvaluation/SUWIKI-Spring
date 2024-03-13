@@ -13,6 +13,7 @@ import usw.suwiki.domain.user.service.RestrictingUserService;
 import usw.suwiki.domain.user.service.UserCRUDService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -26,6 +27,19 @@ class RestrictingUserServiceImpl implements RestrictingUserService {
     private final UserCRUDService userCRUDService;
     private final BlacklistDomainCRUDService blacklistDomainCRUDService;
     private final RestrictingUserRepository restrictingUserRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Long> loadAllRestrictedUntilNow() {
+        return restrictingUserRepository.findByRestrictingDateBefore(LocalDateTime.now()).stream()
+          .map(RestrictingUser::getUserIdx)
+          .toList();
+    }
+
+    @Override
+    public void releaseByUserId(Long userId) {
+        restrictingUserRepository.deleteByUserIdx(userId);
+    }
 
     @Override
     public void executeRestrictUserFromEvaluatePost(UserAdminRequestDto.EvaluatePostRestrictForm evaluatePostRestrictForm, Long reportedUserId) {
@@ -76,9 +90,5 @@ class RestrictingUserServiceImpl implements RestrictingUserService {
                     .updatedAt(LocalDateTime.now()).build()
             );
         }
-    }
-
-    public void deleteFromUserIdx(Long userIdx) {
-        restrictingUserRepository.deleteByUserIdx(userIdx);
     }
 }

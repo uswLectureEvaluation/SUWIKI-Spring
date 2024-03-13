@@ -23,6 +23,13 @@ class UserIsolationCRUDServiceImpl implements UserIsolationCRUDService {
     private final UserIsolationRepository userIsolationRepository;
 
     @Override
+    public List<Long> loadAllIsolatedUntilTarget(LocalDateTime target) {
+        return userIsolationRepository.findByRequestedQuitDateBefore(target).stream()
+          .map(UserIsolation::getUserIdx)
+          .toList();
+    }
+
+    @Override
     public boolean isIsolatedByEmail(String email) {
         return userIsolationRepository.findByEmail(email).isPresent();
     }
@@ -74,14 +81,33 @@ class UserIsolationCRUDServiceImpl implements UserIsolationCRUDService {
         return user;
     }
 
+    @Override
     @Transactional
-    public void saveUserIsolation(UserIsolation userIsolation) {
-        userIsolationRepository.save(userIsolation);
+    public void saveUserIsolation(User user) {
+        userIsolationRepository.save(UserIsolation.builder()
+          .userIdx(user.getId())
+          .loginId(user.getLoginId())
+          .password(user.getPassword())
+          .email(user.getEmail())
+          .lastLogin(user.getLastLogin())
+          .requestedQuitDate(user.getRequestedQuitDate())
+          .build());
     }
 
+    @Override
     @Transactional
     public void deleteByUserIdx(Long userIdx) {
         userIsolationRepository.deleteByUserIdx(userIdx);
+    }
+
+    @Override
+    public boolean isNotIsolated(Long userId) {
+        return userIsolationRepository.findByUserIdx(userId).isEmpty();
+    }
+
+    @Override
+    public long countAllIsolatedUsers() {
+        return userIsolationRepository.count();
     }
 
     @Transactional
@@ -115,11 +141,6 @@ class UserIsolationCRUDServiceImpl implements UserIsolationCRUDService {
 
     public UserIsolation loadUserFromEmail(String email) {
         return convertOptionalUserToDomainUser(userIsolationRepository.findByEmail(email));
-    }
-
-    @Override
-    public long countAllIsolatedUsers() {
-        return userIsolationRepository.count();
     }
 
     private UserIsolation convertOptionalUserToDomainUser(Optional<UserIsolation> optionalUser) {

@@ -11,11 +11,10 @@ import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
 import usw.suwiki.domain.lecture.major.service.FavoriteMajorService;
 import usw.suwiki.domain.user.User;
-import usw.suwiki.domain.user.isolated.UserIsolation;
 import usw.suwiki.domain.user.service.RestrictingUserService;
 import usw.suwiki.domain.user.service.UserCRUDService;
 import usw.suwiki.domain.user.service.UserIsolationCRUDService;
-import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDService;
+import usw.suwiki.domain.user.service.ViewExamCRUDService;
 import usw.suwiki.external.mail.EmailSender;
 import usw.suwiki.report.ReportPostService;
 
@@ -67,16 +66,8 @@ public class UserIsolationSchedulingService {
         LocalDateTime endTime = LocalDateTime.now().minusMonths(12);
 
         for (User user : userCRUDService.loadUsersLastLoginBetweenStartEnd(startTime, endTime)) {
-            if (userIsolationCRUDService.loadUserFromUserIdx(user.getId()) == null) {
-                UserIsolation userIsolation = UserIsolation.builder()
-                    .userIdx(user.getId())
-                    .loginId(user.getLoginId())
-                    .password(user.getPassword())
-                    .email(user.getEmail())
-                    .lastLogin(user.getLastLogin())
-                    .requestedQuitDate(user.getRequestedQuitDate())
-                    .build();
-                userIsolationCRUDService.saveUserIsolation(userIsolation);
+            if (userIsolationCRUDService.isNotIsolated(user.getId())) {
+                userIsolationCRUDService.saveUserIsolation(user);
                 userCRUDService.softDeleteForIsolation(user.getId());
             }
         }
@@ -113,7 +104,7 @@ public class UserIsolationSchedulingService {
             evaluatePostCRUDService.deleteFromUserIdx(userIdx);
             examPostCRUDService.deleteFromUserIdx(userIdx);
             favoriteMajorService.deleteFromUserIdx(userIdx);
-            restrictingUserService.deleteFromUserIdx(userIdx);
+            restrictingUserService.releaseByUserId(userIdx);
             confirmationTokenCRUDService.deleteFromUserIdx(userIdx);
             userIsolationCRUDService.deleteByUserIdx(userIdx);
             userCRUDService.deleteFromUserIdx(userIdx);

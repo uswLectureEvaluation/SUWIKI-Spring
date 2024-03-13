@@ -12,10 +12,9 @@ import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
 import usw.suwiki.domain.lecture.major.service.FavoriteMajorService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserRepository;
-import usw.suwiki.domain.user.isolated.UserIsolation;
-import usw.suwiki.domain.user.isolated.UserIsolationRepository;
-import usw.suwiki.domain.user.restricted.RestrictingUserRepository;
-import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDService;
+import usw.suwiki.domain.user.service.RestrictingUserService;
+import usw.suwiki.domain.user.service.UserIsolationCRUDService;
+import usw.suwiki.domain.user.service.ViewExamCRUDService;
 import usw.suwiki.external.mail.EmailSender;
 import usw.suwiki.report.ReportPostService;
 
@@ -33,8 +32,8 @@ public class UserSchedulingService {
     private final UserRepository userRepository;
     private final ViewExamCRUDService viewExamCRUDService;
     private final FavoriteMajorService favoriteMajorService;
-    private final UserIsolationRepository userIsolationRepository;
-    private final RestrictingUserRepository restrictingUserRepository;
+    private final RestrictingUserService restrictingUserService;
+    private final UserIsolationCRUDService userIsolationCRUDService;
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
@@ -60,33 +59,32 @@ public class UserSchedulingService {
 
         LocalDateTime targetTime = LocalDateTime.now().minusDays(30);
         List<User> targetUser = userRepository.findByRequestedQuitDateBefore(targetTime);
-        List<UserIsolation> targetUserIsolation = userIsolationRepository.findByRequestedQuitDateBefore(targetTime);
+        List<Long> isolatedUserIds = userIsolationCRUDService.loadAllIsolatedUntilTarget(targetTime);
 
         if (!targetUser.isEmpty()) {
-            for (int index = 0; index < targetUser.toArray().length; index++) {
-                Long userId = targetUser.get(index).getId();
-                viewExamCRUDService.deleteAllFromUserIdx(userId);
-                refreshTokenRepository.deleteByUserIdx(userId);
-                reportPostService.deleteFromUserIdx(userId);
-                evaluatePostCRUDService.deleteFromUserIdx(userId);
-                examPostCRUDService.deleteFromUserIdx(userId);
-                favoriteMajorService.deleteFromUserIdx(userId);
-                restrictingUserRepository.deleteByUserIdx(userId);
-                confirmationTokenRepository.deleteByUserIdx(userId);
-                userRepository.deleteById(userId);
-            }
+          for (User user : targetUser) {
+            Long userId = user.getId();
+            viewExamCRUDService.deleteAllFromUserIdx(userId);
+            refreshTokenRepository.deleteByUserIdx(userId);
+            reportPostService.deleteFromUserIdx(userId);
+            evaluatePostCRUDService.deleteFromUserIdx(userId);
+            examPostCRUDService.deleteFromUserIdx(userId);
+            favoriteMajorService.deleteFromUserIdx(userId);
+            restrictingUserService.releaseByUserId(userId);
+            confirmationTokenRepository.deleteByUserIdx(userId);
+            userRepository.deleteById(userId);
+          }
         } else {
-            for (int i = 0; i < targetUserIsolation.toArray().length; i++) {
-                Long userIdx = targetUserIsolation.get(i).getUserIdx();
-                viewExamCRUDService.deleteAllFromUserIdx(userIdx);
-                refreshTokenRepository.deleteByUserIdx(userIdx);
-                reportPostService.deleteFromUserIdx(userIdx);
-                evaluatePostCRUDService.deleteFromUserIdx(userIdx);
-                examPostCRUDService.deleteFromUserIdx(userIdx);
-                favoriteMajorService.deleteFromUserIdx(userIdx);
-                restrictingUserRepository.deleteByUserIdx(userIdx);
-                confirmationTokenRepository.deleteByUserIdx(userIdx);
-                userIsolationRepository.deleteByLoginId(targetUserIsolation.get(i).getLoginId());
+            for (Long isolatedUserId : isolatedUserIds) {
+                viewExamCRUDService.deleteAllFromUserIdx(isolatedUserId);
+                refreshTokenRepository.deleteByUserIdx(isolatedUserId);
+                reportPostService.deleteFromUserIdx(isolatedUserId);
+                evaluatePostCRUDService.deleteFromUserIdx(isolatedUserId);
+                examPostCRUDService.deleteFromUserIdx(isolatedUserId);
+                favoriteMajorService.deleteFromUserIdx(isolatedUserId);
+                restrictingUserService.releaseByUserId(isolatedUserId);
+                confirmationTokenRepository.deleteByUserIdx(isolatedUserId);
+                userIsolationCRUDService.deleteByUserIdx(isolatedUserId);
             }
         }
 

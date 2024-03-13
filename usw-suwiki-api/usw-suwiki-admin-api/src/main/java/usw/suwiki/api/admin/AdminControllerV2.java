@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.auth.core.annotation.JWTVerify;
 import usw.suwiki.domain.user.dto.UserAdminResponseDto;
 import usw.suwiki.domain.user.service.AdminBusinessService;
+import usw.suwiki.report.evaluatepost.EvaluatePostReport;
+import usw.suwiki.report.exampost.ExamPostReport;
 import usw.suwiki.statistics.annotation.ApiLogger;
 
 import javax.validation.Valid;

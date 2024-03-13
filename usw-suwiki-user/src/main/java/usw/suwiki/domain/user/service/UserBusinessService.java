@@ -21,7 +21,7 @@ import usw.suwiki.domain.lecture.major.service.FavoriteMajorService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.model.UserClaim;
-import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDService;
+import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDServiceImpl;
 import usw.suwiki.external.mail.EmailSender;
 import usw.suwiki.report.ReportPostService;
 import usw.suwiki.report.evaluatepost.EvaluatePostReport;
@@ -63,7 +63,7 @@ public class UserBusinessService {
     private final FavoriteMajorService favoriteMajorService;
 
     private final EvaluatePostCRUDService evaluatePostCRUDService;
-    private final ViewExamCRUDService viewExamCRUDService;
+    private final ViewExamCRUDServiceImpl viewExamCRUDService;
     private final ExamPostCRUDService examPostCRUDService;
 
     private final ReportPostService reportPostService;
