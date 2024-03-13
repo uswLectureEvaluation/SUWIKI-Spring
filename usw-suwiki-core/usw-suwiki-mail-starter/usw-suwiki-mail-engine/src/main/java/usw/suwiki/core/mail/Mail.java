@@ -1,4 +1,4 @@
-package usw.suwiki.external.mail;
+package usw.suwiki.core.mail;
 
 import org.thymeleaf.context.Context;
 

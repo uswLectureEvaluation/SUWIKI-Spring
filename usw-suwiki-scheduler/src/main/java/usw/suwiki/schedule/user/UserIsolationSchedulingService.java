@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.auth.token.service.ConfirmationTokenCRUDService;
 import usw.suwiki.auth.token.service.RefreshTokenCRUDService;
+import usw.suwiki.core.mail.EmailSender;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
 import usw.suwiki.domain.lecture.major.service.FavoriteMajorService;
@@ -15,13 +16,12 @@ import usw.suwiki.domain.user.service.RestrictingUserService;
 import usw.suwiki.domain.user.service.UserCRUDService;
 import usw.suwiki.domain.user.service.UserIsolationCRUDService;
 import usw.suwiki.domain.user.service.ViewExamCRUDService;
-import usw.suwiki.external.mail.EmailSender;
 import usw.suwiki.report.ReportPostService;
 
 import java.time.LocalDateTime;
 
-import static usw.suwiki.external.mail.MailType.DELETE_WARNING;
-import static usw.suwiki.external.mail.MailType.DORMANT_NOTIFICATION;
+import static usw.suwiki.core.mail.MailType.DELETE_WARNING;
+import static usw.suwiki.core.mail.MailType.DORMANT_NOTIFICATION;
 
 @Slf4j
 @Service

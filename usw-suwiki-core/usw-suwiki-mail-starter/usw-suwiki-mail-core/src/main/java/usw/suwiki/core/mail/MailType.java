@@ -1,4 +1,4 @@
-package usw.suwiki.external.mail;
+package usw.suwiki.core.mail;
 
 import lombok.RequiredArgsConstructor;
 

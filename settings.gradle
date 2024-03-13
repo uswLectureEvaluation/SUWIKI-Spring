@@ -35,6 +35,10 @@ include 'usw-suwiki-core:usw-suwiki-secure'
 include 'usw-suwiki-core:usw-suwiki-version'
 include 'usw-suwiki-core:usw-suwiki-exception'
 
+include 'usw-suwiki-core:usw-suwiki-mail-starter'
+include 'usw-suwiki-core:usw-suwiki-mail-starter:usw-suwiki-mail-core'
+include 'usw-suwiki-core:usw-suwiki-mail-starter:usw-suwiki-mail-engine'
+
 include 'usw-suwiki-auth'
 include 'usw-suwiki-auth:usw-suwiki-auth-core'
 include 'usw-suwiki-auth:usw-suwiki-auth-token'
@@ -44,9 +48,6 @@ include 'usw-suwiki-common'
 include 'usw-suwiki-statistics'
 
 include 'usw-suwiki-scheduler'
-
-include 'usw-suwiki-external'
-include 'usw-suwiki-external:usw-suwiki-mail'
 
 include 'usw-suwiki-infra'
 include 'usw-suwiki-infra:usw-suwiki-db'

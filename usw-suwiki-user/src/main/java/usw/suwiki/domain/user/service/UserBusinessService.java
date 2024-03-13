@@ -10,6 +10,7 @@ import usw.suwiki.auth.token.service.RefreshTokenCRUDService;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.mail.EmailSender;
 import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.core.secure.model.Claim;
@@ -22,7 +23,6 @@ import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.model.UserClaim;
 import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDServiceImpl;
-import usw.suwiki.external.mail.EmailSender;
 import usw.suwiki.report.ReportPostService;
 import usw.suwiki.report.evaluatepost.EvaluatePostReport;
 import usw.suwiki.report.exampost.ExamPostReport;
@@ -36,14 +36,14 @@ import java.util.Optional;
 import static usw.suwiki.common.response.ApiResponseFactory.overlapFalseFlag;
 import static usw.suwiki.common.response.ApiResponseFactory.overlapTrueFlag;
 import static usw.suwiki.common.response.ApiResponseFactory.successFlag;
+import static usw.suwiki.core.mail.MailType.EMAIL_AUTH;
+import static usw.suwiki.core.mail.MailType.FIND_ID;
+import static usw.suwiki.core.mail.MailType.FIND_PASSWORD;
 import static usw.suwiki.domain.user.dto.UserRequestDto.EvaluateReportForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.ExamReportForm;
 import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
 import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
 import static usw.suwiki.domain.user.dto.UserResponseDto.UserInformationResponseForm;
-import static usw.suwiki.external.mail.MailType.EMAIL_AUTH;
-import static usw.suwiki.external.mail.MailType.FIND_ID;
-import static usw.suwiki.external.mail.MailType.FIND_PASSWORD;
 
 @Service
 @Transactional
@@ -147,7 +147,7 @@ public class UserBusinessService {
 
         if (userByLoginId.equals(userByEmail)) {
             User user = userByLoginId.get();
-            emailSender.send(email, FIND_PASSWORD,user.updateRandomPassword(passwordEncoder));
+            emailSender.send(email, FIND_PASSWORD, user.updateRandomPassword(passwordEncoder));
             return successFlag();
         } else if (userIsolationCRUDService.isRetrievedUserEquals(email, loginId)) {
             String newPassword = userIsolationCRUDService.updateIsolatedUserPassword(passwordEncoder, email);

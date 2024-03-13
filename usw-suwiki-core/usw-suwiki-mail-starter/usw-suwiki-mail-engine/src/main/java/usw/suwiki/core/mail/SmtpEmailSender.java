@@ -1,4 +1,4 @@
-package usw.suwiki.external.mail;
+package usw.suwiki.core.mail;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -7,10 +7,9 @@ import org.thymeleaf.context.Context;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-// todo: bean으로 설정해주기
 @Service
 @RequiredArgsConstructor
-public class SmtpEmailSender implements EmailSender {
+class SmtpEmailSender implements EmailSender {
     private final ServerProperties serverProperties;
     private final RawMailSender rawMailSender;
 
