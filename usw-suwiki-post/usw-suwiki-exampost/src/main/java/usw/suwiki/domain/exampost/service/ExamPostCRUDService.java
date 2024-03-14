@@ -16,10 +16,6 @@ import java.util.List;
 public class ExamPostCRUDService {
   private final ExamPostRepository examPostRepository;
 
-  public List<ExamPost> loadExamPostListFromUserIdx(Long userIdx) {
-    return examPostRepository.findAllByUserId(userIdx);
-  }
-
   public ExamPost loadExamPostFromExamPostIdx(Long examIdx) {
     return examPostRepository.findById(examIdx)
       .orElseThrow(() -> new ExamPostException(ExceptionType.EXAM_POST_NOT_FOUND));
@@ -27,7 +23,7 @@ public class ExamPostCRUDService {
 
   @Transactional
   public void deleteFromUserIdx(Long userIdx) {
-    List<ExamPost> examPosts = loadExamPostListFromUserIdx(userIdx);
+    List<ExamPost> examPosts = examPostRepository.findAllByUserId(userIdx);
     examPostRepository.deleteAllInBatch(examPosts);
   }
 

@@ -20,9 +20,6 @@ project(':usw-suwiki-user') {
         implementation project(':usw-suwiki-lecture:usw-suwiki-major')
         implementation project(':usw-suwiki-lecture:usw-suwiki-timetable')
 
-        implementation project(':usw-suwiki-post:usw-suwiki-exampost')
-        implementation project(':usw-suwiki-post:usw-suwiki-evaluatepost')
-
         implementation project(':usw-suwiki-auth:usw-suwiki-auth-token')
 
         implementation project(':usw-suwiki-core:usw-suwiki-mail-starter')

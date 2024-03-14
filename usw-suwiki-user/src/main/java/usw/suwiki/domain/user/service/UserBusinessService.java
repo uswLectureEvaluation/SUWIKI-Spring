@@ -14,10 +14,6 @@ import usw.suwiki.core.mail.EmailSender;
 import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.core.secure.model.Claim;
-import usw.suwiki.domain.evaluatepost.EvaluatePost;
-import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
-import usw.suwiki.domain.exampost.ExamPost;
-import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
 import usw.suwiki.domain.lecture.major.service.FavoriteMajorService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
@@ -61,9 +57,9 @@ public class UserBusinessService {
 
   private final FavoriteMajorService favoriteMajorService;
 
-  private final EvaluatePostCRUDService evaluatePostCRUDService;
   private final ClearViewExamService clearViewExamService;
-  private final ExamPostCRUDService examPostCRUDService;
+  private final ClearExamPostsService clearExamPostsService;
+  private final ClearEvaluatePostsService clearEvaluatePostsService;
 
   private final ReportPostService reportPostService;
 
@@ -203,8 +199,8 @@ public class UserBusinessService {
     return refreshUserJWT(user, refreshToken.getPayload());
   }
 
-  public Map<String, Boolean> executeQuit(String Authorization, String inputPassword) {
-    User user = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
+  public Map<String, Boolean> executeQuit(String authorization, String inputPassword) {
+    User user = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(authorization));
 
     if (!user.validatePassword(passwordEncoder, inputPassword)) {
       throw new AccountException(ExceptionType.PASSWORD_ERROR);
@@ -213,8 +209,9 @@ public class UserBusinessService {
     reportPostService.deleteFromUserIdx(user.getId());
     favoriteMajorService.deleteFromUserIdx(user.getId());
     clearViewExamService.clear(user.getId());
-    examPostCRUDService.deleteFromUserIdx(user.getId());
-    evaluatePostCRUDService.deleteFromUserIdx(user.getId());
+    clearExamPostsService.clear(user.getId());
+    clearEvaluatePostsService.clear(user.getId());
+
     user.waitQuit();
     return successFlag();
   }
