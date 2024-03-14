@@ -10,13 +10,13 @@ import usw.suwiki.domain.exampost.ExamPost;
 import usw.suwiki.domain.exampost.ExamPostQueryRepository;
 import usw.suwiki.domain.exampost.ExamPostRepository;
 import usw.suwiki.domain.exampost.dto.ExamPostRequest;
-import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.service.UserCRUDService;
 import usw.suwiki.domain.user.viewexam.ViewExam;
-import usw.suwiki.domain.user.viewexam.dto.PurchaseHistoryDto;
-import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDServiceImpl;
+import usw.suwiki.domain.user.viewexam.ViewExamQueryRepository;
+import usw.suwiki.domain.user.viewexam.dto.ViewExamResponse;
+import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDService;
 
 import java.util.List;
 
@@ -38,7 +38,9 @@ public class ExamPostService {
 
   private final LectureService lectureService;
   private final UserCRUDService userCRUDService;
-  private final ViewExamCRUDServiceImpl viewExamCRUDService;
+
+  private final ViewExamCRUDService viewExamCRUDService;
+  private final ViewExamQueryRepository viewExamQueryRepository;
 
   public boolean canRead(Long userId, Long lectureId) {
     return viewExamCRUDService.isExist(userId, lectureId);
@@ -48,10 +50,8 @@ public class ExamPostService {
     return examPostRepository.existsByUserIdAndLectureId(userId, lectureId);
   }
 
-  public List<PurchaseHistoryDto> loadPurchasedHistories(Long userId) {
-    return viewExamCRUDService.loadViewExamsFromUserIdx(userId).stream()
-      .map(ExamPostMapper::toPurchasedHistory)
-      .toList();
+  public List<ViewExamResponse.PurchaseHistory> loadPurchasedHistories(Long userId) {
+    return viewExamQueryRepository.loadPurchasedHistoriesByUserId(userId);
   }
 
   public Details loadAllExamPosts(Long userId, Long lectureId, PageOption option) {
@@ -90,15 +90,15 @@ public class ExamPostService {
   }
 
   @Transactional
-  public void purchaseExamPost(Long lectureId, Long userId) {
+  public void purchaseExamPost(Long userId, Long lectureId) {
     if (canRead(userId, lectureId)) {
       throw new ExamPostException(EXAM_POST_ALREADY_PURCHASE);
     }
 
-    Lecture lecture = lectureService.findLectureById(lectureId);
+    lectureService.findLectureById(lectureId);
     User user = userCRUDService.loadUserFromUserIdx(userId);
 
-    viewExamCRUDService.save(new ViewExam(user, lecture));
+    viewExamCRUDService.save(new ViewExam(userId, lectureId));
     user.purchaseExamPost();
   }
 
@@ -109,13 +109,13 @@ public class ExamPostService {
   }
 
   @Transactional
-  public void executeDeleteExamPosts(Long userIdx, Long examId) {
+  public void deleteExamPost(Long userIdx, Long examId) {
     ExamPost examPost = loadExamPostOrThrow(examId);
 
     User user = userCRUDService.loadUserFromUserIdx(userIdx);
     examPostRepository.delete(examPost);
 
-    user.decreasePointAndWrittenExamByDeleteExamPosts();
+    user.deleteExamPost();
   }
 
   private ExamPost loadExamPostOrThrow(Long examId) {

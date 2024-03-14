@@ -16,8 +16,14 @@ project(':usw-suwiki-post:usw-suwiki-evaluatepost') {
 project(':usw-suwiki-post:usw-suwiki-exampost') {
     dependencies {
         implementation project(':usw-suwiki-user')
-        implementation project(':usw-suwiki-user:usw-suwiki-viewexam')
+        implementation project(':usw-suwiki-lecture')
+        implementation project(':usw-suwiki-post:usw-suwiki-viewexam')
+    }
+}
 
+project(':usw-suwiki-post:usw-suwiki-viewexam') {
+    dependencies {
+        implementation project(':usw-suwiki-user')
         implementation project(':usw-suwiki-lecture')
     }
 }

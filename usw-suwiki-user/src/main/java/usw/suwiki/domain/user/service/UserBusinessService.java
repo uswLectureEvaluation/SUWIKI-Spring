@@ -22,7 +22,6 @@ import usw.suwiki.domain.lecture.major.service.FavoriteMajorService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.model.UserClaim;
-import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDServiceImpl;
 import usw.suwiki.report.ReportPostService;
 import usw.suwiki.report.evaluatepost.EvaluatePostReport;
 import usw.suwiki.report.exampost.ExamPostReport;
@@ -49,273 +48,273 @@ import static usw.suwiki.domain.user.dto.UserResponseDto.UserInformationResponse
 @Transactional
 @RequiredArgsConstructor
 public class UserBusinessService {
-    private static final String MAIL_FORM = "@suwon.ac.kr";
+  private static final String MAIL_FORM = "@suwon.ac.kr";
 
-    private final EmailSender emailSender;
-    private final PasswordEncoder passwordEncoder;
+  private final EmailSender emailSender;
+  private final PasswordEncoder passwordEncoder;
 
-    private final UserCRUDService userCRUDService;
-    private final BlacklistDomainService blacklistDomainService;
-    private final UserIsolationCRUDService userIsolationCRUDService;
-    private final BlacklistDomainCRUDService blacklistDomainCRUDService;
-    private final RestrictingUserCRUDService restrictingUserCRUDService;
+  private final UserCRUDService userCRUDService;
+  private final BlacklistDomainService blacklistDomainService;
+  private final UserIsolationCRUDService userIsolationCRUDService;
+  private final BlacklistDomainCRUDService blacklistDomainCRUDService;
+  private final RestrictingUserCRUDService restrictingUserCRUDService;
 
-    private final FavoriteMajorService favoriteMajorService;
+  private final FavoriteMajorService favoriteMajorService;
 
-    private final EvaluatePostCRUDService evaluatePostCRUDService;
-    private final ViewExamCRUDServiceImpl viewExamCRUDService;
-    private final ExamPostCRUDService examPostCRUDService;
+  private final EvaluatePostCRUDService evaluatePostCRUDService;
+  private final ClearViewExamService clearViewExamService;
+  private final ExamPostCRUDService examPostCRUDService;
 
-    private final ReportPostService reportPostService;
+  private final ReportPostService reportPostService;
 
-    private final RefreshTokenCRUDService refreshTokenCRUDService;
-    private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
+  private final RefreshTokenCRUDService refreshTokenCRUDService;
+  private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
 
-    private final TokenAgent tokenAgent;
+  private final TokenAgent tokenAgent;
 
-    @Transactional(readOnly = true)
-    public Map<String, Boolean> executeCheckId(String loginId) {
-        if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
-            userIsolationCRUDService.isIsolatedByLoginId(loginId)
-        ) {
-            return overlapTrueFlag();
-        }
-        return overlapFalseFlag();
+  @Transactional(readOnly = true)
+  public Map<String, Boolean> executeCheckId(String loginId) {
+    if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
+        userIsolationCRUDService.isIsolatedByLoginId(loginId)
+    ) {
+      return overlapTrueFlag();
+    }
+    return overlapFalseFlag();
+  }
+
+  @Transactional(readOnly = true)
+  public Map<String, Boolean> executeCheckEmail(String email) {
+    if (userCRUDService.loadWrappedUserFromEmail(email).isPresent() ||
+        userIsolationCRUDService.isIsolatedByEmail(email)
+    ) {
+      return overlapTrueFlag();
+    }
+    return overlapFalseFlag();
+  }
+
+  public Map<String, Boolean> executeJoin(String loginId, String password, String email) {
+    blacklistDomainService.isUserInBlackListThatRequestJoin(email);
+
+    if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
+        userIsolationCRUDService.isIsolatedByLoginId(loginId) ||
+        userCRUDService.loadWrappedUserFromEmail(email).isPresent() ||
+        userIsolationCRUDService.isIsolatedByEmail(email)
+    ) {
+      throw new AccountException(ExceptionType.LOGIN_ID_OR_EMAIL_OVERLAP);
     }
 
-    @Transactional(readOnly = true)
-    public Map<String, Boolean> executeCheckEmail(String email) {
-        if (userCRUDService.loadWrappedUserFromEmail(email).isPresent() ||
-            userIsolationCRUDService.isIsolatedByEmail(email)
-        ) {
-            return overlapTrueFlag();
-        }
-        return overlapFalseFlag();
+    if (!email.contains(MAIL_FORM)) {
+      throw new AccountException(ExceptionType.IS_NOT_EMAIL_FORM);
     }
 
-    public Map<String, Boolean> executeJoin(String loginId, String password, String email) {
-        blacklistDomainService.isUserInBlackListThatRequestJoin(email);
+    User user = User.makeUser(loginId, passwordEncoder.encode(password), email);
+    userCRUDService.saveUser(user);
 
-        if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
-            userIsolationCRUDService.isIsolatedByLoginId(loginId) ||
-            userCRUDService.loadWrappedUserFromEmail(email).isPresent() ||
-            userIsolationCRUDService.isIsolatedByEmail(email)
-        ) {
-            throw new AccountException(ExceptionType.LOGIN_ID_OR_EMAIL_OVERLAP);
-        }
+    ConfirmationToken confirmationToken = ConfirmationToken.makeToken(user.getId());
+    confirmationTokenCRUDService.saveConfirmationToken(confirmationToken);
 
-        if (!email.contains(MAIL_FORM)) {
-            throw new AccountException(ExceptionType.IS_NOT_EMAIL_FORM);
-        }
+    emailSender.send(email, EMAIL_AUTH, confirmationToken.getToken());
+    return successFlag();
+  }
 
-        User user = User.makeUser(loginId, passwordEncoder.encode(password), email);
-        userCRUDService.saveUser(user);
+  public Map<String, Boolean> executeFindId(String email) {
+    Optional<User> requestUser = userCRUDService.loadWrappedUserFromEmail(email);
+    Optional<String> isolatedLoginId = userIsolationCRUDService.getIsolatedLoginIdByEmail(email);
 
-        ConfirmationToken confirmationToken = ConfirmationToken.makeToken(user.getId());
-        confirmationTokenCRUDService.saveConfirmationToken(confirmationToken);
+    if (requestUser.isPresent()) {
+      emailSender.send(email, FIND_ID, requestUser.get().getLoginId());
+      return successFlag();
+    } else if (isolatedLoginId.isPresent()) {
+      emailSender.send(email, FIND_ID, isolatedLoginId.get());
+      return successFlag();
+    }
+    throw new AccountException(ExceptionType.USER_NOT_EXISTS);
+  }
 
-        emailSender.send(email, EMAIL_AUTH, confirmationToken.getToken());
-        return successFlag();
+  // todo: isoloation user table부터 확인 후 user table 확인하도록 수정
+  public Map<String, Boolean> executeFindPw(String loginId, String email) {
+    Optional<User> userByLoginId = userCRUDService.loadWrappedUserFromLoginId(loginId);
+
+    if (userByLoginId.isEmpty()) {
+      throw new AccountException(ExceptionType.USER_NOT_FOUND_BY_LOGINID);
     }
 
-    public Map<String, Boolean> executeFindId(String email) {
-        Optional<User> requestUser = userCRUDService.loadWrappedUserFromEmail(email);
-        Optional<String> isolatedLoginId = userIsolationCRUDService.getIsolatedLoginIdByEmail(email);
-
-        if (requestUser.isPresent()) {
-            emailSender.send(email, FIND_ID, requestUser.get().getLoginId());
-            return successFlag();
-        } else if (isolatedLoginId.isPresent()) {
-            emailSender.send(email, FIND_ID, isolatedLoginId.get());
-            return successFlag();
-        }
-        throw new AccountException(ExceptionType.USER_NOT_EXISTS);
+    Optional<User> userByEmail = userCRUDService.loadWrappedUserFromEmail(email);
+    if (userByEmail.isEmpty()) {
+      throw new AccountException(ExceptionType.USER_NOT_FOUND_BY_EMAIL);
     }
 
-    // todo: isoloation user table부터 확인 후 user table 확인하도록 수정
-    public Map<String, Boolean> executeFindPw(String loginId, String email) {
-        Optional<User> userByLoginId = userCRUDService.loadWrappedUserFromLoginId(loginId);
+    if (userByLoginId.equals(userByEmail)) {
+      User user = userByLoginId.get();
+      emailSender.send(email, FIND_PASSWORD, user.updateRandomPassword(passwordEncoder));
+      return successFlag();
+    } else if (userIsolationCRUDService.isRetrievedUserEquals(email, loginId)) {
+      String newPassword = userIsolationCRUDService.updateIsolatedUserPassword(passwordEncoder, email);
+      emailSender.send(email, FIND_PASSWORD, newPassword);
+      return successFlag();
+    }
+    throw new AccountException(ExceptionType.USER_NOT_FOUND_BY_EMAIL);
+  }
 
-        if (userByLoginId.isEmpty()) {
-            throw new AccountException(ExceptionType.USER_NOT_FOUND_BY_LOGINID);
-        }
+  public Map<String, String> executeLogin(String loginId, String inputPassword) {
+    if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent()) {
+      User user = userCRUDService.loadUserFromLoginId(loginId);
+      user.isUserEmailAuthed(confirmationTokenCRUDService.loadConfirmationTokenFromUserIdx(user.getId()));
+      if (user.validatePassword(passwordEncoder, inputPassword)) {
+        user.updateLastLoginDate();
+        return generateUserJWT(user);
+      }
+    } else if (userIsolationCRUDService.isLoginableIsolatedUser(loginId, inputPassword, passwordEncoder)) {
+      User user = userIsolationCRUDService.awakeIsolated(userCRUDService, loginId);
+      return generateUserJWT(user);
+    }
+    throw new AccountException(ExceptionType.PASSWORD_ERROR);
+  }
 
-        Optional<User> userByEmail = userCRUDService.loadWrappedUserFromEmail(email);
-        if (userByEmail.isEmpty()) {
-            throw new AccountException(ExceptionType.USER_NOT_FOUND_BY_EMAIL);
-        }
 
-        if (userByLoginId.equals(userByEmail)) {
-            User user = userByLoginId.get();
-            emailSender.send(email, FIND_PASSWORD, user.updateRandomPassword(passwordEncoder));
-            return successFlag();
-        } else if (userIsolationCRUDService.isRetrievedUserEquals(email, loginId)) {
-            String newPassword = userIsolationCRUDService.updateIsolatedUserPassword(passwordEncoder, email);
-            emailSender.send(email, FIND_PASSWORD, newPassword);
-            return successFlag();
-        }
-        throw new AccountException(ExceptionType.USER_NOT_FOUND_BY_EMAIL);
+  public Map<String, Boolean> executeEditPassword(String Authorization, String prePassword, String newPassword) {
+    User user = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
+
+    if (!passwordEncoder.matches(prePassword, user.getPassword())) {
+      throw new AccountException(ExceptionType.PASSWORD_ERROR);
+    } else if (prePassword.equals(newPassword)) {
+      throw new AccountException(ExceptionType.PASSWORD_NOT_CHANGED);
+    }
+    user.updatePassword(passwordEncoder, newPassword);
+    return successFlag();
+  }
+
+  public UserInformationResponseForm executeLoadMyPage(String Authorization) {
+    Long userIdx = tokenAgent.getId(Authorization);
+    User user = userCRUDService.loadUserFromUserIdx(userIdx);
+    return UserInformationResponseForm.buildMyPageResponseForm(user);
+  }
+
+  public Map<String, String> executeJWTRefreshForWebClient(Cookie requestRefreshCookie) {
+    String payload = requestRefreshCookie.getValue();
+    RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
+    User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
+    return refreshUserJWT(user, payload);
+  }
+
+  public Map<String, String> executeJWTRefreshForMobileClient(String payload) {
+    RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
+    User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
+    return refreshUserJWT(user, refreshToken.getPayload());
+  }
+
+  public Map<String, Boolean> executeQuit(String Authorization, String inputPassword) {
+    User user = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
+
+    if (!user.validatePassword(passwordEncoder, inputPassword)) {
+      throw new AccountException(ExceptionType.PASSWORD_ERROR);
     }
 
-    public Map<String, String> executeLogin(String loginId, String inputPassword) {
-        if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent()) {
-            User user = userCRUDService.loadUserFromLoginId(loginId);
-            user.isUserEmailAuthed(confirmationTokenCRUDService.loadConfirmationTokenFromUserIdx(user.getId()));
-            if (user.validatePassword(passwordEncoder, inputPassword)) {
-                user.updateLastLoginDate();
-                return generateUserJWT(user);
-            }
-        } else if (userIsolationCRUDService.isLoginableIsolatedUser(loginId, inputPassword, passwordEncoder)) {
-            User user = userIsolationCRUDService.awakeIsolated(userCRUDService, loginId);
-            return generateUserJWT(user);
-        }
-        throw new AccountException(ExceptionType.PASSWORD_ERROR);
+    reportPostService.deleteFromUserIdx(user.getId());
+    favoriteMajorService.deleteFromUserIdx(user.getId());
+    clearViewExamService.clear(user.getId());
+    examPostCRUDService.deleteFromUserIdx(user.getId());
+    evaluatePostCRUDService.deleteFromUserIdx(user.getId());
+    user.waitQuit();
+    return successFlag();
+  }
+
+  public Map<String, Boolean> executeReportEvaluatePost(EvaluateReportForm evaluateReportForm, String Authorization) {
+    if (tokenAgent.getUserIsRestricted(Authorization)) {
+      throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
+    Long reportingUserIdx = tokenAgent.getId(Authorization);
+    EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateReportForm.evaluateIdx());
+    Long reportedUserIdx = evaluatePost.getUser().getId();
 
+    reportPostService.saveEvaluatePostReport(
+      EvaluatePostReport.buildEvaluatePostReport(
+        evaluateReportForm.evaluateIdx(),
+        evaluatePost,
+        reportedUserIdx,
+        reportingUserIdx)
+    );
+    return successFlag();
+  }
 
-    public Map<String, Boolean> executeEditPassword(String Authorization, String prePassword, String newPassword) {
-        User user = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
-
-        if (!passwordEncoder.matches(prePassword, user.getPassword())) {
-            throw new AccountException(ExceptionType.PASSWORD_ERROR);
-        } else if (prePassword.equals(newPassword)) {
-            throw new AccountException(ExceptionType.PASSWORD_NOT_CHANGED);
-        }
-        user.updatePassword(passwordEncoder, newPassword);
-        return successFlag();
+  public Map<String, Boolean> executeReportExamPost(ExamReportForm examReportForm, String Authorization) {
+    if (tokenAgent.getUserIsRestricted(Authorization)) {
+      throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
+    Long reportingUserIdx = tokenAgent.getId(Authorization);
+    ExamPost examPost = examPostCRUDService.loadExamPostFromExamPostIdx(examReportForm.examIdx());
+    Long reportedUserIdx = examPost.getUserId();
+    reportPostService.saveExamPostReport(
+      ExamPostReport.buildExamPostReport(
+        examReportForm.examIdx(),
+        examPost,
+        reportedUserIdx,
+        reportingUserIdx)
+    );
+    return successFlag();
+  }
 
-    public UserInformationResponseForm executeLoadMyPage(String Authorization) {
-        Long userIdx = tokenAgent.getId(Authorization);
-        User user = userCRUDService.loadUserFromUserIdx(userIdx);
-        return UserInformationResponseForm.buildMyPageResponseForm(user);
+  public List<LoadMyBlackListReasonResponseForm> executeLoadBlackListReason(String Authorization) {
+    User requestUser = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
+    return blacklistDomainCRUDService.loadAllBlacklistLog(requestUser.getId());
+  }
+
+  public List<LoadMyRestrictedReasonResponseForm> executeLoadRestrictedReason(String Authorization) {
+    User requestUser = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
+    return restrictingUserCRUDService.loadRestrictedLog(requestUser.getId());
+  }
+
+  public void executeFavoriteMajorSave(String Authorization, FavoriteSaveDto favoriteSaveDto) {
+    if (tokenAgent.getUserIsRestricted(Authorization)) {
+      throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
+    Long userIdx = tokenAgent.getId(Authorization);
+    favoriteMajorService.save(favoriteSaveDto, userIdx);
+  }
 
-    public Map<String, String> executeJWTRefreshForWebClient(Cookie requestRefreshCookie) {
-        String payload = requestRefreshCookie.getValue();
-        RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
-        User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
-        return refreshUserJWT(user, payload);
+  public void executeFavoriteMajorDelete(String Authorization, String majorType) {
+    if (tokenAgent.getUserIsRestricted(Authorization)) {
+      throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
+    Long userIdx = tokenAgent.getId(Authorization);
+    favoriteMajorService.delete(userIdx, majorType);
+  }
 
-    public Map<String, String> executeJWTRefreshForMobileClient(String payload) {
-        RefreshToken refreshToken = refreshTokenCRUDService.loadRefreshTokenFromPayload(payload);
-        User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
-        return refreshUserJWT(user, refreshToken.getPayload());
+  public ResponseForm executeFavoriteMajorLoad(String Authorization) {
+    if (tokenAgent.getUserIsRestricted(Authorization)) {
+      throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
+    Long userIdx = tokenAgent.getId(Authorization);
+    List<String> list = favoriteMajorService.findMajorTypeByUser(userIdx);
+    return new ResponseForm(list);
+  }
 
-    public Map<String, Boolean> executeQuit(String Authorization, String inputPassword) {
-        User user = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
+  private void rollBackUserFromSleeping(Long userIdx, String loginId, String password, String email) {
+    User user = userCRUDService.loadUserFromUserIdx(userIdx);
+    user.awake(loginId, password, email);
+  }
 
-        if (!user.validatePassword(passwordEncoder, inputPassword)) {
-            throw new AccountException(ExceptionType.PASSWORD_ERROR);
-        }
+  private Map<String, String> generateUserJWT(User user) {
+    Claim userClaim = new UserClaim(user.getLoginId(), user.getRole().name(), user.getRestricted());
 
-        reportPostService.deleteFromUserIdx(user.getId());
-        favoriteMajorService.deleteFromUserIdx(user.getId());
-        viewExamCRUDService.deleteAllFromUserIdx(user.getId());
-        examPostCRUDService.deleteFromUserIdx(user.getId());
-        evaluatePostCRUDService.deleteFromUserIdx(user.getId());
-        user.waitQuit();
-        return successFlag();
+    return new HashMap<>() {{
+      put("AccessToken", tokenAgent.createAccessToken(user.getId(), userClaim));
+      put("RefreshToken", tokenAgent.provideRefreshTokenInLogin(user.getId()));
+    }};
+  }
+
+  private Map<String, String> refreshUserJWT(User user, String refreshTokenPayload) {
+    Claim userClaim = new UserClaim(user.getLoginId(), user.getRole().name(), user.getRestricted());
+
+    return new HashMap<>() {{
+      put("AccessToken", tokenAgent.createAccessToken(user.getId(), userClaim));
+      put("RefreshToken", tokenAgent.reissueRefreshToken(refreshTokenPayload));
+    }};
+  }
+
+  public void validateRestrictedUser(String authorization) {
+    if (tokenAgent.getUserIsRestricted(authorization)) {
+      throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
-
-    public Map<String, Boolean> executeReportEvaluatePost(EvaluateReportForm evaluateReportForm, String Authorization) {
-        if (tokenAgent.getUserIsRestricted(Authorization)) {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
-        }
-        Long reportingUserIdx = tokenAgent.getId(Authorization);
-        EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateReportForm.evaluateIdx());
-        Long reportedUserIdx = evaluatePost.getUser().getId();
-
-        reportPostService.saveEvaluatePostReport(
-            EvaluatePostReport.buildEvaluatePostReport(
-                evaluateReportForm.evaluateIdx(),
-                evaluatePost,
-                reportedUserIdx,
-                reportingUserIdx)
-        );
-        return successFlag();
-    }
-
-    public Map<String, Boolean> executeReportExamPost(ExamReportForm examReportForm, String Authorization) {
-        if (tokenAgent.getUserIsRestricted(Authorization)) {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
-        }
-        Long reportingUserIdx = tokenAgent.getId(Authorization);
-        ExamPost examPost = examPostCRUDService.loadExamPostFromExamPostIdx(examReportForm.examIdx());
-        Long reportedUserIdx = examPost.getUser().getId();
-        reportPostService.saveExamPostReport(
-            ExamPostReport.buildExamPostReport(
-                examReportForm.examIdx(),
-                examPost,
-                reportedUserIdx,
-                reportingUserIdx)
-        );
-        return successFlag();
-    }
-
-    public List<LoadMyBlackListReasonResponseForm> executeLoadBlackListReason(String Authorization) {
-        User requestUser = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
-        return blacklistDomainCRUDService.loadAllBlacklistLog(requestUser.getId());
-    }
-
-    public List<LoadMyRestrictedReasonResponseForm> executeLoadRestrictedReason(String Authorization) {
-        User requestUser = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
-        return restrictingUserCRUDService.loadRestrictedLog(requestUser.getId());
-    }
-
-    public void executeFavoriteMajorSave(String Authorization, FavoriteSaveDto favoriteSaveDto) {
-        if (tokenAgent.getUserIsRestricted(Authorization)) {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
-        }
-        Long userIdx = tokenAgent.getId(Authorization);
-        favoriteMajorService.save(favoriteSaveDto, userIdx);
-    }
-
-    public void executeFavoriteMajorDelete(String Authorization, String majorType) {
-        if (tokenAgent.getUserIsRestricted(Authorization)) {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
-        }
-        Long userIdx = tokenAgent.getId(Authorization);
-        favoriteMajorService.delete(userIdx, majorType);
-    }
-
-    public ResponseForm executeFavoriteMajorLoad(String Authorization) {
-        if (tokenAgent.getUserIsRestricted(Authorization)) {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
-        }
-        Long userIdx = tokenAgent.getId(Authorization);
-        List<String> list = favoriteMajorService.findMajorTypeByUser(userIdx);
-        return new ResponseForm(list);
-    }
-
-    private void rollBackUserFromSleeping(Long userIdx, String loginId, String password, String email) {
-        User user = userCRUDService.loadUserFromUserIdx(userIdx);
-        user.awake(loginId, password, email);
-    }
-
-    private Map<String, String> generateUserJWT(User user) {
-        Claim userClaim = new UserClaim(user.getLoginId(), user.getRole().name(), user.getRestricted());
-
-        return new HashMap<>() {{
-            put("AccessToken", tokenAgent.createAccessToken(user.getId(), userClaim));
-            put("RefreshToken", tokenAgent.provideRefreshTokenInLogin(user.getId()));
-        }};
-    }
-
-    private Map<String, String> refreshUserJWT(User user, String refreshTokenPayload) {
-        Claim userClaim = new UserClaim(user.getLoginId(), user.getRole().name(), user.getRestricted());
-
-        return new HashMap<>() {{
-            put("AccessToken", tokenAgent.createAccessToken(user.getId(), userClaim));
-            put("RefreshToken", tokenAgent.reissueRefreshToken(refreshTokenPayload));
-        }};
-    }
-
-    public void validateRestrictedUser(String authorization) {
-        if (tokenAgent.getUserIsRestricted(authorization)) {
-            throw new AccountException(ExceptionType.USER_RESTRICTED);
-        }
-    }
+  }
 }

@@ -16,24 +16,17 @@ subprojects {
 project(':usw-suwiki-user') {
     dependencies {
         implementation project(':usw-suwiki-report')
-        implementation project(':usw-suwiki-user:usw-suwiki-viewexam')
 
         implementation project(':usw-suwiki-lecture:usw-suwiki-major')
         implementation project(':usw-suwiki-lecture:usw-suwiki-timetable')
 
-        implementation project(':usw-suwiki-post:usw-suwiki-evaluatepost')
         implementation project(':usw-suwiki-post:usw-suwiki-exampost')
+        implementation project(':usw-suwiki-post:usw-suwiki-evaluatepost')
 
         implementation project(':usw-suwiki-auth:usw-suwiki-auth-token')
 
         implementation project(':usw-suwiki-core:usw-suwiki-mail-starter')
 
         implementation 'org.springframework.boot:spring-boot-starter-web'
-    }
-}
-
-project(':usw-suwiki-user:usw-suwiki-viewexam') {
-    dependencies {
-        implementation project(':usw-suwiki-lecture')
     }
 }

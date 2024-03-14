@@ -55,7 +55,7 @@ public class ExamPostsController {
   public String purchaseExamPost(@RequestHeader String Authorization, @RequestParam Long lectureId) {
     validateAuth(Authorization);
     Long userId = jwtAgent.getId(Authorization);
-    examPostService.purchaseExamPost(lectureId, userId);
+    examPostService.purchaseExamPost(userId, lectureId);
     return "success";
   }
 
@@ -108,7 +108,7 @@ public class ExamPostsController {
   public String deleteExamPosts(@RequestHeader String Authorization, @RequestParam Long examIdx) {
     validateAuth(Authorization);
     Long userIdx = jwtAgent.getId(Authorization);
-    examPostService.executeDeleteExamPosts(userIdx, examIdx);
+    examPostService.deleteExamPost(userIdx, examIdx);
     return "success";
   }
 
