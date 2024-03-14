@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.common.pagination.PageOption;
+import usw.suwiki.core.exception.AccountException;
+import usw.suwiki.core.exception.ExamPostException;
 import usw.suwiki.domain.exampost.ExamPost;
-import usw.suwiki.domain.exampost.dto.ExamPostUpdateDto;
-import usw.suwiki.domain.exampost.dto.ExamPostsSaveDto;
-import usw.suwiki.domain.exampost.dto.ExamResponseByLectureIdDto;
-import usw.suwiki.domain.exampost.dto.ExamResponseByUserIdxDto;
-import usw.suwiki.domain.exampost.dto.ReadExamPostResponse;
+import usw.suwiki.domain.exampost.ExamPostQueryRepository;
+import usw.suwiki.domain.exampost.ExamPostRepository;
+import usw.suwiki.domain.exampost.dto.ExamPostRequest;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.User;
@@ -18,115 +18,108 @@ import usw.suwiki.domain.user.viewexam.ViewExam;
 import usw.suwiki.domain.user.viewexam.dto.PurchaseHistoryDto;
 import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDServiceImpl;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static usw.suwiki.core.exception.ExceptionType.EXAM_POST_ALREADY_PURCHASE;
+import static usw.suwiki.core.exception.ExceptionType.EXAM_POST_NOT_FOUND;
+import static usw.suwiki.core.exception.ExceptionType.POSTS_WRITE_OVERLAP;
+import static usw.suwiki.domain.exampost.dto.ExamPostResponse.Detail;
+import static usw.suwiki.domain.exampost.dto.ExamPostResponse.Details;
+import static usw.suwiki.domain.exampost.dto.ExamPostResponse.MyPost;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ExamPostService {
-    private final LectureService lectureService;
-    private final UserCRUDService userCRUDService;
-    private final ExamPostCRUDService examPostCRUDService;
-    private final ViewExamCRUDServiceImpl viewExamCRUDService;
+  private static final int PAGE_LIMIT = 10;
 
-    @Transactional
-    public void write(ExamPostsSaveDto examData, Long userIdx, Long lectureId) {
-        Lecture lecture = lectureService.findLectureById(lectureId);
-        User user = userCRUDService.loadUserFromUserIdx(userIdx);
+  private final ExamPostRepository examPostRepository;
+  private final ExamPostQueryRepository examPostQueryRepository;
 
-        ExamPost examPost = createExamPost(examData, user, lecture);
-        user.increasePointByWritingExamPost();
+  private final LectureService lectureService;
+  private final UserCRUDService userCRUDService;
+  private final ViewExamCRUDServiceImpl viewExamCRUDService;
 
-        examPostCRUDService.save(examPost);
+  public boolean canRead(Long userId, Long lectureId) {
+    return viewExamCRUDService.isExist(userId, lectureId);
+  }
+
+  public boolean isWritten(Long userId, Long lectureId) {
+    return examPostRepository.existsByUserIdAndLectureId(userId, lectureId);
+  }
+
+  public List<PurchaseHistoryDto> loadPurchasedHistories(Long userId) {
+    return viewExamCRUDService.loadViewExamsFromUserIdx(userId).stream()
+      .map(ExamPostMapper::toPurchasedHistory)
+      .toList();
+  }
+
+  public Details loadAllExamPosts(Long userId, Long lectureId, PageOption option) {
+    boolean isWritten = isWritten(userId, lectureId);
+
+    List<Detail> data = examPostRepository.findAllByLectureId(lectureId, option.getOffset(), PAGE_LIMIT).stream()
+      .map(ExamPostMapper::toDetail)
+      .toList();
+
+    Details response = data.isEmpty() ? Details.noData(isWritten) : Details.withData(data, isWritten);
+
+    if (!canRead(userId, lectureId)) {
+      response.noAccess();
     }
 
-    @Transactional
-    public void purchase(Long lectureIdx, Long userIdx) {
-        User user = userCRUDService.loadUserFromUserIdx(userIdx);
-        Lecture lecture = lectureService.findLectureById(lectureIdx);
-        user.purchaseExamPost();
+    return response;
+  }
 
-        viewExamCRUDService.save(ViewExam.builder()
-          .user(user)
-          .lecture(lecture)
-          .build()
-        );
+  public List<MyPost> loadAllMyExamPosts(PageOption option, Long userId) {
+    return examPostQueryRepository.findByUserIdxAndPageOption(userId, option.getOffset(), PAGE_LIMIT);
+  }
+
+  @Transactional
+  public void write(Long userId, Long lectureId, ExamPostRequest.Create request) {
+    if (isWritten(userId, lectureId)) {
+      throw new AccountException(POSTS_WRITE_OVERLAP);
     }
 
-    public boolean canRead(Long userId, Long lectureId) {
-        return viewExamCRUDService.isExist(userId, lectureId);
+    lectureService.findLectureById(lectureId);
+    User user = userCRUDService.loadUserFromUserIdx(userId);
+
+    ExamPost examPost = ExamPostMapper.toEntity(userId, lectureId, request);
+    examPostRepository.save(examPost);
+
+    user.wroteExamPost();
+  }
+
+  @Transactional
+  public void purchaseExamPost(Long lectureId, Long userId) {
+    if (canRead(userId, lectureId)) {
+      throw new ExamPostException(EXAM_POST_ALREADY_PURCHASE);
     }
 
-    public List<PurchaseHistoryDto> readPurchaseHistory(Long userIdx) {
-        List<PurchaseHistoryDto> response = new ArrayList<>();
+    Lecture lecture = lectureService.findLectureById(lectureId);
+    User user = userCRUDService.loadUserFromUserIdx(userId);
 
-        for (ViewExam viewExam : viewExamCRUDService.loadViewExamsFromUserIdx(userIdx)) {
-            response.add(PurchaseHistoryDto.builder()
-              .id(viewExam.getId())
-              .lectureName(viewExam.getLecture().getName())
-              .professor(viewExam.getLecture().getProfessor())
-              .majorType(viewExam.getLecture().getMajorType())
-              .createDate(viewExam.getCreateDate())
-              .build());
-        }
-        return response;
-    }
+    viewExamCRUDService.save(new ViewExam(user, lecture));
+    user.purchaseExamPost();
+  }
 
-    @Transactional
-    public void update(Long examIdx, ExamPostUpdateDto examUpdateData) {
-        ExamPost examPost = examPostCRUDService.loadExamPostFromExamPostIdx(examIdx);
-        examPost.update(examUpdateData);
-    }
+  @Transactional
+  public void update(Long examId, ExamPostRequest.Update request) {
+    ExamPost examPost = loadExamPostOrThrow(examId);
+    examPost.update(request.getContent(), request.getSelectedSemester(), ExamPostMapper.toExamDetail(request));
+  }
 
-    public ReadExamPostResponse readExamPost(Long userId, Long lectureId, PageOption option) {
-        List<ExamResponseByLectureIdDto> response = new ArrayList<>();
+  @Transactional
+  public void executeDeleteExamPosts(Long userIdx, Long examId) {
+    ExamPost examPost = loadExamPostOrThrow(examId);
 
-        List<ExamPost> examPosts = examPostCRUDService.loadExamPostsFromLectureIdx(lectureId, option);
-        boolean isWrite = isWrite(userId, lectureId);
+    User user = userCRUDService.loadUserFromUserIdx(userIdx);
+    examPostRepository.delete(examPost);
 
-        for (ExamPost post : examPosts) {
-            response.add(new ExamResponseByLectureIdDto(post));
-        }
+    user.decreasePointAndWrittenExamByDeleteExamPosts();
+  }
 
-        if (response.isEmpty()) {
-            return ReadExamPostResponse.hasNotExamPost(isWrite);
-        }
-
-        return ReadExamPostResponse.hasExamPost(response, isWrite);
-    }
-
-
-    public List<ExamResponseByUserIdxDto> readExamPostByUserIdAndOption(PageOption option, Long userId) {
-        List<ExamResponseByUserIdxDto> response = new ArrayList<>();
-
-        for (ExamPost examPost : examPostCRUDService.loadExamPostsFromUserIdxAndPageOption(userId, option)) {
-            ExamResponseByUserIdxDto data = new ExamResponseByUserIdxDto(examPost);
-            data.setSemesterList(examPost.getLecture().getSemester());
-            response.add(data);
-        }
-
-        return response;
-    }
-
-    public boolean isWrite(Long userIdx, Long lectureIdx) {
-        User user = userCRUDService.loadUserFromUserIdx(userIdx);
-        Lecture lecture = lectureService.findLectureById(lectureIdx);
-        return examPostCRUDService.isWrite(user, lecture);
-    }
-
-    @Transactional
-    public void executeDeleteExamPosts(Long userIdx, Long examIdx) {
-        ExamPost post = examPostCRUDService.loadExamPostFromExamPostIdx(examIdx);
-        User user = userCRUDService.loadUserFromUserIdx(userIdx);
-        user.decreasePointAndWrittenExamByDeleteExamPosts();
-        examPostCRUDService.delete(post);
-    }
-
-    private ExamPost createExamPost(ExamPostsSaveDto examData, User user, Lecture lecture) {
-        ExamPost examPost = new ExamPost(examData);
-        examPost.setLecture(lecture);
-        examPost.setUser(user);
-        return examPost;
-    }
+  private ExamPost loadExamPostOrThrow(Long examId) {
+    return examPostRepository.findById(examId)
+      .orElseThrow(() -> new ExamPostException(EXAM_POST_NOT_FOUND));
+  }
 }

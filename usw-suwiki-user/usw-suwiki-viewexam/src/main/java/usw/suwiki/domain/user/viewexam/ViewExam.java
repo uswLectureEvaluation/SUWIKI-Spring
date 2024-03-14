@@ -1,8 +1,6 @@
 package usw.suwiki.domain.user.viewexam;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.lecture.Lecture;
@@ -19,8 +17,6 @@ import javax.persistence.ManyToOne;
 
 @Getter
 @Entity
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ViewExam extends BaseTimeEntity {
 
@@ -36,7 +32,6 @@ public class ViewExam extends BaseTimeEntity {
     @JoinColumn(name = "lecture_id")
     private Lecture lecture;
 
-    @Builder
     public ViewExam(User user, Lecture lecture) {
         this.user = user;
         this.lecture = lecture;

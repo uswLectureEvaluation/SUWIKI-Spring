@@ -203,7 +203,7 @@ public class User {
         this.writtenEvaluation -= 1;
     }
 
-    public void increasePointByWritingExamPost() {
+    public void wroteExamPost() {
         this.point += 20;
         this.writtenExam += 1;
     }
