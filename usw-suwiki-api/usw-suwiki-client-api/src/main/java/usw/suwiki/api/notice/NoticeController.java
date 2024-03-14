@@ -10,20 +10,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.auth.core.jwt.JwtAgent;
 import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
-import usw.suwiki.domain.notice.dto.NoticeDetailResponseDto;
-import usw.suwiki.domain.notice.dto.NoticeResponseDto;
-import usw.suwiki.domain.notice.dto.NoticeSaveOrUpdateDto;
+import usw.suwiki.domain.notice.dto.NoticeRequest;
+import usw.suwiki.domain.notice.dto.NoticeResponse;
 import usw.suwiki.domain.notice.service.NoticeService;
 import usw.suwiki.statistics.annotation.ApiLogger;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.http.HttpStatus.OK;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -35,61 +38,55 @@ public class NoticeController {
 
     @ApiLogger(option = "notice")
     @GetMapping("/all")
+    @ResponseStatus(OK)
     public ResponseForm findNoticesApi(@RequestParam(required = false) Optional<Integer> page) {
-        PageOption option = new PageOption(page);
-        List<NoticeResponseDto> response = noticeService.readAllNotice(option);
+        List<NoticeResponse.Simple> response = noticeService.getAllNotices(new PageOption(page));
         return new ResponseForm(response);
     }
 
     @ApiLogger(option = "notice")
     @GetMapping("/")
+    @ResponseStatus(OK)
     public ResponseForm findNoticeApi(@RequestParam Long noticeId) {
-        NoticeDetailResponseDto response = noticeService.readNotice(noticeId);
-        return new ResponseForm(response);
-    }
-
-    @ApiLogger(option = "notice")
-    @GetMapping("/v2/all")
-    public ResponseForm findNoticesApiV2(@RequestParam(required = false) Optional<Integer> page) {
-        PageOption option = new PageOption(page);
-        List<NoticeResponseDto> response = noticeService.readAllNotice(option);
-        return new ResponseForm(response);
-    }
-
-    @ApiLogger(option = "notice")
-    @GetMapping("/v2/")
-    public ResponseForm findNoticeApiV2(@RequestParam Long noticeId) {
-        NoticeDetailResponseDto response = noticeService.readNotice(noticeId);
+        NoticeResponse.Detail response = noticeService.getNotice(noticeId);
         return new ResponseForm(response);
     }
 
     @ApiLogger(option = "notice")
     @PostMapping("/")
-    public String writeNoticeApi(@RequestBody NoticeSaveOrUpdateDto request, @RequestHeader String Authorization) {
+    @ResponseStatus(OK)
+    public String write(
+      @RequestHeader String Authorization,
+      @Valid @RequestBody NoticeRequest.Create request
+    ) {
         jwtAgent.validateJwt(Authorization);
         validateAdmin(Authorization);
-        noticeService.write(request);
-
+        noticeService.write(request.getTitle(), request.getContent());
         return "success";
     }
 
     @ApiLogger(option = "notice")
     @PutMapping("/")
+    @ResponseStatus(OK)
     public String updateNotice(
+        @RequestHeader String Authorization,
         @RequestParam Long noticeId,
-        @RequestBody NoticeSaveOrUpdateDto dto,
-        @RequestHeader String Authorization
+        @Valid @RequestBody NoticeRequest.Update request
     ) {
         jwtAgent.validateJwt(Authorization);
         validateAdmin(Authorization);
-        noticeService.update(dto, noticeId);
+        noticeService.update(noticeId, request.getTitle(), request.getContent());
 
         return "success";
     }
 
     @ApiLogger(option = "notice")
     @DeleteMapping("/")
-    public String deleteNotice(@RequestParam Long noticeId, @RequestHeader String Authorization) {
+    @ResponseStatus(OK)
+    public String deleteNotice(
+      @RequestHeader String Authorization,
+      @RequestParam Long noticeId
+    ) {
         jwtAgent.validateJwt(Authorization);
         validateAdmin(Authorization);
         noticeService.delete(noticeId);
