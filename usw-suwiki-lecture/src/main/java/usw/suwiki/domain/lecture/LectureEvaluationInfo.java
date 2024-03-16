@@ -10,6 +10,8 @@ import javax.persistence.Embeddable;
 public class LectureEvaluationInfo {
   private static final int EVALUATION_TYPE_COUNT = 3;
   private static final int ZERO_POST = 0;
+  private static final int MINUS = -1;
+  private static final int PLUS = 1;
 
   private float lectureTotalAvg;
   private float lectureSatisfactionAvg;
@@ -18,6 +20,7 @@ public class LectureEvaluationInfo {
   private float lectureTeamAvg;
   private float lectureDifficultyAvg;
   private float lectureHomeworkAvg;
+
   private float lectureSatisfactionValue;
   private float lectureHoneyValue;
   private float lectureLearningValue;
@@ -36,24 +39,23 @@ public class LectureEvaluationInfo {
   }
 
   public void apply(EvaluatedData data) {
-    this.lectureSatisfactionValue += data.satisfaction();
-    this.lectureHoneyValue += data.honey();
-    this.lectureLearningValue += data.learning();
-    this.lectureTeamValue += data.team();
-    this.lectureDifficultyValue += data.difficulty();
-    this.lectureHomeworkValue += data.homework();
+    calculate(data, PLUS);
   }
 
   public void cancel(EvaluatedData data) {
-    this.lectureSatisfactionValue -= data.satisfaction();
-    this.lectureHoneyValue -= data.honey();
-    this.lectureLearningValue -= data.learning();
-    this.lectureTeamValue -= data.team();
-    this.lectureDifficultyValue -= data.difficulty();
-    this.lectureHomeworkValue -= data.homework();
+    calculate(data, MINUS);
+  }
+
+  private void calculate(EvaluatedData data, int operator) {
+    this.lectureSatisfactionValue += operator * data.satisfaction();
+    this.lectureHoneyValue += operator * data.honey();
+    this.lectureLearningValue += operator * data.learning();
+    this.lectureTeamValue += operator * data.team();
+    this.lectureDifficultyValue += operator * data.difficulty();
+    this.lectureHomeworkValue += operator * data.homework();
   }
 
   private float average(float amount, int count) {
-    return count == ZERO_POST ? 0.0f : amount / count;
+    return count == ZERO_POST ? 0.0f : (amount / count);
   }
 }
