@@ -47,7 +47,7 @@ public class LectureService {
   @Transactional
   public void evaluate(Long lectureId, EvaluatedData evaluatedData) {
     Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(lectureId);
-    lecture.evaluated(evaluatedData);
+    lecture.evaluate(evaluatedData);
   }
 
   @Transactional
