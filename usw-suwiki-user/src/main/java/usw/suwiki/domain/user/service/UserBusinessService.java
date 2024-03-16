@@ -18,9 +18,6 @@ import usw.suwiki.domain.lecture.major.service.FavoriteMajorService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.model.UserClaim;
-import usw.suwiki.report.ReportPostService;
-import usw.suwiki.report.evaluatepost.EvaluatePostReport;
-import usw.suwiki.report.exampost.ExamPostReport;
 
 import javax.servlet.http.Cookie;
 import java.util.HashMap;
@@ -34,8 +31,6 @@ import static usw.suwiki.common.response.ApiResponseFactory.successFlag;
 import static usw.suwiki.core.mail.MailType.EMAIL_AUTH;
 import static usw.suwiki.core.mail.MailType.FIND_ID;
 import static usw.suwiki.core.mail.MailType.FIND_PASSWORD;
-import static usw.suwiki.domain.user.dto.UserRequestDto.EvaluateReportForm;
-import static usw.suwiki.domain.user.dto.UserRequestDto.ExamReportForm;
 import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
 import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
 import static usw.suwiki.domain.user.dto.UserResponseDto.UserInformationResponseForm;
@@ -57,11 +52,10 @@ public class UserBusinessService {
 
   private final FavoriteMajorService favoriteMajorService;
 
+  private final ClearReportService clearReportService;
   private final ClearViewExamService clearViewExamService;
   private final ClearExamPostsService clearExamPostsService;
   private final ClearEvaluatePostsService clearEvaluatePostsService;
-
-  private final ReportPostService reportPostService;
 
   private final RefreshTokenCRUDService refreshTokenCRUDService;
   private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
@@ -206,48 +200,13 @@ public class UserBusinessService {
       throw new AccountException(ExceptionType.PASSWORD_ERROR);
     }
 
-    reportPostService.deleteFromUserIdx(user.getId());
     favoriteMajorService.deleteFromUserIdx(user.getId());
+    clearReportService.clear(user.getId());
     clearViewExamService.clear(user.getId());
     clearExamPostsService.clear(user.getId());
     clearEvaluatePostsService.clear(user.getId());
 
     user.waitQuit();
-    return successFlag();
-  }
-
-  public Map<String, Boolean> executeReportEvaluatePost(EvaluateReportForm evaluateReportForm, String Authorization) {
-    if (tokenAgent.getUserIsRestricted(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-    Long reportingUserIdx = tokenAgent.getId(Authorization);
-    EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateReportForm.evaluateIdx());
-    Long reportedUserIdx = evaluatePost.getUser().getId();
-
-    reportPostService.saveEvaluatePostReport(
-      EvaluatePostReport.buildEvaluatePostReport(
-        evaluateReportForm.evaluateIdx(),
-        evaluatePost,
-        reportedUserIdx,
-        reportingUserIdx)
-    );
-    return successFlag();
-  }
-
-  public Map<String, Boolean> executeReportExamPost(ExamReportForm examReportForm, String Authorization) {
-    if (tokenAgent.getUserIsRestricted(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-    Long reportingUserIdx = tokenAgent.getId(Authorization);
-    ExamPost examPost = examPostCRUDService.loadExamPostFromExamPostIdx(examReportForm.examIdx());
-    Long reportedUserIdx = examPost.getUserId();
-    reportPostService.saveExamPostReport(
-      ExamPostReport.buildExamPostReport(
-        examReportForm.examIdx(),
-        examPost,
-        reportedUserIdx,
-        reportingUserIdx)
-    );
     return successFlag();
   }
 

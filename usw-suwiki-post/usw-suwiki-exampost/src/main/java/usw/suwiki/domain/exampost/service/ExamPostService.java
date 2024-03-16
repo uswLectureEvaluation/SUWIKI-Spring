@@ -17,6 +17,8 @@ import usw.suwiki.domain.user.viewexam.ViewExam;
 import usw.suwiki.domain.user.viewexam.ViewExamQueryRepository;
 import usw.suwiki.domain.user.viewexam.dto.ViewExamResponse;
 import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDService;
+import usw.suwiki.report.ExamPostReport;
+import usw.suwiki.report.service.ReportService;
 
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class ExamPostService {
 
   private final LectureService lectureService;
   private final UserCRUDService userCRUDService;
+  private final ReportService reportService;
 
   private final ViewExamCRUDService viewExamCRUDService;
   private final ViewExamQueryRepository viewExamQueryRepository;
@@ -72,6 +75,20 @@ public class ExamPostService {
 
   public List<MyPost> loadAllMyExamPosts(PageOption option, Long userId) {
     return examPostQueryRepository.findByUserIdxAndPageOption(userId, option.getOffset(), PAGE_LIMIT);
+  }
+
+  public void report(Long reportingUserId, Long examId) {
+    ExamPost examPost = loadExamPostOrThrow(examId);
+    Long reportedUserId = examPost.getUserId();
+
+    reportService.saveExamPostReport(ExamPostReport.of(
+      examId,
+      reportedUserId,
+      reportingUserId,
+      examPost.getProfessor(),
+      examPost.getLectureName(),
+      examPost.getContent()
+    ));
   }
 
   @Transactional

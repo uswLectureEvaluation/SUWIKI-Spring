@@ -1,8 +1,9 @@
 dependencies {
-    implementation project(':usw-suwiki-post:usw-suwiki-exampost')
-    implementation project(':usw-suwiki-post:usw-suwiki-evaluatepost')
+    implementation project(':usw-suwiki-user')
 
     implementation project(':usw-suwiki-core:usw-suwiki-exception')
 
     implementation project(':usw-suwiki-infra:usw-suwiki-db')
+
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }

@@ -16,7 +16,7 @@ import usw.suwiki.domain.user.service.ClearViewExamService;
 import usw.suwiki.domain.user.service.RestrictingUserService;
 import usw.suwiki.domain.user.service.UserCRUDService;
 import usw.suwiki.domain.user.service.UserIsolationCRUDService;
-import usw.suwiki.report.ReportPostService;
+import usw.suwiki.report.service.ReportService;
 
 import java.time.LocalDateTime;
 
@@ -36,7 +36,7 @@ public class UserIsolationSchedulingService {
   private final ClearViewExamService clearViewExamService;
   private final FavoriteMajorService favoriteMajorService;
 
-  private final ReportPostService reportPostService;
+  private final ReportService reportService;
 
   private final EvaluatePostCRUDService evaluatePostCRUDService;
   private final ExamPostCRUDService examPostCRUDService;
@@ -100,7 +100,7 @@ public class UserIsolationSchedulingService {
       Long userIdx = user.getId();
       clearViewExamService.clear(userIdx);
       refreshTokenCRUDService.deleteFromUserIdx(userIdx);
-      reportPostService.deleteFromUserIdx(userIdx);
+      reportService.deleteFromUserIdx(userIdx);
       evaluatePostCRUDService.deleteFromUserIdx(userIdx);
       examPostCRUDService.deleteFromUserIdx(userIdx);
       favoriteMajorService.deleteFromUserIdx(userIdx);

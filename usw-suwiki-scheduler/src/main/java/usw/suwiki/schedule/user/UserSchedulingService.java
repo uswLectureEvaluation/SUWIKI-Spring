@@ -16,7 +16,7 @@ import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.service.ClearViewExamService;
 import usw.suwiki.domain.user.service.RestrictingUserService;
 import usw.suwiki.domain.user.service.UserIsolationCRUDService;
-import usw.suwiki.report.ReportPostService;
+import usw.suwiki.report.service.ReportService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,7 +38,7 @@ public class UserSchedulingService {
   private final RefreshTokenRepository refreshTokenRepository;
   private final ConfirmationTokenRepository confirmationTokenRepository;
 
-  private final ReportPostService reportPostService;
+  private final ReportService reportService;
   private final ExamPostCRUDService examPostCRUDService;
   private final EvaluatePostCRUDService evaluatePostCRUDService;
 
@@ -66,7 +66,7 @@ public class UserSchedulingService {
         Long userId = user.getId();
         clearViewExamService.clear(userId);
         refreshTokenRepository.deleteByUserIdx(userId);
-        reportPostService.deleteFromUserIdx(userId);
+        reportService.deleteFromUserIdx(userId);
         evaluatePostCRUDService.deleteFromUserIdx(userId);
         examPostCRUDService.deleteFromUserIdx(userId);
         favoriteMajorService.deleteFromUserIdx(userId);
@@ -78,7 +78,7 @@ public class UserSchedulingService {
       for (Long isolatedUserId : isolatedUserIds) {
         clearViewExamService.clear(isolatedUserId);
         refreshTokenRepository.deleteByUserIdx(isolatedUserId);
-        reportPostService.deleteFromUserIdx(isolatedUserId);
+        reportService.deleteFromUserIdx(isolatedUserId);
         evaluatePostCRUDService.deleteFromUserIdx(isolatedUserId);
         examPostCRUDService.deleteFromUserIdx(isolatedUserId);
         favoriteMajorService.deleteFromUserIdx(isolatedUserId);

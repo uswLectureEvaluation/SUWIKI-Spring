@@ -15,8 +15,6 @@ subprojects {
 
 project(':usw-suwiki-user') {
     dependencies {
-        implementation project(':usw-suwiki-report')
-
         implementation project(':usw-suwiki-lecture:usw-suwiki-major')
         implementation project(':usw-suwiki-lecture:usw-suwiki-timetable')
 
