@@ -1,14 +1,14 @@
-package usw.suwiki.report.service;
+package usw.suwiki.domain.report.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.exception.ReportedPostException;
-import usw.suwiki.report.EvaluatePostReport;
-import usw.suwiki.report.EvaluateReportRepository;
-import usw.suwiki.report.ExamPostReport;
-import usw.suwiki.report.ExamReportRepository;
+import usw.suwiki.domain.report.EvaluatePostReport;
+import usw.suwiki.domain.report.EvaluateReportRepository;
+import usw.suwiki.domain.report.ExamPostReport;
+import usw.suwiki.domain.report.ExamReportRepository;
 
 import java.util.List;
 

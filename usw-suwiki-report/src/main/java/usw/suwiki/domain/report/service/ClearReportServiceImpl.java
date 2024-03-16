@@ -1,11 +1,11 @@
-package usw.suwiki.report.service;
+package usw.suwiki.domain.report.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.report.EvaluateReportRepository;
+import usw.suwiki.domain.report.ExamReportRepository;
 import usw.suwiki.domain.user.service.ClearReportService;
-import usw.suwiki.report.EvaluateReportRepository;
-import usw.suwiki.report.ExamReportRepository;
 
 @Service
 @Transactional

@@ -12,11 +12,11 @@ import usw.suwiki.domain.evaluatepost.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.exampost.ExamPost;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
+import usw.suwiki.domain.report.EvaluatePostReport;
+import usw.suwiki.domain.report.ExamPostReport;
+import usw.suwiki.domain.report.service.ReportService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.model.UserClaim;
-import usw.suwiki.report.EvaluatePostReport;
-import usw.suwiki.report.ExamPostReport;
-import usw.suwiki.report.service.ReportService;
 
 import java.util.List;
 import java.util.Map;

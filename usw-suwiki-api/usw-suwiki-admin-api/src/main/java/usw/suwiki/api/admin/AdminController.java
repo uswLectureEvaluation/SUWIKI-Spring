@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.auth.core.annotation.JWTVerify;
+import usw.suwiki.domain.report.EvaluatePostReport;
+import usw.suwiki.domain.report.ExamPostReport;
 import usw.suwiki.domain.user.dto.UserAdminResponseDto;
 import usw.suwiki.domain.user.service.AdminBusinessService;
-import usw.suwiki.report.EvaluatePostReport;
-import usw.suwiki.report.ExamPostReport;
 import usw.suwiki.statistics.annotation.ApiLogger;
 
 import javax.validation.Valid;

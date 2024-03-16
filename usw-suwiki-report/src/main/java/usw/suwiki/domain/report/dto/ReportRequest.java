@@ -1,4 +1,4 @@
-package usw.suwiki.report.dto;
+package usw.suwiki.domain.report.dto;
 
 import lombok.AccessLevel;
 import lombok.Data;

@@ -13,7 +13,7 @@ import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
 import usw.suwiki.domain.exampost.service.ExamPostService;
-import usw.suwiki.report.dto.ReportRequest;
+import usw.suwiki.domain.report.dto.ReportRequest;
 import usw.suwiki.statistics.annotation.ApiLogger;
 
 import javax.validation.Valid;

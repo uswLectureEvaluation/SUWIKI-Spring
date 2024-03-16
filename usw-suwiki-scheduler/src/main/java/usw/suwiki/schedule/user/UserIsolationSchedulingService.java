@@ -11,12 +11,12 @@ import usw.suwiki.core.mail.EmailSender;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
 import usw.suwiki.domain.lecture.major.service.FavoriteMajorService;
+import usw.suwiki.domain.report.service.ReportService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.service.ClearViewExamService;
 import usw.suwiki.domain.user.service.RestrictingUserService;
 import usw.suwiki.domain.user.service.UserCRUDService;
 import usw.suwiki.domain.user.service.UserIsolationCRUDService;
-import usw.suwiki.report.service.ReportService;
 
 import java.time.LocalDateTime;
 

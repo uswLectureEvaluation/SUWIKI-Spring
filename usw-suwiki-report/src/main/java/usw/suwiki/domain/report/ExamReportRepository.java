@@ -1,4 +1,4 @@
-package usw.suwiki.report;
+package usw.suwiki.domain.report;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

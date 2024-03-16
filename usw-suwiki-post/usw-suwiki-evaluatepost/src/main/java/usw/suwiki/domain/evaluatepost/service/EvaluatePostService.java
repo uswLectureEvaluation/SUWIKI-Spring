@@ -16,10 +16,10 @@ import usw.suwiki.domain.evaluatepost.dto.FindByLectureToJson;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.lecture.service.LectureCRUDService;
 import usw.suwiki.domain.lecture.service.LectureService;
+import usw.suwiki.domain.report.EvaluatePostReport;
+import usw.suwiki.domain.report.service.ReportService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.service.UserCRUDService;
-import usw.suwiki.report.EvaluatePostReport;
-import usw.suwiki.report.service.ReportService;
 
 import java.util.ArrayList;
 import java.util.List;
