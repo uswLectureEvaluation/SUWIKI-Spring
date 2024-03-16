@@ -1,129 +1,66 @@
 package usw.suwiki.domain.evaluatepost;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import usw.suwiki.domain.evaluatepost.dto.EvaluatePostSaveDto;
-import usw.suwiki.domain.evaluatepost.dto.EvaluatePostUpdateDto;
-import usw.suwiki.domain.lecture.Lecture;
-import usw.suwiki.domain.user.User;
 import usw.suwiki.infra.jpa.BaseTimeEntity;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import java.util.Objects;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EvaluatePost extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String lectureName;
-    private String selectedSemester;
-    private String professor;
-    private float satisfaction;
-    private float learning;
-    private float honey;
-    private float totalAvg;
-    private int team;
-    private int difficulty;
-    private int homework;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lecture_id")
-    private Lecture lecture;
+  @Column(nullable = false)
+  private Long userId;
 
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_idx")
-    private User user;
+  @Column(columnDefinition = "TEXT", nullable = false)
+  private String content;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
+  @Embedded
+  private LectureInfo lectureInfo;
 
-    @Builder
-    public EvaluatePost(
-        String lectureName,
-        String selectedSemester,
-        String professor,
-        String content,
-        float satisfaction,
-        float learning,
-        float honey,
-        float totalAvg,
-        int team,
-        int difficulty,
-        int homework
-    ) {
-        this.lectureName = lectureName;
-        this.selectedSemester = selectedSemester;
-        this.professor = professor;
-        this.satisfaction = satisfaction;
-        this.learning = learning;
-        this.honey = honey;
-        this.totalAvg = totalAvg;
-        this.team = team;
-        this.difficulty = difficulty;
-        this.homework = homework;
-        this.content = content;
+  @Embedded
+  private LectureRating lectureRating;
+
+  public EvaluatePost(Long userId, String content, LectureInfo lectureInfo, LectureRating lectureRating) {
+    this.userId = userId;
+    this.content = content;
+    this.lectureInfo = lectureInfo;
+    this.lectureRating = lectureRating;
+  }
+
+  public void update(String content, String lectureName, String selectedSemester, String professor, LectureRating lectureRating) {
+    this.content = content;
+    this.lectureInfo = lectureInfo.update(lectureName, selectedSemester, professor);
+    this.lectureRating = lectureRating;
+  }
+
+  public void validateAuthor(Long userId) {
+    if (!this.userId.equals(userId)) {
+      throw new IllegalArgumentException("not an author"); // todo: 알맞는 예외 던지기
     }
+  }
 
-    public EvaluatePost(EvaluatePostSaveDto dto) {  // TODO: 삭제 -> 생성자로 DTO측에서 만들기. 엔티티에선 DTO를 모르는게 좋다.
-        this.lectureName = dto.getLectureName();
-        this.selectedSemester = dto.getSelectedSemester();
-        this.professor = dto.getProfessor();
-        this.satisfaction = dto.getSatisfaction();
-        this.learning = dto.getLearning();
-        this.honey = dto.getHoney();
-        this.team = dto.getTeam();
-        this.difficulty = dto.getDifficulty();
-        this.homework = dto.getHomework();
-        this.content = dto.getContent();
-        this.totalAvg = (learning + honey + satisfaction) / 3;  // TODO: 해당 로직 따로 관리. 평균 유틸 메서드 찾아보자
-    }
+  public Long getLectureId() {
+    return lectureInfo.getLectureId();
+  }
 
-    public void update(EvaluatePostUpdateDto dto) {
-        this.selectedSemester = dto.getSelectedSemester();
-        this.satisfaction = dto.getSatisfaction();
-        this.learning = dto.getLearning();
-        this.honey = dto.getHoney();
-        this.team = dto.getTeam();
-        this.difficulty = dto.getDifficulty();
-        this.homework = dto.getHomework();
-        this.content = dto.getContent();
-        this.totalAvg = (learning + honey + satisfaction) / 3;
-    }
+  public String getLectureName() {
+    return lectureInfo.getLectureName();
+  }
 
-
-    /**
-     * 연관관계 편의 메서드
-     */
-
-    public void associateUser(User user) {
-        if (Objects.nonNull(this.user)) {
-            this.user.removeEvaluatePost(this);
-        }
-        this.user = user;
-        user.addEvaluatePost(this);
-    }
-
-    public void associateLecture(Lecture lecture) {
-        if (Objects.nonNull(this.lecture)) {
-            this.lecture.removeEvaluatePost(this);
-        }
-        this.lecture = lecture;
-        lecture.addEvaluatePost(this);
-    }
+  public String getProfessor() {
+    return lectureInfo.getProfessor();
+  }
 }

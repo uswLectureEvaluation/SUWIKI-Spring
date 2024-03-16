@@ -9,7 +9,7 @@ import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.core.secure.model.Claim;
 import usw.suwiki.domain.evaluatepost.EvaluatePost;
-import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
+import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
 import usw.suwiki.domain.exampost.ExamPost;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
 import usw.suwiki.domain.report.EvaluatePostReport;
@@ -46,7 +46,7 @@ public class AdminBusinessService {
 
   private final ReportService reportService;
   private final ExamPostCRUDService examPostCRUDService;
-  private final EvaluatePostCRUDService evaluatePostCRUDService;
+  private final EvaluatePostService evaluatePostService;
 
   private final JwtAgent jwtAgent;
 
@@ -121,8 +121,7 @@ public class AdminBusinessService {
   }
 
   public Map<String, Boolean> executeBlackListEvaluatePost(EvaluatePostBlacklistForm evaluatePostBlacklistForm) {
-    Long userIdx = evaluatePostCRUDService
-      .loadEvaluatePostFromEvaluatePostIdx(evaluatePostBlacklistForm.evaluateIdx()).getUser().getId();
+    Long userIdx = evaluatePostService.loadEvaluatePostById(evaluatePostBlacklistForm.evaluateIdx()).getUserId();
 
     deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostBlacklistForm.evaluateIdx());
 
@@ -153,9 +152,9 @@ public class AdminBusinessService {
   }
 
   private void deleteReportedEvaluatePostFromEvaluateIdx(Long evaluateIdx) {
-    EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
+    EvaluatePost evaluatePost = evaluatePostService.loadEvaluatePostById(evaluateIdx);
     reportService.deleteByEvaluateIdx(evaluateIdx);
-    evaluatePostCRUDService.delete(evaluatePost);
+    evaluatePostService.delete(evaluatePost);
   }
 
   private void deleteReportedExamPostFromEvaluateIdx(Long examPostIdx) {

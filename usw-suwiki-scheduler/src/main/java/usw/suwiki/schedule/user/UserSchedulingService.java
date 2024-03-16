@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.auth.token.ConfirmationTokenRepository;
 import usw.suwiki.auth.token.RefreshTokenRepository;
 import usw.suwiki.core.mail.EmailSender;
-import usw.suwiki.domain.evaluatepost.service.EvaluatePostCRUDService;
+import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
 import usw.suwiki.domain.lecture.major.service.FavoriteMajorService;
 import usw.suwiki.domain.report.service.ReportService;
@@ -40,7 +40,7 @@ public class UserSchedulingService {
 
   private final ReportService reportService;
   private final ExamPostCRUDService examPostCRUDService;
-  private final EvaluatePostCRUDService evaluatePostCRUDService;
+  private final EvaluatePostService evaluatePostService;
 
   @Transactional(readOnly = true)
   @Scheduled(cron = "0 1 0 1 3 *")
@@ -67,7 +67,7 @@ public class UserSchedulingService {
         clearViewExamService.clear(userId);
         refreshTokenRepository.deleteByUserIdx(userId);
         reportService.deleteFromUserIdx(userId);
-        evaluatePostCRUDService.deleteFromUserIdx(userId);
+        evaluatePostService.deleteAllByUserId(userId);
         examPostCRUDService.deleteFromUserIdx(userId);
         favoriteMajorService.deleteFromUserIdx(userId);
         restrictingUserService.releaseByUserId(userId);
@@ -79,7 +79,7 @@ public class UserSchedulingService {
         clearViewExamService.clear(isolatedUserId);
         refreshTokenRepository.deleteByUserIdx(isolatedUserId);
         reportService.deleteFromUserIdx(isolatedUserId);
-        evaluatePostCRUDService.deleteFromUserIdx(isolatedUserId);
+        evaluatePostService.deleteAllByUserId(isolatedUserId);
         examPostCRUDService.deleteFromUserIdx(isolatedUserId);
         favoriteMajorService.deleteFromUserIdx(isolatedUserId);
         restrictingUserService.releaseByUserId(isolatedUserId);

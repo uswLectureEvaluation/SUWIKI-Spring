@@ -7,38 +7,48 @@ import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.core.exception.EvaluatePostException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.evaluatepost.EvaluatePost;
-import usw.suwiki.domain.evaluatepost.dto.EvaluatePostResponseByLectureIdDto;
-import usw.suwiki.domain.evaluatepost.dto.EvaluatePostResponseByUserIdxDto;
-import usw.suwiki.domain.evaluatepost.dto.EvaluatePostSaveDto;
-import usw.suwiki.domain.evaluatepost.dto.EvaluatePostUpdateDto;
-import usw.suwiki.domain.evaluatepost.dto.EvaluatePostsToLecture;
-import usw.suwiki.domain.evaluatepost.dto.FindByLectureToJson;
-import usw.suwiki.domain.lecture.Lecture;
-import usw.suwiki.domain.lecture.service.LectureCRUDService;
+import usw.suwiki.domain.evaluatepost.EvaluatePostQueryRepository;
+import usw.suwiki.domain.evaluatepost.EvaluatePostRepository;
+import usw.suwiki.domain.evaluatepost.dto.EvaluatePostRequest;
+import usw.suwiki.domain.evaluatepost.dto.EvaluatePostResponse;
+import usw.suwiki.domain.lecture.data.EvaluatedData;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.report.EvaluatePostReport;
 import usw.suwiki.domain.report.service.ReportService;
-import usw.suwiki.domain.user.User;
-import usw.suwiki.domain.user.service.UserCRUDService;
+import usw.suwiki.domain.user.service.UserBusinessService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class EvaluatePostService {
-  private final EvaluatePostCRUDService evaluatePostCRUDService;
-  private final LectureCRUDService lectureCRUDService;
+  private final EvaluatePostRepository evaluatePostRepository;
+  private final EvaluatePostQueryRepository evaluatePostQueryRepository;
+
+  private final UserBusinessService userBusinessService;
   private final LectureService lectureService;
-  private final UserCRUDService userCRUDService;
+
   private final ReportService reportService;
 
-  public void report(Long reportingUserId, Long evaluateId) {
-    EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateId);
-    Long reportedUserId = evaluatePost.getUser().getId();
+  @Transactional(readOnly = true)
+  public EvaluatePostResponse.Details loadAllEvaluatePostsByLectureId(PageOption option, Long userId, Long lectureId) {
+    return new EvaluatePostResponse.Details(
+      evaluatePostQueryRepository.findAllByLectureIdAndPageOption(lectureId, option.getOffset()),
+      isAlreadyWritten(userId, lectureId)
+    );
+  }
 
-    reportService.saveEvaluatePostReport(EvaluatePostReport.of(
+  @Transactional(readOnly = true)
+  public List<EvaluatePostResponse.MyPost> loadAllEvaluatePostsByUserId(PageOption option, Long userId) {
+    return evaluatePostQueryRepository.findAllByUserIdAndPageOption(userId, option.getOffset());
+  }
+
+  public void report(Long reportingUserId, Long evaluateId) {
+    EvaluatePost evaluatePost = loadEvaluatePostById(evaluateId);
+    Long reportedUserId = evaluatePost.getUserId();
+
+    reportService.saveEvaluatePostReport(EvaluatePostReport.of( // todo: 의존성 분리하기
       evaluateId,
       reportedUserId,
       reportingUserId,
@@ -48,107 +58,58 @@ public class EvaluatePostService {
     ));
   }
 
-  public void write(EvaluatePostSaveDto evaluatePostData, Long userIdx, Long lectureId) {
-    checkAlreadyWrite(userIdx, lectureId);
-    Lecture lecture = lectureService.findLectureById(lectureId);
-    User user = userCRUDService.loadUserFromUserIdx(userIdx);
-    EvaluatePost evaluatePost = createEvaluatePost(evaluatePostData, user, lecture);
-
-    user.updateWritingEvaluatePost();
-    EvaluatePostsToLecture lectureEvaluation = new EvaluatePostsToLecture(evaluatePost);
-    updateLectureEvaluationIfCreateNewPost(lectureEvaluation);
-
-    evaluatePostCRUDService.save(evaluatePost);
-  }
-
-  public void update(Long evaluateIdx, EvaluatePostUpdateDto evaluatePostUpdateData) {
-    EvaluatePost post = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
-    EvaluatePostsToLecture beforeUpdated = new EvaluatePostsToLecture(post);
-    post.update(evaluatePostUpdateData);
-
-    EvaluatePostsToLecture updated = new EvaluatePostsToLecture(post);
-    updateLectureEvaluationIfUpdatePost(beforeUpdated, updated);
-  }
-
-  @Transactional(readOnly = true)
-  public FindByLectureToJson readEvaluatePostsByLectureId(PageOption option, Long userIdx, Long lectureId) {
-    List<EvaluatePostResponseByLectureIdDto> data = new ArrayList<>();
-
-    List<EvaluatePost> evaluatePosts =
-      evaluatePostCRUDService.loadEvaluatePostsFromLectureIdx(option, lectureId);
-
-    for (EvaluatePost post : evaluatePosts) {
-      data.add(new EvaluatePostResponseByLectureIdDto(post));
-    }
-
-    return setWrittenInformation(data, userIdx, lectureId);
-  }
-
-  private FindByLectureToJson setWrittenInformation(List<EvaluatePostResponseByLectureIdDto> data, Long userIdx, Long lectureId) {
-    FindByLectureToJson response = new FindByLectureToJson(data);
-
-    if (verifyIsUserCanWriteEvaluatePost(userIdx, lectureId)) {
-      response.setWritten(Boolean.FALSE);
-    }
-
-    return response;
-  }
-
-  @Transactional(readOnly = true)
-  public List<EvaluatePostResponseByUserIdxDto> readEvaluatePostsByUserId(PageOption option, Long userId) {
-    List<EvaluatePostResponseByUserIdxDto> response = new ArrayList<>();
-
-    List<EvaluatePost> evaluatePosts =
-      evaluatePostCRUDService.loadEvaluatePostsFromUserIdxAndOption(option, userId);
-
-    for (EvaluatePost post : evaluatePosts) {
-      EvaluatePostResponseByUserIdxDto data = new EvaluatePostResponseByUserIdxDto(post);
-      data.setSemesterList(post.getLecture().getSemester());
-      response.add(data);
-    }
-    return response;
-  }
-
-  public boolean verifyIsUserCanWriteEvaluatePost(Long userIdx, Long lectureId) {
-    Lecture lecture = lectureService.findLectureById(lectureId);
-    User user = userCRUDService.loadUserFromUserIdx(userIdx);
-    return evaluatePostCRUDService.isAlreadyWritten(user, lecture);
-  }
-
-  public void executeDeleteEvaluatePost(Long evaluateIdx, Long userIdx) {
-    EvaluatePost evaluatePost = evaluatePostCRUDService.loadEvaluatePostFromEvaluatePostIdx(evaluateIdx);
-    User user = userCRUDService.loadUserFromUserIdx(userIdx);
-    user.decreasePointAndWrittenEvaluationByDeleteEvaluatePosts();
-
-    evaluatePostCRUDService.delete(evaluatePost);
-  }
-
-  public void updateLectureEvaluationIfCreateNewPost(EvaluatePostsToLecture post) {
-    Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(post.getLectureId());
-    lecture.handleLectureEvaluationIfNewPost(post);
-  }
-
-  public void updateLectureEvaluationIfUpdatePost(EvaluatePostsToLecture beforeUpdatePost, EvaluatePostsToLecture post) {
-    Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(post.getLectureId());
-    lecture.handleLectureEvaluationIfUpdatePost(beforeUpdatePost, post);
-  }
-
-  public void updateLectureEvaluationIfDeletePost(EvaluatePostsToLecture post) {
-    Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(post.getLectureId());
-    lecture.handleLectureEvaluationIfDeletePost(post);
-  }
-
-  private void checkAlreadyWrite(Long userIdx, Long lectureIdx) {
-    if (!(verifyIsUserCanWriteEvaluatePost(userIdx, lectureIdx))) {
+  public void write(Long userId, Long lectureId, EvaluatePostRequest.Create request) {
+    if (isAlreadyWritten(userId, lectureId)) {
       throw new EvaluatePostException(ExceptionType.POSTS_WRITE_OVERLAP);
     }
+
+    EvaluatePost evaluatePost = EvaluatePostMapper.toEntity(userId, lectureId, request);
+    EvaluatedData evaluatedData = EvaluatePostMapper.toEvaluatedData(evaluatePost.getLectureRating());
+
+    lectureService.evaluate(lectureId, evaluatedData);
+    evaluatePostRepository.save(evaluatePost);
+    userBusinessService.wroteEvaluation(userId);
   }
 
-  private EvaluatePost createEvaluatePost(EvaluatePostSaveDto evaluatePostData, User user, Lecture lecture) {
-    EvaluatePost evaluatePost = new EvaluatePost(evaluatePostData);
-    evaluatePost.setUser(user);
-    evaluatePost.setLecture(lecture);
+  private boolean isAlreadyWritten(Long userId, Long lectureId) {
+    return evaluatePostRepository.existsByUserIdAndLectureInfoLectureId(userId, lectureId);
+  }
 
-    return evaluatePost;
+  public void update(Long evaluateId, EvaluatePostRequest.Update request) {
+    EvaluatePost evaluatePost = loadEvaluatePostById(evaluateId);
+    EvaluatedData currentEvaluation = EvaluatePostMapper.toEvaluatedData(evaluatePost.getLectureRating());
+
+    evaluatePost.update(
+      evaluatePost.getContent(),
+      evaluatePost.getLectureName(),
+      request.getSelectedSemester(),
+      evaluatePost.getProfessor(),
+      EvaluatePostMapper.toRating(request)
+    );
+
+    EvaluatedData updatedEvaluation = EvaluatePostMapper.toEvaluatedData(evaluatePost.getLectureRating());
+    lectureService.updateEvaluation(evaluatePost.getLectureId(), currentEvaluation, updatedEvaluation);
+  }
+
+  public void deleteEvaluatePost(Long evaluateId, Long userId) {
+    EvaluatePost evaluatePost = loadEvaluatePostById(evaluateId);
+    evaluatePost.validateAuthor(userId);
+
+    delete(evaluatePost);
+    userBusinessService.deleteEvaluation(userId);
+  }
+
+  public void delete(EvaluatePost evaluatePost) {
+    evaluatePostRepository.delete(evaluatePost);
+  }
+
+  public void deleteAllByUserId(Long userId) {
+    List<EvaluatePost> evaluatePosts = evaluatePostRepository.findAllByUserId(userId);
+    evaluatePostRepository.deleteAllInBatch(evaluatePosts);
+  }
+
+  public EvaluatePost loadEvaluatePostById(Long evaluateId) {
+    return evaluatePostRepository.findById(evaluateId)
+      .orElseThrow(() -> new EvaluatePostException(ExceptionType.EVALUATE_POST_NOT_FOUND));
   }
 }

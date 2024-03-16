@@ -96,8 +96,7 @@ public class User {
   @Builder.Default
   private List<EvaluatePost> evaluatePostList = new ArrayList<>();
 
-
-  public static User makeUser(String loginId, String password, String email) {
+  public static User init(String loginId, String password, String email) {
     return builder()
       .loginId(loginId)
       .password(password)
@@ -194,12 +193,12 @@ public class User {
     this.evaluatePostList.remove(evaluatePost);
   }
 
-  public void updateWritingEvaluatePost() {
+  public void writeEvaluatePost() {
     this.point += WROTE_EVALUATION_BONUS;
     this.writtenEvaluation += 1;
   }
 
-  public void decreasePointAndWrittenEvaluationByDeleteEvaluatePosts() {
+  public void deleteEvaluatePost() {
     validatePointLimit(PURCHASE_POINT_LIMIT);
     this.point -= DELETE_POINT_LIMIT;
     this.writtenEvaluation -= 1;

@@ -33,7 +33,7 @@ import static usw.suwiki.domain.exampost.dto.ExamPostResponse.MyPost;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ExamPostService {
-  private static final int PAGE_LIMIT = 10;
+  private static final int PAGE_LIMIT = 10; // todo: hide when query repository testable
 
   private final ExamPostRepository examPostRepository;
   private final ExamPostQueryRepository examPostQueryRepository;
@@ -45,11 +45,11 @@ public class ExamPostService {
   private final ViewExamCRUDService viewExamCRUDService;
   private final ViewExamQueryRepository viewExamQueryRepository;
 
-  public boolean canRead(Long userId, Long lectureId) {
+  public boolean isAlreadyPurchased(Long userId, Long lectureId) {
     return viewExamCRUDService.isExist(userId, lectureId);
   }
 
-  public boolean isWritten(Long userId, Long lectureId) {
+  public boolean isAlreadyWritten(Long userId, Long lectureId) {
     return examPostRepository.existsByUserIdAndLectureId(userId, lectureId);
   }
 
@@ -58,15 +58,15 @@ public class ExamPostService {
   }
 
   public Details loadAllExamPosts(Long userId, Long lectureId, PageOption option) {
-    boolean isWritten = isWritten(userId, lectureId);
+    boolean isWritten = isAlreadyWritten(userId, lectureId);
 
-    List<Detail> data = examPostRepository.findAllByLectureId(lectureId, option.getOffset(), PAGE_LIMIT).stream()
+    List<Detail> data = examPostRepository.findAllByLectureIdAndPageOption(lectureId, option.getOffset(), PAGE_LIMIT).stream()
       .map(ExamPostMapper::toDetail)
-      .toList();
+      .toList(); // todo: to query repository
 
     Details response = data.isEmpty() ? Details.noData(isWritten) : Details.withData(data, isWritten);
 
-    if (!canRead(userId, lectureId)) {
+    if (!isAlreadyPurchased(userId, lectureId)) {
       response.noAccess();
     }
 
@@ -74,7 +74,7 @@ public class ExamPostService {
   }
 
   public List<MyPost> loadAllMyExamPosts(PageOption option, Long userId) {
-    return examPostQueryRepository.findByUserIdxAndPageOption(userId, option.getOffset(), PAGE_LIMIT);
+    return examPostQueryRepository.findAllByUserIdAndPageOption(userId, option.getOffset());
   }
 
   public void report(Long reportingUserId, Long examId) {
@@ -93,7 +93,7 @@ public class ExamPostService {
 
   @Transactional
   public void write(Long userId, Long lectureId, ExamPostRequest.Create request) {
-    if (isWritten(userId, lectureId)) {
+    if (isAlreadyWritten(userId, lectureId)) {
       throw new AccountException(POSTS_WRITE_OVERLAP);
     }
 
@@ -108,7 +108,7 @@ public class ExamPostService {
 
   @Transactional
   public void purchaseExamPost(Long userId, Long lectureId) {
-    if (canRead(userId, lectureId)) {
+    if (isAlreadyPurchased(userId, lectureId)) {
       throw new ExamPostException(EXAM_POST_ALREADY_PURCHASE);
     }
 
