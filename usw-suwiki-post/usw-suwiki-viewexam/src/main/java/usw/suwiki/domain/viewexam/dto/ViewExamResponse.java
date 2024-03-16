@@ -1,4 +1,4 @@
-package usw.suwiki.domain.user.viewexam.dto;
+package usw.suwiki.domain.viewexam.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;

@@ -13,10 +13,10 @@ import usw.suwiki.domain.exampost.dto.ExamPostRequest;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.service.UserCRUDService;
-import usw.suwiki.domain.user.viewexam.ViewExam;
-import usw.suwiki.domain.user.viewexam.ViewExamQueryRepository;
-import usw.suwiki.domain.user.viewexam.dto.ViewExamResponse;
-import usw.suwiki.domain.user.viewexam.service.ViewExamCRUDService;
+import usw.suwiki.domain.viewexam.ViewExam;
+import usw.suwiki.domain.viewexam.ViewExamQueryRepository;
+import usw.suwiki.domain.viewexam.dto.ViewExamResponse;
+import usw.suwiki.domain.viewexam.service.ViewExamCRUDService;
 import usw.suwiki.report.ExamPostReport;
 import usw.suwiki.report.service.ReportService;
 

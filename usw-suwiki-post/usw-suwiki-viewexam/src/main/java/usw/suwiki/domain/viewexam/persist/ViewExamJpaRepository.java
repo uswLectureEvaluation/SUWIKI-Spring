@@ -1,9 +1,9 @@
-package usw.suwiki.domain.user.viewexam.persist;
+package usw.suwiki.domain.viewexam.persist;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import usw.suwiki.domain.user.viewexam.ViewExam;
-import usw.suwiki.domain.user.viewexam.ViewExamRepository;
+import usw.suwiki.domain.viewexam.ViewExam;
+import usw.suwiki.domain.viewexam.ViewExamRepository;
 
 import javax.persistence.EntityManager;
 import java.util.Collections;

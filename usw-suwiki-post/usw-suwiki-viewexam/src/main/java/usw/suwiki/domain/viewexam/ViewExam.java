@@ -1,4 +1,4 @@
-package usw.suwiki.domain.user.viewexam;
+package usw.suwiki.domain.viewexam;
 
 import lombok.AccessLevel;
 import lombok.Getter;
