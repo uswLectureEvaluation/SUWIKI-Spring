@@ -10,6 +10,8 @@ subprojects {
         implementation project(':usw-suwiki-post:usw-suwiki-exampost')
         implementation project(':usw-suwiki-post:usw-suwiki-evaluatepost')
 
+        implementation project(':usw-suwiki-report')
+
         implementation project(':usw-suwiki-common')
 
         implementation project(':usw-suwiki-statistics')
@@ -31,8 +33,6 @@ project(':usw-suwiki-api:usw-suwiki-admin-api') {
         implementation project(':usw-suwiki-user:usw-suwiki-restricted')
         implementation project(':usw-suwiki-user:usw-suwiki-isolated-user')
 
-        implementation project(':usw-suwiki-report')
-
-        implementation 'org.springframework:spring-tx' // todo: 필요한지 확인하기 (24.03.08 Hejow)
+        implementation project(':usw-suwiki-infra:usw-suwiki-db')
     }
 }

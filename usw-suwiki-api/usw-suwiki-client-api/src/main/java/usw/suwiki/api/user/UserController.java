@@ -33,8 +33,6 @@ import static org.springframework.http.HttpStatus.OK;
 import static usw.suwiki.domain.user.dto.UserRequestDto.CheckEmailForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.CheckLoginIdForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.EditMyPasswordForm;
-import static usw.suwiki.domain.user.dto.UserRequestDto.EvaluateReportForm;
-import static usw.suwiki.domain.user.dto.UserRequestDto.ExamReportForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.FindIdForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.FindPasswordForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.JoinForm;
@@ -49,236 +47,214 @@ import static usw.suwiki.domain.user.dto.UserResponseDto.UserInformationResponse
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserBusinessService userBusinessService;
-    private final ConfirmationTokenBusinessService confirmationTokenBusinessService;
+  private final UserBusinessService userBusinessService;
+  private final ConfirmationTokenBusinessService confirmationTokenBusinessService;
 
-    @ApiLogger(option = "user")
-    @PostMapping("/check-id")
-    @ResponseStatus(OK)
-    public Map<String, Boolean> overlapId(@Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
-        return userBusinessService.executeCheckId(checkLoginIdForm.loginId());
-    }
+  @ApiLogger(option = "user")
+  @PostMapping("/check-id")
+  @ResponseStatus(OK)
+  public Map<String, Boolean> overlapId(@Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
+    return userBusinessService.executeCheckId(checkLoginIdForm.loginId());
+  }
 
-    @ApiLogger(option = "user")
-    @PostMapping("/check-email")
-    @ResponseStatus(OK)
-    public Map<String, Boolean> overlapEmail(@Valid @RequestBody CheckEmailForm checkEmailForm) {
-        return userBusinessService.executeCheckEmail(checkEmailForm.email());
-    }
+  @ApiLogger(option = "user")
+  @PostMapping("/check-email")
+  @ResponseStatus(OK)
+  public Map<String, Boolean> overlapEmail(@Valid @RequestBody CheckEmailForm checkEmailForm) {
+    return userBusinessService.executeCheckEmail(checkEmailForm.email());
+  }
 
-    @ApiLogger(option = "user")
-    @PostMapping("join")
-    @ResponseStatus(OK)
-    public Map<String, Boolean> join(@Valid @RequestBody JoinForm joinForm) {
-        return userBusinessService.executeJoin(joinForm.loginId(), joinForm.password(), joinForm.email());
-    }
+  @ApiLogger(option = "user")
+  @PostMapping("join")
+  @ResponseStatus(OK)
+  public Map<String, Boolean> join(@Valid @RequestBody JoinForm joinForm) {
+    return userBusinessService.executeJoin(joinForm.loginId(), joinForm.password(), joinForm.email());
+  }
 
-    // todo: confirmationControllerV2와 같은 코드
-    @ApiLogger(option = "user")
-    @GetMapping(value = "verify-email", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
-    @ResponseStatus(OK)
-    public String confirmEmail(@RequestParam("token") String token) {
-        return confirmationTokenBusinessService.confirmToken(token);
-    }
+  // todo: confirmationControllerV2와 같은 코드
+  @ApiLogger(option = "user")
+  @GetMapping(value = "verify-email", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
+  @ResponseStatus(OK)
+  public String confirmEmail(@RequestParam("token") String token) {
+    return confirmationTokenBusinessService.confirmToken(token);
+  }
 
-    @ApiLogger(option = "user")
-    @PostMapping("find-id")
-    @ResponseStatus(OK)
-    public Map<String, Boolean> findId(@Valid @RequestBody FindIdForm findIdForm) {
-        return userBusinessService.executeFindId(findIdForm.email());
-    }
+  @ApiLogger(option = "user")
+  @PostMapping("find-id")
+  @ResponseStatus(OK)
+  public Map<String, Boolean> findId(@Valid @RequestBody FindIdForm findIdForm) {
+    return userBusinessService.executeFindId(findIdForm.email());
+  }
 
-    @ApiLogger(option = "user")
-    @PostMapping("find-pw")
-    @ResponseStatus(OK)
-    public Map<String, Boolean> findPw(@Valid @RequestBody FindPasswordForm findPasswordForm) {
-        return userBusinessService.executeFindPw(findPasswordForm.loginId(), findPasswordForm.email());
-    }
+  @ApiLogger(option = "user")
+  @PostMapping("find-pw")
+  @ResponseStatus(OK)
+  public Map<String, Boolean> findPw(@Valid @RequestBody FindPasswordForm findPasswordForm) {
+    return userBusinessService.executeFindPw(findPasswordForm.loginId(), findPasswordForm.email());
+  }
 
-    @ApiLogger(option = "user")
-    @PostMapping("reset-pw")
-    @ResponseStatus(OK)
-    public Map<String, Boolean> resetPw(
-        @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
-        @RequestHeader String Authorization
-    ) {
-        return userBusinessService.executeEditPassword(
-            Authorization,
-            editMyPasswordForm.prePassword(),
-            editMyPasswordForm.newPassword()
-        );
-    }
+  @ApiLogger(option = "user")
+  @PostMapping("reset-pw")
+  @ResponseStatus(OK)
+  public Map<String, Boolean> resetPw(
+    @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
+    @RequestHeader String Authorization
+  ) {
+    return userBusinessService.executeEditPassword(
+      Authorization,
+      editMyPasswordForm.prePassword(),
+      editMyPasswordForm.newPassword()
+    );
+  }
 
-    @ApiLogger(option = "user")
-    @PostMapping("login")
-    @ResponseStatus(OK)
-    public Map<String, String> mobileLogin(
-        @Valid @RequestBody LoginForm loginForm) {
-        return userBusinessService.executeLogin(
-            loginForm.loginId(),
-            loginForm.password()
-        );
-    }
+  @ApiLogger(option = "user")
+  @PostMapping("login")
+  @ResponseStatus(OK)
+  public Map<String, String> mobileLogin(
+    @Valid @RequestBody LoginForm loginForm) {
+    return userBusinessService.executeLogin(
+      loginForm.loginId(),
+      loginForm.password()
+    );
+  }
 
-    @ApiLogger(option = "user")
-    @PostMapping("client-login")
-    @ResponseStatus(OK)
-    public Map<String, String> clientLogin(
-        @Valid @RequestBody LoginForm loginForm,
-        HttpServletResponse response
-    ) {
-        Map<String, String> tokenPair = userBusinessService.executeLogin(
-            loginForm.loginId(),
-            loginForm.password()
-        );
+  @ApiLogger(option = "user")
+  @PostMapping("client-login")
+  @ResponseStatus(OK)
+  public Map<String, String> clientLogin(
+    @Valid @RequestBody LoginForm loginForm,
+    HttpServletResponse response
+  ) {
+    Map<String, String> tokenPair = userBusinessService.executeLogin(
+      loginForm.loginId(),
+      loginForm.password()
+    );
 
-        Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
-        refreshCookie.setMaxAge(270 * 24 * 60 * 60);
-        refreshCookie.setSecure(true);
-        refreshCookie.setHttpOnly(true);
-        response.addCookie(refreshCookie);
+    Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
+    refreshCookie.setMaxAge(270 * 24 * 60 * 60);
+    refreshCookie.setSecure(true);
+    refreshCookie.setHttpOnly(true);
+    response.addCookie(refreshCookie);
 
-        return new HashMap<>() {{
-            put("AccessToken", tokenPair.get("AccessToken"));
-        }};
-    }
+    return new HashMap<>() {{
+      put("AccessToken", tokenPair.get("AccessToken"));
+    }};
+  }
 
-    @ApiLogger(option = "user")
-    @PostMapping("client-logout")
-    @ResponseStatus(OK)
-    public Map<String, Boolean> clientLogout(HttpServletResponse response) {
-        Cookie refreshCookie = new Cookie("refreshToken", "");
-        refreshCookie.setMaxAge(0);
-        response.addCookie(refreshCookie);
-        return new HashMap<>() {{
-            put("Success", true);
-        }};
-    }
+  @ApiLogger(option = "user")
+  @PostMapping("client-logout")
+  @ResponseStatus(OK)
+  public Map<String, Boolean> clientLogout(HttpServletResponse response) {
+    Cookie refreshCookie = new Cookie("refreshToken", "");
+    refreshCookie.setMaxAge(0);
+    response.addCookie(refreshCookie);
+    return new HashMap<>() {{
+      put("Success", true);
+    }};
+  }
 
-    @ApiLogger(option = "user")
-    @GetMapping("/my-page")
-    @ResponseStatus(OK)
-    public UserInformationResponseForm myPage(@Valid @RequestHeader String Authorization) {
-        return userBusinessService.executeLoadMyPage(Authorization);
-    }
+  @ApiLogger(option = "user")
+  @GetMapping("/my-page")
+  @ResponseStatus(OK)
+  public UserInformationResponseForm myPage(@Valid @RequestHeader String Authorization) {
+    return userBusinessService.executeLoadMyPage(Authorization);
+  }
 
-    @ApiLogger(option = "user")
-    @PostMapping("/client-refresh")
-    @ResponseStatus(OK)
-    public Map<String, String> clientTokenRefresh(
-        @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
-        HttpServletResponse response
-    ) {
-        Map<String, String> tokenPair = userBusinessService.executeJWTRefreshForWebClient(requestRefreshCookie);
+  @ApiLogger(option = "user")
+  @PostMapping("/client-refresh")
+  @ResponseStatus(OK)
+  public Map<String, String> clientTokenRefresh(
+    @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
+    HttpServletResponse response
+  ) {
+    Map<String, String> tokenPair = userBusinessService.executeJWTRefreshForWebClient(requestRefreshCookie);
 
-        Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
-        refreshCookie.setMaxAge(14 * 24 * 60 * 60);
-        refreshCookie.setSecure(true);
-        refreshCookie.setHttpOnly(true);
-        response.addCookie(refreshCookie);
+    Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
+    refreshCookie.setMaxAge(14 * 24 * 60 * 60);
+    refreshCookie.setSecure(true);
+    refreshCookie.setHttpOnly(true);
+    response.addCookie(refreshCookie);
 
-        return new HashMap<>() {{
-            put("AccessToken", tokenPair.get("AccessToken"));
-        }};
-    }
+    return new HashMap<>() {{
+      put("AccessToken", tokenPair.get("AccessToken"));
+    }};
+  }
 
-    @ApiLogger(option = "user")
-    @PostMapping("/refresh")
-    @ResponseStatus(OK)
-    public Map<String, String> tokenRefresh(@Valid @RequestHeader String Authorization) {
-        return userBusinessService.executeJWTRefreshForMobileClient(Authorization);
-    }
+  @ApiLogger(option = "user")
+  @PostMapping("/refresh")
+  @ResponseStatus(OK)
+  public Map<String, String> tokenRefresh(@Valid @RequestHeader String Authorization) {
+    return userBusinessService.executeJWTRefreshForMobileClient(Authorization);
+  }
 
-    // 회원 탈퇴
-    @ApiLogger(option = "user")
-    @PostMapping("quit")
-    @ResponseStatus(INTERNAL_SERVER_ERROR)
-    public Map<String, Boolean> userQuit(
-        @Valid @RequestBody UserQuitForm userQuitForm,
-        @Valid @RequestHeader String Authorization
-    ) {
+  // 회원 탈퇴
+  @ApiLogger(option = "user")
+  @PostMapping("quit")
+  @ResponseStatus(INTERNAL_SERVER_ERROR)
+  public Map<String, Boolean> userQuit(
+    @Valid @RequestBody UserQuitForm userQuitForm,
+    @Valid @RequestHeader String Authorization
+  ) {
 //        return userBusinessService.executeQuit(
 //                Authorization,
 //                userQuitForm.password()
 //        );
 
-        // TODO fix: 회원 탈퇴 오류에 의한 임시 처리. 유저 탈퇴 로직 fix 후 복구해야 합니다.
-        throw new AccountException(ExceptionType.SERVER_ERROR);
-    }
+    // TODO fix: 회원 탈퇴 오류에 의한 임시 처리. 유저 탈퇴 로직 fix 후 복구해야 합니다.
+    throw new AccountException(ExceptionType.SERVER_ERROR);
+  }
 
-    // todo: PostReportControllerV2에도 같은 코드가 존재
-    @ApiLogger(option = "user")
-    @PostMapping("/report/evaluate")
-    @ResponseStatus(OK)
-    public Map<String, Boolean> reportEvaluate(
-        @Valid @RequestBody EvaluateReportForm evaluateReportForm,
-        @Valid @RequestHeader String Authorization
-    ) {
-        return userBusinessService.executeReportEvaluatePost(evaluateReportForm, Authorization);
-    }
+  @ApiLogger(option = "user")
+  @PostMapping("/favorite-major")
+  @ResponseStatus(OK)
+  public String saveFavoriteMajor(
+    @RequestHeader String Authorization,
+    @RequestBody FavoriteSaveDto favoriteSaveDto
+  ) {
+    userBusinessService.executeFavoriteMajorSave(Authorization, favoriteSaveDto);
+    return "success";
+  }
 
-    // todo: PostReportControllerV2에도 같은 코드가 존재
-    @ApiLogger(option = "user")
-    @PostMapping("/report/exam")
-    @ResponseStatus(OK)
-    public Map<String, Boolean> reportExam(
-        @Valid @RequestBody ExamReportForm examReportForm,
-        @Valid @RequestHeader String Authorization
-    ) {
-        return userBusinessService.executeReportExamPost(examReportForm, Authorization);
-    }
+  @ApiLogger(option = "user")
+  @DeleteMapping("/favorite-major")
+  @ResponseStatus(OK)
+  public String deleteFavoriteMajor(@RequestHeader String Authorization, @RequestParam String majorType) {
+    userBusinessService.executeFavoriteMajorDelete(Authorization, majorType);
+    return "success";
+  }
 
-    @ApiLogger(option = "user")
-    @PostMapping("/favorite-major")
-    @ResponseStatus(OK)
-    public String saveFavoriteMajor(
-        @RequestHeader String Authorization,
-        @RequestBody FavoriteSaveDto favoriteSaveDto
-    ) {
-        userBusinessService.executeFavoriteMajorSave(Authorization, favoriteSaveDto);
-        return "success";
-    }
+  @ApiLogger(option = "user")
+  @GetMapping("/favorite-major")
+  @ResponseStatus(OK)
+  public ResponseForm loadFavoriteMajor(@RequestHeader String Authorization) {
+    return userBusinessService.executeFavoriteMajorLoad(Authorization);
+  }
 
-    @ApiLogger(option = "user")
-    @DeleteMapping("/favorite-major")
-    @ResponseStatus(OK)
-    public String deleteFavoriteMajor(@RequestHeader String Authorization, @RequestParam String majorType) {
-        userBusinessService.executeFavoriteMajorDelete(Authorization, majorType);
-        return "success";
-    }
+  @ApiLogger(option = "user")
+  @GetMapping(value = "/suki", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
+  @ResponseStatus(OK)
+  public String thanksToSuwiki() {
+    return """
+        <center>\uD83D\uDE00 Thank You Suki! \uD83D\uDE00 <br><br> You gave to me a lot of knowledge <br><br>
+        He is my Tech-Mentor <br><br>
+        If you wanna contact him <br><br>
+        <a href = https://github.com/0xsuky>
+        <b>https://github.com/0xsuky<b>
+        </center>
+      """;
+  }
 
-    @ApiLogger(option = "user")
-    @GetMapping("/favorite-major")
-    @ResponseStatus(OK)
-    public ResponseForm loadFavoriteMajor(@RequestHeader String Authorization) {
-        return userBusinessService.executeFavoriteMajorLoad(Authorization);
-    }
+  @ApiLogger(option = "user")
+  @GetMapping("/restricted-reason")
+  @ResponseStatus(OK)
+  public List<LoadMyRestrictedReasonResponseForm> loadRestrictedReason(@Valid @RequestHeader String Authorization) {
+    return userBusinessService.executeLoadRestrictedReason(Authorization);
+  }
 
-    @ApiLogger(option = "user")
-    @GetMapping(value = "/suki", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
-    @ResponseStatus(OK)
-    public String thanksToSuwiki() {
-        return
-            "<center>\uD83D\uDE00 Thank You Suki! \uD83D\uDE00 <br><br> You gave to me a lot of knowledge <br><br>"
-                +
-                "He is my Tech-Mentor <br><br>" +
-                "If you wanna contact him <br><br>" +
-                "<a href = https://github.com/0xsuky> " +
-                "<b>https://github.com/0xsuky<b>" +
-                "</center>";
-    }
-
-    @ApiLogger(option = "user")
-    @GetMapping("/restricted-reason")
-    @ResponseStatus(OK)
-    public List<LoadMyRestrictedReasonResponseForm> loadRestrictedReason(@Valid @RequestHeader String Authorization) {
-        return userBusinessService.executeLoadRestrictedReason(Authorization);
-    }
-
-    @ApiLogger(option = "user")
-    @GetMapping("/blacklist-reason")
-    @ResponseStatus(OK)
-    public List<LoadMyBlackListReasonResponseForm> loadBlacklistReason(@Valid @RequestHeader String Authorization) {
-        return userBusinessService.executeLoadBlackListReason(Authorization);
-    }
+  @ApiLogger(option = "user")
+  @GetMapping("/blacklist-reason")
+  @ResponseStatus(OK)
+  public List<LoadMyBlackListReasonResponseForm> loadBlacklistReason(@Valid @RequestHeader String Authorization) {
+    return userBusinessService.executeLoadBlackListReason(Authorization);
+  }
 }

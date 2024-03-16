@@ -13,7 +13,6 @@ include 'usw-suwiki-api:usw-suwiki-admin-api'
 include 'usw-suwiki-api:usw-suwiki-client-api'
 
 include 'usw-suwiki-user'
-include 'usw-suwiki-user:usw-suwiki-viewexam'
 include 'usw-suwiki-user:usw-suwiki-blacklist'
 include 'usw-suwiki-user:usw-suwiki-restricted'
 include 'usw-suwiki-user:usw-suwiki-isolated-user'
@@ -25,6 +24,7 @@ include 'usw-suwiki-lecture:usw-suwiki-timetable'
 
 include 'usw-suwiki-post'
 include 'usw-suwiki-post:usw-suwiki-notice'
+include 'usw-suwiki-post:usw-suwiki-viewexam'
 include 'usw-suwiki-post:usw-suwiki-exampost'
 include 'usw-suwiki-post:usw-suwiki-evaluatepost'
 
