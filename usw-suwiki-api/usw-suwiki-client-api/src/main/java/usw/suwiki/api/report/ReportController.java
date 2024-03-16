@@ -24,7 +24,7 @@ import static usw.suwiki.common.response.ApiResponseFactory.successFlag;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("/v2")
+@RequestMapping("/user/report")
 @RequiredArgsConstructor
 public class ReportController {
   private final EvaluatePostService evaluatePostService;
@@ -32,7 +32,7 @@ public class ReportController {
   private final JwtAgent jwtAgent;
 
   @ApiLogger(option = "user")
-  @PostMapping("/report/evaluate")
+  @PostMapping("/evaluate")
   @ResponseStatus(OK)
   public Map<String, Boolean> reportEvaluate(
     @RequestHeader String Authorization,
@@ -47,7 +47,7 @@ public class ReportController {
   }
 
   @ApiLogger(option = "user")
-  @PostMapping("/report/exam")
+  @PostMapping("/exam")
   @ResponseStatus(OK)
   public Map<String, Boolean> reportExam(
     @RequestHeader String Authorization,
