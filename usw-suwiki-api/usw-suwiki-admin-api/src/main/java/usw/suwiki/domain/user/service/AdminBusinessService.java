@@ -77,11 +77,11 @@ public class AdminBusinessService {
   }
 
   public EvaluatePostReport executeLoadDetailReportedEvaluatePost(Long evaluatePostReportId) {
-    return reportService.loadDetailEvaluateReportFromReportingEvaluatePostId(evaluatePostReportId);
+    return reportService.loadEvaluateReportByEvaluateId(evaluatePostReportId);
   }
 
   public ExamPostReport executeLoadDetailReportedExamPost(Long examPostReportId) {
-    return reportService.loadDetailEvaluateReportFromReportingExamPostId(examPostReportId);
+    return reportService.loadExamReportByExamId(examPostReportId);
   }
 
   public Map<String, Boolean> executeNoProblemEvaluatePost(EvaluatePostNoProblemForm evaluatePostNoProblemForm) {
@@ -94,27 +94,25 @@ public class AdminBusinessService {
     return successCapitalFlag();
   }
 
-  public Map<String, Boolean> executeRestrictEvaluatePost(EvaluatePostRestrictForm evaluatePostRestrictForm) {
-    EvaluatePostReport evaluatePostReport =
-      reportService.loadDetailEvaluateReportFromReportingEvaluatePostId(evaluatePostRestrictForm.evaluateIdx());
+  public Map<String, Boolean> executeRestrictEvaluatePost(EvaluatePostRestrictForm request) {
+    EvaluatePostReport evaluatePostReport = reportService.loadEvaluateReportByEvaluateId(request.evaluateIdx());
 
     plusReportingUserPoint(evaluatePostReport.getReportingUserIdx());
     plusRestrictCount(evaluatePostReport.getReportedUserIdx());
 
-    restrictingUserService.executeRestrictUserFromEvaluatePost(evaluatePostRestrictForm, evaluatePostReport.getReportedUserIdx());
+    restrictingUserService.executeRestrictUserFromEvaluatePost(request, evaluatePostReport.getReportedUserIdx());
 
     deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostReport.getEvaluateIdx());
     return successCapitalFlag();
   }
 
-  public Map<String, Boolean> executeRestrictExamPost(ExamPostRestrictForm examPostRestrictForm) {
-    ExamPostReport examPostReport =
-      reportService.loadDetailEvaluateReportFromReportingExamPostId(examPostRestrictForm.examIdx());
+  public Map<String, Boolean> executeRestrictExamPost(ExamPostRestrictForm request) {
+    ExamPostReport examPostReport = reportService.loadExamReportByExamId(request.examIdx());
 
     plusReportingUserPoint(examPostReport.getReportingUserIdx());
     plusRestrictCount(examPostReport.getReportedUserIdx());
 
-    restrictingUserService.executeRestrictUserFromExamPost(examPostRestrictForm, examPostReport.getReportedUserIdx());
+    restrictingUserService.executeRestrictUserFromExamPost(request, examPostReport.getReportedUserIdx());
 
     deleteReportedExamPostFromEvaluateIdx(examPostReport.getExamIdx());
     return successCapitalFlag();

@@ -9,8 +9,11 @@ import usw.suwiki.domain.report.EvaluatePostReport;
 import usw.suwiki.domain.report.EvaluateReportRepository;
 import usw.suwiki.domain.report.ExamPostReport;
 import usw.suwiki.domain.report.ExamReportRepository;
+import usw.suwiki.domain.report.model.Report;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Service
 @Transactional
@@ -18,6 +21,19 @@ import java.util.List;
 public class ReportService {
   private final EvaluateReportRepository evaluateReportRepository;
   private final ExamReportRepository examReportRepository;
+
+  public void reportEvaluatePost(Report report) {
+    save(report, EvaluatePostReport::from, evaluateReportRepository::save);
+  }
+
+  public void reportExamPost(Report report) {
+    save(report, ExamPostReport::from, examReportRepository::save);
+  }
+
+  private <T> void save(Report report, Function<Report, T> mapper, Consumer<T> repository) {
+    T entity = mapper.apply(report);
+    repository.accept(entity);
+  }
 
   public List<EvaluatePostReport> loadAllEvaluateReports() {
     return evaluateReportRepository.findAll();
@@ -27,13 +43,13 @@ public class ReportService {
     return examReportRepository.findAll();
   }
 
-  public EvaluatePostReport loadDetailEvaluateReportFromReportingEvaluatePostId(Long reportingEvaluatePostId) {
-    return evaluateReportRepository.findById(reportingEvaluatePostId)
+  public EvaluatePostReport loadEvaluateReportByEvaluateId(Long evaluateId) {
+    return evaluateReportRepository.findById(evaluateId)
       .orElseThrow(() -> new ReportedPostException(ExceptionType.REPORTED_POST_NOT_FOUND));
   }
 
-  public ExamPostReport loadDetailEvaluateReportFromReportingExamPostId(Long reportingExamPostId) {
-    return examReportRepository.findById(reportingExamPostId)
+  public ExamPostReport loadExamReportByExamId(Long examId) {
+    return examReportRepository.findById(examId)
       .orElseThrow(() -> new ReportedPostException(ExceptionType.REPORTED_POST_NOT_FOUND));
   }
 
@@ -44,19 +60,11 @@ public class ReportService {
     evaluateReportRepository.deleteAllByReportingUserIdx(userId);
   }
 
-  public void deleteByEvaluateIdx(Long evaluateIdx) {
-    evaluateReportRepository.deleteByEvaluateIdx(evaluateIdx);
+  public void deleteByEvaluateIdx(Long evaluateId) {
+    evaluateReportRepository.deleteByEvaluateIdx(evaluateId);
   }
 
-  public void deleteByExamIdx(Long examIdx) {
-    examReportRepository.deleteByExamIdx(examIdx);
-  }
-
-  public void saveEvaluatePostReport(EvaluatePostReport evaluatePostReport) {
-    evaluateReportRepository.save(evaluatePostReport);
-  }
-
-  public void saveExamPostReport(ExamPostReport examPostReport) {
-    examReportRepository.save(examPostReport);
+  public void deleteByExamIdx(Long examId) {
+    examReportRepository.deleteByExamIdx(examId);
   }
 }

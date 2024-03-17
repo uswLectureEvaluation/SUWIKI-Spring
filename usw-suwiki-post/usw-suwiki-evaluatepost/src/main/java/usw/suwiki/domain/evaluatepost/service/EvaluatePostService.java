@@ -13,7 +13,7 @@ import usw.suwiki.domain.evaluatepost.dto.EvaluatePostRequest;
 import usw.suwiki.domain.evaluatepost.dto.EvaluatePostResponse;
 import usw.suwiki.domain.lecture.data.EvaluatedData;
 import usw.suwiki.domain.lecture.service.LectureService;
-import usw.suwiki.domain.report.EvaluatePostReport;
+import usw.suwiki.domain.report.model.Report;
 import usw.suwiki.domain.report.service.ReportService;
 import usw.suwiki.domain.user.service.UserBusinessService;
 
@@ -48,14 +48,8 @@ public class EvaluatePostService {
     EvaluatePost evaluatePost = loadEvaluatePostById(evaluateId);
     Long reportedUserId = evaluatePost.getUserId();
 
-    reportService.saveEvaluatePostReport(EvaluatePostReport.of( // todo: 의존성 분리하기
-      evaluateId,
-      reportedUserId,
-      reportingUserId,
-      evaluatePost.getProfessor(),
-      evaluatePost.getLectureName(),
-      evaluatePost.getContent()
-    ));
+    Report report = Report.evaluate(evaluateId, reportedUserId, reportingUserId, evaluatePost.getContent(), evaluatePost.getLectureName(), evaluatePost.getProfessor());
+    reportService.reportEvaluatePost(report);
   }
 
   public void write(Long userId, Long lectureId, EvaluatePostRequest.Create request) {

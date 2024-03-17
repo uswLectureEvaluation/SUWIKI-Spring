@@ -3,6 +3,7 @@ package usw.suwiki.domain.report;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import usw.suwiki.domain.report.model.Report;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,7 +52,15 @@ public class EvaluatePostReport {
     this.reportedDate = reportedDate;
   }
 
-  public static EvaluatePostReport of(Long evaluateIdx, Long reportedUserIdx, Long reportingUserIdx, String professor, String lectureName, String content) {
-    return new EvaluatePostReport(evaluateIdx, reportedUserIdx, reportingUserIdx, professor, lectureName, content, LocalDateTime.now());
+  public static EvaluatePostReport from(Report report) {
+    return new EvaluatePostReport(
+      report.targetId(),
+      report.reportedUserId(),
+      report.reportingUserId(),
+      report.professor(),
+      report.lecture(),
+      report.content(),
+      LocalDateTime.now()
+    );
   }
 }
