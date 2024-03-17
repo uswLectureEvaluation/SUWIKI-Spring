@@ -82,6 +82,16 @@ public class UserBusinessService {
     return overlapFalseFlag();
   }
 
+  public void wroteEvaluation(Long userId) {
+    User user = userCRUDService.loadUserById(userId);
+    user.writeEvaluatePost();
+  }
+
+  public void deleteEvaluation(Long userId) {
+    User user = userCRUDService.loadUserById(userId);
+    user.deleteEvaluatePost();
+  }
+
   public Map<String, Boolean> executeJoin(String loginId, String password, String email) {
     blacklistDomainService.isUserInBlackListThatRequestJoin(email);
 
@@ -97,7 +107,7 @@ public class UserBusinessService {
       throw new AccountException(ExceptionType.IS_NOT_EMAIL_FORM);
     }
 
-    User user = User.makeUser(loginId, passwordEncoder.encode(password), email);
+    User user = User.init(loginId, passwordEncoder.encode(password), email);
     userCRUDService.saveUser(user);
 
     ConfirmationToken confirmationToken = ConfirmationToken.makeToken(user.getId());

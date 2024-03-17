@@ -21,7 +21,5 @@ project(':usw-suwiki-user') {
         implementation project(':usw-suwiki-auth:usw-suwiki-auth-token')
 
         implementation project(':usw-suwiki-core:usw-suwiki-mail-starter')
-
-        implementation 'org.springframework.boot:spring-boot-starter-web'
     }
 }
