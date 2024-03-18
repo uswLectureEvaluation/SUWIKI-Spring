@@ -75,6 +75,10 @@ public class Lecture extends BaseTimeEntity {
     this.lectureEvaluationInfo.calculateAverage(this.postsCount);
   }
 
+  public int getGrade() {
+    return this.lectureDetail.getGrade();
+  }
+
   @Deprecated
   public boolean isOld() {
     return this.semester.length() > 9;

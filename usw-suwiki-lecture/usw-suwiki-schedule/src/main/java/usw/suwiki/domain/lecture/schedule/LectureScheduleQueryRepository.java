@@ -25,4 +25,11 @@ public class LectureScheduleQueryRepository {
       .where(lectureSchedule.lectureId.eq(lectureId))
       .fetch();
   }
+
+  public List<String> findAllPlaceSchedulesByLectureId(Long lectureId) {
+    return queryFactory.select(lectureSchedule.placeSchedule)
+      .from(lectureSchedule)
+      .where(lectureSchedule.lectureId.eq(lectureId))
+      .fetch();
+  }
 }

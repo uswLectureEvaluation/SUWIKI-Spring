@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.common.pagination.SlicePaginationUtils;
 import usw.suwiki.domain.lecture.dto.LectureSearchOption;
-import usw.suwiki.domain.lecture.dto.Lectures;
+import usw.suwiki.domain.lecture.model.Lectures;
 
 import java.util.List;
 import java.util.Objects;

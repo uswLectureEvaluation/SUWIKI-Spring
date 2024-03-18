@@ -2,11 +2,15 @@ package usw.suwiki.domain.lecture.schedule.data;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.exception.TimetableException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
+
+import static usw.suwiki.domain.lecture.dto.LectureResponse.LectureCell;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LectureStringConverter {
@@ -14,14 +18,14 @@ public class LectureStringConverter {
   private static final int SPLIT_SIZE = 3;
 
   /**
-   * @param schedule 강의 장소 및 시간 원본 lecture_schedule.place_schedule
-   * @implNote place_schedule을 TimetableCellSchedule 객체 리스트로 변환
+   * @param placeSchedule 강의 장소 및 시간 원본 lecture_schedule.place_schedule
+   * @implNote place_schedule을 DTO 리스트로 변환
    */
-  public static List<TimetableCellSchedule> chunkToTimetableCellSchedules(String schedule) {
-    List<TimetableCellSchedule> schedules = new ArrayList<>();
+  public static List<LectureCell> chunkToLectureCells(String placeSchedule) {
+    List<LectureCell> lectureCells = new ArrayList<>();
 
     // e.g. "IT103(..),IT505(..)" -> [ "IT103(..)", "IT505(..)" ]
-    for (String locationAndDays : schedule.split(",(?![^()]*\\))")) {
+    for (String locationAndDays : placeSchedule.split(",(?![^()]*\\))")) {
       String location = extractLocationFromLocationAndDays(locationAndDays);
       String dayAndPeriodsString = extractDaysFromLocationAndDays(locationAndDays);
 
@@ -31,18 +35,19 @@ public class LectureStringConverter {
         String stringPeriods = dayAndPeriods.substring(1);
 
         for (List<Integer> periods : splitPeriodsIntoThree(stringPeriods)) {
-          TimetableCellSchedule schedule = TimetableCellSchedule.builder()
-            .location(location)
-            .day(TimetableDay.ofKorean(day))
-            .startPeriod(periods.get(0))
-            .endPeriod(periods.get(periods.size() - 1))
-            .build();
-          schedules.add(schedule);
+          LectureCell cell = new LectureCell(
+            location,
+            toEnglish(day),
+            periods.get(0),
+            periods.get(periods.size() - 1)
+          );
+
+          lectureCells.add(cell);
         }
       }
     }
 
-    return schedules;
+    return lectureCells;
   }
 
   // e.g. "IT103(월1,2, 화1,2)" -> "IT103"
@@ -69,5 +74,19 @@ public class LectureStringConverter {
       .limit((sortedPeriods.size() + 2) / SPLIT_SIZE)
       .map(current -> sortedPeriods.subList(current, Math.min(current + SPLIT_SIZE, sortedPeriods.size())))
       .toList();
+  }
+
+  private static String toEnglish(String korean) {
+    return switch (korean) {
+      case "월" -> "MON";
+      case "화" -> "TUE";
+      case "수" -> "WED";
+      case "목" -> "THU";
+      case "금" -> "FRI";
+      case "토" -> "SAT";
+      case "일" -> "SUN";
+
+      default -> throw new TimetableException(ExceptionType.INVALID_TIMETABLE_CELL_DAY); // todo: 삭제할 것
+    };
   }
 }
