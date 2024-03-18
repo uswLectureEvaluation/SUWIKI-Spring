@@ -21,10 +21,7 @@ project(':usw-suwiki-lecture:usw-suwiki-schedule') {
 
 project(':usw-suwiki-lecture:usw-suwiki-timetable') {
     dependencies {
-        implementation project(':usw-suwiki-user')
         implementation project(':usw-suwiki-lecture')
-
-        implementation 'org.springframework.boot:spring-boot-starter-validation'
     }
 }
 

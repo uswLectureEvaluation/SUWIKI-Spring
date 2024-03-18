@@ -44,7 +44,7 @@ public class LectureController {
     return lectureService.loadAllLecturesByKeyword(searchValue, findOption);
   }
 
-  @GetMapping("/current/cells/search")
+  @GetMapping("/current/cells/search") // todo: (03.18) 이것만큼은 건들면 안된다.
   @ResponseStatus(HttpStatus.OK)
   public ApiResponse<NoOffsetPaginationResponse<LectureWithOptionalScheduleResponse>> searchLectureCells(
     @RequestParam(required = false) Long cursorId,

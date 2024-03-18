@@ -1,125 +1,92 @@
 package usw.suwiki.domain.lecture.timetable;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.exception.TimetableException;
-import usw.suwiki.domain.user.User;
 import usw.suwiki.infra.jpa.BaseTimeEntity;
 
-import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.persistence.OrderColumn;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Timetable extends BaseTimeEntity {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "timetable_id")
+  private Long id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "timetable_id")
-    private Long id;
+  @Column(nullable = false)
+  private Long userId;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+  @Column
+  private String name;
 
-    @NotNull
-    @Size(max = 200)
-    private String name;
+  @Column
+  private Integer year;
 
-    @NotNull
-    @Min(value = 1023)
-    @Max(value = 3023)
-    private Integer year;
+  @Enumerated(EnumType.STRING)
+  private Semester semester;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private Semester semester;
+  @ElementCollection
+  @CollectionTable(name = "timetable_cell", joinColumns = @JoinColumn(name = "timetable_id"))
+  @OrderColumn(name = "cell_idx")
+  private final List<TimetableCell> cells = new ArrayList<>(); // todo: 반드시 테스트할 것
 
-    @OneToMany(mappedBy = "timetable", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<TimetableCell> cellList = new ArrayList<>();
+  public Timetable(Long userId, String name, Integer year, String semester) {
+    this.userId = userId;
+    this.name = name;
+    this.year = year;
+    this.semester = Semester.from(semester);
+  }
 
-    @Builder
-    public Timetable(String name, Integer year, Semester semester) {
-        this.name = name;
-        this.year = year;
-        this.semester = semester;
+  public void update(String name, Integer year, String semester) {
+    this.name = name;
+    this.year = year;
+    this.semester = Semester.from(semester);
+  }
+
+  public String getSemester() {
+    return this.semester.name();
+  }
+
+  public void validateAuthor(Long userId) {
+    if (!this.userId.equals(userId)) {
+      throw new TimetableException(ExceptionType.TIMETABLE_NOT_AN_AUTHOR);
     }
+  }
 
-    public void associateUser(User user) {
-        if (Objects.nonNull(this.user)) {
-            this.user.removeTimetable(this);
-        }
-        this.user = user;
-        user.addTimetable(this);
+  public void addCell(TimetableCell cell) {
+    validateOverlap(cell);
+    this.cells.add(cell);
+  }
+
+  public void updateCell(int cellIdx, TimetableCell cell) {
+    this.cells.remove(cellIdx);
+    addCell(cell);
+  }
+
+  public void removeCell(int cellIdx) {
+    this.cells.remove(cellIdx);
+  }
+
+  private void validateOverlap(TimetableCell cell) {
+    if (cells.stream().anyMatch(cell::isOverlapped)) {
+      throw new TimetableException(ExceptionType.OVERLAPPED_TIMETABLE_CELL_SCHEDULE);
     }
-
-    public void dissociateUser(User user) {
-        this.user = null;
-        user.removeTimetable(this);
-    }
-
-    public void addCell(TimetableCell cell) {
-        this.cellList.add(cell);
-    }
-
-    public void removeCell(TimetableCell cell) {
-        this.cellList.remove(cell);
-    }
-
-    public void validateCellScheduleOverlapBeforeAssociation(TimetableCellSchedule schedule) {
-        boolean isOverlapped = cellList.stream()
-            .anyMatch(it -> it.getSchedule().isOverlapped(schedule));
-
-        if (isOverlapped) {
-            throw new TimetableException(ExceptionType.OVERLAPPED_TIMETABLE_CELL_SCHEDULE);
-        }
-    }
-
-    public void validateCellScheduleOverlapAfterAssociation(TimetableCellSchedule schedule,
-        TimetableCell timetableCell) {
-        boolean isOverlapped = cellList.stream()
-            .filter(it -> !it.equals(timetableCell))
-            .anyMatch(it -> it.getSchedule().isOverlapped(schedule));
-
-        if (isOverlapped) {
-            throw new TimetableException(ExceptionType.OVERLAPPED_TIMETABLE_CELL_SCHEDULE);
-        }
-    }
-
-    public void update(String name, Integer year, Semester semester) {
-        this.name = name;
-        this.year = year;
-        this.semester = semester;
-    }
-
-    public void validateIsAuthor(User user) {
-        if (!isAuthorId(user.getId())) {
-            throw new TimetableException(ExceptionType.TIMETABLE_NOT_AN_AUTHOR);
-        }
-    }
-
-    private boolean isAuthorId(Long userId) {
-        return this.user.getId().equals(userId);
-    }
+  }
 }

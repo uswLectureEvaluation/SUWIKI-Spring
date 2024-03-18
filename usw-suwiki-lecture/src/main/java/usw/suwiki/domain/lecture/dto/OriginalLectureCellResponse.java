@@ -1,4 +1,4 @@
-package usw.suwiki.domain.lecture.schedule.dto;
+package usw.suwiki.domain.lecture.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
