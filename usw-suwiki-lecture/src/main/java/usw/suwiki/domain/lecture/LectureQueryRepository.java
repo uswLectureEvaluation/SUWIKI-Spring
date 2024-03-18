@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.common.pagination.SlicePaginationUtils;
 import usw.suwiki.domain.lecture.dto.LectureSearchOption;
 import usw.suwiki.domain.lecture.dto.Lectures;
@@ -19,8 +21,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Repository
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class LectureCustomRepositoryImpl implements LectureCustomRepository {
+public class LectureQueryRepository {
   private static final String DEFAULT_ORDER = "modifiedDate";
   private static final Integer DEFAULT_LIMIT = 10;
   private static final Integer DEFAULT_PAGE = 1;
@@ -30,7 +34,6 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository {
   @Value("${business.current-semester}")
   private String currentSemester;
 
-  @Override
   public Slice<Lecture> findCurrentSemesterLectures(
     final Long cursorId,
     final int limit,
@@ -50,7 +53,6 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository {
     return SlicePaginationUtils.buildSlice(query.fetch(), limit);
   }
 
-  @Override
   public Optional<Lecture> findByExtraUniqueKey(
     String lectureName,
     String professor,
@@ -58,8 +60,7 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository {
     String dividedClassNumber
   ) {
     return Optional.ofNullable(
-      queryFactory
-        .selectFrom(lecture)
+      queryFactory.selectFrom(lecture)
         .where(
           lecture.name.eq(lectureName),
           lecture.professor.eq(professor),
@@ -68,11 +69,7 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository {
         .fetchOne());
   }
 
-  /**
-   * if (!Arrays.asList(orderOptions).contains(orderOption)) { throw new
-   * AccountException(ExceptionType.INVALID_ORDER_OPTION); }
-   */
-  @Override
+
   public Lectures findAllLecturesByOption(String searchValue, LectureSearchOption option) {
     String orderOption = initializeOrderOption(option.getOrderOption());
     Integer page = initializePageNumber(option.getPageNumber());
@@ -98,7 +95,6 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository {
     return new Lectures(queryResults.getResults(), queryResults.getTotal());
   }
 
-  @Override
   public Lectures findAllLecturesByMajorType(String searchValue, LectureSearchOption option) {
     String orderOption = initializeOrderOption(option.getOrderOption());
     Integer page = initializePageNumber(option.getPageNumber());
@@ -129,7 +125,6 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository {
     return new Lectures(queryResults.getResults(), count);
   }
 
-  @Override
   public Lectures findAllLecturesByOption(LectureSearchOption option) {
     String orderOption = initializeOrderOption(option.getOrderOption());
     Integer page = initializePageNumber(option.getPageNumber());
@@ -153,7 +148,6 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository {
     return new Lectures(queryResults.getResults(), count);
   }
 
-  @Override
   public Lectures findAllLecturesByMajorType(LectureSearchOption option) {
     String orderOption = initializeOrderOption(option.getOrderOption());
     Integer page = initializePageNumber(option.getPageNumber());
@@ -181,7 +175,6 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository {
     return new Lectures(queryResults.getResults(), count);
   }
 
-  @Override
   public List<String> findAllMajorTypes() {
     return queryFactory.selectDistinct(lecture.majorType)
       .from(lecture)
@@ -205,18 +198,14 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository {
   }
 
   private OrderSpecifier<?> getOrderSpecifier(String orderOption) {
-    switch (orderOption) {
-      case "lectureEvaluationInfo.lectureSatisfactionAvg":
-        return lecture.lectureEvaluationInfo.lectureSatisfactionAvg.desc();
-      case "lectureEvaluationInfo.lectureHoneyAvg":
-        return lecture.lectureEvaluationInfo.lectureHoneyAvg.desc();
-      case "lectureEvaluationInfo.lectureLearningAvg":
-        return lecture.lectureEvaluationInfo.lectureLearningAvg.desc();
-      case "lectureEvaluationInfo.lectureTotalAvg":
-        return lecture.lectureEvaluationInfo.lectureTotalAvg.desc();
-      default:
-        return lecture.modifiedDate.desc(); // Default order
-    }
+    return switch (orderOption) {
+      case "lectureEvaluationInfo.lectureSatisfactionAvg" ->
+        lecture.lectureEvaluationInfo.lectureSatisfactionAvg.desc();
+      case "lectureEvaluationInfo.lectureHoneyAvg" -> lecture.lectureEvaluationInfo.lectureHoneyAvg.desc();
+      case "lectureEvaluationInfo.lectureLearningAvg" -> lecture.lectureEvaluationInfo.lectureLearningAvg.desc();
+      case "lectureEvaluationInfo.lectureTotalAvg" -> lecture.lectureEvaluationInfo.lectureTotalAvg.desc();
+      default -> lecture.modifiedDate.desc(); // Default order
+    };
   }
 
   private OrderSpecifier<Integer> createPostCountOption() {

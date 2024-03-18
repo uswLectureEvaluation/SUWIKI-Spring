@@ -8,6 +8,7 @@ import usw.suwiki.common.response.NoOffsetPaginationResponse;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.exception.LectureException;
 import usw.suwiki.domain.lecture.Lecture;
+import usw.suwiki.domain.lecture.LectureQueryRepository;
 import usw.suwiki.domain.lecture.LectureRepository;
 import usw.suwiki.domain.lecture.dto.LectureResponse;
 import usw.suwiki.domain.lecture.dto.LectureSearchOption;
@@ -22,10 +23,11 @@ import java.util.stream.Stream;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LectureService {
+  private final LectureQueryRepository lectureQueryRepository;
   private final LectureRepository lectureRepository;
 
   public List<String> loadMajorTypes() {
-    return lectureRepository.findAllMajorTypes();
+    return lectureQueryRepository.findAllMajorTypes();
   }
 
   public Lecture findLectureById(Long id) {
@@ -40,15 +42,15 @@ public class LectureService {
 
   public LectureResponse.Simples loadAllLecturesByKeyword(String keyword, LectureSearchOption option) {
     return toResponse(option.passMajorFiltering()
-      ? lectureRepository.findAllLecturesByOption(keyword, option)
-      : lectureRepository.findAllLecturesByMajorType(keyword, option)
+      ? lectureQueryRepository.findAllLecturesByOption(keyword, option)
+      : lectureQueryRepository.findAllLecturesByMajorType(keyword, option)
     );
   }
 
   public LectureResponse.Simples loadAllLectures(LectureSearchOption option) {
     return toResponse(option.passMajorFiltering()
-      ? lectureRepository.findAllLecturesByOption(option)
-      : lectureRepository.findAllLecturesByMajorType(option)
+      ? lectureQueryRepository.findAllLecturesByOption(option)
+      : lectureQueryRepository.findAllLecturesByMajorType(option)
     );
   }
 
@@ -85,26 +87,16 @@ public class LectureService {
     String major,
     Integer grade
   ) {
-    Slice<Lecture> lectureSlice = lectureRepository.findCurrentSemesterLectures(cursorId, limit, keyword, major, grade);
+    Slice<Lecture> lectureSlice = lectureQueryRepository.findCurrentSemesterLectures(cursorId, limit, keyword, major, grade);
     return NoOffsetPaginationResponse.of(toPaginationResponse(lectureSlice), lectureSlice.isLast());
   }
 
+  // todo: 쿼리 개선하기
   private List<LectureWithOptionalScheduleResponse> toPaginationResponse(Slice<Lecture> slice) {
     return slice.stream()
       .flatMap(lecture -> lecture.getScheduleList().isEmpty()
         ? Stream.of(LectureWithOptionalScheduleResponse.from(lecture))
         : lecture.getScheduleList().stream().map(LectureWithOptionalScheduleResponse::from))
       .toList();
-//    for (Lecture lecture : slice) {
-//      if (lecture.getScheduleList().isEmpty()) {
-//        result.add(LectureWithOptionalScheduleResponse.from(lecture));
-//      } else {
-//        result.addAll(lecture.getScheduleList()
-//          .stream()
-//          .map(LectureWithOptionalScheduleResponse::from)
-//          .toList());
-//      }
-//    }
-//    return result;
   }
 }
