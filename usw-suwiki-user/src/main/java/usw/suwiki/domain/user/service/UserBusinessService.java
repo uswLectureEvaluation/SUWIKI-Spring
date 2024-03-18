@@ -14,7 +14,6 @@ import usw.suwiki.core.mail.EmailSender;
 import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.core.secure.model.Claim;
-import usw.suwiki.domain.lecture.major.service.FavoriteMajorService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.model.UserClaim;
@@ -161,7 +160,7 @@ public class UserBusinessService {
       User user = userCRUDService.loadUserFromLoginId(loginId);
       user.isUserEmailAuthed(confirmationTokenCRUDService.loadConfirmationTokenFromUserIdx(user.getId()));
       if (user.validatePassword(passwordEncoder, inputPassword)) {
-        user.updateLastLoginDate();
+        user.login();
         return generateUserJWT(user);
       }
     } else if (userIsolationCRUDService.isLoginableIsolatedUser(loginId, inputPassword, passwordEncoder)) {
@@ -210,7 +209,7 @@ public class UserBusinessService {
       throw new AccountException(ExceptionType.PASSWORD_ERROR);
     }
 
-    favoriteMajorService.deleteFromUserIdx(user.getId());
+    favoriteMajorService.clear(user.getId());
     clearReportService.clear(user.getId());
     clearViewExamService.clear(user.getId());
     clearExamPostsService.clear(user.getId());
@@ -234,8 +233,9 @@ public class UserBusinessService {
     if (tokenAgent.getUserIsRestricted(Authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
-    Long userIdx = tokenAgent.getId(Authorization);
-    favoriteMajorService.save(favoriteSaveDto, userIdx);
+    Long userId = tokenAgent.getId(Authorization);
+    
+    favoriteMajorService.save(userId, favoriteSaveDto.getMajorType());
   }
 
   public void executeFavoriteMajorDelete(String Authorization, String majorType) {
@@ -276,11 +276,5 @@ public class UserBusinessService {
       put("AccessToken", tokenAgent.createAccessToken(user.getId(), userClaim));
       put("RefreshToken", tokenAgent.reissueRefreshToken(refreshTokenPayload));
     }};
-  }
-
-  public void validateRestrictedUser(String authorization) {
-    if (tokenAgent.getUserIsRestricted(authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
   }
 }

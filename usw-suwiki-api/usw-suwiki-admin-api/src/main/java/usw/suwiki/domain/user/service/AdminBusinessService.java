@@ -164,7 +164,7 @@ public class AdminBusinessService {
   private void plusRestrictCount(Long userIdx) {
     User user = userCRUDService.loadUserFromUserIdx(userIdx);
     user.increaseRestrictedCountByReportedPost();
-    user.editRestricted(true);
+    user.restricted();
   }
 
   private void plusReportingUserPoint(Long reportingUserIdx) {

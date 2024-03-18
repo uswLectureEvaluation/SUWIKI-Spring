@@ -78,7 +78,7 @@ public class UserCRUDService {
   }
 
   public void softDeleteForIsolation(Long userIdx) {
-    User user = loadUserFromUserIdx(userIdx);
+    User user = loadUserById(userIdx);
     user.sleep();
   }
 }

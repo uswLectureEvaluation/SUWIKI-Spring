@@ -97,7 +97,7 @@ public class ExamPostService {
     ExamPost examPost = ExamPostMapper.toEntity(userId, lectureId, request);
     examPostRepository.save(examPost);
 
-    user.wroteExamPost();
+    user.writeExamPost();
   }
 
   @Transactional
