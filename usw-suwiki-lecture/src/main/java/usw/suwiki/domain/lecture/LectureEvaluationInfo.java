@@ -1,7 +1,7 @@
 package usw.suwiki.domain.lecture;
 
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.lecture.data.EvaluatedData;
+import usw.suwiki.domain.lecture.model.Evaluation;
 
 import javax.persistence.Embeddable;
 
@@ -38,15 +38,15 @@ public class LectureEvaluationInfo {
     this.lectureTotalAvg = (lectureSatisfactionAvg + lectureHoneyAvg + lectureLearningAvg) / EVALUATION_TYPE_COUNT;
   }
 
-  public void apply(EvaluatedData data) {
+  public void apply(Evaluation data) {
     calculate(data, PLUS);
   }
 
-  public void cancel(EvaluatedData data) {
+  public void cancel(Evaluation data) {
     calculate(data, MINUS);
   }
 
-  private void calculate(EvaluatedData data, int operator) {
+  private void calculate(Evaluation data, int operator) {
     this.lectureSatisfactionValue += operator * data.satisfaction();
     this.lectureHoneyValue += operator * data.honey();
     this.lectureLearningValue += operator * data.learning();

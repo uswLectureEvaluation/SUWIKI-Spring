@@ -4,21 +4,15 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.evaluatepost.EvaluatePost;
-import usw.suwiki.domain.lecture.data.EvaluatedData;
-import usw.suwiki.domain.lecture.schedule.LectureSchedule;
+import usw.suwiki.domain.lecture.model.Evaluation;
 import usw.suwiki.infra.jpa.BaseTimeEntity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 @Entity
@@ -51,12 +45,6 @@ public class Lecture extends BaseTimeEntity {
 
   private int postsCount = 0;
 
-  @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
-  private final List<LectureSchedule> scheduleList = new ArrayList<>();
-
-  @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
-  private final List<EvaluatePost> evaluatePostList = new ArrayList<>();
-
   @Builder
   public Lecture(
     String semester,
@@ -76,35 +64,16 @@ public class Lecture extends BaseTimeEntity {
   }
 
   /**
-   * 연관관계 메서드
-   */
-  public void addEvaluatePost(EvaluatePost evaluatePost) {
-    this.evaluatePostList.add(evaluatePost);
-  }
-
-  public void removeEvaluatePost(EvaluatePost evaluatePost) {
-    this.evaluatePostList.remove(evaluatePost);
-  }
-
-  public void addSchedule(LectureSchedule lectureSchedule) {
-    this.scheduleList.add(lectureSchedule);
-  }
-
-  public void removeSchedule(LectureSchedule lectureSchedule) {
-    this.scheduleList.remove(lectureSchedule);
-  }
-
-  /**
    * 비즈니스 메서드
    */
 
-  public void evaluate(EvaluatedData evaluatedData) {
-    this.lectureEvaluationInfo.apply(evaluatedData);
+  public void evaluate(Evaluation evaluation) {
+    this.lectureEvaluationInfo.apply(evaluation);
     this.lectureEvaluationInfo.calculateAverage(this.postsCount);
     this.postsCount += 1;
   }
 
-  public void updateEvaluation(EvaluatedData current, EvaluatedData update) {
+  public void updateEvaluation(Evaluation current, Evaluation update) {
     this.lectureEvaluationInfo.cancel(current);
     this.lectureEvaluationInfo.apply(update);
     this.lectureEvaluationInfo.calculateAverage(this.postsCount);

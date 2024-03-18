@@ -16,15 +16,13 @@ import usw.suwiki.core.exception.LectureException;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.lecture.LectureRepository;
 import usw.suwiki.domain.lecture.LecturesAndCountDao;
-import usw.suwiki.domain.lecture.data.EvaluatedData;
 import usw.suwiki.domain.lecture.data.JSONLectureVO;
 import usw.suwiki.domain.lecture.dto.LectureAndCountResponseForm;
 import usw.suwiki.domain.lecture.dto.LectureDetailResponseDto;
 import usw.suwiki.domain.lecture.dto.LectureFindOption;
 import usw.suwiki.domain.lecture.dto.LectureResponseDto;
 import usw.suwiki.domain.lecture.dto.LectureWithOptionalScheduleResponse;
-import usw.suwiki.domain.lecture.schedule.LectureSchedule;
-import usw.suwiki.domain.lecture.schedule.LectureScheduleRepository;
+import usw.suwiki.domain.lecture.model.Evaluation;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -45,13 +43,13 @@ public class LectureService {
   private String currentSemester;
 
   @Transactional
-  public void evaluate(Long lectureId, EvaluatedData evaluatedData) {
+  public void evaluate(Long lectureId, Evaluation evaluation) {
     Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(lectureId);
-    lecture.evaluate(evaluatedData);
+    lecture.evaluate(evaluation);
   }
 
   @Transactional
-  public void updateEvaluation(Long lectureId, EvaluatedData current, EvaluatedData update) {
+  public void updateEvaluation(Long lectureId, Evaluation current, Evaluation update) {
     Lecture lecture = lectureCRUDService.loadLectureFromIdPessimisticLock(lectureId);
     lecture.updateEvaluation(current, update);
   }

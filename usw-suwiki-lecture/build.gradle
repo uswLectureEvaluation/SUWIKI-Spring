@@ -9,9 +9,6 @@ allprojects {
 project(':usw-suwiki-lecture') {
     dependencies {
         implementation project(':usw-suwiki-user')
-        implementation project(':usw-suwiki-lecture:usw-suwiki-schedule')
-        implementation project(':usw-suwiki-lecture:usw-suwiki-timetable')
-        implementation project(':usw-suwiki-post:usw-suwiki-evaluatepost')
 
         implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     }

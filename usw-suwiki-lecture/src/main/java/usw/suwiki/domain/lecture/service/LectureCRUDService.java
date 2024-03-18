@@ -16,31 +16,30 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LectureCRUDService {
-    private final LectureRepository lectureRepository;
+  private final LectureRepository lectureRepository;
 
-    public List<String> loadMajorTypes() {
-      return lectureRepository.findAllMajorType();
-    }
+  public List<String> loadMajorTypes() {
+    return lectureRepository.findAllMajorType();
+  }
 
-    public Lecture loadLectureFromIdPessimisticLock(Long id) {
-        return lectureRepository.findForUpdateById(id)
-            .orElseThrow(() -> new LectureException(ExceptionType.LECTURE_NOT_FOUND));
-    }
+  public Lecture loadLectureFromIdPessimisticLock(Long id) {
+    return lectureRepository.findForUpdateById(id)
+      .orElseThrow(() -> new LectureException(ExceptionType.LECTURE_NOT_FOUND));
+  }
 
-    public LecturesAndCountDao loadLectureByKeywordAndOption(String keyword, LectureFindOption option) {
-        return lectureRepository.findLectureByFindOption(keyword, option);
-    }
+  public LecturesAndCountDao loadLectureByKeywordAndOption(String keyword, LectureFindOption option) {
+    return lectureRepository.findLectureByFindOption(keyword, option);
+  }
 
-    public LecturesAndCountDao loadLectureByKeywordAndMajor(String searchValue, LectureFindOption option) {
-        return lectureRepository.findLectureByMajorType(searchValue, option);
-    }
+  public LecturesAndCountDao loadLectureByKeywordAndMajor(String searchValue, LectureFindOption option) {
+    return lectureRepository.findLectureByMajorType(searchValue, option);
+  }
 
-    public LecturesAndCountDao loadLecturesByOption(LectureFindOption option) {
-        return lectureRepository.findAllLectureByFindOption(option);
-    }
+  public LecturesAndCountDao loadLecturesByOption(LectureFindOption option) {
+    return lectureRepository.findAllLectureByFindOption(option);
+  }
 
-    public LecturesAndCountDao loadLecturesByMajor(LectureFindOption option) {
-        return lectureRepository.findAllLectureByMajorType(option);
-    }
-
+  public LecturesAndCountDao loadLecturesByMajor(LectureFindOption option) {
+    return lectureRepository.findAllLectureByMajorType(option);
+  }
 }
