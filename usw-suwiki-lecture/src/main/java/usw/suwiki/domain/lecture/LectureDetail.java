@@ -14,23 +14,22 @@ import javax.persistence.Embeddable;
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LectureDetail {	// TODO refactor: placeSchedule, grade, point 은 Lecture로 이동. 혹은 전체 이동.
+public class LectureDetail {
+  @Column(name = "lecture_code")
+  private String code;
 
-	@Column(name = "lecture_code")
-	private String code;
+  @Column(name = "point")
+  private double point;
 
-	@Column(name = "point")
-	private double point;
+  @Column(name = "cappr_type")
+  private String capprType;
 
-	@Column(name = "cappr_type")
-	private String capprType;
+  @Column(name = "dicl_no")
+  private String diclNo;
 
-	@Column(name = "dicl_no")
-	private String diclNo;
+  @Column(name = "grade")
+  private int grade;
 
-	@Column(name = "grade")
-	private int grade;
-
-	@Column(name = "evaluate_type")
-	private String evaluateType;
+  @Column(name = "evaluate_type")
+  private String evaluateType;
 }

@@ -15,14 +15,6 @@ import usw.suwiki.auth.core.jwt.JwtAgent;
 import usw.suwiki.common.request.BulkRequest;
 import usw.suwiki.common.response.ApiResponse;
 import usw.suwiki.common.response.ResultResponse;
-import usw.suwiki.domain.lecture.dto.CreateTimetableCellRequest;
-import usw.suwiki.domain.lecture.dto.CreateTimetableRequest;
-import usw.suwiki.domain.lecture.dto.CreateWholeTimetableRequest;
-import usw.suwiki.domain.lecture.dto.SimpleTimetableResponse;
-import usw.suwiki.domain.lecture.dto.TimetableCellResponse;
-import usw.suwiki.domain.lecture.dto.TimetableResponse;
-import usw.suwiki.domain.lecture.dto.UpdateTimetableCellRequest;
-import usw.suwiki.domain.lecture.dto.UpdateTimetableRequest;
 import usw.suwiki.domain.lecture.timetable.service.TimetableService;
 
 import javax.validation.Valid;
@@ -33,97 +25,97 @@ import java.util.List;
 @RequestMapping("/timetables")
 @RequiredArgsConstructor
 public class TimetableController {// TODO: PrincipalDetails 유저 인증 객체, AuthService 유저 검증 로직 추가
-    private final TimetableService timetableService;
-    private final JwtAgent jwtAgent;
+  private final TimetableService timetableService;
+  private final JwtAgent jwtAgent;
 
-    @PostMapping
-    public ApiResponse<SimpleTimetableResponse> createTimetable(
-        @RequestHeader String authorization,
-        @Valid @RequestBody CreateTimetableRequest request
-    ) {
-        jwtAgent.validateJwt(authorization);
-        Long userId = jwtAgent.getId(authorization);
+  @PostMapping
+  public ApiResponse<SimpleTimetableResponse> createTimetable(
+    @RequestHeader String authorization,
+    @Valid @RequestBody CreateTimetableRequest request
+  ) {
+    jwtAgent.validateJwt(authorization);
+    Long userId = jwtAgent.getId(authorization);
 
-        return ApiResponse.success(timetableService.createTimetable(request, userId));
-    }
+    return ApiResponse.success(timetableService.createTimetable(request, userId));
+  }
 
-    @PostMapping("/bulk")
-    public ApiResponse<List<TimetableResponse>> bulkCreateTimetables(
-        @RequestHeader String authorization,
-        @Valid @RequestBody BulkRequest<CreateWholeTimetableRequest> request
-    ) {
-        jwtAgent.validateJwt(authorization);
-        Long userId = jwtAgent.getId(authorization);
+  @PostMapping("/bulk")
+  public ApiResponse<List<TimetableResponse>> bulkCreateTimetables(
+    @RequestHeader String authorization,
+    @Valid @RequestBody BulkRequest<CreateWholeTimetableRequest> request
+  ) {
+    jwtAgent.validateJwt(authorization);
+    Long userId = jwtAgent.getId(authorization);
 
-        return ApiResponse.success(timetableService.bulkCreateTimetables(request.getBulk(), userId));
-    }
+    return ApiResponse.success(timetableService.bulkCreateTimetables(request.getBulk(), userId));
+  }
 
-    @PutMapping("/{timetableId}")
-    public ApiResponse<SimpleTimetableResponse> updateTimetable(
-        @PathVariable Long timetableId,
-        @RequestHeader String authorization,
-        @Valid @RequestBody UpdateTimetableRequest request
-    ) {
-        jwtAgent.validateJwt(authorization);
-        Long userId = jwtAgent.getId(authorization);
+  @PutMapping("/{timetableId}")
+  public ApiResponse<SimpleTimetableResponse> updateTimetable(
+    @PathVariable Long timetableId,
+    @RequestHeader String authorization,
+    @Valid @RequestBody UpdateTimetableRequest request
+  ) {
+    jwtAgent.validateJwt(authorization);
+    Long userId = jwtAgent.getId(authorization);
 
-        return ApiResponse.success(timetableService.updateTimetable(request, timetableId, userId));
-    }
+    return ApiResponse.success(timetableService.updateTimetable(request, timetableId, userId));
+  }
 
-    @DeleteMapping("/{timetableId}")
-    public ApiResponse<ResultResponse> deleteTimetable(@PathVariable Long timetableId, @RequestHeader String authorization) {
-        jwtAgent.validateJwt(authorization);
-        Long userId = jwtAgent.getId(authorization);
+  @DeleteMapping("/{timetableId}")
+  public ApiResponse<ResultResponse> deleteTimetable(@PathVariable Long timetableId, @RequestHeader String authorization) {
+    jwtAgent.validateJwt(authorization);
+    Long userId = jwtAgent.getId(authorization);
 
-        timetableService.deleteTimetable(timetableId, userId);
-        return ApiResponse.success(ResultResponse.complete());
-    }
+    timetableService.deleteTimetable(timetableId, userId);
+    return ApiResponse.success(ResultResponse.complete());
+  }
 
-    @GetMapping
-    public ApiResponse<List<SimpleTimetableResponse>> getMyAllTimetableList(@RequestHeader String authorization) {
-        jwtAgent.validateJwt(authorization);
-        Long userId = jwtAgent.getId(authorization);
+  @GetMapping
+  public ApiResponse<List<SimpleTimetableResponse>> getMyAllTimetableList(@RequestHeader String authorization) {
+    jwtAgent.validateJwt(authorization);
+    Long userId = jwtAgent.getId(authorization);
 
-        return ApiResponse.success(timetableService.getMyAllTimetableList(userId));
-    }
+    return ApiResponse.success(timetableService.getMyAllTimetableList(userId));
+  }
 
-    @GetMapping("/{timetableId}")
-    public ApiResponse<TimetableResponse> getTimetable(@PathVariable Long timetableId, @RequestHeader String authorization) {
-        jwtAgent.validateJwt(authorization);
+  @GetMapping("/{timetableId}")
+  public ApiResponse<TimetableResponse> getTimetable(@PathVariable Long timetableId, @RequestHeader String authorization) {
+    jwtAgent.validateJwt(authorization);
 
-        return ApiResponse.success(timetableService.getTimetable(timetableId));
-    }
+    return ApiResponse.success(timetableService.getTimetable(timetableId));
+  }
 
-    @PostMapping("/{timetableId}/cells")
-    public ApiResponse<TimetableCellResponse> createTimetableCell(
-        @PathVariable Long timetableId,
-        @RequestHeader String authorization,
-        @Valid @RequestBody CreateTimetableCellRequest request
-    ) {
-        jwtAgent.validateJwt(authorization);
-        Long userId = jwtAgent.getId(authorization);
+  @PostMapping("/{timetableId}/cells")
+  public ApiResponse<TimetableCellResponse> createTimetableCell(
+    @PathVariable Long timetableId,
+    @RequestHeader String authorization,
+    @Valid @RequestBody CreateTimetableCellRequest request
+  ) {
+    jwtAgent.validateJwt(authorization);
+    Long userId = jwtAgent.getId(authorization);
 
-        return ApiResponse.success(timetableService.createTimetableCell(request, timetableId, userId));
-    }
+    return ApiResponse.success(timetableService.createTimetableCell(request, timetableId, userId));
+  }
 
-    @PutMapping("/cells/{cellId}")
-    public ApiResponse<TimetableCellResponse> updateTimetableCell(
-        @PathVariable Long cellId,
-        @RequestHeader String authorization,
-        @Valid @RequestBody UpdateTimetableCellRequest request
-    ) {
-        jwtAgent.validateJwt(authorization);
-        Long userId = jwtAgent.getId(authorization);
+  @PutMapping("/cells/{cellId}")
+  public ApiResponse<TimetableCellResponse> updateTimetableCell(
+    @PathVariable Long cellId,
+    @RequestHeader String authorization,
+    @Valid @RequestBody UpdateTimetableCellRequest request
+  ) {
+    jwtAgent.validateJwt(authorization);
+    Long userId = jwtAgent.getId(authorization);
 
-        return ApiResponse.success(timetableService.updateTimetableCell(request, cellId, userId));
-    }
+    return ApiResponse.success(timetableService.updateTimetableCell(request, cellId, userId));
+  }
 
-    @DeleteMapping("/cells/{cellId}")
-    public ApiResponse<ResultResponse> deleteTimetableCell(@PathVariable Long cellId, @RequestHeader String authorization) {
-        jwtAgent.validateJwt(authorization);
-        Long userId = jwtAgent.getId(authorization);
+  @DeleteMapping("/cells/{cellId}")
+  public ApiResponse<ResultResponse> deleteTimetableCell(@PathVariable Long cellId, @RequestHeader String authorization) {
+    jwtAgent.validateJwt(authorization);
+    Long userId = jwtAgent.getId(authorization);
 
-        timetableService.deleteTimetableCell(cellId, userId);
-        return ApiResponse.success(ResultResponse.complete());
-    }
+    timetableService.deleteTimetableCell(cellId, userId);
+    return ApiResponse.success(ResultResponse.complete());
+  }
 }

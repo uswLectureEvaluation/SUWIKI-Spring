@@ -63,10 +63,6 @@ public class Lecture extends BaseTimeEntity {
     this.lectureEvaluationInfo = new LectureEvaluationInfo();
   }
 
-  /**
-   * 비즈니스 메서드
-   */
-
   public void evaluate(Evaluation evaluation) {
     this.lectureEvaluationInfo.apply(evaluation);
     this.lectureEvaluationInfo.calculateAverage(this.postsCount);

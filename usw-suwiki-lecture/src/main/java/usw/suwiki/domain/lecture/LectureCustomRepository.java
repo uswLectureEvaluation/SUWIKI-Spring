@@ -1,7 +1,8 @@
 package usw.suwiki.domain.lecture;
 
 import org.springframework.data.domain.Slice;
-import usw.suwiki.domain.lecture.dto.LectureFindOption;
+import usw.suwiki.domain.lecture.dto.LectureSearchOption;
+import usw.suwiki.domain.lecture.dto.Lectures;
 import usw.suwiki.domain.lecture.schedule.LectureSchedule;
 
 import java.util.List;
@@ -9,19 +10,19 @@ import java.util.Optional;
 
 public interface LectureCustomRepository {
 
-    Slice<Lecture> findCurrentSemesterLectures(Long cursorId, int limit, String keyword, String majorType, Integer grade);
+  Slice<Lecture> findCurrentSemesterLectures(Long cursorId, int limit, String keyword, String majorType, Integer grade);
 
-    List<LectureSchedule> findAllLectureSchedulesByLectureSemesterContains(String semester);
+  List<LectureSchedule> findAllLectureSchedulesByLectureSemesterContains(String semester);
 
-    Optional<Lecture> findByExtraUniqueKey(String lectureName, String professor, String majorType, String dividedClassNumber);
+  Optional<Lecture> findByExtraUniqueKey(String lectureName, String professor, String majorType, String dividedClassNumber);
 
-    List<String> findAllMajorType();
+  List<String> findAllMajorTypes();
 
-    LecturesAndCountDao findLectureByFindOption(String searchValue, LectureFindOption lectureFindOption);
+  Lectures findAllLecturesByOption(String searchValue, LectureSearchOption lectureSearchOption);
 
-    LecturesAndCountDao findLectureByMajorType(String searchValue, LectureFindOption lectureFindOption);
+  Lectures findAllLecturesByMajorType(String searchValue, LectureSearchOption lectureSearchOption);
 
-    LecturesAndCountDao findAllLectureByFindOption(LectureFindOption lectureFindOption);
+  Lectures findAllLecturesByOption(LectureSearchOption lectureSearchOption);
 
-    LecturesAndCountDao findAllLectureByMajorType(LectureFindOption lectureFindOption);
+  Lectures findAllLecturesByMajorType(LectureSearchOption lectureSearchOption);
 }

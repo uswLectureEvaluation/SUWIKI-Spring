@@ -1,10 +1,12 @@
 package usw.suwiki.domain.lecture;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.lecture.model.Evaluation;
 
 import javax.persistence.Embeddable;
 
+@Getter
 @Embeddable
 @NoArgsConstructor
 public class LectureEvaluationInfo {
