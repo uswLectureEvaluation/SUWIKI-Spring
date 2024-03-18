@@ -3,7 +3,6 @@ package usw.suwiki.domain.lecture;
 import org.springframework.data.domain.Slice;
 import usw.suwiki.domain.lecture.dto.LectureSearchOption;
 import usw.suwiki.domain.lecture.dto.Lectures;
-import usw.suwiki.domain.lecture.schedule.LectureSchedule;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,8 +10,6 @@ import java.util.Optional;
 public interface LectureCustomRepository {
 
   Slice<Lecture> findCurrentSemesterLectures(Long cursorId, int limit, String keyword, String majorType, Integer grade);
-
-  List<LectureSchedule> findAllLectureSchedulesByLectureSemesterContains(String semester);
 
   Optional<Lecture> findByExtraUniqueKey(String lectureName, String professor, String majorType, String dividedClassNumber);
 

@@ -5,13 +5,16 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.exception.LectureException;
 import usw.suwiki.domain.lecture.Lecture;
+import usw.suwiki.domain.lecture.LectureRepository;
 import usw.suwiki.domain.lecture.schedule.LectureSchedule;
+import usw.suwiki.domain.lecture.schedule.LectureScheduleQueryRepository;
 import usw.suwiki.domain.lecture.schedule.LectureScheduleRepository;
 import usw.suwiki.domain.lecture.schedule.data.JsonLecture;
 
@@ -22,21 +25,28 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LectureScheduleService {
+  private final LectureScheduleQueryRepository lectureScheduleQueryRepository;
   private final LectureScheduleRepository lectureScheduleRepository;
+  private final LectureRepository lectureRepository;
+
   private final SemesterProvider semesterProvider;
 
-  public void bulkApplyLectureJsonFile(String filePath) {
-    List<JsonLecture> jsonLectures = deserializeJsonFile(filePath).stream()
+  @Async
+  @Transactional(propagation = Propagation.MANDATORY)
+  public void bulkApplyJsonLectures(String filePath) {
+    List<JsonLecture> jsonLectures = deserializeJsonFromPath(filePath).stream()
       .map(rawObject -> JsonLecture.from((JSONObject) rawObject))
       .toList();
 
-    bulkApplyJsonLectureList(jsonLectures);
+    deleteAllRemovedLectures(jsonLectures);
+    deleteAllRemovedLectureSchedules(jsonLectures);
+    jsonLectures.forEach(this::insertJsonLectureOrLectureSchedule);
   }
 
-  private JSONArray deserializeJsonFile(String filePath) {
+  private JSONArray deserializeJsonFromPath(String filePath) {
     try {
       Reader reader = new FileReader(filePath);
       JSONParser parser = new JSONParser();
@@ -47,36 +57,25 @@ public class LectureScheduleService {
     }
   }
 
-  @Transactional(propagation = Propagation.MANDATORY)
-  public void bulkApplyJsonLectureList(List<JsonLecture> jsonLectures) {
-    deleteAllRemovedLectures(jsonLectures);
-    deleteAllRemovedLectureSchedules(jsonLectures);
-    jsonLectures.forEach(this::insertJsonLectureOrLectureSchedule);
-  }
-
   private void deleteAllRemovedLectures(List<JsonLecture> jsonLectures) {
-    List<Lecture> removedLectureList = lectureRepository.findAllBySemesterContains(currentSemester).stream()
-      .filter(it -> jsonLectures.stream().noneMatch(vo -> vo.isLectureEqual(it)))
-      .toList();
-
-    for (Lecture lecture : removedLectureList) {
-      if (lecture.isOld()) {
-        lecture.removeSemester(currentSemester);
-      } else {
-        lectureRepository.delete(lecture);
-      }
-    }
+    lectureRepository.findAllBySemesterContains(semesterProvider.semester()).stream()
+      .filter(it -> jsonLectures.stream().noneMatch(jsonLecture -> jsonLecture.isLectureEqual(it)))
+      .forEach(lecture -> {
+        if (lecture.isOld()) {
+          lecture.removeSemester(semesterProvider.semester());
+        } else {
+          lectureRepository.delete(lecture);
+        }
+      });
   }
 
   private void deleteAllRemovedLectureSchedules(List<JsonLecture> jsonLectures) {
-    List<LectureSchedule> currentSemeterLectureScheduleList = lectureRepository
-      .findAllLectureSchedulesByLectureSemesterContains(currentSemester);
+    List<LectureSchedule> schedulesToDelete =
+      lectureScheduleQueryRepository.findAllSchedulesBySemesterContains(semesterProvider.semester()).stream() // 기존의 스케줄이 삭제된 케이스 필터링 : O(N^2) 비교
+        .filter(it -> jsonLectures.stream().noneMatch(jsonLecture -> jsonLecture.isLectureAndPlaceScheduleEqual(it)))
+        .toList();
 
-    List<LectureSchedule> removedLectureScheduleList = currentSemeterLectureScheduleList.stream() // 기존의 스케줄이 삭제된 케이스 필터링 : O(N^2) 비교
-      .filter(it -> jsonLectures.stream().noneMatch(vo -> vo.isLectureAndPlaceScheduleEqual(it)))
-      .toList();
-
-    lectureScheduleRepository.deleteAll(removedLectureScheduleList);
+    lectureScheduleRepository.deleteAllInBatch(schedulesToDelete);
   }
 
   private void insertJsonLectureOrLectureSchedule(JsonLecture jsonLecture) {
@@ -88,27 +87,28 @@ public class LectureScheduleService {
     );
 
     if (optionalLecture.isPresent()) {
-      Lecture lecture = optionalLecture.get();
-      lecture.addSemester(jsonLecture.getSelectedSemester());
-
-      if (lecture.getScheduleList().stream().noneMatch(jsonLecture::isLectureAndPlaceScheduleEqual)) {
-        saveLectureSchedule(jsonLecture, lecture);
-      }
-
+      extendSemesterOfLecture(optionalLecture.get(), jsonLecture);
     } else {
-      Lecture newLecture = jsonLecture.toEntity();
-      saveLectureSchedule(jsonLecture, newLecture);
-      lectureRepository.save(newLecture);
+      insertNewLecture(jsonLecture);
     }
   }
 
-  private void saveLectureSchedule(JsonLecture jsonLecture, Lecture lecture) {
-    if (jsonLecture.isPlaceScheduleValid()) {
-      LectureSchedule schedule = LectureSchedule.builder()
-        .lecture(lecture)
-        .placeSchedule(jsonLecture.getPlaceSchedule())
-        .semester(semesterProvider.getCurrentSemester())
-        .build();
+  private void extendSemesterOfLecture(Lecture lecture, JsonLecture jsonLecture) {
+    lecture.addSemester(jsonLecture.getSelectedSemester());
+    List<LectureSchedule> schedules = lectureScheduleQueryRepository.findAllByLectureId(lecture.getId());
+    if (schedules.stream().noneMatch(jsonLecture::isLectureAndPlaceScheduleEqual)) {
+      saveLectureSchedule(lecture.getId(), jsonLecture);
+    }
+  }
+
+  private void insertNewLecture(JsonLecture jsonLecture) {
+    Lecture saved = lectureRepository.save(jsonLecture.toEntity());
+    saveLectureSchedule(saved.getId(), jsonLecture);
+  }
+
+  private void saveLectureSchedule(Long lectureId, JsonLecture jsonLecture) {
+    if (jsonLecture.isValidPlaceSchedule()) {
+      LectureSchedule schedule = new LectureSchedule(lectureId, jsonLecture.getPlaceSchedule(), semesterProvider.semester());
       lectureScheduleRepository.save(schedule);
     }
   }

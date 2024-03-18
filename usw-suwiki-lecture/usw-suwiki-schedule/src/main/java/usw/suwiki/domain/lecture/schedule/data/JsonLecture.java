@@ -44,27 +44,26 @@ public class JsonLecture {
   }
 
   public Lecture toEntity() {
-    LectureDetail lectureDetail = LectureDetail.builder()
-      .code(lectureCode)
-      .grade(grade)
-      .point(point)
-      .diclNo(dividedClassNumber)
-      .evaluateType(evaluateType)
-      .capprType(capacityPresentationType)
-      .build();
-
     return Lecture.builder()
       .name(lectureName)
       .type(lectureType)
       .professor(professor)
       .semester(selectedSemester)
       .majorType(majorType)
-      .lectureDetail(lectureDetail)
+      .lectureDetail(
+        LectureDetail.builder()
+          .code(lectureCode)
+          .grade(grade)
+          .point(point)
+          .diclNo(dividedClassNumber)
+          .evaluateType(evaluateType)
+          .capprType(capacityPresentationType)
+          .build())
       .build();
   }
 
 
-  public boolean isPlaceScheduleValid() {
+  public boolean isValidPlaceSchedule() {
     return !(placeSchedule.equals("null") || placeSchedule.isEmpty());
   }
 

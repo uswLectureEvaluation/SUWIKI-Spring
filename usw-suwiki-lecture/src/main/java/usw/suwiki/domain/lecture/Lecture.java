@@ -75,6 +75,14 @@ public class Lecture extends BaseTimeEntity {
     this.lectureEvaluationInfo.calculateAverage(this.postsCount);
   }
 
+  @Deprecated
+  public boolean isOld() {
+    return this.semester.length() > 9;
+  }
+
+  /**
+   * 이하 로직들은 Lecture가 가져야할 비지니스 로직이 아니다. 도메인 서비스로 분리할 것.
+   */
   public void addSemester(String singleSemester) {
     validateSingleSemester(singleSemester);
     if (this.semester.isEmpty() || this.semester.contains(singleSemester)) {
@@ -84,14 +92,6 @@ public class Lecture extends BaseTimeEntity {
     this.semester = extendSemester(this.semester, singleSemester);
   }
 
-  @Deprecated
-  public boolean isOld() {
-    return this.semester.length() > 9;
-  }
-
-  /**
-   * 이하 로직들은 Lecture가 가져야할 비지니스 로직이 아니다. 도메인 서비스로 분리할 것.
-   */
   public void removeSemester(String singleSemester) {
     validateSingleSemester(singleSemester);
     if (this.semester.contains(singleSemester)) {

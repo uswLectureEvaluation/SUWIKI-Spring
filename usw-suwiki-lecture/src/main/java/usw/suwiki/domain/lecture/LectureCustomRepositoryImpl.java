@@ -14,7 +14,6 @@ import org.springframework.data.domain.Slice;
 import usw.suwiki.common.pagination.SlicePaginationUtils;
 import usw.suwiki.domain.lecture.dto.LectureSearchOption;
 import usw.suwiki.domain.lecture.dto.Lectures;
-import usw.suwiki.domain.lecture.schedule.LectureSchedule;
 
 import java.util.List;
 import java.util.Objects;
@@ -49,14 +48,6 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository {
       .limit(SlicePaginationUtils.increaseSliceLimit(limit));
 
     return SlicePaginationUtils.buildSlice(query.fetch(), limit);
-  }
-
-  @Override
-  public List<LectureSchedule> findAllLectureSchedulesByLectureSemesterContains(String semester) {
-    return queryFactory.selectFrom(lectureSchedule)
-      .join(lectureSchedule.lecture).fetchJoin()
-      .where(lectureSchedule.lecture.semester.contains(semester))
-      .fetch();
   }
 
   @Override
@@ -137,7 +128,6 @@ public class LectureCustomRepositoryImpl implements LectureCustomRepository {
 
     return new Lectures(queryResults.getResults(), count);
   }
-
 
   @Override
   public Lectures findAllLecturesByOption(LectureSearchOption option) {
