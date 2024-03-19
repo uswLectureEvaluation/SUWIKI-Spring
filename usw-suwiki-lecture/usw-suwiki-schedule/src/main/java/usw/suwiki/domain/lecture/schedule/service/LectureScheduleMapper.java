@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class LectureScheduleMapper {
+class LectureScheduleMapper {
 
   public static LectureResponse.Lecture toEmptyCellResponse(Lecture lecture) {
     return map(lecture, Collections.emptyList());
