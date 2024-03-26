@@ -6,7 +6,7 @@ import usw.suwiki.domain.evaluatepost.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.LectureInfo;
 import usw.suwiki.domain.evaluatepost.LectureRating;
 import usw.suwiki.domain.evaluatepost.dto.EvaluatePostRequest;
-import usw.suwiki.domain.lecture.data.EvaluatedData;
+import usw.suwiki.domain.lecture.model.Evaluation;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class EvaluatePostMapper {
@@ -24,8 +24,8 @@ class EvaluatePostMapper {
     return new LectureRating(request.getSatisfaction(), request.getLearning(), request.getHoney(), request.getTeam(), request.getDifficulty(), request.getHomework());
   }
 
-  public static EvaluatedData toEvaluatedData(LectureRating lectureRating) {
-    return new EvaluatedData(
+  public static Evaluation toEvaluatedData(LectureRating lectureRating) {
+    return new Evaluation(
       lectureRating.getTotalAvg(),
       lectureRating.getSatisfaction(),
       lectureRating.getHoney(),

@@ -11,9 +11,9 @@ import usw.suwiki.domain.evaluatepost.EvaluatePostQueryRepository;
 import usw.suwiki.domain.evaluatepost.EvaluatePostRepository;
 import usw.suwiki.domain.evaluatepost.dto.EvaluatePostRequest;
 import usw.suwiki.domain.evaluatepost.dto.EvaluatePostResponse;
-import usw.suwiki.domain.lecture.data.EvaluatedData;
+import usw.suwiki.domain.lecture.model.Evaluation;
 import usw.suwiki.domain.lecture.service.LectureService;
-import usw.suwiki.domain.report.EvaluatePostReport;
+import usw.suwiki.domain.report.model.Report;
 import usw.suwiki.domain.report.service.ReportService;
 import usw.suwiki.domain.user.service.UserBusinessService;
 
@@ -48,14 +48,8 @@ public class EvaluatePostService {
     EvaluatePost evaluatePost = loadEvaluatePostById(evaluateId);
     Long reportedUserId = evaluatePost.getUserId();
 
-    reportService.saveEvaluatePostReport(EvaluatePostReport.of( // todo: 의존성 분리하기
-      evaluateId,
-      reportedUserId,
-      reportingUserId,
-      evaluatePost.getProfessor(),
-      evaluatePost.getLectureName(),
-      evaluatePost.getContent()
-    ));
+    Report report = Report.evaluate(evaluateId, reportedUserId, reportingUserId, evaluatePost.getContent(), evaluatePost.getLectureName(), evaluatePost.getProfessor());
+    reportService.reportEvaluatePost(report);
   }
 
   public void write(Long userId, Long lectureId, EvaluatePostRequest.Create request) {
@@ -64,9 +58,9 @@ public class EvaluatePostService {
     }
 
     EvaluatePost evaluatePost = EvaluatePostMapper.toEntity(userId, lectureId, request);
-    EvaluatedData evaluatedData = EvaluatePostMapper.toEvaluatedData(evaluatePost.getLectureRating());
+    Evaluation evaluation = EvaluatePostMapper.toEvaluatedData(evaluatePost.getLectureRating());
 
-    lectureService.evaluate(lectureId, evaluatedData);
+    lectureService.evaluate(lectureId, evaluation);
     evaluatePostRepository.save(evaluatePost);
     userBusinessService.wroteEvaluation(userId);
   }
@@ -77,7 +71,7 @@ public class EvaluatePostService {
 
   public void update(Long evaluateId, EvaluatePostRequest.Update request) {
     EvaluatePost evaluatePost = loadEvaluatePostById(evaluateId);
-    EvaluatedData currentEvaluation = EvaluatePostMapper.toEvaluatedData(evaluatePost.getLectureRating());
+    Evaluation currentEvaluation = EvaluatePostMapper.toEvaluatedData(evaluatePost.getLectureRating());
 
     evaluatePost.update(
       evaluatePost.getContent(),
@@ -87,7 +81,7 @@ public class EvaluatePostService {
       EvaluatePostMapper.toRating(request)
     );
 
-    EvaluatedData updatedEvaluation = EvaluatePostMapper.toEvaluatedData(evaluatePost.getLectureRating());
+    Evaluation updatedEvaluation = EvaluatePostMapper.toEvaluatedData(evaluatePost.getLectureRating());
     lectureService.updateEvaluation(evaluatePost.getLectureId(), currentEvaluation, updatedEvaluation);
   }
 

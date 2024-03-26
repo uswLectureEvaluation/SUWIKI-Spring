@@ -1,50 +1,36 @@
 package usw.suwiki.domain.lecture.schedule;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.infra.jpa.BaseTimeEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import java.util.Objects;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LectureSchedule extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "place_schedule", nullable = false)
-    private String placeSchedule;
+  @Column(nullable = false)
+  private Long lectureId;
 
-    @Column(nullable = false, updatable = false)
-    private String semester;
+  @Column(name = "place_schedule", nullable = false)
+  private String placeSchedule;  // 장소와 시간
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Lecture lecture;
+  @Column(nullable = false, updatable = false)
+  private String semester;
 
-    @Builder
-    public LectureSchedule(String placeSchedule, String semester, Lecture lecture) {
-        this.placeSchedule = placeSchedule;
-        this.semester = semester;
-        associateLecture(lecture);  // TODO refactor: Lecture - addSchedule 메서드로 책임 분리
-    }
-
-    private void associateLecture(Lecture lecture) {
-        if (Objects.nonNull(this.lecture)) {
-            this.lecture.removeSchedule(this);
-        }
-        this.lecture = lecture;
-        lecture.addSchedule(this);
-    }
+  public LectureSchedule(Long lectureId, String placeSchedule, String semester) {
+    this.lectureId = lectureId;
+    this.placeSchedule = placeSchedule;
+    this.semester = semester;
+  }
 }

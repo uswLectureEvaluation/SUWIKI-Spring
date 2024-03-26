@@ -55,7 +55,7 @@ class RestrictingUserServiceImpl implements RestrictingUserService {
         JUDGEMENT
       );
     } else if (user.getRestrictedCount() < 3) {
-      user.editRestricted(true);
+      user.restricted();
       restrictingUserRepository.save(
         RestrictingUser.builder()
           .userIdx(user.getId())
@@ -81,7 +81,7 @@ class RestrictingUserServiceImpl implements RestrictingUserService {
         JUDGEMENT
       );
     } else if (user.getRestrictedCount() < 3) {
-      user.editRestricted(true);
+      user.restricted();
       restrictingUserRepository.save(
         RestrictingUser.builder()
           .userIdx(user.getId())

@@ -10,11 +10,11 @@ import usw.suwiki.auth.token.RefreshTokenRepository;
 import usw.suwiki.core.mail.EmailSender;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
-import usw.suwiki.domain.lecture.major.service.FavoriteMajorService;
 import usw.suwiki.domain.report.service.ReportService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserRepository;
 import usw.suwiki.domain.user.service.ClearViewExamService;
+import usw.suwiki.domain.user.service.FavoriteMajorService;
 import usw.suwiki.domain.user.service.RestrictingUserService;
 import usw.suwiki.domain.user.service.UserIsolationCRUDService;
 
@@ -69,7 +69,7 @@ public class UserSchedulingService {
         reportService.deleteFromUserIdx(userId);
         evaluatePostService.deleteAllByUserId(userId);
         examPostCRUDService.deleteFromUserIdx(userId);
-        favoriteMajorService.deleteFromUserIdx(userId);
+        favoriteMajorService.clear(userId);
         restrictingUserService.releaseByUserId(userId);
         confirmationTokenRepository.deleteByUserIdx(userId);
         userRepository.deleteById(userId);
@@ -81,7 +81,7 @@ public class UserSchedulingService {
         reportService.deleteFromUserIdx(isolatedUserId);
         evaluatePostService.deleteAllByUserId(isolatedUserId);
         examPostCRUDService.deleteFromUserIdx(isolatedUserId);
-        favoriteMajorService.deleteFromUserIdx(isolatedUserId);
+        favoriteMajorService.clear(isolatedUserId);
         restrictingUserService.releaseByUserId(isolatedUserId);
         confirmationTokenRepository.deleteByUserIdx(isolatedUserId);
         userIsolationCRUDService.deleteByUserIdx(isolatedUserId);

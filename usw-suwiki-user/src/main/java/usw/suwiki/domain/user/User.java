@@ -5,15 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 import usw.suwiki.auth.token.ConfirmationToken;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.core.secure.PasswordRandomizer;
-import usw.suwiki.domain.lecture.timetable.Timetable;
+import usw.suwiki.infra.jpa.BaseTimeEntity;
 
-import javax.persistence.CascadeType;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -21,10 +20,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static usw.suwiki.core.exception.ExceptionType.EMAIL_NOT_AUTHED;
@@ -35,7 +31,11 @@ import static usw.suwiki.core.exception.ExceptionType.USER_POINT_LACK;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+@AttributeOverrides({
+  @AttributeOverride(name = "createDate", column = @Column(name = "created_at")),
+  @AttributeOverride(name = "modifiedDate", column = @Column(name = "updated_at"))
+})
+public class User extends BaseTimeEntity {
   private static final int DELETE_POINT_LIMIT = 30;
   private static final int PURCHASE_POINT_LIMIT = 20;
   private static final int WROTE_EVALUATION_BONUS = 10;
@@ -80,22 +80,6 @@ public class User {
   @Column
   private LocalDateTime requestedQuitDate;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  @Builder.Default
-  private List<Timetable> timetableList = new ArrayList<>();
-
-  @CreatedDate
-  @Column
-  private LocalDateTime createdAt;
-
-  @UpdateTimestamp
-  @Column
-  private LocalDateTime updatedAt;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  @Builder.Default
-  private List<EvaluatePost> evaluatePostList = new ArrayList<>();
-
   public static User init(String loginId, String password, String email) {
     return builder()
       .loginId(loginId)
@@ -110,15 +94,15 @@ public class User {
       .build();
   }
 
-  /**
-   * User Status
-   */
-  public void editRestricted(boolean restricted) {
-    this.restricted = restricted;
+  public void restricted() {
+    this.restricted = true;
+  }
+
+  public void released() {
+    this.restricted = false;
   }
 
   public void waitQuit() {
-    this.restricted = true;
     this.restrictedCount = null;
     this.role = null;
     this.writtenExam = null;
@@ -126,9 +110,8 @@ public class User {
     this.viewExamCount = null;
     this.point = null;
     this.lastLogin = null;
-    this.createdAt = null;
-    this.updatedAt = null;
     this.requestedQuitDate = LocalDateTime.now();
+    restricted();
   }
 
   public void sleep() {
@@ -141,18 +124,17 @@ public class User {
     this.loginId = loginId;
     this.password = password;
     this.email = email;
-    updateLastLoginDate();
+    login();
   }
 
   public void activateUser() {
     this.restricted = false;
-    this.createdAt = LocalDateTime.now();
-    this.updatedAt = LocalDateTime.now();
     this.role = Role.USER;
+    super.modified();
   }
 
   public boolean isAdmin() {
-    return this.role.equals(Role.ADMIN);
+    return this.role == Role.ADMIN;
   }
 
   public void updatePassword(PasswordEncoder passwordEncoder, String newPassword) {
@@ -181,16 +163,8 @@ public class User {
     throw new AccountException(EMAIL_NOT_AUTHED);
   }
 
-  public void updateLastLoginDate() {
+  public void login() {
     this.lastLogin = LocalDateTime.now();
-  }
-
-  public void addEvaluatePost(EvaluatePost evaluatePost) {
-    this.evaluatePostList.add(evaluatePost);
-  }
-
-  public void removeEvaluatePost(EvaluatePost evaluatePost) {
-    this.evaluatePostList.remove(evaluatePost);
   }
 
   public void writeEvaluatePost() {
@@ -204,7 +178,7 @@ public class User {
     this.writtenEvaluation -= 1;
   }
 
-  public void wroteExamPost() {
+  public void writeExamPost() {
     this.point += 20;
     this.writtenExam += 1;
   }
@@ -233,13 +207,5 @@ public class User {
 
   public void increasePointByReporting() {
     this.point += 1;
-  }
-
-  public void addTimetable(Timetable timetable) {
-    this.timetableList.add(timetable);
-  }
-
-  public void removeTimetable(Timetable timetable) {
-    this.timetableList.remove(timetable);
   }
 }

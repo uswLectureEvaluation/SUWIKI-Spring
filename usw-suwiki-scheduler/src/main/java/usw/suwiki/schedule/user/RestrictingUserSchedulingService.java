@@ -16,18 +16,18 @@ import java.time.LocalDateTime;
 @Transactional
 @RequiredArgsConstructor
 public class RestrictingUserSchedulingService {
-    private final UserCRUDService userCRUDService;
-    private final RestrictingUserService restrictingUserService;
+  private final UserCRUDService userCRUDService;
+  private final RestrictingUserService restrictingUserService;
 
-    @Scheduled(cron = "0 0 * * * *")
-    public void isUnrestrictedTarget() {
-        log.info("{} - 정지 유저 출소 시작", LocalDateTime.now());
-        for (Long restrictedId : restrictingUserService.loadAllRestrictedUntilNow()) {
-            User user = userCRUDService.loadUserFromUserIdx(restrictedId);
-            user.editRestricted(false);
-            restrictingUserService.releaseByUserId(restrictedId);
-        }
-
-        log.info("{} - 정지 유저 출소 종료", LocalDateTime.now());
+  @Scheduled(cron = "0 0 * * * *")
+  public void isUnrestrictedTarget() {
+    log.info("{} - 정지 유저 출소 시작", LocalDateTime.now());
+    for (Long restrictedId : restrictingUserService.loadAllRestrictedUntilNow()) {
+      User user = userCRUDService.loadUserFromUserIdx(restrictedId);
+      user.released();
+      restrictingUserService.releaseByUserId(restrictedId);
     }
+
+    log.info("{} - 정지 유저 출소 종료", LocalDateTime.now());
+  }
 }

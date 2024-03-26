@@ -11,7 +11,7 @@ import usw.suwiki.domain.exampost.ExamPostQueryRepository;
 import usw.suwiki.domain.exampost.ExamPostRepository;
 import usw.suwiki.domain.exampost.dto.ExamPostRequest;
 import usw.suwiki.domain.lecture.service.LectureService;
-import usw.suwiki.domain.report.ExamPostReport;
+import usw.suwiki.domain.report.model.Report;
 import usw.suwiki.domain.report.service.ReportService;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.service.UserCRUDService;
@@ -81,14 +81,8 @@ public class ExamPostService {
     ExamPost examPost = loadExamPostOrThrow(examId);
     Long reportedUserId = examPost.getUserId();
 
-    reportService.saveExamPostReport(ExamPostReport.of(
-      examId,
-      reportedUserId,
-      reportingUserId,
-      examPost.getProfessor(),
-      examPost.getLectureName(),
-      examPost.getContent()
-    ));
+    Report report = Report.exam(examId, reportedUserId, reportingUserId, examPost.getContent(), examPost.getLectureName(), examPost.getProfessor());
+    reportService.reportExamPost(report);
   }
 
   @Transactional
@@ -103,7 +97,7 @@ public class ExamPostService {
     ExamPost examPost = ExamPostMapper.toEntity(userId, lectureId, request);
     examPostRepository.save(examPost);
 
-    user.wroteExamPost();
+    user.writeExamPost();
   }
 
   @Transactional

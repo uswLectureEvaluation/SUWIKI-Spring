@@ -1,89 +1,68 @@
 package usw.suwiki.domain.lecture.timetable;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.infra.jpa.BaseTimeEntity;
+import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.exception.TimetableException;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.Objects;
 
-@Entity
 @Getter
+@Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TimetableCell extends BaseTimeEntity {
+public class TimetableCell {
+  @Column
+  private String lectureName;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "timetable_cell_id")
-    private Long id;
+  @Column
+  private String professorName;
 
-    @NotNull
-    @Size(max = 200)
-    private String lectureName;
+  @Column
+  private String location;
 
-    @NotNull
-    @Size(max = 100)
-    private String professorName;
+  @Column
+  private Integer startPeriod;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private TimetableCellColor color;
+  @Column
+  private Integer endPeriod;
 
-    @Valid
-    @Embedded
-    private TimetableCellSchedule schedule;
+  @Enumerated(EnumType.STRING)
+  private TimetableDay day;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "timetable_id")
-    private Timetable timetable;
+  @Enumerated(EnumType.STRING)
+  private TimetableCellColor color;
 
-    // TODO 고민: 오버랩 검증 로직 및 연관관계 편의 메서드 호출을 생성자로 이동
-    @Builder
-    public TimetableCell(String lectureName, String professorName, TimetableCellColor color, TimetableCellSchedule schedule) {
-        this.lectureName = lectureName;
-        this.professorName = professorName;
-        this.color = color;
-        this.schedule = schedule;
+  public TimetableCell(String lecture, String professor, String location, Integer startPeriod, Integer endPeriod, String day, String color) {
+    this.lectureName = lecture;
+    this.professorName = professor;
+    this.location = location;
+    this.startPeriod = startPeriod;
+    this.endPeriod = endPeriod;
+    this.day = TimetableDay.from(day);
+    this.color = TimetableCellColor.from(color);
+    validatePeriod();
+  }
+
+  private void validatePeriod() {
+    if (this.startPeriod > this.endPeriod) {
+      throw new TimetableException(ExceptionType.INVALID_TIMETABLE_CELL_SCHEDULE);
     }
+  }
 
-    // 연관관계 편의 메서드
-    public void associateTimetable(Timetable timetable) {
-        if (Objects.nonNull(this.timetable)) {
-            this.timetable.removeCell(this);
-        }
-        this.timetable = timetable;
-        timetable.addCell(this);
-    }
+  public boolean isOverlapped(TimetableCell cell) {
+    return this.day.isEquals(cell.day) &&
+           Math.max(this.startPeriod, cell.startPeriod) <= Math.min(this.endPeriod, cell.getEndPeriod());
+  }
 
-    public void dissociateTimetable(Timetable timetable) {
-        this.timetable = null;
-        timetable.removeCell(this);
-    }
+  public String getColor() {
+    return this.color.name();
+  }
 
-    public Long bringTimetableId() {
-        return this.timetable.getId();
-    }
-
-    public void update(String lectureName, String professorName, TimetableCellColor color, TimetableCellSchedule schedule) {
-        this.lectureName = lectureName;
-        this.professorName = professorName;
-        this.color = color;
-        this.schedule = schedule;
-    }
-
+  public String getDay() {
+    return this.day.name();
+  }
 }
